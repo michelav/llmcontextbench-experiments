@@ -51,7 +51,6 @@ experiments/repoqa/
 ├── experiment.repoqa.json
 ├── analyze_repoqa.py
 ├── derive_repoqa.py
-├── generate_figures.py
 └── baseline-01/
     ├── provenance.json
     ├── manifest.json
@@ -129,17 +128,6 @@ Some preserved evaluations may not contain every metric required by the aggregat
 | `calls` | Observed operation/tool-call count. |
 | `analysis_complete` | Whether all fields required for aggregate analysis are available. |
 | `incomplete_reasons` | Semicolon-separated reasons for an incomplete analysis row. |
-
-## Optional diagnostic figures
-
-`generate_figures.py` can be used for exploratory visualization of the derived RepoQA results. These figures are supplementary diagnostics and are not required by the root replication workflow.
-
-Generate the analysis files first, then inspect the script options:
-
-```bash
-just repoqa-analyze
-python experiments/repoqa/generate_figures.py --help
-```
 
 ## Clean generated outputs
 

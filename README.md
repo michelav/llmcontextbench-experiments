@@ -6,10 +6,12 @@ LLMContextBench represents an experiment as a combination of dataset instances, 
 
 The package contains preserved experiment outputs, dataset and tool snapshots, analysis scripts, and figure/table generators associated with the following SBES 2026 papers:
 
-- *LLMContextBench: A Benchmark Tool for Evaluating Context Provisioning Strategies in LLM-Based Systems* — accepted paper: `[link/DOI to be added before the camera-ready submission]`;
-- *Evaluating Context Provisioning Strategies for LLM-Based Systems: An Empirical Study with the Lattes Platform* — accepted paper: `[link/DOI to be added before the camera-ready submission]`.
+- *LLMContextBench: A Benchmark Tool for Evaluating Context Provisioning Strategies in LLM-Based Systems*;
+- *Evaluating Context Provisioning Strategies for LLM-Based Systems: An Empirical Study with the Lattes Platform*.
 
-> **Note to the artifact evaluators:** the links above are placeholders and will be filled in with the final paper DOI/arXiv link (or a PDF committed to this repository) before the Festival de Artefatos submission deadline.
+The camera-ready PDFs of both papers will be added to this repository, under [`articles/`](articles/), before the Festival de Artefatos submission deadline. Until then, the current development repository is available at <https://github.com/michelav/llmcontextbench-experiments>.
+
+> **Note to the artifact evaluators:** the GitHub link above is an informational pointer to where the papers will be committed; it is not the official archival link. The archival copy submitted for the "Available" seal is the Zenodo deposit described in [Section 9 (Citation)](#9-citation) and [Section 10 (License)](#10-license), which will include the same paper PDFs once added.
 
 ## 1. Purpose and relation to the papers
 
@@ -60,7 +62,6 @@ The analysis scripts calculate their outputs directly from the preserved experim
         ├── README.md
         ├── analyze_repoqa.py
         ├── derive_repoqa.py
-        ├── generate_figures.py
         └── baseline-01/
 ```
 
