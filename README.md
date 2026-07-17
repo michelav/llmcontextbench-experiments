@@ -23,7 +23,7 @@ The two preserved experiments are:
 | Lattes | Academic CV question answering | Three LLM judges | Research-paper Tables 5–7 and Figure 3 |
 | RepoQA | Long-context source-code retrieval | Deterministic RepoQA scorer | Analysis-ready CSV files and diagnostic summaries |
 
-The analysis scripts calculate their outputs directly from the preserved experiment artifacts. The repository does not compare generated results against hard-coded values copied from the articles.
+The analysis scripts calculate their outputs directly from the preserved experiment artifacts.
 
 ## 2. Repository structure
 
