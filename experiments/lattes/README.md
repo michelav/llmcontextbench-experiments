@@ -47,25 +47,26 @@ Expected paper values are verification fixtures only. They are never used as inp
 ## Directory layout
 
 ```text
-experiments/lattes/
-├── README.md
-├── Makefile
-├── experiment.baseline001.json
-├── analyze_lattes.py
-├── extract_observed_calls.py
-├── generate_figures.py
-├── analysis.ipynb
-└── baseline_001/
-    ├── provenance.json
-    ├── manifest.json
-    ├── queries.jsonl
-    ├── answers.jsonl
-    ├── evals.jsonl
-    ├── evals-summary.json
-    ├── judge_votes.jsonl
-    └── traces/
-        ├── queries/
-        └── evals/
+repository root/
+├── justfile
+└── experiments/lattes/
+    ├── README.md
+    ├── experiment.baseline001.json
+    ├── analyze_lattes.py
+    ├── extract_observed_calls.py
+    ├── generate_figures.py
+    ├── analysis.ipynb
+    └── baseline_001/
+        ├── provenance.json
+        ├── manifest.json
+        ├── queries.jsonl
+        ├── answers.jsonl
+        ├── evals.jsonl
+        ├── evals-summary.json
+        ├── judge_votes.jsonl
+        └── traces/
+            ├── queries/
+            └── evals/
 ```
 
 The exact software and dataset snapshots used by the baseline are stored at the repository root:
@@ -108,20 +109,31 @@ The analysis script invokes the extractor automatically. Running the extractor s
 
 ## Requirements
 
-Offline analysis requires Python 3.11 or 3.12 with:
+Offline analysis requires:
 
+- Python 3.11 or 3.12;
 - pandas;
 - NumPy;
 - Matplotlib;
+- `just`, as the repository-level command runner;
 - Jupyter, only for the notebook.
 
-Example environment:
+Example Python environment:
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
 pip install pandas numpy matplotlib jupyter
 ```
+
+Install `just` using the package manager for your operating system, then confirm that the repository recipes are available:
+
+```bash
+just --version
+just --list
+```
+
+`just` is only an orchestration layer: every recipe delegates to the documented Python scripts. The scripts can still be executed directly when `just` is unavailable.
 
 Offline processing does not call model providers or the remote MCP server.
 
@@ -130,10 +142,17 @@ Offline processing does not call model providers or the remote MCP server.
 Run from the repository root:
 
 ```bash
-make -C experiments/lattes all
+just lattes-all
 ```
 
-Equivalent commands:
+The workflow can also be run in separate stages:
+
+```bash
+just lattes-analyze
+just lattes-figures
+```
+
+Equivalent direct commands:
 
 ```bash
 python experiments/lattes/analyze_lattes.py \
@@ -151,7 +170,7 @@ The figure generator currently produces:
 - latency distribution by strategy;
 - question-level difficulty and judge-disagreement chart.
 
-To generate selected figures:
+To generate selected figures directly:
 
 ```bash
 python experiments/lattes/generate_figures.py \
@@ -171,14 +190,14 @@ heatmap latency disagreement
 Generate the CSVs first, then open the notebook:
 
 ```bash
-make -C experiments/lattes analyze
+just lattes-analyze
 jupyter lab experiments/lattes/analysis.ipynb
 ```
 
 For non-interactive execution:
 
 ```bash
-make -C experiments/lattes notebook
+just lattes-notebook
 ```
 
 The notebook fails explicitly when required derived files are absent. It does not silently fall back to the raw baseline artifacts.
@@ -186,6 +205,12 @@ The notebook fails explicitly when required derived files are absent. It does no
 ## Verify against the published table
 
 Expected files are optional verification fixtures. They are read only after the baseline-derived analysis has completed.
+
+```bash
+just lattes-verify
+```
+
+Equivalent direct command:
 
 ```bash
 python experiments/lattes/analyze_lattes.py \
@@ -214,6 +239,12 @@ python experiments/lattes/extract_observed_calls.py \
   experiments/lattes/baseline_001 \
   --output-dir experiments/lattes/baseline_001/derived/calls \
   --scan-raw-response
+```
+
+## Clean generated outputs
+
+```bash
+just lattes-clean
 ```
 
 ## Re-running the experiment
