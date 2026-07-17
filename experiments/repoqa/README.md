@@ -67,7 +67,7 @@ The preserved outputs cover:
 | `Sec.` | Median query duration in seconds. |
 | `Calls` | Mean compact operation/tool-call count recorded with responses. |
 
-The table and values reported in the paper are documented in the accepted manuscript. fileciteturn155file0
+These definitions and the published aggregate values follow Table 3(b) of the accepted tool-track manuscript.
 
 ## Directory layout
 
