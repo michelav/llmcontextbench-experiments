@@ -5,6 +5,10 @@ This is the official preprocessing stage for RepoQA. It reads the committed
 responses and deterministic evaluations through ``analyze_repoqa.py`` and
 writes normalized CSV files. It never reads the published Table 3(b), expected
 values, or a paper-selection manifest.
+
+Incomplete historical rows are preserved and explicitly reported instead of
+being silently discarded or guessed. Paper-table generation remains strict and
+accepts only fully scored selected trials.
 """
 
 from __future__ import annotations
@@ -53,20 +57,36 @@ def write_outputs(frame: pd.DataFrame, output_dir: Path, experiment_dir: Path) -
     summarize_dimension(frame, "context_size_k").to_csv(
         output_dir / "repoqa_summary_by_context_size.csv", index=False
     )
-    frame[(~frame["passed"].astype(bool)) | (~frame["hit"].astype(bool))].to_csv(
+
+    frame[frame["passed"].eq(False) | frame["hit"].eq(False)].to_csv(
         output_dir / "repoqa_failures.csv", index=False
     )
+    incomplete = frame.loc[~frame["analysis_complete"].fillna(False).astype(bool)].copy()
+    incomplete.to_csv(output_dir / "repoqa_incomplete_trials.csv", index=False)
 
     responses = response_path(experiment_dir)
     evaluations = experiment_dir / "evals.jsonl"
     manifest = {
-        "schemaVersion": "1.0",
+        "schemaVersion": "1.1",
         "sourceDirectory": str(experiment_dir),
         "sourceArtifacts": {
             responses.name: {"sha256": sha256_file(responses)},
             evaluations.name: {"sha256": sha256_file(evaluations)},
         },
         "joinedTrials": int(len(frame)),
+        "completeTrials": int(frame["analysis_complete"].fillna(False).sum()),
+        "incompleteTrials": int(len(incomplete)),
+        "incompleteByReason": {
+            str(key): int(value)
+            for key, value in (
+                incomplete.assign(reason=incomplete["incomplete_reasons"].fillna("").str.split(";"))
+                .explode("reason")
+                .loc[lambda data: data["reason"].ne("")]
+                .groupby("reason")
+                .size()
+                .items()
+            )
+        },
         "configurations": {
             str(key): int(value) for key, value in frame.groupby("configuration").size().items()
         },
@@ -77,8 +97,9 @@ def write_outputs(frame: pd.DataFrame, output_dir: Path, experiment_dir: Path) -
         ),
         "paperTableGenerated": False,
         "note": (
-            "Table 3(b) is generated in a separate stage from repoqa_trials.csv "
-            "using an explicit immutable paper-selection manifest."
+            "Complete-baseline summaries use only rows with a complete metric set and report both "
+            "N and CompleteN. Incomplete rows remain in repoqa_trials.csv and are listed separately. "
+            "Table 3(b) is generated in a strict second stage using an explicit immutable selection."
         ),
     }
     (output_dir / "repoqa_analysis_manifest.json").write_text(
@@ -95,21 +116,35 @@ def main() -> int:
         default=Path("experiments/repoqa/baseline-01"),
     )
     parser.add_argument("--output-dir", type=Path, default=None)
-    parser.add_argument("--allow-missing-evaluations", action="store_true")
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="Fail when any historical response lacks a complete analysis metric set.",
+    )
+    parser.add_argument(
+        "--allow-missing-evaluations",
+        action="store_true",
+        help=argparse.SUPPRESS,
+    )
     args = parser.parse_args()
 
     experiment_dir = args.experiment_dir.resolve()
     output_dir = (args.output_dir or experiment_dir / "derived" / "analysis").resolve()
     try:
-        frame = load_trials(
-            experiment_dir, strict=not args.allow_missing_evaluations
-        )
+        frame = load_trials(experiment_dir, strict=args.strict)
         write_outputs(frame, output_dir, experiment_dir)
     except (ArtifactError, OSError, ValueError, KeyError, pd.errors.ParserError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2
 
+    complete = int(frame["analysis_complete"].fillna(False).sum())
+    incomplete = int(len(frame) - complete)
     print(f"Wrote RepoQA analysis CSVs to {output_dir}")
+    print(f"Trials: {len(frame)} total, {complete} complete, {incomplete} incomplete")
+    if incomplete:
+        print(
+            "See repoqa_incomplete_trials.csv and repoqa_analysis_manifest.json for details."
+        )
     return 0
 
 
