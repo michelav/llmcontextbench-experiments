@@ -6,7 +6,7 @@ RepoQA evaluates long-context source-code retrieval. Given a natural-language de
 
 ## Reproducibility design
 
-The official processing path mirrors the Lattes workflow and separates baseline analysis from paper-table construction:
+The supported workflow analyzes the complete committed baseline:
 
 ```text
 baseline-01/{responses.jsonl,evals.jsonl}
@@ -15,32 +15,12 @@ baseline-01/{responses.jsonl,evals.jsonl}
               derive_repoqa.py
                      |
                      v
-baseline-01/derived/analysis/repoqa_trials.csv
-                     |
-                     | + paper-selection.json
-                     v
-             build_table_3b.py
-                     |
-                     v
-baseline-01/derived/analysis/table-3b.csv
+baseline-01/derived/analysis/*.csv
 ```
 
-`derive_repoqa.py` is the baseline preprocessing stage. It reads the preserved responses and deterministic evaluations and writes normalized CSV files plus a manifest. It never reads published values or a paper-selection file.
+`derive_repoqa.py` reads the preserved responses and deterministic evaluations and writes normalized CSV files and a provenance manifest. The shared parsing and summarization functions are implemented in `analyze_repoqa.py`.
 
-`build_table_3b.py` is the presentation stage. It reads only `repoqa_trials.csv`, applies an explicit immutable list of trial IDs, calculates the Table 3(b) metrics, and writes the paper table and a selection/provenance manifest.
-
-Expected values are verification fixtures only. They are never used to choose trials, fill missing data, or compute metrics.
-
-## Important limitation: the paper subset
-
-The committed baseline currently contains **960 responses and 960 evaluations**, while Table 3(b) reports **45 trials for each of four configurations**, for a total of 180 trials. The exact immutable 180-trial subset used for the paper has not yet been recorded in the repository.
-
-Consequently:
-
-- the complete baseline can already be analyzed reproducibly;
-- exact Table 3(b) reproduction requires `paper-selection.json` containing the 180 exact trial IDs;
-- scripts intentionally reject implicit filtering when generating the paper table;
-- the expected CSV is not a substitute for the missing selection.
+The workflow does not compare generated metrics against values copied from the article.
 
 ## Experiment scope
 
@@ -48,26 +28,20 @@ The preserved outputs cover:
 
 - Python, Java, TypeScript, and Rust;
 - 4k, 8k, and 16k context sizes;
-- four OpenAI and Google generation models;
+- OpenAI and Google generation models;
 - inline code (`I-Code`);
 - inline JSON (`I-JSON`);
 - local function calling (`Func.`);
 - local MCP (`L-MCP`).
 
-## Table 3(b) metrics
+The deterministic analysis includes:
 
-| Metric | Definition |
-|---|---|
-| `N` | Number of explicitly selected trials for the configuration. |
-| `Hit` | Percentage with `details.repoqa.isBestMatch = true`. |
-| `Pass` | Percentage with `details.repoqa.passed = true`. |
-| `Sim.` | Mean `details.repoqa.bestSimilarScore`. |
-| `Tok./T` | Query-phase tokens divided by all selected trials. |
-| `Tok./P` | Query-phase tokens divided by passing selected trials. |
-| `Sec.` | Median query duration in seconds. |
-| `Calls` | Mean compact operation/tool-call count recorded with responses. |
-
-These definitions and the published aggregate values follow Table 3(b) of the accepted tool-track manuscript.
+- retrieval hit;
+- scorer pass/fail;
+- best similarity score;
+- token consumption;
+- execution duration;
+- observed operation-call count.
 
 ## Directory layout
 
@@ -77,11 +51,7 @@ experiments/repoqa/
 ├── experiment.repoqa.json
 ├── analyze_repoqa.py
 ├── derive_repoqa.py
-├── build_table_3b.py
 ├── generate_figures.py
-├── paper-selection.example.json
-├── expected/
-│   └── tool-paper-table-3b.csv      # legacy fixture location
 └── baseline-01/
     ├── provenance.json
     ├── manifest.json
@@ -92,17 +62,18 @@ experiments/repoqa/
     └── traces/
 ```
 
-The repository-level verification fixture is:
+The archived dataset and software snapshot are stored at the repository root:
 
 ```text
-expected/table-3b-repoqa.csv
+datasets/repoqa.tar.gz
+tools/llmcontextbench-current.zip
 ```
 
-`analyze_repoqa.py` remains available as a lower-level compatibility/helper module. The official reproducibility entry points are `derive_repoqa.py` and `build_table_3b.py`.
+Their relationship to the experiment and any archival limitations are recorded in `baseline-01/provenance.json`.
 
 ## Requirements
 
-Offline processing requires Python 3.11 or 3.12 with pandas. The repository-level environment also includes NumPy and Matplotlib for the other analyses and figures.
+Offline processing requires Python 3.11 or 3.12 and the packages listed in the root `requirements-analysis.txt`.
 
 ```bash
 python -m venv .venv
@@ -112,7 +83,7 @@ pip install -r requirements-analysis.txt
 
 Offline analysis does not call model providers or MCP services.
 
-## Analyze the complete committed baseline
+## Analyze the committed baseline
 
 From the repository root:
 
@@ -131,89 +102,44 @@ python experiments/repoqa/derive_repoqa.py \
 Generated files include:
 
 ```text
-repoqa_trials.csv
-repoqa_summary_by_configuration.csv
-repoqa_summary_by_model.csv
-repoqa_summary_by_language.csv
-repoqa_summary_by_context_size.csv
-repoqa_failures.csv
-repoqa_analysis_manifest.json
+baseline-01/derived/analysis/
+├── repoqa_trials.csv
+├── repoqa_summary_by_configuration.csv
+├── repoqa_summary_by_model.csv
+├── repoqa_summary_by_language.csv
+├── repoqa_summary_by_context_size.csv
+├── repoqa_failures.csv
+├── repoqa_incomplete_trials.csv
+└── repoqa_analysis_manifest.json
 ```
 
-The manifest records SHA-256 hashes for `responses.jsonl` and `evals.jsonl`. No Table 3(b) file is created at this stage.
+The manifest records SHA-256 hashes for the preserved response and evaluation files, trial counts, configurations, models, languages, context sizes, and completeness information.
 
-## Record the immutable paper selection
+Some preserved evaluations may not contain every metric required by the aggregate analysis. Such rows remain in `repoqa_trials.csv`, are marked explicitly as incomplete, and are also written to `repoqa_incomplete_trials.csv`. Missing measurements are not converted into failures.
 
-Create the working selection file:
+## Interpretation of the main fields
+
+| Field | Meaning |
+|---|---|
+| `hit` | Whether the best function identified by the deterministic scorer matches the requested target. |
+| `passed` | Whether the response satisfies the RepoQA scoring threshold. |
+| `similarity` | Best similarity score reported by the RepoQA scorer. |
+| `total_tokens` | Query-phase token count preserved with the response. |
+| `duration_sec` | Query execution duration in seconds. |
+| `calls` | Observed operation/tool-call count. |
+| `analysis_complete` | Whether all fields required for aggregate analysis are available. |
+| `incomplete_reasons` | Semicolon-separated reasons for an incomplete analysis row. |
+
+## Optional diagnostic figures
+
+`generate_figures.py` can be used for exploratory visualization of the derived RepoQA results. These figures are supplementary diagnostics and are not required by the root replication workflow.
+
+Generate the analysis files first, then inspect the script options:
 
 ```bash
-cp experiments/repoqa/paper-selection.example.json \
-  experiments/repoqa/paper-selection.json
+just repoqa-analyze
+python experiments/repoqa/generate_figures.py --help
 ```
-
-Populate `trialIds` with the exact 180 trial IDs used in the paper. The generator requires exactly 45 selected trials for each configuration:
-
-```text
-I-Code
-I-JSON
-Func.
-L-MCP
-```
-
-Do not infer the paper population from row order, timestamps, expected values, or a convenient filter. Use the historically correct trial identifiers.
-
-## Generate Table 3(b)
-
-After recording the selection:
-
-```bash
-just repoqa-table
-```
-
-To use a selection stored elsewhere:
-
-```bash
-REPOQA_SELECTION=/path/to/paper-selection.json just repoqa-table
-```
-
-Equivalent direct command:
-
-```bash
-python experiments/repoqa/build_table_3b.py \
-  experiments/repoqa/baseline-01/derived/analysis \
-  --selection experiments/repoqa/paper-selection.json \
-  --output-dir experiments/repoqa/baseline-01/derived/analysis
-```
-
-Generated artifacts:
-
-```text
-table-3b.csv
-table-3b.tex
-table-3b-selected-trials.csv
-table-3b-manifest.json
-```
-
-The manifest records the SHA-256 hashes of both `repoqa_trials.csv` and the selection file, the selected counts, and that expected values were not used as inputs.
-
-## Verify against the published table
-
-```bash
-just repoqa-verify
-```
-
-Equivalent direct command:
-
-```bash
-python experiments/repoqa/build_table_3b.py \
-  experiments/repoqa/baseline-01/derived/analysis \
-  --selection experiments/repoqa/paper-selection.json \
-  --output-dir experiments/repoqa/baseline-01/derived/analysis \
-  --expected expected/table-3b-repoqa.csv \
-  --verify
-```
-
-A mismatch returns a non-zero status. Verification occurs only after all metrics have been calculated from the explicitly selected derived rows.
 
 ## Clean generated outputs
 
@@ -221,6 +147,6 @@ A mismatch returns a non-zero status. Verification occurs only after all metrics
 just repoqa-clean
 ```
 
-## Remaining archival blocker
+## Re-running the experiment
 
-Before assigning a persistent artifact release or claiming exact Table 3(b) reproduction, identify and commit the correct paper selection. The current repository cannot honestly derive that historical subset from the published aggregate values alone.
+The preserved artifacts support offline analytical replication. A new end-to-end execution requires a compatible LLMContextBench version, the RepoQA dataset, model credentials, network access, provider quotas, and sufficient budget. Hosted model behavior may change, so a new run is not expected to reproduce the preserved responses byte-for-byte.
