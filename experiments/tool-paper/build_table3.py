@@ -13,15 +13,27 @@ import pandas as pd
 def latex_rows(frame: pd.DataFrame) -> list[str]:
     rows: list[str] = []
     for record in frame.to_dict(orient="records"):
-        rows.append(" & ".join(str(record[column]) for column in frame.columns) + r" \\")
+        rows.append(" & ".join(str(record[column]) for column in frame.columns) + r" \")
     return rows
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--lattes", type=Path, default=Path("experiments/tool-paper/expected/table-3a-lattes.csv"))
-    parser.add_argument("--repoqa", type=Path, default=Path("experiments/repoqa/baseline-01/derived/analysis/tool-paper-table-3b.csv"))
-    parser.add_argument("--output-dir", type=Path, default=Path("experiments/tool-paper/generated"))
+    parser.add_argument(
+        "--lattes",
+        type=Path,
+        default=Path("experiments/tool-paper/expected/table-3a-lattes.csv"),
+    )
+    parser.add_argument(
+        "--repoqa",
+        type=Path,
+        default=Path("experiments/repoqa/baseline-01/derived/analysis/table-3b.csv"),
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("experiments/tool-paper/generated"),
+    )
     args = parser.parse_args()
 
     for path in (args.lattes, args.repoqa):
@@ -61,7 +73,7 @@ def main() -> int:
         r"\caption{Lattes dataset.}",
         r"\begin{tabular}{" + "l" + "r" * (len(lattes.columns) - 1) + "}",
         r"\toprule",
-        " & ".join(lattes.columns) + r" \\",
+        " & ".join(lattes.columns) + r" \",
         r"\midrule",
         *latex_rows(lattes),
         r"\bottomrule",
@@ -73,7 +85,7 @@ def main() -> int:
         r"\caption{RepoQA dataset.}",
         r"\begin{tabular}{" + "l" + "r" * (len(repoqa.columns) - 1) + "}",
         r"\toprule",
-        " & ".join(repoqa.columns) + r" \\",
+        " & ".join(repoqa.columns) + r" \",
         r"\midrule",
         *latex_rows(repoqa),
         r"\bottomrule",
