@@ -11,14 +11,19 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import math
 import sys
 from pathlib import Path
 from typing import Any
 
 import pandas as pd
 
-from analyze_repoqa import ArtifactError, format_k, summarize, verify
+from analyze_repoqa import (
+    ArtifactError,
+    format_k,
+    require_complete_analysis,
+    summarize,
+    verify,
+)
 
 REQUIRED_CONFIGS = ["I-Code", "I-JSON", "Func.", "L-MCP"]
 TABLE_COLUMNS = ["Config", "N", "Hit", "Pass", "Sim.", "Tok./T", "Tok./P", "Sec.", "Calls"]
@@ -32,15 +37,17 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
-def parse_bool(series: pd.Series, column: str) -> pd.Series:
-    if pd.api.types.is_bool_dtype(series):
-        return series.astype(bool)
-    normalized = series.astype(str).str.strip().str.lower()
-    valid = normalized.isin({"true", "false", "1", "0"})
+def parse_nullable_bool(series: pd.Series, column: str) -> pd.Series:
+    normalized = series.astype("string").str.strip().str.lower()
+    missing = normalized.isna() | normalized.isin({"", "nan", "none", "<na>"})
+    valid = missing | normalized.isin({"true", "false", "1", "0"})
     if not valid.all():
-        values = sorted(normalized.loc[~valid].unique())
+        values = sorted(normalized.loc[~valid].dropna().unique())
         raise ArtifactError(f"Invalid boolean values in {column}: {values}")
-    return normalized.isin({"true", "1"})
+    result = pd.Series(pd.NA, index=series.index, dtype="boolean")
+    result.loc[normalized.isin({"true", "1"})] = True
+    result.loc[normalized.isin({"false", "0"})] = False
+    return result
 
 
 def load_trials(path: Path) -> pd.DataFrame:
@@ -62,10 +69,20 @@ def load_trials(path: Path) -> pd.DataFrame:
         raise ArtifactError(f"{path} is missing columns: {', '.join(missing)}")
     if frame["trial_id"].duplicated().any():
         raise ArtifactError("repoqa_trials.csv contains duplicate trial_id values")
-    frame["hit"] = parse_bool(frame["hit"], "hit")
-    frame["passed"] = parse_bool(frame["passed"], "passed")
+
+    frame["hit"] = parse_nullable_bool(frame["hit"], "hit")
+    frame["passed"] = parse_nullable_bool(frame["passed"], "passed")
+    if "analysis_complete" in frame.columns:
+        frame["analysis_complete"] = parse_nullable_bool(
+            frame["analysis_complete"], "analysis_complete"
+        ).fillna(False)
+    else:
+        frame["analysis_complete"] = ~frame[
+            ["hit", "passed", "similarity", "total_tokens", "duration_sec", "calls"]
+        ].isna().any(axis=1)
+
     for column in ("similarity", "total_tokens", "duration_sec", "calls"):
-        frame[column] = pd.to_numeric(frame[column], errors="raise")
+        frame[column] = pd.to_numeric(frame[column], errors="coerce")
     frame["trial_id"] = frame["trial_id"].astype(str)
     frame["configuration"] = frame["configuration"].astype(str)
     return frame
@@ -117,6 +134,7 @@ def select_trials(frame: pd.DataFrame, trial_ids: list[str], expected_per_config
         raise ArtifactError(
             f"Expected {expected_per_config} trials per configuration, found {rendered}"
         )
+    require_complete_analysis(selected, context="Table 3(b) selection")
     return selected
 
 
@@ -182,7 +200,7 @@ def main() -> int:
             output_dir / "table-3b-selected-trials.csv", index=False
         )
         manifest = {
-            "schemaVersion": "1.0",
+            "schemaVersion": "1.1",
             "inputTrials": str(trials_path),
             "inputTrialsSha256": sha256_file(trials_path),
             "selection": str(args.selection.resolve()),
@@ -193,6 +211,7 @@ def main() -> int:
                 str(key): int(value)
                 for key, value in selected.groupby("configuration").size().items()
             },
+            "completeSelectedTrials": int(selected["analysis_complete"].fillna(False).sum()),
             "expectedFilesUsedAsInputs": False,
             "selectionDescription": selection.get("description"),
         }
