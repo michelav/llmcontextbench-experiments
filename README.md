@@ -9,7 +9,7 @@ The package contains preserved experiment outputs, dataset and tool snapshots, a
 - *LLMContextBench: A Benchmark Tool for Evaluating Context Provisioning Strategies in LLM-Based Systems*;
 - *Evaluating Context Provisioning Strategies for LLM-Based Systems: An Empirical Study with the Lattes Platform*.
 
-The camera-ready PDFs of both papers are available in [experiments repository](https://github.com/michelav/llmcontextbench-experiments/) under [`articles/`](articles/).
+The camera-ready PDFs of both papers are available in [experiments repository](https://github.com/michelav/llmcontextbench-sbes2026/) under [`articles/`](articles/).
 
 ## 1. Purpose and relation to the papers
 
