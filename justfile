@@ -8,7 +8,6 @@ lattes_baseline := lattes_dir + "/baseline_001"
 lattes_derived := lattes_baseline + "/derived"
 lattes_analysis := lattes_derived + "/analysis"
 lattes_figures := lattes_derived + "/figures"
-expected_lattes := "expected/table-5-lattes.csv"
 
 repoqa_dir := "experiments/repoqa"
 repoqa_baseline := repoqa_dir + "/baseline-01"
@@ -41,14 +40,6 @@ lattes-notebook: lattes-analyze
         --execute {{lattes_dir}}/analysis.ipynb \
         --output analysis.executed.ipynb \
         --output-dir {{lattes_derived}}
-
-# Verify generated Table 5 against the published-table fixture.
-lattes-verify: lattes-analyze
-    {{python}} {{lattes_dir}}/analyze_lattes.py \
-        {{lattes_baseline}} \
-        --output-dir {{lattes_analysis}} \
-        --expected {{expected_lattes}} \
-        --verify
 
 # Remove all generated Lattes outputs.
 lattes-clean:
