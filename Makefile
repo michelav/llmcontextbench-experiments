@@ -1,6 +1,8 @@
 PYTHON ?= python
 
 LATTES_DIR ?= experiments/lattes/baseline_001
+LATTES_ANALYSIS_DIR ?= $(LATTES_DIR)/derived/analysis
+LATTES_FIGURES_DIR ?= $(LATTES_DIR)/derived/figures
 LATTES_EXPECTED ?= experiments/tool-paper/expected/table-3a-lattes.csv
 
 REPOQA_DIR ?= experiments/repoqa/baseline-01
