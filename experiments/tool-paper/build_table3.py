@@ -9,11 +9,16 @@ from pathlib import Path
 
 import pandas as pd
 
+LATEX_ROW_END = "\\\\"
+
 
 def latex_rows(frame: pd.DataFrame) -> list[str]:
     rows: list[str] = []
     for record in frame.to_dict(orient="records"):
-        rows.append(" & ".join(str(record[column]) for column in frame.columns) + r" \")
+        rows.append(
+            " & ".join(str(record[column]) for column in frame.columns)
+            + f" {LATEX_ROW_END}"
+        )
     return rows
 
 
@@ -73,7 +78,7 @@ def main() -> int:
         r"\caption{Lattes dataset.}",
         r"\begin{tabular}{" + "l" + "r" * (len(lattes.columns) - 1) + "}",
         r"\toprule",
-        " & ".join(lattes.columns) + r" \",
+        " & ".join(lattes.columns) + f" {LATEX_ROW_END}",
         r"\midrule",
         *latex_rows(lattes),
         r"\bottomrule",
@@ -85,7 +90,7 @@ def main() -> int:
         r"\caption{RepoQA dataset.}",
         r"\begin{tabular}{" + "l" + "r" * (len(repoqa.columns) - 1) + "}",
         r"\toprule",
-        " & ".join(repoqa.columns) + r" \",
+        " & ".join(repoqa.columns) + f" {LATEX_ROW_END}",
         r"\midrule",
         *latex_rows(repoqa),
         r"\bottomrule",
