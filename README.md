@@ -1,13 +1,15 @@
 # LLMContextBench Replication Package
 
-This repository is the replication package for the empirical studies conducted with **LLMContextBench**, a benchmark tool for evaluating how LLM-based systems receive and access external context.
+This repository is the replication package for the empirical studies conducted with **LLMContextBench**, a benchmark tool for evaluating how LLM-based systems receive and access external context. It allows (a) reprocessing the preserved experiment outputs offline to reproduce every table and figure reported in the papers, and (b) re-running the original experiments end to end against live model providers and MCP servers.
 
 LLMContextBench represents an experiment as a combination of dataset instances, tasks, models, context-provisioning strategies, formats, repetitions, evaluation procedures, and execution traces. It supports comparisons between strategies such as inline context, local function calling, local MCP, and remote MCP.
 
 The package contains preserved experiment outputs, dataset and tool snapshots, analysis scripts, and figure/table generators associated with the following SBES 2026 papers:
 
-- *LLMContextBench: A Benchmark Tool for Evaluating Context Provisioning Strategies in LLM-Based Systems*;
-- *Evaluating Context Provisioning Strategies for LLM-Based Systems: An Empirical Study with the Lattes Platform*.
+- *LLMContextBench: A Benchmark Tool for Evaluating Context Provisioning Strategies in LLM-Based Systems* — accepted paper: `[link/DOI to be added before the camera-ready submission]`;
+- *Evaluating Context Provisioning Strategies for LLM-Based Systems: An Empirical Study with the Lattes Platform* — accepted paper: `[link/DOI to be added before the camera-ready submission]`.
+
+> **Note to the artifact evaluators:** the links above are placeholders and will be filled in with the final paper DOI/arXiv link (or a PDF committed to this repository) before the Festival de Artefatos submission deadline.
 
 ## 1. Purpose and relation to the papers
 
@@ -24,6 +26,12 @@ The two preserved experiments are:
 | RepoQA | Long-context source-code retrieval | Deterministic RepoQA scorer | Analysis-ready CSV files and diagnostic summaries |
 
 The analysis scripts calculate their outputs directly from the preserved experiment artifacts.
+
+### Data provenance, storage, and ethical notes
+
+- **Lattes dataset** (`datasets/lattes.tar.gz`; preserved outputs under `experiments/lattes/baseline_001/`) is built from curricula publicly accessible on the Brazilian Lattes Platform, each identified by its public numeric Lattes ID. No information beyond what each researcher already publishes on their own public CV page was collected or is redistributed. The compressed archive is about 1.4 MB; the full preserved baseline, including request/response traces kept for provenance, is about 103 MB.
+- **RepoQA dataset** (`datasets/repoqa.tar.gz`; preserved outputs under `experiments/repoqa/baseline-01/`) is built from publicly available open-source repositories. The compressed archive is about 17 MB; the full preserved baseline, including traces, is about 78 MB.
+- The repository totals approximately 300 MB, mostly the preserved `traces/` directories. They are not required to reproduce the tables and figures (only the derived CSV files are) and can be deleted locally if disk space is constrained; the committed baseline artifacts are otherwise the ones that matter.
 
 ## 2. Repository structure
 
@@ -69,8 +77,11 @@ Experiment-specific documentation is available in:
 
 - Python 3.11 or 3.12;
 - [`just`](https://github.com/casey/just);
-- Python packages listed in `requirements-analysis.txt`;
-- Jupyter only when executing the Lattes notebook.
+- Python packages listed in `requirements-analysis.txt` (this includes `jupyterlab` and `nbconvert`, needed to open or non-interactively execute the Lattes notebook);
+- no GPU, Docker, or platform-specific dependencies are required for offline replication; it runs on Linux, macOS, or WSL;
+- about 350 MB of free disk space for the repository, plus space for the Python virtual environment (see [Section 1](#data-provenance-storage-and-ethical-notes) for a breakdown).
+
+### Installation
 
 Create an isolated environment from the repository root:
 
@@ -93,6 +104,21 @@ A different Python executable can be supplied through the `PYTHON` environment v
 ```bash
 PYTHON=python3.12 just lattes-all
 ```
+
+**Verify the installation** by running the complete offline Lattes workflow once:
+
+```bash
+just lattes-all
+```
+
+Expected output: the console prints a per-configuration summary table (`I-HTML`, `I-JSON`, `Func.`, `L-MCP`, `R-MCP`), and the following files are created:
+
+```text
+experiments/lattes/baseline_001/derived/analysis/table-5.csv
+experiments/lattes/baseline_001/derived/figures/figure-3-combined.png
+```
+
+If both appear, the environment is installed correctly.
 
 ## 4. Recommended offline replication
 
@@ -189,7 +215,7 @@ This runs the complete Lattes workflow and the RepoQA baseline analysis.
 
 ## 5. Inspecting the Lattes notebook
 
-The notebook is an inspection layer over the CSV files generated by `analyze_lattes.py`; it does not recompute the official metrics from raw artifacts.
+The notebook is an inspection layer over the CSV files generated by `analyze_lattes.py`; it does not recompute the official metrics from raw artifacts. Its Figure 3 cells import `generate_figures.py` and call its drawing functions directly (`load_analysis`, `draw_latency_violin`, `draw_accuracy_heatmap`), so the notebook and the standalone script render the exact same figures — only the destination (inline display vs. saved files) differs.
 
 Interactive use:
 
@@ -253,12 +279,17 @@ The package follows these rules:
 
 ## 9. Citation
 
-Citation metadata is provided in [`CITATION.cff`](CITATION.cff). GitHub can render this file through the repository's **Cite this repository** action.
+Citation metadata is provided in [`CITATION.cff`](CITATION.cff). GitHub can render this file through the repository's **Cite this repository** action; Zenodo parses the same file to populate the deposit's citation and "Cite as" fields.
 
-Until a DOI is assigned, cite the repository using its URL and the version or commit used in the analysis.
+Until a DOI is assigned, cite the repository using its URL and the version or commit used in the analysis. After the first Zenodo deposit:
+
+- update `CITATION.cff` with the assigned DOI (`identifiers`) and the deposited `version`;
+- update this README and the papers' *Artifact Availability* statements to point to the specific archived version (for example, `https://doi.org/10.5281/zenodo.NNNNNNN`), not the "all versions" concept DOI, per the CBSoft Festival de Artefatos submission instructions.
 
 ## 10. License
 
 Repository-authored source code, analysis scripts, and documentation are distributed under the [MIT License](LICENSE).
 
-Dataset archives, tool snapshots, model outputs, and other third-party or derived artifacts may be subject to their original licenses, terms of use, or attribution requirements. The MIT License does not override rights attached to material created by third parties.
+The preserved Lattes and RepoQA dataset archives (`datasets/*.tar.gz`) were assembled by the authors from publicly accessible sources (public Lattes Platform curricula and public open-source repositories, respectively; see [Section 1](#data-provenance-storage-and-ethical-notes)) and are made available for research and replication purposes under the same repository terms.
+
+Tool snapshots, raw model outputs, and any other third-party or derived artifacts may still be subject to their original licenses, terms of use, or attribution requirements. The MIT License does not override rights attached to material created by third parties.

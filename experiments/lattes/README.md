@@ -12,6 +12,8 @@ The experiment compares five context-provisioning configurations:
 
 The preserved execution contains 1,200 generated answers and 3,600 individual judge votes. These committed artifacts are the source of truth for all derived numerical results.
 
+**Data note:** the questions are answered against curricula publicly accessible on the Brazilian Lattes Platform, each identified by its public numeric Lattes ID. No information beyond what each researcher already publishes on their own public CV page is collected, generated, or redistributed by this dataset.
+
 ## Reproducibility design
 
 ```text
