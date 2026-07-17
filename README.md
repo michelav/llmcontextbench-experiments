@@ -1,10 +1,10 @@
 # LLMContextBench Replication Package
 
-This repository is the replication package for the empirical studies conducted with **LLMContextBench**, a benchmark tool for evaluating how LLM-based systems receive and access context.
+This repository is the replication package for the empirical studies conducted with **LLMContextBench**, a benchmark tool for evaluating how LLM-based systems receive and access external context.
 
-LLMContextBench models an experiment as a combination of dataset instances, tasks, models, context-provisioning strategies, formats, repetitions, evaluation procedures, and execution traces. The tool supports reproducible comparisons between strategies such as inline context, local function calling, local MCP, and remote MCP.
+LLMContextBench represents an experiment as a combination of dataset instances, tasks, models, context-provisioning strategies, formats, repetitions, evaluation procedures, and execution traces. It supports comparisons between strategies such as inline context, local function calling, local MCP, and remote MCP.
 
-The package contains the preserved outputs, dataset snapshots, analysis scripts, and figure/table generators used in the following SBES 2026 papers:
+The package contains preserved experiment outputs, dataset and tool snapshots, analysis scripts, and figure/table generators associated with the following SBES 2026 papers:
 
 - *LLMContextBench: A Benchmark Tool for Evaluating Context Provisioning Strategies in LLM-Based Systems*;
 - *Evaluating Context Provisioning Strategies for LLM-Based Systems: An Empirical Study with the Lattes Platform*.
@@ -13,7 +13,7 @@ The package contains the preserved outputs, dataset snapshots, analysis scripts,
 
 The repository supports two complementary uses:
 
-1. **Offline replication**, which reprocesses the committed experimental outputs without contacting model providers or MCP servers. This is the recommended path for artifact evaluation.
+1. **Offline analytical replication**, which reprocesses the committed experimental outputs without contacting model providers or MCP servers. This is the recommended path for artifact evaluation.
 2. **Full experiment re-execution**, which requires the archived datasets and tool versions, model credentials, external services, time, and budget.
 
 The two preserved experiments are:
@@ -23,22 +23,23 @@ The two preserved experiments are:
 | Lattes | Academic CV question answering | Three LLM judges | Research-paper Tables 5–7 and Figure 3 |
 | RepoQA | Long-context source-code retrieval | Deterministic RepoQA scorer | Analysis-ready CSV files and diagnostic summaries |
 
+The analysis scripts calculate their outputs directly from the preserved experiment artifacts. The repository does not compare generated results against hard-coded values copied from the articles.
+
 ## 2. Repository structure
 
 ```text
 .
 ├── README.md
+├── LICENSE
+├── CITATION.cff
 ├── justfile
 ├── requirements-analysis.txt
 ├── datasets/
 │   ├── lattes.tar.gz
 │   └── repoqa.tar.gz
 ├── tools/
-│   └── llmcontextbench-lattes.zip
+│   ├── llmcontextbench-lattes.zip
 │   └── llmcontextbench-current.zip
-├── expected/
-│   ├── table-5-lattes.csv
-│   └── table-3b-repoqa.csv
 └── experiments/
     ├── lattes/
     │   ├── README.md
@@ -47,19 +48,17 @@ The two preserved experiments are:
     │   ├── generate_figures.py
     │   ├── analysis.ipynb
     │   └── baseline_001/
-    ├── repoqa/
-    │   ├── README.md
-    │   ├── analyze_repoqa.py
-    │   ├── derive_repoqa.py
-    │   ├── build_table_3b.py
-    │   ├── generate_figures.py
-    │   └── baseline-01/
-    └── tool-paper/
+    └── repoqa/
+        ├── README.md
+        ├── analyze_repoqa.py
+        ├── derive_repoqa.py
+        ├── generate_figures.py
+        └── baseline-01/
 ```
 
 The baseline directories contain the preserved raw outputs. Generated files are written below each baseline's `derived/` directory and can be safely removed and recreated.
 
-More detailed experiment-specific documentation is available in:
+Experiment-specific documentation is available in:
 
 - [`experiments/lattes/README.md`](experiments/lattes/README.md);
 - [`experiments/repoqa/README.md`](experiments/repoqa/README.md).
@@ -82,7 +81,7 @@ python -m pip install --upgrade pip
 pip install -r requirements-analysis.txt
 ```
 
-Confirm the available reproduction commands:
+Check the available commands:
 
 ```bash
 just --version
@@ -107,7 +106,7 @@ Run the complete Lattes workflow:
 just lattes-all
 ```
 
-This performs the following pipeline:
+The workflow is:
 
 ```text
 answers.jsonl + judge_votes.jsonl + traces
@@ -136,7 +135,7 @@ They include:
 - normalized trial- and dimension-level CSV files;
 - a provenance manifest.
 
-The paper figures are written to:
+The figures are written to:
 
 ```text
 experiments/lattes/baseline_001/derived/figures/
@@ -148,20 +147,12 @@ The main files are:
 - `figure-3b-question-accuracy-heatmap.*`;
 - `figure-3-combined.*`.
 
-To execute individual stages:
+Individual stages can be executed with:
 
 ```bash
 just lattes-analyze
 just lattes-figures
 ```
-
-To verify the generated Table 5 against the committed paper-value fixture:
-
-```bash
-just lattes-verify
-```
-
-The expected CSV is used only after the metrics have been calculated. It is never used to fill, select, or modify experimental results.
 
 ### Analyze the RepoQA baseline
 
@@ -187,7 +178,6 @@ The generated files include:
 - `repoqa_failures.csv`;
 - `repoqa_incomplete_trials.csv`;
 - `repoqa_analysis_manifest.json`.
-
 
 ### Reproduce all currently supported outputs
 
@@ -234,7 +224,7 @@ Remove all generated outputs:
 just clean
 ```
 
-The commands do not remove the committed baseline artifacts, dataset archives, or expected-value fixtures.
+These commands do not remove the committed baseline artifacts, dataset archives, or tool snapshots.
 
 ## 7. Full experiment re-execution
 
@@ -248,7 +238,7 @@ Re-running the complete experiments is optional and substantially more demanding
 
 Hosted models may change over time, so a new execution is not expected to be byte-for-byte identical to the preserved baseline. For analytical replication, the committed baseline artifacts are authoritative.
 
-The Lattes experiment is already bound to an archived tool snapshot. The RepoQA provenance still records the absence of the exact producing software snapshot as an archival limitation.
+The Lattes experiment is bound to an archived tool snapshot. The RepoQA provenance records the available software and dataset information and any remaining archival limitations.
 
 ## 8. Reproducibility principles
 
@@ -256,12 +246,19 @@ The package follows these rules:
 
 - preserved raw artifacts are the source of truth;
 - derived CSV files are generated by deterministic scripts;
-- figure generators consume derived analysis data rather than paper values;
-- expected values are verification-only fixtures;
+- figure generators consume derived analysis data rather than article values;
 - missing measurements remain missing and are explicitly reported;
 - generated files are separated from committed baseline artifacts;
 - full experiment re-execution is distinguished from offline analytical replication.
 
 ## 9. Citation
 
-Citation metadata will be added after the final publication information and persistent artifact identifier are available.
+Citation metadata is provided in [`CITATION.cff`](CITATION.cff). GitHub can render this file through the repository's **Cite this repository** action.
+
+Until a DOI is assigned, cite the repository using its URL and the version or commit used in the analysis.
+
+## 10. License
+
+Repository-authored source code, analysis scripts, and documentation are distributed under the [MIT License](LICENSE).
+
+Dataset archives, tool snapshots, model outputs, and other third-party or derived artifacts may be subject to their original licenses, terms of use, or attribution requirements. The MIT License does not override rights attached to material created by third parties.
