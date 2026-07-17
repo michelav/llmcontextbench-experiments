@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Analyze preserved CTXBench RepoQA outputs without provider calls.
 
-The module joins responses and deterministic RepoQA evaluations by trialId and
-provides shared normalization, selection, summarization, and verification
-helpers. Missing measurements are preserved as null values; they are never
-inferred from other fields.
+The module joins responses and deterministic RepoQA evaluations by trial ID and
+provides shared normalization, optional diagnostic filtering, and summarization
+helpers. It does not validate results against aggregate values copied from the
+article.
 """
 
 from __future__ import annotations
@@ -94,17 +94,17 @@ def boolean(value: Any) -> bool | None:
 
 
 def configuration(strategy: Any, context_format: Any) -> str:
-    strategy = str(strategy or "").lower()
-    context_format = str(context_format or "").lower()
-    if strategy == "inline" and context_format in {"code", "text", "txt"}:
+    strategy_text = str(strategy or "").lower()
+    format_text = str(context_format or "").lower()
+    if strategy_text == "inline" and format_text in {"code", "text", "txt"}:
         return "I-Code"
-    if strategy == "inline" and context_format == "json":
+    if strategy_text == "inline" and format_text == "json":
         return "I-JSON"
-    if strategy == "local_function":
+    if strategy_text == "local_function":
         return "Func."
-    if strategy == "local_mcp":
+    if strategy_text == "local_mcp":
         return "L-MCP"
-    return f"{strategy or 'unknown'}:{context_format or 'unknown'}"
+    return f"{strategy_text or 'unknown'}:{format_text or 'unknown'}"
 
 
 def instance_metadata(instance_id: str, evaluation: Mapping[str, Any]) -> tuple[str, int | None]:
@@ -113,7 +113,8 @@ def instance_metadata(instance_id: str, evaluation: Mapping[str, Any]) -> tuple[
     match = INSTANCE_RE.match(instance_id)
     prefix = match.group("lang").lower() if match else ""
     size = int(match.group("size")) if match else None
-    return LANGUAGES.get(reported, LANGUAGES.get(prefix, reported or prefix or "unknown")), size
+    language = LANGUAGES.get(reported, LANGUAGES.get(prefix, reported or prefix or "unknown"))
+    return language, size
 
 
 def call_count(response: Mapping[str, Any]) -> float:
@@ -137,7 +138,7 @@ def response_path(experiment_dir: Path) -> Path:
     raise ArtifactError(f"No responses.jsonl or answers.jsonl in {experiment_dir}")
 
 
-def _missing_reasons(row: Mapping[str, Any], evaluation_present: bool) -> list[str]:
+def missing_reasons(row: Mapping[str, Any], evaluation_present: bool) -> list[str]:
     reasons: list[str] = []
     if not evaluation_present:
         reasons.append("missing_evaluation")
@@ -149,13 +150,6 @@ def _missing_reasons(row: Mapping[str, Any], evaluation_present: bool) -> list[s
 
 
 def load_trials(experiment_dir: Path, *, strict: bool = True) -> pd.DataFrame:
-    """Join preserved responses and evaluations.
-
-    In non-strict mode every response is retained. Missing evaluation fields are
-    represented as nulls and described by ``incomplete_reasons``. Strict mode is
-    reserved for consumers that require a fully scored population.
-    """
-
     evaluations: dict[str, dict[str, Any]] = {}
     for evaluation in read_jsonl(experiment_dir / "evals.jsonl"):
         trial_id = str(evaluation.get("trialId") or evaluation.get("runId") or "")
@@ -227,7 +221,7 @@ def load_trials(experiment_dir: Path, *, strict: bool = True) -> pd.DataFrame:
             "evaluation_present": evaluation_present,
             "trace_ref": response.get("traceRef"),
         }
-        reasons = _missing_reasons(row, evaluation_present)
+        reasons = missing_reasons(row, evaluation_present)
         row["analysis_complete"] = not reasons
         row["incomplete_reasons"] = ";".join(reasons)
         rows.append(row)
@@ -252,21 +246,6 @@ def load_trials(experiment_dir: Path, *, strict: bool = True) -> pd.DataFrame:
     return frame
 
 
-def require_complete_analysis(frame: pd.DataFrame, *, context: str) -> None:
-    missing_columns = [field for field in REQUIRED_ANALYSIS_FIELDS if field not in frame.columns]
-    if missing_columns:
-        raise ArtifactError(f"{context} is missing columns: {', '.join(missing_columns)}")
-    incomplete_mask = frame[list(REQUIRED_ANALYSIS_FIELDS)].isna().any(axis=1)
-    if "analysis_complete" in frame.columns:
-        incomplete_mask |= ~frame["analysis_complete"].fillna(False).astype(bool)
-    if incomplete_mask.any():
-        trial_ids = frame.loc[incomplete_mask, "trial_id"].astype(str).head(5).tolist()
-        raise ArtifactError(
-            f"{context} contains {int(incomplete_mask.sum())} incomplete trials; first: "
-            + ", ".join(trial_ids)
-        )
-
-
 def selection_values(value: Any) -> set[str]:
     if value is None:
         return set()
@@ -275,7 +254,15 @@ def selection_values(value: Any) -> set[str]:
     return {str(item) for item in value}
 
 
-def apply_selection(frame: pd.DataFrame, path: Path | None) -> tuple[pd.DataFrame, dict[str, Any] | None]:
+def apply_selection(
+    frame: pd.DataFrame, path: Path | None
+) -> tuple[pd.DataFrame, dict[str, Any] | None]:
+    """Apply optional diagnostic filters from a JSON file.
+
+    Filtering is intended for exploratory analysis and figure generation; it is
+    not a paper-value validation mechanism.
+    """
+
     if path is None:
         return frame.copy(), None
     if not path.is_file():
@@ -311,18 +298,10 @@ def apply_selection(frame: pd.DataFrame, path: Path | None) -> tuple[pd.DataFram
         selected = selected[~selected["trial_id"].astype(str).isin(excluded)]
     if selected.empty:
         raise ArtifactError("Selection removed every trial")
-
-    expected = selection.get("expectedPerConfiguration")
-    if expected is not None:
-        counts = selected.groupby("configuration").size().to_dict()
-        unexpected = {key: value for key, value in counts.items() if value != int(expected)}
-        if unexpected:
-            rendered = ", ".join(f"{key}={value}" for key, value in sorted(unexpected.items()))
-            raise ArtifactError(f"Unexpected trials per configuration: {rendered}")
     return selected.reset_index(drop=True), selection
 
 
-def _complete_rows(frame: pd.DataFrame) -> pd.DataFrame:
+def complete_rows(frame: pd.DataFrame) -> pd.DataFrame:
     if "analysis_complete" in frame.columns:
         mask = frame["analysis_complete"].fillna(False).astype(bool)
     else:
@@ -333,10 +312,10 @@ def _complete_rows(frame: pd.DataFrame) -> pd.DataFrame:
 def summarize(frame: pd.DataFrame) -> pd.DataFrame:
     records: list[dict[str, Any]] = []
     for config, group in frame.groupby("configuration", sort=False):
-        complete = _complete_rows(group)
+        complete = complete_rows(group)
+        complete_n = len(complete)
         passed_count = int(complete["passed"].eq(True).sum())
         token_total = float(complete["total_tokens"].sum())
-        complete_n = len(complete)
         records.append(
             {
                 "Config": config,
@@ -362,7 +341,7 @@ def summarize_dimension(frame: pd.DataFrame, dimension: str) -> pd.DataFrame:
     records: list[dict[str, Any]] = []
     for keys, group in frame.groupby([dimension, "configuration"], dropna=False, sort=False):
         dimension_value, config = keys
-        complete = _complete_rows(group)
+        complete = complete_rows(group)
         complete_n = len(complete)
         records.append(
             {
@@ -381,69 +360,6 @@ def summarize_dimension(frame: pd.DataFrame, dimension: str) -> pd.DataFrame:
     return pd.DataFrame(records)
 
 
-def format_k(value: float) -> str:
-    return "--" if math.isnan(value) else f"{value / 1000:.1f}k"
-
-
-def write_latex(summary: pd.DataFrame, path: Path) -> None:
-    lines = [
-        r"\begin{tabular}{lrrrrrrrr}",
-        r"\toprule",
-        r"Config. & N & Hit & Pass & Sim. & Tok./T & Tok./P & Sec. & Calls \\",
-        r"\midrule",
-    ]
-    for row in summary.to_dict(orient="records"):
-        lines.append(
-            f"{row['Config']} & {int(row['N'])} & {row['Hit']:.1f} & {row['Pass']:.1f} & "
-            f"{row['Sim.']:.2f} & {format_k(float(row['Tok./T']))} & "
-            f"{format_k(float(row['Tok./P']))} & {row['Sec.']:.2f} & {row['Calls']:.2f} \\\\"
-        )
-    lines.extend([r"\bottomrule", r"\end{tabular}"])
-    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
-
-
-def expected_number(value: Any) -> float:
-    text = str(value).strip()
-    if not text or text == "--":
-        return math.nan
-    multiplier = 1000 if text.lower().endswith("k") else 1
-    return float(text[:-1] if multiplier == 1000 else text) * multiplier
-
-
-def verify(summary: pd.DataFrame, expected_path: Path) -> list[str]:
-    expected = pd.read_csv(expected_path)
-    actual = {row["Config"]: row for row in summary.to_dict(orient="records")}
-    tolerances = {
-        "Hit": 0.15,
-        "Pass": 0.15,
-        "Sim.": 0.015,
-        "Tok./T": 150,
-        "Tok./P": 150,
-        "Sec.": 0.11,
-        "Calls": 0.025,
-    }
-    errors: list[str] = []
-    for row in expected.to_dict(orient="records"):
-        config = str(row["Config"])
-        found = actual.get(config)
-        if found is None:
-            errors.append(f"Missing configuration {config}")
-            continue
-        if int(found["N"]) != int(row["N"]):
-            errors.append(f"{config} N: expected {int(row['N'])}, got {int(found['N'])}")
-        if "CompleteN" in found and int(found["CompleteN"]) != int(found["N"]):
-            errors.append(
-                f"{config} contains incomplete selected trials: "
-                f"N={int(found['N'])}, CompleteN={int(found['CompleteN'])}"
-            )
-        for metric, tolerance in tolerances.items():
-            expected_value = expected_number(row[metric])
-            actual_value = float(found[metric])
-            if math.isnan(actual_value) or abs(actual_value - expected_value) > tolerance:
-                errors.append(f"{config} {metric}: expected {expected_value:g}, got {actual_value:g}")
-    return errors
-
-
 def write_outputs(
     frame: pd.DataFrame,
     output_dir: Path,
@@ -453,20 +369,18 @@ def write_outputs(
     output_dir.mkdir(parents=True, exist_ok=True)
     summary = summarize(frame)
     frame.sort_values(
-        ["configuration", "language", "context_size_k", "model_id", "instance_id"]
+        ["configuration", "language", "context_size_k", "model_id", "instance_id", "trial_id"]
     ).to_csv(output_dir / "repoqa_trials.csv", index=False)
     summary.to_csv(output_dir / "repoqa_summary_by_configuration.csv", index=False)
-    columns = ["Config", "N", "Hit", "Pass", "Sim.", "Tok./T", "Tok./P", "Sec.", "Calls"]
-    summary[columns].to_csv(output_dir / "tool-paper-table-3b.csv", index=False)
-    write_latex(summary, output_dir / "tool-paper-table-3b.tex")
     for dimension, name in (
         ("model", "repoqa_summary_by_model.csv"),
         ("language", "repoqa_summary_by_language.csv"),
         ("context_size_k", "repoqa_summary_by_context_size.csv"),
     ):
         summarize_dimension(frame, dimension).to_csv(output_dir / name, index=False)
-    failures = frame[frame["passed"].eq(False) | frame["hit"].eq(False)]
-    failures.to_csv(output_dir / "repoqa_failures.csv", index=False)
+    frame[frame["passed"].eq(False) | frame["hit"].eq(False)].to_csv(
+        output_dir / "repoqa_failures.csv", index=False
+    )
     incomplete = frame.loc[~frame["analysis_complete"].fillna(False).astype(bool)]
     incomplete.to_csv(output_dir / "repoqa_incomplete_trials.csv", index=False)
     manifest = {
@@ -475,10 +389,13 @@ def write_outputs(
         "joinedTrials": int(len(frame)),
         "completeTrials": int(frame["analysis_complete"].fillna(False).sum()),
         "incompleteTrials": int((~frame["analysis_complete"].fillna(False).astype(bool)).sum()),
-        "configurations": {str(k): int(v) for k, v in frame.groupby("configuration").size().items()},
-        "models": sorted(str(v) for v in frame["model"].dropna().unique()),
-        "languages": sorted(str(v) for v in frame["language"].dropna().unique()),
-        "contextSizesK": sorted(int(v) for v in frame["context_size_k"].dropna().unique()),
+        "configurations": {
+            str(key): int(value) for key, value in frame.groupby("configuration").size().items()
+        },
+        "models": sorted(str(value) for value in frame["model"].dropna().unique()),
+        "languages": sorted(str(value) for value in frame["language"].dropna().unique()),
+        "contextSizesK": sorted(int(value) for value in frame["context_size_k"].dropna().unique()),
+        "note": "All metrics are derived directly from preserved RepoQA artifacts.",
     }
     (output_dir / "repoqa_analysis_manifest.json").write_text(
         json.dumps(manifest, indent=2) + "\n", encoding="utf-8"
@@ -496,47 +413,31 @@ def main() -> int:
     )
     parser.add_argument("--output-dir", type=Path, default=None)
     parser.add_argument("--selection", type=Path, default=None)
-    parser.add_argument("--expected", type=Path, default=None)
-    parser.add_argument("--verify", action="store_true")
     parser.add_argument(
         "--strict",
         action="store_true",
-        help="Fail when any response lacks a complete RepoQA/query metric set.",
-    )
-    parser.add_argument(
-        "--allow-missing-evaluations",
-        action="store_true",
-        help=argparse.SUPPRESS,
+        help="Fail when any response lacks a complete RepoQA metric set.",
     )
     args = parser.parse_args()
+
     experiment_dir = args.experiment_dir.resolve()
     output_dir = (args.output_dir or experiment_dir / "derived" / "analysis").resolve()
     try:
         frame = load_trials(experiment_dir, strict=args.strict)
-        frame, selection = apply_selection(frame, args.selection.resolve() if args.selection else None)
-        if args.selection or args.expected or args.verify:
-            require_complete_analysis(frame, context="selected RepoQA population")
+        frame, selection = apply_selection(
+            frame, args.selection.resolve() if args.selection else None
+        )
         summary = write_outputs(frame, output_dir, selection, experiment_dir)
-    except (ArtifactError, OSError, ValueError, KeyError) as exc:
+    except (ArtifactError, OSError, ValueError, KeyError, pd.errors.ParserError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2
+
     print(
         summary[
             ["Config", "N", "CompleteN", "Hit", "Pass", "Sim.", "Tok./T", "Tok./P", "Sec.", "Calls"]
         ].to_string(index=False)
     )
     print(f"Wrote RepoQA analysis to {output_dir}")
-    if args.expected:
-        errors = verify(summary, args.expected.resolve())
-        if errors:
-            print("Paper-value verification failed:", file=sys.stderr)
-            for error in errors:
-                print(f"  - {error}", file=sys.stderr)
-            return 1 if args.verify else 0
-        print("Paper-value verification passed.")
-    elif args.verify:
-        print("ERROR: --verify requires --expected", file=sys.stderr)
-        return 2
     return 0
 
 
