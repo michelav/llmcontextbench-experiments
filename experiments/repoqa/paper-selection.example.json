@@ -1,22 +1,12 @@
 {
-  "description": "Replace these filters with the exact immutable RepoQA subset used to produce Table 3(b) in the SBES 2026 tool paper.",
-  "filters": {
-    "trialIds": [],
-    "instanceIds": [],
-    "modelIds": [],
-    "models": [],
-    "providers": [],
-    "strategies": [],
-    "formats": [],
-    "configurations": ["I-Code", "I-JSON", "Func.", "L-MCP"],
-    "languages": ["python", "java", "typescript", "rust"],
-    "contextSizesK": [4, 8, 16]
-  },
-  "excludeTrialIds": [],
+  "description": "Replace trialIds with the exact immutable 180-trial subset used to produce RepoQA Table 3(b) in the SBES 2026 tool paper.",
+  "trialIds": [],
   "expectedPerConfiguration": 45,
+  "requiredConfigurations": ["I-Code", "I-JSON", "Func.", "L-MCP"],
   "notes": [
-    "An empty trialIds list does not mean the complete baseline automatically matches the paper subset.",
-    "Prefer explicit trial IDs when the exact paper subset has been identified.",
-    "Do not claim exact paper reproduction until analyze_repoqa.py --verify passes against expected/tool-paper-table-3b.csv."
+    "Exact paper reproduction requires explicit trial IDs; implicit filters are intentionally rejected.",
+    "The selected IDs must resolve to exactly 45 trials for each required configuration.",
+    "Expected values are verification fixtures only and are never used to select or compute trials.",
+    "Do not claim exact Table 3(b) reproduction until build_table_3b.py --verify succeeds."
   ]
 }
