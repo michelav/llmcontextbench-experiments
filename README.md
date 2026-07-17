@@ -31,7 +31,7 @@ The analysis scripts calculate their outputs directly from the preserved experim
 
 ### Data provenance, storage, and ethical notes
 
-- **Lattes dataset** (`datasets/lattes.tar.gz`; preserved outputs under `experiments/lattes/baseline_001/`) is built from curricula publicly accessible on the Brazilian Lattes Platform, each identified by its public numeric Lattes ID. No information beyond what each researcher already publishes on their own public CV page was collected or is redistributed. The compressed archive is about 1.4 MB; the full preserved baseline, including request/response traces kept for provenance, is about 103 MB.
+- **Lattes dataset** (`datasets/lattes.tar.gz`; preserved outputs under `experiments/lattes/baseline_001/`) is built from curricula publicly accessible on the Brazilian Lattes Platform, each identified by its public numeric Lattes ID. No information beyond what each researcher already publishes on their own public CV page was collected or is redistributed. The compressed archive is about 1.4 MB; the full preserved baseline (`answers.jsonl`, `judge_votes.jsonl`, `queries.jsonl`, and the request/response traces kept for provenance) is about 113 MB.
 - **RepoQA dataset** (`datasets/repoqa.tar.gz`; preserved outputs under `experiments/repoqa/baseline-01/`) is built from publicly available open-source repositories. The compressed archive is about 17 MB; the full preserved baseline, including traces, is about 78 MB.
 - The repository totals approximately 300 MB, mostly the preserved `traces/` directories. They are not required to reproduce the tables and figures (only the derived CSV files are) and can be deleted locally if disk space is constrained; the committed baseline artifacts are otherwise the ones that matter.
 
@@ -44,6 +44,8 @@ The analysis scripts calculate their outputs directly from the preserved experim
 ├── CITATION.cff
 ├── justfile
 ├── requirements-analysis.txt
+├── articles/
+│   └── README.md
 ├── datasets/
 │   ├── lattes.tar.gz
 │   └── repoqa.tar.gz
@@ -80,7 +82,7 @@ Experiment-specific documentation is available in:
 - [`just`](https://github.com/casey/just);
 - Python packages listed in `requirements-analysis.txt` (this includes `jupyterlab` and `nbconvert`, needed to open or non-interactively execute the Lattes notebook);
 - no GPU, Docker, or platform-specific dependencies are required for offline replication; it runs on Linux, macOS, or WSL;
-- about 350 MB of free disk space for the repository, plus space for the Python virtual environment (see [Section 1](#data-provenance-storage-and-ethical-notes) for a breakdown).
+- about 350 MB of free disk space for the repository content (see [Section 1](#data-provenance-storage-and-ethical-notes) for a breakdown), plus roughly 450–500 MB for the Python virtual environment and its dependencies (mostly Jupyter and its transitive packages) — budget about 1 GB of free disk space in total.
 
 ### Installation
 
@@ -105,6 +107,14 @@ A different Python executable can be supplied through the `PYTHON` environment v
 ```bash
 PYTHON=python3.12 just lattes-all
 ```
+
+**NixOS / Nix users:** a plain `python -m venv` followed by `pip install` may fail to import `numpy`/`pandas` with an error such as `ImportError: libstdc++.so.6: cannot open shared object file`, because prebuilt wheels expect system libraries that Nix does not expose on the standard path. Use a Nix shell with the required packages instead of the venv steps above:
+
+```bash
+nix-shell -p just -p 'python3.withPackages(ps: with ps; [ numpy pandas jupyterlab matplotlib ])' --run 'just lattes-all'
+```
+
+This has been verified to run the full offline workflow (`lattes-all`, `repoqa-analyze`, `lattes-notebook`) without errors.
 
 **Verify the installation** by running the complete offline Lattes workflow once:
 
