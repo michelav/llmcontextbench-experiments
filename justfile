@@ -7,19 +7,19 @@ baseline_dir := lattes_dir + "/baseline_001"
 derived_dir := baseline_dir + "/derived"
 analysis_dir := derived_dir + "/analysis"
 figures_dir := derived_dir + "/figures"
-expected_lattes := "expected/table-3a-lattes.csv"
+expected_lattes := "expected/table-5-lattes.csv"
 
 # List available recipes.
 default:
     @just --list
 
-# Generate all Lattes baseline-derived CSV files.
+# Generate all Lattes baseline-derived CSV files, including Tables 5, 6, and 7.
 lattes-analyze:
     {{python}} {{lattes_dir}}/analyze_lattes.py \
         {{baseline_dir}} \
         --output-dir {{analysis_dir}}
 
-# Generate Lattes figures exclusively from baseline-derived CSV files.
+# Generate paper Figure 3a, Figure 3b, and the combined Figure 3.
 lattes-figures: lattes-analyze
     {{python}} {{lattes_dir}}/generate_figures.py \
         {{analysis_dir}} \
@@ -36,7 +36,7 @@ lattes-notebook: lattes-analyze
         --output analysis.executed.ipynb \
         --output-dir {{derived_dir}}
 
-# Verify Lattes-derived values against the published-table fixture.
+# Verify generated Table 5 against the published-table fixture.
 lattes-verify: lattes-analyze
     {{python}} {{lattes_dir}}/analyze_lattes.py \
         {{baseline_dir}} \
