@@ -1,14 +1,10 @@
 #!/usr/bin/env python3
 """Generate analysis-ready RepoQA CSV files from the preserved baseline.
 
-This is the official preprocessing stage for RepoQA. It reads the committed
+This is the official processing stage for RepoQA. It reads the committed
 responses and deterministic evaluations through ``analyze_repoqa.py`` and
-writes normalized CSV files. It never reads the published Table 3(b), expected
-values, or a paper-selection manifest.
-
-Incomplete historical rows are preserved and explicitly reported instead of
-being silently discarded or guessed. Paper-table generation remains strict and
-accepts only fully scored selected trials.
+writes normalized CSV files. Incomplete historical rows are preserved and
+explicitly reported instead of being silently discarded or guessed.
 """
 
 from __future__ import annotations
@@ -95,11 +91,10 @@ def write_outputs(frame: pd.DataFrame, output_dir: Path, experiment_dir: Path) -
         "contextSizesK": sorted(
             int(value) for value in frame["context_size_k"].dropna().unique()
         ),
-        "paperTableGenerated": False,
         "note": (
-            "Complete-baseline summaries use only rows with a complete metric set and report both "
-            "N and CompleteN. Incomplete rows remain in repoqa_trials.csv and are listed separately. "
-            "Table 3(b) is generated in a strict second stage using an explicit immutable selection."
+            "Summaries use rows with complete metric sets and report both N and CompleteN. "
+            "Incomplete rows remain in repoqa_trials.csv and are listed separately. "
+            "No article-value fixture is read or validated."
         ),
     }
     (output_dir / "repoqa_analysis_manifest.json").write_text(
@@ -120,11 +115,6 @@ def main() -> int:
         "--strict",
         action="store_true",
         help="Fail when any historical response lacks a complete analysis metric set.",
-    )
-    parser.add_argument(
-        "--allow-missing-evaluations",
-        action="store_true",
-        help=argparse.SUPPRESS,
     )
     args = parser.parse_args()
 
