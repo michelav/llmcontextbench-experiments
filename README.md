@@ -23,8 +23,6 @@ The two preserved experiments are:
 | Lattes | Academic CV question answering | Three LLM judges | Research-paper Tables 5–7 and Figure 3 |
 | RepoQA | Long-context source-code retrieval | Deterministic RepoQA scorer | Analysis-ready CSV files and diagnostic summaries |
 
-The RepoQA Table 3(b) workflow is intentionally not exposed through the repository `justfile` at this stage. The complete baseline can be analyzed, but exact paper-table reproduction still depends on identifying the immutable subset of trials used in the published table.
-
 ## 2. Repository structure
 
 ```text
@@ -37,6 +35,7 @@ The RepoQA Table 3(b) workflow is intentionally not exposed through the reposito
 │   └── repoqa.tar.gz
 ├── tools/
 │   └── llmcontextbench-lattes.zip
+│   └── llmcontextbench-current.zip
 ├── expected/
 │   ├── table-5-lattes.csv
 │   └── table-3b-repoqa.csv
@@ -100,7 +99,7 @@ PYTHON=python3.12 just lattes-all
 
 Offline processing reads only the committed artifacts. It does not call OpenAI, Google, Anthropic, or remote MCP services.
 
-### Option A — Reproduce the Lattes results
+### Reproduce the Lattes results
 
 Run the complete Lattes workflow:
 
@@ -164,7 +163,7 @@ just lattes-verify
 
 The expected CSV is used only after the metrics have been calculated. It is never used to fill, select, or modify experimental results.
 
-### Option B — Analyze the RepoQA baseline
+### Analyze the RepoQA baseline
 
 Run:
 
@@ -189,9 +188,6 @@ The generated files include:
 - `repoqa_incomplete_trials.csv`;
 - `repoqa_analysis_manifest.json`.
 
-The committed RepoQA baseline contains 960 responses and evaluations. Some evaluations do not contain every analysis field, so the scripts preserve those rows as incomplete rather than silently converting missing measurements into failures. Summary files report both the total and complete populations where relevant.
-
-At present, the `justfile` deliberately provides only the RepoQA analysis step. The scripts related to Table 3(b) remain in the repository for further reconciliation, but they are not part of the recommended reproduction workflow.
 
 ### Reproduce all currently supported outputs
 
