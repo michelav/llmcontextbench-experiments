@@ -2,12 +2,20 @@
 # Run `just --list` to discover available recipes.
 
 python := env_var_or_default("PYTHON", "python")
+
 lattes_dir := "experiments/lattes"
-baseline_dir := lattes_dir + "/baseline_001"
-derived_dir := baseline_dir + "/derived"
-analysis_dir := derived_dir + "/analysis"
-figures_dir := derived_dir + "/figures"
+lattes_baseline := lattes_dir + "/baseline_001"
+lattes_derived := lattes_baseline + "/derived"
+lattes_analysis := lattes_derived + "/analysis"
+lattes_figures := lattes_derived + "/figures"
 expected_lattes := "expected/table-5-lattes.csv"
+
+repoqa_dir := "experiments/repoqa"
+repoqa_baseline := repoqa_dir + "/baseline-01"
+repoqa_derived := repoqa_baseline + "/derived"
+repoqa_analysis := repoqa_derived + "/analysis"
+repoqa_selection := env_var_or_default("REPOQA_SELECTION", repoqa_dir + "/paper-selection.json")
+expected_repoqa := "expected/table-3b-repoqa.csv"
 
 # List available recipes.
 default:
@@ -16,14 +24,14 @@ default:
 # Generate all Lattes baseline-derived CSV files, including Tables 5, 6, and 7.
 lattes-analyze:
     {{python}} {{lattes_dir}}/analyze_lattes.py \
-        {{baseline_dir}} \
-        --output-dir {{analysis_dir}}
+        {{lattes_baseline}} \
+        --output-dir {{lattes_analysis}}
 
 # Generate paper Figure 3a, Figure 3b, and the combined Figure 3.
 lattes-figures: lattes-analyze
     {{python}} {{lattes_dir}}/generate_figures.py \
-        {{analysis_dir}} \
-        --output-dir {{figures_dir}}
+        {{lattes_analysis}} \
+        --output-dir {{lattes_figures}}
 
 # Run the complete deterministic Lattes analysis and figure workflow.
 lattes-all: lattes-figures
@@ -34,16 +42,51 @@ lattes-notebook: lattes-analyze
         --to notebook \
         --execute {{lattes_dir}}/analysis.ipynb \
         --output analysis.executed.ipynb \
-        --output-dir {{derived_dir}}
+        --output-dir {{lattes_derived}}
 
 # Verify generated Table 5 against the published-table fixture.
 lattes-verify: lattes-analyze
     {{python}} {{lattes_dir}}/analyze_lattes.py \
-        {{baseline_dir}} \
-        --output-dir {{analysis_dir}} \
+        {{lattes_baseline}} \
+        --output-dir {{lattes_analysis}} \
         --expected {{expected_lattes}} \
         --verify
 
 # Remove all generated Lattes outputs.
 lattes-clean:
-    rm -rf {{derived_dir}}
+    rm -rf {{lattes_derived}}
+
+# Generate analysis-ready RepoQA CSVs from the complete committed baseline.
+repoqa-analyze:
+    {{python}} {{repoqa_dir}}/derive_repoqa.py \
+        {{repoqa_baseline}} \
+        --output-dir {{repoqa_analysis}}
+
+# Generate Table 3(b) from derived CSVs and the immutable paper selection.
+repoqa-table: repoqa-analyze
+    {{python}} {{repoqa_dir}}/build_table_3b.py \
+        {{repoqa_analysis}} \
+        --selection {{repoqa_selection}} \
+        --output-dir {{repoqa_analysis}}
+
+# Generate and verify Table 3(b) against the published-value fixture.
+repoqa-verify: repoqa-analyze
+    {{python}} {{repoqa_dir}}/build_table_3b.py \
+        {{repoqa_analysis}} \
+        --selection {{repoqa_selection}} \
+        --output-dir {{repoqa_analysis}} \
+        --expected {{expected_repoqa}} \
+        --verify
+
+# Run the complete RepoQA paper-table workflow.
+repoqa-all: repoqa-table
+
+# Remove all generated RepoQA outputs.
+repoqa-clean:
+    rm -rf {{repoqa_derived}}
+
+# Generate the reproducible outputs for both experiments.
+all: lattes-all repoqa-all
+
+# Remove generated outputs from both experiments.
+clean: lattes-clean repoqa-clean
