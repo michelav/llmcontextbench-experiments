@@ -1,30 +1,35 @@
 #!/usr/bin/env python3
-"""Generate Lattes figures exclusively from preserved baseline artifacts.
+"""Generate Lattes figures from analysis files derived from the preserved baseline.
 
-The script delegates data loading and metric computation to analyze_lattes.py.
-It does not contain paper result values and does not generate the discarded
-Pareto chart. Configuration and question orders are derived from the baseline
-and its experiment configuration.
+This script deliberately does not read paper tables or embed published result values.
+Run ``analyze_lattes.py`` first; it reads the committed baseline artifacts and writes
+``lattes_trials.csv`` plus a manifest. Figures are then generated exclusively from
+those derived records. The discarded Pareto figure is intentionally not generated.
 """
 
 from __future__ import annotations
 
 import argparse
+import json
+import sys
 from pathlib import Path
+from typing import Any
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from matplotlib.colors import LinearSegmentedColormap
 
-from analyze_lattes import config_order, load_runs, question_order
+
+class FigureInputError(RuntimeError):
+    """Raised when required baseline-derived analysis files are unavailable."""
 
 
 def save_figure(fig: plt.Figure, output_dir: Path, stem: str, dpi: int) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     for suffix in ("pdf", "png", "svg"):
         path = output_dir / f"{stem}.{suffix}"
-        kwargs = {"bbox_inches": "tight"}
+        kwargs: dict[str, Any] = {"bbox_inches": "tight"}
         if suffix == "png":
             kwargs["dpi"] = dpi
         fig.savefig(path, **kwargs)
@@ -32,19 +37,88 @@ def save_figure(fig: plt.Figure, output_dir: Path, stem: str, dpi: int) -> None:
     plt.close(fig)
 
 
+def read_manifest(path: Path) -> dict[str, Any]:
+    if not path.is_file():
+        raise FigureInputError(f"Missing analysis manifest: {path}")
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise FigureInputError(f"Expected a JSON object in {path}")
+    return payload
+
+
+def parse_boolean(series: pd.Series, column: str) -> pd.Series:
+    if pd.api.types.is_bool_dtype(series):
+        return series.astype(bool)
+    normalized = series.astype(str).str.strip().str.lower()
+    valid = normalized.isin({"true", "false", "1", "0"})
+    if not valid.all():
+        values = sorted(normalized.loc[~valid].unique())
+        raise FigureInputError(f"Invalid boolean values in {column}: {values}")
+    return normalized.isin({"true", "1"})
+
+
+def load_analysis(analysis_dir: Path) -> tuple[pd.DataFrame, list[str], list[str]]:
+    trials_path = analysis_dir / "lattes_trials.csv"
+    summary_path = analysis_dir / "lattes_summary_by_configuration.csv"
+    manifest_path = analysis_dir / "lattes_analysis_manifest.json"
+
+    for path in (trials_path, summary_path, manifest_path):
+        if not path.is_file():
+            raise FigureInputError(
+                f"Missing baseline-derived analysis file: {path}. "
+                "Run experiments/lattes/analyze_lattes.py first."
+            )
+
+    trials = pd.read_csv(trials_path)
+    summary = pd.read_csv(summary_path)
+    manifest = read_manifest(manifest_path)
+
+    required = {
+        "question_id",
+        "configuration",
+        "query_duration_sec",
+        "majority_correct",
+        "unanimous_correct",
+        "full_disagreement",
+    }
+    missing = sorted(required.difference(trials.columns))
+    if missing:
+        raise FigureInputError(f"{trials_path} is missing columns: {', '.join(missing)}")
+    if "Config" not in summary.columns:
+        raise FigureInputError(f"{summary_path} is missing the Config column")
+
+    for column in ("majority_correct", "unanimous_correct", "full_disagreement"):
+        trials[column] = parse_boolean(trials[column], column)
+    trials["query_duration_sec"] = pd.to_numeric(trials["query_duration_sec"], errors="raise")
+    trials["question_id"] = trials["question_id"].astype(str)
+    trials["configuration"] = trials["configuration"].astype(str)
+
+    present_questions = set(trials["question_id"])
+    manifest_questions = [str(value) for value in manifest.get("questions", [])]
+    questions = [value for value in manifest_questions if value in present_questions]
+    questions.extend(sorted(present_questions.difference(questions)))
+
+    present_configs = set(trials["configuration"])
+    configurations = [str(value) for value in summary["Config"] if str(value) in present_configs]
+    configurations.extend(sorted(present_configs.difference(configurations)))
+
+    if not questions or not configurations:
+        raise FigureInputError("The derived trial table contains no questions or configurations")
+    return trials, questions, configurations
+
+
 def make_strategy_heatmap(
-    runs: pd.DataFrame,
-    experiment_dir: Path,
+    trials: pd.DataFrame,
+    questions: list[str],
+    configurations: list[str],
     output_dir: Path,
     *,
     width: float,
     height: float,
     dpi: int,
 ) -> None:
-    questions = question_order(experiment_dir, runs)
-    configurations = config_order(runs)
     matrix = (
-        runs.pivot_table(
+        trials.pivot_table(
             index="question_id",
             columns="configuration",
             values="majority_correct",
@@ -61,7 +135,14 @@ def make_strategy_heatmap(
         N=256,
     )
     fig, ax = plt.subplots(figsize=(width, height), dpi=dpi)
-    image = ax.imshow(matrix.values, aspect="auto", vmin=0, vmax=100, interpolation="nearest", cmap=muted_blue)
+    image = ax.imshow(
+        matrix.values,
+        aspect="auto",
+        vmin=0,
+        vmax=100,
+        interpolation="nearest",
+        cmap=muted_blue,
+    )
     ax.set_xticks(np.arange(len(configurations)))
     ax.set_xticklabels(configurations, fontsize=7.8)
     ax.set_yticks(np.arange(len(questions)))
@@ -89,17 +170,20 @@ def make_strategy_heatmap(
 
 
 def make_latency_boxplot(
-    runs: pd.DataFrame,
+    trials: pd.DataFrame,
+    configurations: list[str],
     output_dir: Path,
     *,
     width: float,
     height: float,
     dpi: int,
 ) -> None:
-    configurations = config_order(runs)
-    data = [runs.loc[runs["configuration"] == config, "query_duration_sec"].dropna().to_numpy() for config in configurations]
+    data = [
+        trials.loc[trials["configuration"] == config, "query_duration_sec"].dropna().to_numpy()
+        for config in configurations
+    ]
     latency_summary = (
-        runs.groupby("configuration")["query_duration_sec"]
+        trials.groupby("configuration")["query_duration_sec"]
         .agg(["count", "min", "median", "mean", "max"])
         .reindex(configurations)
     )
@@ -120,17 +204,16 @@ def make_latency_boxplot(
 
 
 def make_question_disagreement(
-    runs: pd.DataFrame,
-    experiment_dir: Path,
+    trials: pd.DataFrame,
+    questions: list[str],
     output_dir: Path,
     *,
     width: float,
     height: float,
     dpi: int,
 ) -> None:
-    questions = question_order(experiment_dir, runs)
     summary = (
-        runs.groupby("question_id", as_index=False)
+        trials.groupby("question_id", as_index=False)
         .agg(
             Majority=("majority_correct", "mean"),
             Unanimous=("unanimous_correct", "mean"),
@@ -164,7 +247,13 @@ def make_question_disagreement(
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("experiment_dir", type=Path, nargs="?", default=Path("experiments/lattes/baseline_001"))
+    parser.add_argument(
+        "analysis_dir",
+        type=Path,
+        nargs="?",
+        default=Path("experiments/lattes/baseline_001/derived/analysis"),
+        help="Directory produced by analyze_lattes.py.",
+    )
     parser.add_argument("--output-dir", type=Path, default=None)
     parser.add_argument("--dpi", type=int, default=300)
     parser.add_argument("--heatmap-width", type=float, default=6.35)
@@ -176,18 +265,45 @@ def main() -> int:
     parser.add_argument("--only", nargs="*", choices=["heatmap", "latency", "disagreement"], default=None)
     args = parser.parse_args()
 
-    experiment_dir = args.experiment_dir.resolve()
-    output_dir = (args.output_dir or experiment_dir / "derived" / "figures").resolve()
+    analysis_dir = args.analysis_dir.resolve()
+    output_dir = (args.output_dir or analysis_dir.parent / "figures").resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
-    runs, _ = load_runs(experiment_dir, derived_dir=experiment_dir / "derived")
-    selected = set(args.only or ["heatmap", "latency", "disagreement"])
 
+    try:
+        trials, questions, configurations = load_analysis(analysis_dir)
+    except (FigureInputError, OSError, ValueError, json.JSONDecodeError, pd.errors.ParserError) as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 2
+
+    selected = set(args.only or ["heatmap", "latency", "disagreement"])
     if "heatmap" in selected:
-        make_strategy_heatmap(runs, experiment_dir, output_dir, width=args.heatmap_width, height=args.heatmap_height, dpi=args.dpi)
+        make_strategy_heatmap(
+            trials,
+            questions,
+            configurations,
+            output_dir,
+            width=args.heatmap_width,
+            height=args.heatmap_height,
+            dpi=args.dpi,
+        )
     if "latency" in selected:
-        make_latency_boxplot(runs, output_dir, width=args.boxplot_width, height=args.boxplot_height, dpi=args.dpi)
+        make_latency_boxplot(
+            trials,
+            configurations,
+            output_dir,
+            width=args.boxplot_width,
+            height=args.boxplot_height,
+            dpi=args.dpi,
+        )
     if "disagreement" in selected:
-        make_question_disagreement(runs, experiment_dir, output_dir, width=args.disagreement_width, height=args.disagreement_height, dpi=args.dpi)
+        make_question_disagreement(
+            trials,
+            questions,
+            output_dir,
+            width=args.disagreement_width,
+            height=args.disagreement_height,
+            dpi=args.dpi,
+        )
     return 0
 
 
