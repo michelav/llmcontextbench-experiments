@@ -4,16 +4,17 @@ on:
   push:
     paths:
       - "experiments/repoqa/**"
-      - "experiments/tool-paper/**"
+      - "expected/table-3b-repoqa.csv"
       - "requirements-analysis.txt"
-      - "Makefile"
+      - "justfile"
       - ".github/workflows/repoqa-analysis.yml"
   pull_request:
     paths:
       - "experiments/repoqa/**"
-      - "experiments/tool-paper/**"
+      - "expected/table-3b-repoqa.csv"
       - "requirements-analysis.txt"
-      - "Makefile"
+      - "justfile"
+      - ".github/workflows/repoqa-analysis.yml"
 
 jobs:
   offline-analysis:
@@ -25,24 +26,32 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: python -m pip install -r requirements-analysis.txt
-      - name: Check Python syntax
+
+      - name: Check RepoQA analysis syntax
         run: |
           python -m py_compile \
             experiments/repoqa/analyze_repoqa.py \
-            experiments/repoqa/generate_figures.py \
-            experiments/tool-paper/build_table3.py \
-            experiments/tool-paper/generate_figures.py
+            experiments/repoqa/derive_repoqa.py \
+            experiments/repoqa/build_table_3b.py \
+            experiments/repoqa/generate_figures.py
+
       - name: Analyze complete RepoQA baseline
-        run: make repoqa-analysis
-      - name: Generate RepoQA figures
-        run: make repoqa-figures
-      - name: Generate conceptual tool-paper figures
-        run: make tool-paper-figures
-      - name: Build combined tool-paper table
-        run: make tool-paper-table
+        run: |
+          python experiments/repoqa/derive_repoqa.py \
+            experiments/repoqa/baseline-01 \
+            --output-dir experiments/repoqa/baseline-01/derived/analysis
+
+      - name: Check Table 3(b) selection contract
+        run: |
+          cp experiments/repoqa/paper-selection.example.json /tmp/repoqa-selection.json
+          if python experiments/repoqa/build_table_3b.py \
+              experiments/repoqa/baseline-01/derived/analysis \
+              --selection /tmp/repoqa-selection.json; then
+            echo "The empty example selection should not generate Table 3(b)." >&2
+            exit 1
+          fi
+
       - uses: actions/upload-artifact@v4
         with:
-          name: repoqa-tool-paper-artifacts
-          path: |
-            experiments/repoqa/baseline-01/derived/
-            experiments/tool-paper/generated/
+          name: repoqa-analysis
+          path: experiments/repoqa/baseline-01/derived/analysis/
