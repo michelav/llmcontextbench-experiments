@@ -1,0 +1,1992 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 2409,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "py_003_ctx8k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "language": "python",
+                "parse_status": "ok_filtered",
+                "path": "src/black/nodes.py",
+                "repository": "psf/black",
+                "symbol_count": 47
+              },
+              {
+                "language": "python",
+                "parse_status": "ok_filtered",
+                "path": "src/black/comments.py",
+                "repository": "psf/black",
+                "symbol_count": 0
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "py_003_ctx8k"
+              },
+              "durationMs": 0,
+              "toolName": "list_files",
+              "workspace_id": "py_003_ctx8k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1386,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "src/black/nodes.py",
+              "workspace_id": "py_003_ctx8k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "Generate a normalized prefix string.",
+                "end_line": 425,
+                "kind": "function",
+                "name": "make_simple_prefix",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "make_simple_prefix",
+                "signature": "def make_simple_prefix(nl_count: int, form_feed: bool, empty_line: str = \"\\n\") -> str",
+                "start_line": 421,
+                "symbol_id": "src/black/nodes.py#function:make_simple_prefix:421"
+              },
+              {
+                "children": [],
+                "documentation": "Return the first leaf that precedes `node`, if any.",
+                "end_line": 443,
+                "kind": "function",
+                "name": "preceding_leaf",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "preceding_leaf",
+                "signature": "def preceding_leaf(node: Optional[LN]) -> Optional[Leaf]",
+                "start_line": 428,
+                "symbol_id": "src/black/nodes.py#function:preceding_leaf:428"
+              },
+              {
+                "children": [],
+                "documentation": "Return if the `node` and its previous siblings match types against the provided\nlist of tokens; the provided `node`has its type matched against the last element in\nthe list.  `None` can be used as the first element to declare that the start of the\nlist is anchored at the start of its parent's children.",
+                "end_line": 459,
+                "kind": "function",
+                "name": "prev_siblings_are",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "prev_siblings_are",
+                "signature": "def prev_siblings_are(node: Optional[LN], tokens: List[Optional[NodeType]]) -> bool",
+                "start_line": 446,
+                "symbol_id": "src/black/nodes.py#function:prev_siblings_are:446"
+              },
+              {
+                "children": [],
+                "documentation": "Returns:\n    @node.parent.type, if @node is not None and has a parent.\n        OR\n    None, otherwise.",
+                "end_line": 472,
+                "kind": "function",
+                "name": "parent_type",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "parent_type",
+                "signature": "def parent_type(node: Optional[LN]) -> Optional[NodeType]",
+                "start_line": 462,
+                "symbol_id": "src/black/nodes.py#function:parent_type:462"
+              },
+              {
+                "children": [],
+                "documentation": "Return the child of `ancestor` that contains `descendant`.",
+                "end_line": 480,
+                "kind": "function",
+                "name": "child_towards",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "child_towards",
+                "signature": "def child_towards(ancestor: Node, descendant: LN) -> Optional[LN]",
+                "start_line": 475,
+                "symbol_id": "src/black/nodes.py#function:child_towards:475"
+              },
+              {
+                "children": [],
+                "documentation": "Side Effects:\n    * If @old_child.parent is set, replace @old_child with @new_child in\n    @old_child's underlying Node structure.\n        OR\n    * Otherwise, this function does nothing.",
+                "end_line": 497,
+                "kind": "function",
+                "name": "replace_child",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "replace_child",
+                "signature": "def replace_child(old_child: LN, new_child: LN) -> None",
+                "start_line": 483,
+                "symbol_id": "src/black/nodes.py#function:replace_child:483"
+              },
+              {
+                "children": [],
+                "documentation": "Return `leaf` or one of its ancestors that is the topmost container of it.\n\nBy \"container\" we mean a node where `leaf` is the very first child.",
+                "end_line": 522,
+                "kind": "function",
+                "name": "container_of",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "container_of",
+                "signature": "def container_of(leaf: Leaf) -> LN",
+                "start_line": 500,
+                "symbol_id": "src/black/nodes.py#function:container_of:500"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the first leaf of the node tree.",
+                "end_line": 532,
+                "kind": "function",
+                "name": "first_leaf_of",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "first_leaf_of",
+                "signature": "def first_leaf_of(node: LN) -> Optional[Leaf]",
+                "start_line": 525,
+                "symbol_id": "src/black/nodes.py#function:first_leaf_of:525"
+              },
+              {
+                "children": [],
+                "documentation": "Whether node is an arithmetic or a binary arithmetic expression",
+                "end_line": 542,
+                "kind": "function",
+                "name": "is_arith_like",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_arith_like",
+                "signature": "def is_arith_like(node: LN) -> bool",
+                "start_line": 535,
+                "symbol_id": "src/black/nodes.py#function:is_arith_like:535"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 574,
+                "kind": "function",
+                "name": "is_docstring",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_docstring",
+                "signature": "def is_docstring(leaf: Leaf, mode: Mode) -> bool",
+                "start_line": 545,
+                "symbol_id": "src/black/nodes.py#function:is_docstring:545"
+              },
+              {
+                "children": [],
+                "documentation": "Return True if `node` holds an empty tuple.",
+                "end_line": 584,
+                "kind": "function",
+                "name": "is_empty_tuple",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_empty_tuple",
+                "signature": "def is_empty_tuple(node: LN) -> bool",
+                "start_line": 577,
+                "symbol_id": "src/black/nodes.py#function:is_empty_tuple:577"
+              },
+              {
+                "children": [],
+                "documentation": "Return True if `node` holds a tuple with one element, with or without parens.",
+                "end_line": 600,
+                "kind": "function",
+                "name": "is_one_tuple",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_one_tuple",
+                "signature": "def is_one_tuple(node: LN) -> bool",
+                "start_line": 587,
+                "symbol_id": "src/black/nodes.py#function:is_one_tuple:587"
+              },
+              {
+                "children": [],
+                "documentation": "Return True if `node` holds a tuple that contains a walrus operator.",
+                "end_line": 611,
+                "kind": "function",
+                "name": "is_tuple_containing_walrus",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_tuple_containing_walrus",
+                "signature": "def is_tuple_containing_walrus(node: LN) -> bool",
+                "start_line": 603,
+                "symbol_id": "src/black/nodes.py#function:is_tuple_containing_walrus:603"
+              },
+              {
+                "children": [],
+                "documentation": "Return True if content between `opening` and `closing` is a one-sequence.",
+                "end_line": 648,
+                "kind": "function",
+                "name": "is_one_sequence_between",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_one_sequence_between",
+                "signature": "def is_one_sequence_between(\n    opening: Leaf,\n    closing: Leaf,\n    leaves: List[Leaf],\n    brackets: Tuple[int, int] = (token.LPAR, token.RPAR),\n) -> bool",
+                "start_line": 614,
+                "symbol_id": "src/black/nodes.py#function:is_one_sequence_between:614"
+              },
+              {
+                "children": [],
+                "documentation": "Return True iff `node` is of the shape ( test := test )",
+                "end_line": 654,
+                "kind": "function",
+                "name": "is_walrus_assignment",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_walrus_assignment",
+                "signature": "def is_walrus_assignment(node: LN) -> bool",
+                "start_line": 651,
+                "symbol_id": "src/black/nodes.py#function:is_walrus_assignment:651"
+              },
+              {
+                "children": [],
+                "documentation": "Return True iff `node` is a trailer valid in a simple decorator",
+                "end_line": 680,
+                "kind": "function",
+                "name": "is_simple_decorator_trailer",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_simple_decorator_trailer",
+                "signature": "def is_simple_decorator_trailer(node: LN, last: bool = False) -> bool",
+                "start_line": 657,
+                "symbol_id": "src/black/nodes.py#function:is_simple_decorator_trailer:657"
+              },
+              {
+                "children": [],
+                "documentation": "Return True iff `node` could be a 'dotted name' decorator\n\nThis function takes the node of the 'namedexpr_test' of the new decorator\ngrammar and test if it would be valid under the old decorator grammar.\n\nThe old grammar was: decorator: @ dotted_name [arguments] NEWLINE\nThe new grammar is : decorator: @ namedexpr_test NEWLINE",
+                "end_line": 704,
+                "kind": "function",
+                "name": "is_simple_decorator_expression",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_simple_decorator_expression",
+                "signature": "def is_simple_decorator_expression(node: LN) -> bool",
+                "start_line": 683,
+                "symbol_id": "src/black/nodes.py#function:is_simple_decorator_expression:683"
+              },
+              {
+                "children": [],
+                "documentation": "Return True if `node` holds a `yield` or `yield from` expression.",
+                "end_line": 725,
+                "kind": "function",
+                "name": "is_yield",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_yield",
+                "signature": "def is_yield(node: LN) -> bool",
+                "start_line": 707,
+                "symbol_id": "src/black/nodes.py#function:is_yield:707"
+              },
+              {
+                "children": [],
+                "documentation": "Return True if `leaf` is a star or double star in a vararg or kwarg.\n\nIf `within` includes VARARGS_PARENTS, this applies to function signatures.\nIf `within` includes UNPACKING_PARENTS, it applies to right hand-side\nextended iterable unpacking (PEP 3132) and additional unpacking\ngeneralizations (PEP 448).",
+                "end_line": 748,
+                "kind": "function",
+                "name": "is_vararg",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_vararg",
+                "signature": "def is_vararg(leaf: Leaf, within: Set[NodeType]) -> bool",
+                "start_line": 728,
+                "symbol_id": "src/black/nodes.py#function:is_vararg:728"
+              },
+              {
+                "children": [],
+                "documentation": "Return True if `leaf` is a multiline string that actually spans many lines.",
+                "end_line": 753,
+                "kind": "function",
+                "name": "is_multiline_string",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_multiline_string",
+                "signature": "def is_multiline_string(leaf: Leaf) -> bool",
+                "start_line": 751,
+                "symbol_id": "src/black/nodes.py#function:is_multiline_string:751"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 760,
+                "kind": "function",
+                "name": "is_parent_function_or_class",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_parent_function_or_class",
+                "signature": "def is_parent_function_or_class(node: Node) -> bool",
+                "start_line": 756,
+                "symbol_id": "src/black/nodes.py#function:is_parent_function_or_class:756"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 764,
+                "kind": "function",
+                "name": "is_function_or_class",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_function_or_class",
+                "signature": "def is_function_or_class(node: Node) -> bool",
+                "start_line": 763,
+                "symbol_id": "src/black/nodes.py#function:is_function_or_class:763"
+              },
+              {
+                "children": [],
+                "documentation": "Return True if `node` is a suite with a stub body.",
+                "end_line": 787,
+                "kind": "function",
+                "name": "is_stub_suite",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_stub_suite",
+                "signature": "def is_stub_suite(node: Node) -> bool",
+                "start_line": 767,
+                "symbol_id": "src/black/nodes.py#function:is_stub_suite:767"
+              },
+              {
+                "children": [],
+                "documentation": "Return True if `node` is a simple statement containing an ellipsis.",
+                "end_line": 804,
+                "kind": "function",
+                "name": "is_stub_body",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_stub_body",
+                "signature": "def is_stub_body(node: LN) -> bool",
+                "start_line": 790,
+                "symbol_id": "src/black/nodes.py#function:is_stub_body:790"
+              },
+              {
+                "children": [],
+                "documentation": "Given a `LN`, determines whether it's an atom `node` with invisible\nparens. Useful in dedupe-ing and normalizing parens.",
+                "end_line": 822,
+                "kind": "function",
+                "name": "is_atom_with_invisible_parens",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_atom_with_invisible_parens",
+                "signature": "def is_atom_with_invisible_parens(node: LN) -> bool",
+                "start_line": 807,
+                "symbol_id": "src/black/nodes.py#function:is_atom_with_invisible_parens:807"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 826,
+                "kind": "function",
+                "name": "is_empty_par",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_empty_par",
+                "signature": "def is_empty_par(leaf: Leaf) -> bool",
+                "start_line": 825,
+                "symbol_id": "src/black/nodes.py#function:is_empty_par:825"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 830,
+                "kind": "function",
+                "name": "is_empty_lpar",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_empty_lpar",
+                "signature": "def is_empty_lpar(leaf: Leaf) -> bool",
+                "start_line": 829,
+                "symbol_id": "src/black/nodes.py#function:is_empty_lpar:829"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 834,
+                "kind": "function",
+                "name": "is_empty_rpar",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_empty_rpar",
+                "signature": "def is_empty_rpar(leaf: Leaf) -> bool",
+                "start_line": 833,
+                "symbol_id": "src/black/nodes.py#function:is_empty_rpar:833"
+              },
+              {
+                "children": [],
+                "documentation": "Return True if the given leaf starts an import statement.",
+                "end_line": 848,
+                "kind": "function",
+                "name": "is_import",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_import",
+                "signature": "def is_import(leaf: Leaf) -> bool",
+                "start_line": 837,
+                "symbol_id": "src/black/nodes.py#function:is_import:837"
+              },
+              {
+                "children": [],
+                "documentation": "Return True if the given leaf starts a with or async with statement.",
+                "end_line": 862,
+                "kind": "function",
+                "name": "is_with_or_async_with_stmt",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_with_or_async_with_stmt",
+                "signature": "def is_with_or_async_with_stmt(leaf: Leaf) -> bool",
+                "start_line": 851,
+                "symbol_id": "src/black/nodes.py#function:is_with_or_async_with_stmt:851"
+              },
+              {
+                "children": [],
+                "documentation": "Return True if the given leaf starts an async def/for/with statement.\n\nNote that `async def` can be either an `async_stmt` or `async_funcdef`,\nthe latter is used when it has decorators.",
+                "end_line": 875,
+                "kind": "function",
+                "name": "is_async_stmt_or_funcdef",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_async_stmt_or_funcdef",
+                "signature": "def is_async_stmt_or_funcdef(leaf: Leaf) -> bool",
+                "start_line": 865,
+                "symbol_id": "src/black/nodes.py#function:is_async_stmt_or_funcdef:865"
+              },
+              {
+                "children": [],
+                "documentation": "Return True if the given leaf is a type comment. This function should only\nbe used for general type comments (excluding ignore annotations, which should\nuse `is_type_ignore_comment`). Note that general type comments are no longer\nused in modern version of Python, this function may be deprecated in the future.",
+                "end_line": 885,
+                "kind": "function",
+                "name": "is_type_comment",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_type_comment",
+                "signature": "def is_type_comment(leaf: Leaf) -> bool",
+                "start_line": 878,
+                "symbol_id": "src/black/nodes.py#function:is_type_comment:878"
+              },
+              {
+                "children": [],
+                "documentation": "Return True if the given leaf is a type comment with ignore annotation.",
+                "end_line": 892,
+                "kind": "function",
+                "name": "is_type_ignore_comment",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_type_ignore_comment",
+                "signature": "def is_type_ignore_comment(leaf: Leaf) -> bool",
+                "start_line": 888,
+                "symbol_id": "src/black/nodes.py#function:is_type_ignore_comment:888"
+              },
+              {
+                "children": [],
+                "documentation": "Return True if the given string match with type comment with\nignore annotation.",
+                "end_line": 898,
+                "kind": "function",
+                "name": "is_type_ignore_comment_string",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_type_ignore_comment_string",
+                "signature": "def is_type_ignore_comment_string(value: str) -> bool",
+                "start_line": 895,
+                "symbol_id": "src/black/nodes.py#function:is_type_ignore_comment_string:895"
+              },
+              {
+                "children": [],
+                "documentation": "Wrap `child` in parentheses.\n\nThis replaces `child` with an atom holding the parentheses and the old\nchild.  That requires moving the prefix.\n\nIf `visible` is False, the leaves will be valueless (and thus invisible).",
+                "end_line": 916,
+                "kind": "function",
+                "name": "wrap_in_parentheses",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "wrap_in_parentheses",
+                "signature": "def wrap_in_parentheses(parent: Node, child: LN, *, visible: bool = True) -> None",
+                "start_line": 901,
+                "symbol_id": "src/black/nodes.py#function:wrap_in_parentheses:901"
+              },
+              {
+                "children": [],
+                "documentation": "Returns `wrapped` if `node` is of the shape ( wrapped ).\n\nParenthesis can be optional. Returns None otherwise",
+                "end_line": 930,
+                "kind": "function",
+                "name": "unwrap_singleton_parenthesis",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "unwrap_singleton_parenthesis",
+                "signature": "def unwrap_singleton_parenthesis(node: LN) -> Optional[LN]",
+                "start_line": 919,
+                "symbol_id": "src/black/nodes.py#function:unwrap_singleton_parenthesis:919"
+              },
+              {
+                "children": [],
+                "documentation": "Make sure parentheses are visible.\n\nThey could be invisible as part of some statements (see\n:func:`normalize_invisible_parens` and :func:`visit_import_from`).",
+                "end_line": 942,
+                "kind": "function",
+                "name": "ensure_visible",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "ensure_visible",
+                "signature": "def ensure_visible(leaf: Leaf) -> None",
+                "start_line": 933,
+                "symbol_id": "src/black/nodes.py#function:ensure_visible:933"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 946,
+                "kind": "function",
+                "name": "is_name_token",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_name_token",
+                "signature": "def is_name_token(nl: NL) -> TypeGuard[Leaf]",
+                "start_line": 945,
+                "symbol_id": "src/black/nodes.py#function:is_name_token:945"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 950,
+                "kind": "function",
+                "name": "is_lpar_token",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_lpar_token",
+                "signature": "def is_lpar_token(nl: NL) -> TypeGuard[Leaf]",
+                "start_line": 949,
+                "symbol_id": "src/black/nodes.py#function:is_lpar_token:949"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 954,
+                "kind": "function",
+                "name": "is_rpar_token",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_rpar_token",
+                "signature": "def is_rpar_token(nl: NL) -> TypeGuard[Leaf]",
+                "start_line": 953,
+                "symbol_id": "src/black/nodes.py#function:is_rpar_token:953"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 958,
+                "kind": "function",
+                "name": "is_string_token",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_string_token",
+                "signature": "def is_string_token(nl: NL) -> TypeGuard[Leaf]",
+                "start_line": 957,
+                "symbol_id": "src/black/nodes.py#function:is_string_token:957"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 962,
+                "kind": "function",
+                "name": "is_number_token",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_number_token",
+                "signature": "def is_number_token(nl: NL) -> TypeGuard[Leaf]",
+                "start_line": 961,
+                "symbol_id": "src/black/nodes.py#function:is_number_token:961"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the type of annotation this leaf is part of, if any.",
+                "end_line": 974,
+                "kind": "function",
+                "name": "get_annotation_type",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "get_annotation_type",
+                "signature": "def get_annotation_type(leaf: Leaf) -> Literal[\"return\", \"param\", None]",
+                "start_line": 965,
+                "symbol_id": "src/black/nodes.py#function:get_annotation_type:965"
+              },
+              {
+                "children": [],
+                "documentation": "Returns whether this leaf is part of a type annotation.",
+                "end_line": 979,
+                "kind": "function",
+                "name": "is_part_of_annotation",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_part_of_annotation",
+                "signature": "def is_part_of_annotation(leaf: Leaf) -> bool",
+                "start_line": 977,
+                "symbol_id": "src/black/nodes.py#function:is_part_of_annotation:977"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the first leaf of the ancestor node.",
+                "end_line": 989,
+                "kind": "function",
+                "name": "first_leaf",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "first_leaf",
+                "signature": "def first_leaf(node: LN) -> Optional[Leaf]",
+                "start_line": 982,
+                "symbol_id": "src/black/nodes.py#function:first_leaf:982"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the last leaf of the ancestor node.",
+                "end_line": 999,
+                "kind": "function",
+                "name": "last_leaf",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "last_leaf",
+                "signature": "def last_leaf(node: LN) -> Optional[Leaf]",
+                "start_line": 992,
+                "symbol_id": "src/black/nodes.py#function:last_leaf:992"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the furthest ancestor that has this leaf node as the last leaf.",
+                "end_line": 1007,
+                "kind": "function",
+                "name": "furthest_ancestor_with_last_leaf",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "furthest_ancestor_with_last_leaf",
+                "signature": "def furthest_ancestor_with_last_leaf(leaf: Leaf) -> LN",
+                "start_line": 1002,
+                "symbol_id": "src/black/nodes.py#function:furthest_ancestor_with_last_leaf:1002"
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "src/black/nodes.py",
+                "workspace_id": "py_003_ctx8k"
+              },
+              "durationMs": 0,
+              "toolName": "list_symbols",
+              "workspace_id": "py_003_ctx8k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 2353,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "symbol_id": "src/black/nodes.py#function:make_simple_prefix:421",
+              "workspace_id": "py_003_ctx8k"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": {
+              "children": [],
+              "code": "def make_simple_prefix(nl_count: int, form_feed: bool, empty_line: str = \"\\n\") -> str:\n    \"\"\"Generate a normalized prefix string.\"\"\"\n    if form_feed:\n        return (empty_line * (nl_count - 1)) + \"\\f\" + empty_line\n    return empty_line * nl_count",
+              "documentation": "Generate a normalized prefix string.",
+              "end_line": 425,
+              "kind": "function",
+              "name": "make_simple_prefix",
+              "parent_id": null,
+              "parent_name": null,
+              "path": "src/black/nodes.py",
+              "qualified_name": "make_simple_prefix",
+              "signature": "def make_simple_prefix(nl_count: int, form_feed: bool, empty_line: str = \"\\n\") -> str",
+              "start_line": 421,
+              "symbol_id": "src/black/nodes.py#function:make_simple_prefix:421"
+            },
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "symbol_id": "src/black/nodes.py#function:make_simple_prefix:421",
+                "workspace_id": "py_003_ctx8k"
+              },
+              "durationMs": 0,
+              "toolName": "get_symbol",
+              "workspace_id": "py_003_ctx8k"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1367,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 7562,
+          "metadata": {},
+          "name": "strategy.local_function.execute",
+          "type": "strategy.local_function.execute"
+        },
+        {
+          "duration_ms": 7562,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 47,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": null,
+        "cachedInputTokens": 2741,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 3,
+        "inputTokens": 10250,
+        "loopControlDurationMsEstimated": 47,
+        "mcpToolCalls": 3,
+        "modelCalls": 4,
+        "modelDurationMs": 7515,
+        "outputTokens": 202,
+        "promptChars": 1272,
+        "questionTokensEstimated": 171,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 526,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 4,
+        "strategyDurationMs": 7562,
+        "taskStatementChars": 1102,
+        "toolCalls": 3,
+        "toolDurationMs": 0,
+        "totalDurationMs": 7562,
+        "totalTokens": 10978,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "workspace_id": "py_003_ctx8k"
+                    },
+                    "id": null,
+                    "name": "list_files",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "Cs4IAQw51sc7UUpYS-vAL4ODRzmGnplJ-jMDQy6PFq2gZpRjJ1I18pX7hamPJ24Qzf4iG4Zl_8GtEVPnzaRPqC-n4_wtjddgmyYGvByqElX1ALkgCIeCJqwRNvK0gMmUSzIHsStvJuy2l8JyF80XxyyCKsuRvKC2H4TyPIcq3nzfo_Egw5BYgV4egaWE5Rjteer5rfc0pjWcAVV1t1ApRDlr3laS07ub6mL8GwEgnOEBALC7uF2BjVhH5gPIm4wX0-qbnTgOLtFERd6DVTnLo3NCc7hin6GM0HFKC57IravUBO-58QEHqzmbPOXGjCTToL21S0aX79d9OO0L6NZmymzIcX6JqA6x1COGzgLUlkfwyhRk-xhjxb6wA8DcvKk83OvhGi0R3xa4vi09AifCqVQeGJ7x7cxmsykcYOhuVcgkBYIYKK108ibx_eAV85Ms9ar3PPppubKcpujbuWsyIrNHGupfPN8YOTlLjBBseGoIY-sqVyKB2zHB1iPxMp7ZM-_OA_s1onpEzOAvbT8aTCcM33OSgG9DXZVxElRo4AvhtjENYWu1ikRuVYMlFNPhU1cW-WM4YyYUHItoMIyahbCgw7GleRIvShXQhFilaGEEHxGKsA9qcfQzbk_MBorDj8muuhucuh_LHHKSx2deXmTYQMe4RAkiD5PK7-5YyhAy_a8kziwfjQkKONWC6bK3AUflpBsZygFyma_BPtbpx9Vv3c0JGWJd2ae-lB7EoUh1_JCngNrgaeOIo9xhocd55FvIMH_wP6ZxGz_JINXP9IKud0NYU2hJmyFqSbvlogPRpFdYGHDe8A00yyjsx-9W_FFto4asM0n-z2kl7_wsOnGtvYm6IEfW3wXw91MocvcxjJgcqtm2yOWDLnhclfjBKC9nP7HFu05v1EBdrxFucplVudV5ctrPHLu5eYUXuPrhC1bffriY1wdRiGQbFLy1_ZPtJ-7bRk-ffBcbo9TgjW8QNNWbyWFyNBXdY9btW3-WgDgXFcOdrWKGHOG7czu8B2tRqcrpGOpd7xEvhPd6wi50WTORnV_RO6JTSs_5H4ZqdZRNWs00-CA2KVYvATqhHxwU-gg9v9gb_SBpIrDsCtbg5Ml6crYFa6DOAMfVETYcwdAlrqm3xET9YIc94RR3YPuQffQL-isfOL9M9ix4ivauKYW9pkuhUkqyQW800wiCTMKWzYjY3gf574vhcBmn2_WDushEOr3YG0-vMK1T8dDEYV41ish-uhnrUym4KZ-qkzCn81OUcgV4PD4utthXXuPuRh7uk-GsmEm1wwAQKcWrNZNdFYesvM1XX_PmGOmL_AkuSGQoaCz23K0LQbX7hBYwdX12VuEr_RJMNd_IjeUMDORhBbW7yQOb5xmdmnwBR6aJUXXUvayLqEJTOixXP-QcldfnY4iWvbyB86U8saoDBOahh7aGAu6ca5C4_DGH9wMCZNlDrOWAh1nQSvh8FA==",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "RoAUaseGOKKDz7IPpabDsAE",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:00:56 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=2200",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 622
+            }
+          ],
+          "cached_content_token_count": 622,
+          "candidates_token_count": 25,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 643,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 643
+            }
+          ],
+          "thoughts_token_count": 246,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 914,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "kind": "function",
+                      "path": "src/black/nodes.py",
+                      "workspace_id": "py_003_ctx8k"
+                    },
+                    "id": null,
+                    "name": "list_symbols",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CooCAQw51seKUmvhyN2qCtfC5M8UPhEsGxb-IJ4eCY5tV_L9XqkqRunDrt9i-YhnyhnKh4rnKcDzM08UF01HCq8RYYUV5yu8seIoa0yZigx8rVb4brDnXbGv_jIhjkNhMG3WheoM0o8V8T0uIehfsm6aLJ6iRr6CcAM-qcGTLBM7FV2CnnBegWavdriH8gbRHvD7FjLYRGyHwa4Zm7TyFAzD5Zcn__MrNn-uMFfWJRTDy96UETDuymwsUx8CUvHplneUCJQv0PhNB3TsJh-3bOYG-7gjpACkhWUHQkY9QlsdAKcQ6qJVq-j_FOoWbSkikLUaWfJhab9pINQFeIvnhUWC6MQHNo8SXx3aaj4=",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "SYAUatj4FOv8qtsPh4eN4Qk",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:00:58 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1183",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 545
+            }
+          ],
+          "cached_content_token_count": 545,
+          "candidates_token_count": 41,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 772,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 772
+            }
+          ],
+          "thoughts_token_count": 73,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 886,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "symbol_id": "src/black/nodes.py#function:make_simple_prefix:421",
+                      "workspace_id": "py_003_ctx8k"
+                    },
+                    "id": null,
+                    "name": "get_symbol",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CtgGAQw51sd_C31nKZVbc4sULVXqTOx1w2_mikmHm_wExvNSbvyVBMAJpMFZCb8Up3jTIMS8xyt0zcZIzK4PKCvt7d8ZuwQ084GlOWObyLyqUxUthUckd4osKowwqUGvx6B5xkHTtnPlOXhSKNsfj7u7ijI04iElvjJb3USsUKI9md83aiSOTistOArSwpnXenArwlAvv-BbMA-nXH99GfKhAne8OPNFAXy4443CwD7-0_HMXHFfVvYIrhqIhM2I1wLVAdYecDm7ALS9Pqbr5-83VPsLlG98eJNOL6GWMg0-fuG0jpSEY53Qw9KdtrLq-UVwQcl8jy_V5bZJPUhxfWqEdZnBuuLFbtbwPu7_4I8bkd7jLy8Fvqn7GrxzvzOCfBy0Ow1-I2mvtyujFAeiGRWkbD7PCjOUBnBgP0zr1MJWIruk1QRqFuYLY5zaPn3Hfeo39Sz4WQ_aYBgqak-FXI5wH8QS-g4U69SIcDwPqp_S3gcDVbczrb48xZAlAWfaElZ7EHC0xTrqu4COpfd1PokSSiOAxO64CYokUnBDgmGyT5SvI8ZSIvGjvyrwk-l0InBSbu-YS2GAo-rM7B3KTCQ7JOb6MxqEJrhEv3g3X4m9Kx5mLysHiVYsdpMCk_r4lL3_pRdkQc7_LAxWBsv8zlZ1g_J0aIRJddbtEPGaaF1XofbOn-si_VRVDST5E2CmlR42k0Z4DBMEF5Ey8kLuVomvykuoyQeyuVh1NTAEQVQ4vBrx6j9Gt_E9Q9LRSazr32DSo3WDTphI3m4p6ymdvVXtkKPDWd_RcSaVkLToC7HwZ5uNN0Obxtj1BjYzBKZf2JcY4HKp6fu-TdQVEHNtSBYBqsBBZx7vfNdmu9LGbx_EcX-zgUqpOrdqYUlWEHgerUZVowacBIhY3QlS1mHrP9yD4PuVukZMLNED5H1e14pBqaslCz981Llc_pJPIaPjki5kA1NXPKEoXIuLlrZ4FaU2pAGzWQFydl-QLatdMC2GR6lopqr7ZA4Sh3EDDEMUmV3n9td6_ujGnjibwYnSFKwB_MFgLTu8ReiNC-pGF0xffOs_EZH0mIOaHPlgDiU72v_8triFCm-pZYyz4qItiRjbV93YtkGvqJLoBO1stuFIRtWs7Kc5LwKI_g==",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "SoAUauzkNYKdz7IPxNG2sAo",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:01:00 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=2133",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 962
+            }
+          ],
+          "cached_content_token_count": 962,
+          "candidates_token_count": 50,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 7886,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 7886
+            }
+          ],
+          "thoughts_token_count": 207,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 8143,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": null,
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": "```python\ndef make_simple_prefix(nl_count: int, form_feed: bool, empty_line: str = \"\\\\n\") -> str:\n    \"\"\"Generate a normalized prefix string.\"\"\"\n    if form_feed:\n        return (empty_line * (nl_count - 1)) + \"\\\\f\" + empty_line\n    return empty_line * nl_count\n```",
+                  "thought": null,
+                  "thought_signature": null,
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "TYAUapOXB8asz7IPjLW1qQ4",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:01:02 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1159",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 612
+            }
+          ],
+          "cached_content_token_count": 612,
+          "candidates_token_count": 86,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 949,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 949
+            }
+          ],
+          "thoughts_token_count": null,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 1035,
+          "traffic_type": null
+        }
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "workspace_id": "py_003_ctx8k"
+        },
+        "durationMs": 0,
+        "toolName": "list_files",
+        "workspace_id": "py_003_ctx8k"
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/black/nodes.py",
+          "workspace_id": "py_003_ctx8k"
+        },
+        "durationMs": 0,
+        "toolName": "list_symbols",
+        "workspace_id": "py_003_ctx8k"
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/black/nodes.py#function:make_simple_prefix:421",
+          "workspace_id": "py_003_ctx8k"
+        },
+        "durationMs": 0,
+        "toolName": "get_symbol",
+        "workspace_id": "py_003_ctx8k"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "workspace_id": "py_003_ctx8k"
+        },
+        "id": "step-1-tool-1",
+        "isError": false,
+        "name": "list_files",
+        "result": [
+          {
+            "language": "python",
+            "parse_status": "ok_filtered",
+            "path": "src/black/nodes.py",
+            "repository": "psf/black",
+            "symbol_count": 47
+          },
+          {
+            "language": "python",
+            "parse_status": "ok_filtered",
+            "path": "src/black/comments.py",
+            "repository": "psf/black",
+            "symbol_count": 0
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/black/nodes.py",
+          "workspace_id": "py_003_ctx8k"
+        },
+        "id": "step-2-tool-1",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "Generate a normalized prefix string.",
+            "end_line": 425,
+            "kind": "function",
+            "name": "make_simple_prefix",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "make_simple_prefix",
+            "signature": "def make_simple_prefix(nl_count: int, form_feed: bool, empty_line: str = \"\\n\") -> str",
+            "start_line": 421,
+            "symbol_id": "src/black/nodes.py#function:make_simple_prefix:421"
+          },
+          {
+            "children": [],
+            "documentation": "Return the first leaf that precedes `node`, if any.",
+            "end_line": 443,
+            "kind": "function",
+            "name": "preceding_leaf",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "preceding_leaf",
+            "signature": "def preceding_leaf(node: Optional[LN]) -> Optional[Leaf]",
+            "start_line": 428,
+            "symbol_id": "src/black/nodes.py#function:preceding_leaf:428"
+          },
+          {
+            "children": [],
+            "documentation": "Return if the `node` and its previous siblings match types against the provided\nlist of tokens; the provided `node`has its type matched against the last element in\nthe list.  `None` can be used as the first element to declare that the start of the\nlist is anchored at the start of its parent's children.",
+            "end_line": 459,
+            "kind": "function",
+            "name": "prev_siblings_are",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "prev_siblings_are",
+            "signature": "def prev_siblings_are(node: Optional[LN], tokens: List[Optional[NodeType]]) -> bool",
+            "start_line": 446,
+            "symbol_id": "src/black/nodes.py#function:prev_siblings_are:446"
+          },
+          {
+            "children": [],
+            "documentation": "Returns:\n    @node.parent.type, if @node is not None and has a parent.\n        OR\n    None, otherwise.",
+            "end_line": 472,
+            "kind": "function",
+            "name": "parent_type",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "parent_type",
+            "signature": "def parent_type(node: Optional[LN]) -> Optional[NodeType]",
+            "start_line": 462,
+            "symbol_id": "src/black/nodes.py#function:parent_type:462"
+          },
+          {
+            "children": [],
+            "documentation": "Return the child of `ancestor` that contains `descendant`.",
+            "end_line": 480,
+            "kind": "function",
+            "name": "child_towards",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "child_towards",
+            "signature": "def child_towards(ancestor: Node, descendant: LN) -> Optional[LN]",
+            "start_line": 475,
+            "symbol_id": "src/black/nodes.py#function:child_towards:475"
+          },
+          {
+            "children": [],
+            "documentation": "Side Effects:\n    * If @old_child.parent is set, replace @old_child with @new_child in\n    @old_child's underlying Node structure.\n        OR\n    * Otherwise, this function does nothing.",
+            "end_line": 497,
+            "kind": "function",
+            "name": "replace_child",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "replace_child",
+            "signature": "def replace_child(old_child: LN, new_child: LN) -> None",
+            "start_line": 483,
+            "symbol_id": "src/black/nodes.py#function:replace_child:483"
+          },
+          {
+            "children": [],
+            "documentation": "Return `leaf` or one of its ancestors that is the topmost container of it.\n\nBy \"container\" we mean a node where `leaf` is the very first child.",
+            "end_line": 522,
+            "kind": "function",
+            "name": "container_of",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "container_of",
+            "signature": "def container_of(leaf: Leaf) -> LN",
+            "start_line": 500,
+            "symbol_id": "src/black/nodes.py#function:container_of:500"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the first leaf of the node tree.",
+            "end_line": 532,
+            "kind": "function",
+            "name": "first_leaf_of",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "first_leaf_of",
+            "signature": "def first_leaf_of(node: LN) -> Optional[Leaf]",
+            "start_line": 525,
+            "symbol_id": "src/black/nodes.py#function:first_leaf_of:525"
+          },
+          {
+            "children": [],
+            "documentation": "Whether node is an arithmetic or a binary arithmetic expression",
+            "end_line": 542,
+            "kind": "function",
+            "name": "is_arith_like",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_arith_like",
+            "signature": "def is_arith_like(node: LN) -> bool",
+            "start_line": 535,
+            "symbol_id": "src/black/nodes.py#function:is_arith_like:535"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 574,
+            "kind": "function",
+            "name": "is_docstring",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_docstring",
+            "signature": "def is_docstring(leaf: Leaf, mode: Mode) -> bool",
+            "start_line": 545,
+            "symbol_id": "src/black/nodes.py#function:is_docstring:545"
+          },
+          {
+            "children": [],
+            "documentation": "Return True if `node` holds an empty tuple.",
+            "end_line": 584,
+            "kind": "function",
+            "name": "is_empty_tuple",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_empty_tuple",
+            "signature": "def is_empty_tuple(node: LN) -> bool",
+            "start_line": 577,
+            "symbol_id": "src/black/nodes.py#function:is_empty_tuple:577"
+          },
+          {
+            "children": [],
+            "documentation": "Return True if `node` holds a tuple with one element, with or without parens.",
+            "end_line": 600,
+            "kind": "function",
+            "name": "is_one_tuple",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_one_tuple",
+            "signature": "def is_one_tuple(node: LN) -> bool",
+            "start_line": 587,
+            "symbol_id": "src/black/nodes.py#function:is_one_tuple:587"
+          },
+          {
+            "children": [],
+            "documentation": "Return True if `node` holds a tuple that contains a walrus operator.",
+            "end_line": 611,
+            "kind": "function",
+            "name": "is_tuple_containing_walrus",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_tuple_containing_walrus",
+            "signature": "def is_tuple_containing_walrus(node: LN) -> bool",
+            "start_line": 603,
+            "symbol_id": "src/black/nodes.py#function:is_tuple_containing_walrus:603"
+          },
+          {
+            "children": [],
+            "documentation": "Return True if content between `opening` and `closing` is a one-sequence.",
+            "end_line": 648,
+            "kind": "function",
+            "name": "is_one_sequence_between",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_one_sequence_between",
+            "signature": "def is_one_sequence_between(\n    opening: Leaf,\n    closing: Leaf,\n    leaves: List[Leaf],\n    brackets: Tuple[int, int] = (token.LPAR, token.RPAR),\n) -> bool",
+            "start_line": 614,
+            "symbol_id": "src/black/nodes.py#function:is_one_sequence_between:614"
+          },
+          {
+            "children": [],
+            "documentation": "Return True iff `node` is of the shape ( test := test )",
+            "end_line": 654,
+            "kind": "function",
+            "name": "is_walrus_assignment",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_walrus_assignment",
+            "signature": "def is_walrus_assignment(node: LN) -> bool",
+            "start_line": 651,
+            "symbol_id": "src/black/nodes.py#function:is_walrus_assignment:651"
+          },
+          {
+            "children": [],
+            "documentation": "Return True iff `node` is a trailer valid in a simple decorator",
+            "end_line": 680,
+            "kind": "function",
+            "name": "is_simple_decorator_trailer",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_simple_decorator_trailer",
+            "signature": "def is_simple_decorator_trailer(node: LN, last: bool = False) -> bool",
+            "start_line": 657,
+            "symbol_id": "src/black/nodes.py#function:is_simple_decorator_trailer:657"
+          },
+          {
+            "children": [],
+            "documentation": "Return True iff `node` could be a 'dotted name' decorator\n\nThis function takes the node of the 'namedexpr_test' of the new decorator\ngrammar and test if it would be valid under the old decorator grammar.\n\nThe old grammar was: decorator: @ dotted_name [arguments] NEWLINE\nThe new grammar is : decorator: @ namedexpr_test NEWLINE",
+            "end_line": 704,
+            "kind": "function",
+            "name": "is_simple_decorator_expression",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_simple_decorator_expression",
+            "signature": "def is_simple_decorator_expression(node: LN) -> bool",
+            "start_line": 683,
+            "symbol_id": "src/black/nodes.py#function:is_simple_decorator_expression:683"
+          },
+          {
+            "children": [],
+            "documentation": "Return True if `node` holds a `yield` or `yield from` expression.",
+            "end_line": 725,
+            "kind": "function",
+            "name": "is_yield",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_yield",
+            "signature": "def is_yield(node: LN) -> bool",
+            "start_line": 707,
+            "symbol_id": "src/black/nodes.py#function:is_yield:707"
+          },
+          {
+            "children": [],
+            "documentation": "Return True if `leaf` is a star or double star in a vararg or kwarg.\n\nIf `within` includes VARARGS_PARENTS, this applies to function signatures.\nIf `within` includes UNPACKING_PARENTS, it applies to right hand-side\nextended iterable unpacking (PEP 3132) and additional unpacking\ngeneralizations (PEP 448).",
+            "end_line": 748,
+            "kind": "function",
+            "name": "is_vararg",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_vararg",
+            "signature": "def is_vararg(leaf: Leaf, within: Set[NodeType]) -> bool",
+            "start_line": 728,
+            "symbol_id": "src/black/nodes.py#function:is_vararg:728"
+          },
+          {
+            "children": [],
+            "documentation": "Return True if `leaf` is a multiline string that actually spans many lines.",
+            "end_line": 753,
+            "kind": "function",
+            "name": "is_multiline_string",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_multiline_string",
+            "signature": "def is_multiline_string(leaf: Leaf) -> bool",
+            "start_line": 751,
+            "symbol_id": "src/black/nodes.py#function:is_multiline_string:751"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 760,
+            "kind": "function",
+            "name": "is_parent_function_or_class",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_parent_function_or_class",
+            "signature": "def is_parent_function_or_class(node: Node) -> bool",
+            "start_line": 756,
+            "symbol_id": "src/black/nodes.py#function:is_parent_function_or_class:756"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 764,
+            "kind": "function",
+            "name": "is_function_or_class",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_function_or_class",
+            "signature": "def is_function_or_class(node: Node) -> bool",
+            "start_line": 763,
+            "symbol_id": "src/black/nodes.py#function:is_function_or_class:763"
+          },
+          {
+            "children": [],
+            "documentation": "Return True if `node` is a suite with a stub body.",
+            "end_line": 787,
+            "kind": "function",
+            "name": "is_stub_suite",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_stub_suite",
+            "signature": "def is_stub_suite(node: Node) -> bool",
+            "start_line": 767,
+            "symbol_id": "src/black/nodes.py#function:is_stub_suite:767"
+          },
+          {
+            "children": [],
+            "documentation": "Return True if `node` is a simple statement containing an ellipsis.",
+            "end_line": 804,
+            "kind": "function",
+            "name": "is_stub_body",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_stub_body",
+            "signature": "def is_stub_body(node: LN) -> bool",
+            "start_line": 790,
+            "symbol_id": "src/black/nodes.py#function:is_stub_body:790"
+          },
+          {
+            "children": [],
+            "documentation": "Given a `LN`, determines whether it's an atom `node` with invisible\nparens. Useful in dedupe-ing and normalizing parens.",
+            "end_line": 822,
+            "kind": "function",
+            "name": "is_atom_with_invisible_parens",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_atom_with_invisible_parens",
+            "signature": "def is_atom_with_invisible_parens(node: LN) -> bool",
+            "start_line": 807,
+            "symbol_id": "src/black/nodes.py#function:is_atom_with_invisible_parens:807"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 826,
+            "kind": "function",
+            "name": "is_empty_par",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_empty_par",
+            "signature": "def is_empty_par(leaf: Leaf) -> bool",
+            "start_line": 825,
+            "symbol_id": "src/black/nodes.py#function:is_empty_par:825"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 830,
+            "kind": "function",
+            "name": "is_empty_lpar",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_empty_lpar",
+            "signature": "def is_empty_lpar(leaf: Leaf) -> bool",
+            "start_line": 829,
+            "symbol_id": "src/black/nodes.py#function:is_empty_lpar:829"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 834,
+            "kind": "function",
+            "name": "is_empty_rpar",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_empty_rpar",
+            "signature": "def is_empty_rpar(leaf: Leaf) -> bool",
+            "start_line": 833,
+            "symbol_id": "src/black/nodes.py#function:is_empty_rpar:833"
+          },
+          {
+            "children": [],
+            "documentation": "Return True if the given leaf starts an import statement.",
+            "end_line": 848,
+            "kind": "function",
+            "name": "is_import",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_import",
+            "signature": "def is_import(leaf: Leaf) -> bool",
+            "start_line": 837,
+            "symbol_id": "src/black/nodes.py#function:is_import:837"
+          },
+          {
+            "children": [],
+            "documentation": "Return True if the given leaf starts a with or async with statement.",
+            "end_line": 862,
+            "kind": "function",
+            "name": "is_with_or_async_with_stmt",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_with_or_async_with_stmt",
+            "signature": "def is_with_or_async_with_stmt(leaf: Leaf) -> bool",
+            "start_line": 851,
+            "symbol_id": "src/black/nodes.py#function:is_with_or_async_with_stmt:851"
+          },
+          {
+            "children": [],
+            "documentation": "Return True if the given leaf starts an async def/for/with statement.\n\nNote that `async def` can be either an `async_stmt` or `async_funcdef`,\nthe latter is used when it has decorators.",
+            "end_line": 875,
+            "kind": "function",
+            "name": "is_async_stmt_or_funcdef",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_async_stmt_or_funcdef",
+            "signature": "def is_async_stmt_or_funcdef(leaf: Leaf) -> bool",
+            "start_line": 865,
+            "symbol_id": "src/black/nodes.py#function:is_async_stmt_or_funcdef:865"
+          },
+          {
+            "children": [],
+            "documentation": "Return True if the given leaf is a type comment. This function should only\nbe used for general type comments (excluding ignore annotations, which should\nuse `is_type_ignore_comment`). Note that general type comments are no longer\nused in modern version of Python, this function may be deprecated in the future.",
+            "end_line": 885,
+            "kind": "function",
+            "name": "is_type_comment",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_type_comment",
+            "signature": "def is_type_comment(leaf: Leaf) -> bool",
+            "start_line": 878,
+            "symbol_id": "src/black/nodes.py#function:is_type_comment:878"
+          },
+          {
+            "children": [],
+            "documentation": "Return True if the given leaf is a type comment with ignore annotation.",
+            "end_line": 892,
+            "kind": "function",
+            "name": "is_type_ignore_comment",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_type_ignore_comment",
+            "signature": "def is_type_ignore_comment(leaf: Leaf) -> bool",
+            "start_line": 888,
+            "symbol_id": "src/black/nodes.py#function:is_type_ignore_comment:888"
+          },
+          {
+            "children": [],
+            "documentation": "Return True if the given string match with type comment with\nignore annotation.",
+            "end_line": 898,
+            "kind": "function",
+            "name": "is_type_ignore_comment_string",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_type_ignore_comment_string",
+            "signature": "def is_type_ignore_comment_string(value: str) -> bool",
+            "start_line": 895,
+            "symbol_id": "src/black/nodes.py#function:is_type_ignore_comment_string:895"
+          },
+          {
+            "children": [],
+            "documentation": "Wrap `child` in parentheses.\n\nThis replaces `child` with an atom holding the parentheses and the old\nchild.  That requires moving the prefix.\n\nIf `visible` is False, the leaves will be valueless (and thus invisible).",
+            "end_line": 916,
+            "kind": "function",
+            "name": "wrap_in_parentheses",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "wrap_in_parentheses",
+            "signature": "def wrap_in_parentheses(parent: Node, child: LN, *, visible: bool = True) -> None",
+            "start_line": 901,
+            "symbol_id": "src/black/nodes.py#function:wrap_in_parentheses:901"
+          },
+          {
+            "children": [],
+            "documentation": "Returns `wrapped` if `node` is of the shape ( wrapped ).\n\nParenthesis can be optional. Returns None otherwise",
+            "end_line": 930,
+            "kind": "function",
+            "name": "unwrap_singleton_parenthesis",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "unwrap_singleton_parenthesis",
+            "signature": "def unwrap_singleton_parenthesis(node: LN) -> Optional[LN]",
+            "start_line": 919,
+            "symbol_id": "src/black/nodes.py#function:unwrap_singleton_parenthesis:919"
+          },
+          {
+            "children": [],
+            "documentation": "Make sure parentheses are visible.\n\nThey could be invisible as part of some statements (see\n:func:`normalize_invisible_parens` and :func:`visit_import_from`).",
+            "end_line": 942,
+            "kind": "function",
+            "name": "ensure_visible",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "ensure_visible",
+            "signature": "def ensure_visible(leaf: Leaf) -> None",
+            "start_line": 933,
+            "symbol_id": "src/black/nodes.py#function:ensure_visible:933"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 946,
+            "kind": "function",
+            "name": "is_name_token",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_name_token",
+            "signature": "def is_name_token(nl: NL) -> TypeGuard[Leaf]",
+            "start_line": 945,
+            "symbol_id": "src/black/nodes.py#function:is_name_token:945"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 950,
+            "kind": "function",
+            "name": "is_lpar_token",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_lpar_token",
+            "signature": "def is_lpar_token(nl: NL) -> TypeGuard[Leaf]",
+            "start_line": 949,
+            "symbol_id": "src/black/nodes.py#function:is_lpar_token:949"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 954,
+            "kind": "function",
+            "name": "is_rpar_token",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_rpar_token",
+            "signature": "def is_rpar_token(nl: NL) -> TypeGuard[Leaf]",
+            "start_line": 953,
+            "symbol_id": "src/black/nodes.py#function:is_rpar_token:953"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 958,
+            "kind": "function",
+            "name": "is_string_token",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_string_token",
+            "signature": "def is_string_token(nl: NL) -> TypeGuard[Leaf]",
+            "start_line": 957,
+            "symbol_id": "src/black/nodes.py#function:is_string_token:957"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 962,
+            "kind": "function",
+            "name": "is_number_token",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_number_token",
+            "signature": "def is_number_token(nl: NL) -> TypeGuard[Leaf]",
+            "start_line": 961,
+            "symbol_id": "src/black/nodes.py#function:is_number_token:961"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the type of annotation this leaf is part of, if any.",
+            "end_line": 974,
+            "kind": "function",
+            "name": "get_annotation_type",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "get_annotation_type",
+            "signature": "def get_annotation_type(leaf: Leaf) -> Literal[\"return\", \"param\", None]",
+            "start_line": 965,
+            "symbol_id": "src/black/nodes.py#function:get_annotation_type:965"
+          },
+          {
+            "children": [],
+            "documentation": "Returns whether this leaf is part of a type annotation.",
+            "end_line": 979,
+            "kind": "function",
+            "name": "is_part_of_annotation",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_part_of_annotation",
+            "signature": "def is_part_of_annotation(leaf: Leaf) -> bool",
+            "start_line": 977,
+            "symbol_id": "src/black/nodes.py#function:is_part_of_annotation:977"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the first leaf of the ancestor node.",
+            "end_line": 989,
+            "kind": "function",
+            "name": "first_leaf",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "first_leaf",
+            "signature": "def first_leaf(node: LN) -> Optional[Leaf]",
+            "start_line": 982,
+            "symbol_id": "src/black/nodes.py#function:first_leaf:982"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the last leaf of the ancestor node.",
+            "end_line": 999,
+            "kind": "function",
+            "name": "last_leaf",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "last_leaf",
+            "signature": "def last_leaf(node: LN) -> Optional[Leaf]",
+            "start_line": 992,
+            "symbol_id": "src/black/nodes.py#function:last_leaf:992"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the furthest ancestor that has this leaf node as the last leaf.",
+            "end_line": 1007,
+            "kind": "function",
+            "name": "furthest_ancestor_with_last_leaf",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "furthest_ancestor_with_last_leaf",
+            "signature": "def furthest_ancestor_with_last_leaf(leaf: Leaf) -> LN",
+            "start_line": 1002,
+            "symbol_id": "src/black/nodes.py#function:furthest_ancestor_with_last_leaf:1002"
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/black/nodes.py#function:make_simple_prefix:421",
+          "workspace_id": "py_003_ctx8k"
+        },
+        "id": "step-3-tool-1",
+        "isError": false,
+        "name": "get_symbol",
+        "result": {
+          "children": [],
+          "code": "def make_simple_prefix(nl_count: int, form_feed: bool, empty_line: str = \"\\n\") -> str:\n    \"\"\"Generate a normalized prefix string.\"\"\"\n    if form_feed:\n        return (empty_line * (nl_count - 1)) + \"\\f\" + empty_line\n    return empty_line * nl_count",
+          "documentation": "Generate a normalized prefix string.",
+          "end_line": 425,
+          "kind": "function",
+          "name": "make_simple_prefix",
+          "parent_id": null,
+          "parent_name": null,
+          "path": "src/black/nodes.py",
+          "qualified_name": "make_simple_prefix",
+          "signature": "def make_simple_prefix(nl_count: int, form_feed: bool, empty_line: str = \"\\n\") -> str",
+          "start_line": 421,
+          "symbol_id": "src/black/nodes.py#function:make_simple_prefix:421"
+        }
+      }
+    ]
+  },
+  "trialId": "2f22d0dd1c"
+}

@@ -1,0 +1,848 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 2155,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "rs_002_ctx4k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 4,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "language": "rust",
+                "parse_status": "ok_filtered",
+                "path": "src/number/streaming.rs",
+                "repository": "rust-bakery/nom",
+                "symbol_count": 6
+              }
+            ],
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "rs_002_ctx4k"
+              },
+              "durationMs": 4,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "list_files",
+              "transport": "in_memory"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 3657,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "src/number/streaming.rs",
+              "workspace_id": "rs_002_ctx4k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 4,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "[test]",
+                "end_line": 1480,
+                "kind": "function",
+                "name": "i8_tests",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "i8_tests",
+                "signature": "fn i8_tests() {\n    assert_parse!(be_i8(&[0x00][..]), Ok((&b\"\"[..], 0)));\n    assert_parse!(be_i8(&[0x7f][..]), Ok((&b\"\"[..], 127)));\n    assert_parse!(be_i8(&[0xff][..]), Ok((&b\"\"[..], -1)));\n    assert_parse!(be_i8(&[0x80][..]), Ok((&b\"\"[..], -128)));\n    assert_parse!(be_i8(&[][..]), Err(Err::Incomplete(Needed::new(1))));\n  }",
+                "start_line": 1474,
+                "symbol_id": "src/number/streaming.rs#function:i8_tests:1474"
+              },
+              {
+                "children": [],
+                "documentation": "[test]",
+                "end_line": 1490,
+                "kind": "function",
+                "name": "i16_tests",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "i16_tests",
+                "signature": "fn i16_tests() {\n    assert_parse!(be_i16(&[0x00, 0x00][..]), Ok((&b\"\"[..], 0)));\n    assert_parse!(be_i16(&[0x7f, 0xff][..]), Ok((&b\"\"[..], 32_767_i16)));\n    assert_parse!(be_i16(&[0xff, 0xff][..]), Ok((&b\"\"[..], -1)));\n    assert_parse!(be_i16(&[0x80, 0x00][..]), Ok((&b\"\"[..], -32_768_i16)));\n    assert_parse!(be_i16(&[][..]), Err(Err::Incomplete(Needed::new(2))));\n    assert_parse!(be_i16(&[0x00][..]), Err(Err::Incomplete(Needed::new(1))));\n  }",
+                "start_line": 1483,
+                "symbol_id": "src/number/streaming.rs#function:i16_tests:1483"
+              },
+              {
+                "children": [],
+                "documentation": "[test]",
+                "end_line": 1506,
+                "kind": "function",
+                "name": "u24_tests",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "u24_tests",
+                "signature": "fn u24_tests() {\n    assert_parse!(be_u24(&[0x00, 0x00, 0x00][..]), Ok((&b\"\"[..], 0)));\n    assert_parse!(be_u24(&[0x00, 0xFF, 0xFF][..]), Ok((&b\"\"[..], 65_535_u32)));\n    assert_parse!(\n      be_u24(&[0x12, 0x34, 0x56][..]),\n      Ok((&b\"\"[..], 1_193_046_u32))\n    );\n    assert_parse!(be_u24(&[][..]), Err(Err::Incomplete(Needed::new(3))));\n    assert_parse!(be_u24(&[0x00][..]), Err(Err::Incomplete(Needed::new(2))));\n    assert_parse!(\n      be_u24(&[0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(1)))\n    );\n  }",
+                "start_line": 1493,
+                "symbol_id": "src/number/streaming.rs#function:u24_tests:1493"
+              },
+              {
+                "children": [],
+                "documentation": "[test]",
+                "end_line": 1522,
+                "kind": "function",
+                "name": "i24_tests",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "i24_tests",
+                "signature": "fn i24_tests() {\n    assert_parse!(be_i24(&[0xFF, 0xFF, 0xFF][..]), Ok((&b\"\"[..], -1_i32)));\n    assert_parse!(be_i24(&[0xFF, 0x00, 0x00][..]), Ok((&b\"\"[..], -65_536_i32)));\n    assert_parse!(\n      be_i24(&[0xED, 0xCB, 0xAA][..]),\n      Ok((&b\"\"[..], -1_193_046_i32))\n    );\n    assert_parse!(be_i24(&[][..]), Err(Err::Incomplete(Needed::new(3))));\n    assert_parse!(be_i24(&[0x00][..]), Err(Err::Incomplete(Needed::new(2))));\n    assert_parse!(\n      be_i24(&[0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(1)))\n    );\n  }",
+                "start_line": 1509,
+                "symbol_id": "src/number/streaming.rs#function:i24_tests:1509"
+              },
+              {
+                "children": [],
+                "documentation": "[test]",
+                "end_line": 1546,
+                "kind": "function",
+                "name": "i32_tests",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "i32_tests",
+                "signature": "fn i32_tests() {\n    assert_parse!(be_i32(&[0x00, 0x00, 0x00, 0x00][..]), Ok((&b\"\"[..], 0)));\n    assert_parse!(\n      be_i32(&[0x7f, 0xff, 0xff, 0xff][..]),\n      Ok((&b\"\"[..], 2_147_483_647_i32))\n    );\n    assert_parse!(be_i32(&[0xff, 0xff, 0xff, 0xff][..]), Ok((&b\"\"[..], -1)));\n    assert_parse!(\n      be_i32(&[0x80, 0x00, 0x00, 0x00][..]),\n      Ok((&b\"\"[..], -2_147_483_648_i32))\n    );\n    assert_parse!(be_i32(&[][..]), Err(Err::Incomplete(Needed::new(4))));\n    assert_parse!(be_i32(&[0x00][..]), Err(Err::Incomplete(Needed::new(3))));\n    assert_parse!(\n      be_i32(&[0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(2)))\n    );\n    assert_parse!(\n      be_i32(&[0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(1)))\n    );\n  }",
+                "start_line": 1525,
+                "symbol_id": "src/number/streaming.rs#function:i32_tests:1525"
+              },
+              {
+                "children": [],
+                "documentation": "[test]",
+                "end_line": 1592,
+                "kind": "function",
+                "name": "i64_tests",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "i64_tests",
+                "signature": "fn i64_tests() {\n    assert_parse!(\n      be_i64(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Ok((&b\"\"[..], 0))\n    );\n    assert_parse!(\n      be_i64(&[0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff][..]),\n      Ok((&b\"\"[..], 9_223_372_036_854_775_807_i64))\n    );\n    assert_parse!(\n      be_i64(&[0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff][..]),\n      Ok((&b\"\"[..], -1))\n    );\n    assert_parse!(\n      be_i64(&[0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Ok((&b\"\"[..], -9_223_372_036_854_775_808_i64))\n    );\n    assert_parse!(be_i64(&[][..]), Err(Err::Incomplete(Needed::new(8))));\n    assert_parse!(be_i64(&[0x00][..]), Err(Err::Incomplete(Needed::new(7))));\n    assert_parse!(\n      be_i64(&[0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(6)))\n    );\n    assert_parse!(\n      be_i64(&[0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(5)))\n    );\n    assert_parse!(\n      be_i64(&[0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(4)))\n    );\n    assert_parse!(\n      be_i64(&[0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(3)))\n    );\n    assert_parse!(\n      be_i64(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(2)))\n    );\n    assert_parse!(\n      be_i64(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(1)))\n    );\n  }",
+                "start_line": 1549,
+                "symbol_id": "src/number/streaming.rs#function:i64_tests:1549"
+              }
+            ],
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "src/number/streaming.rs",
+                "workspace_id": "rs_002_ctx4k"
+              },
+              "durationMs": 3,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "list_symbols",
+              "transport": "in_memory"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 2027,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "symbol_id": "src/number/streaming.rs#function:i16_tests:1483",
+              "workspace_id": "rs_002_ctx4k"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 4,
+          "metadata": {
+            "is_error": false,
+            "result": {
+              "children": [],
+              "code": "fn i16_tests() {\n    assert_parse!(be_i16(&[0x00, 0x00][..]), Ok((&b\"\"[..], 0)));\n    assert_parse!(be_i16(&[0x7f, 0xff][..]), Ok((&b\"\"[..], 32_767_i16)));\n    assert_parse!(be_i16(&[0xff, 0xff][..]), Ok((&b\"\"[..], -1)));\n    assert_parse!(be_i16(&[0x80, 0x00][..]), Ok((&b\"\"[..], -32_768_i16)));\n    assert_parse!(be_i16(&[][..]), Err(Err::Incomplete(Needed::new(2))));\n    assert_parse!(be_i16(&[0x00][..]), Err(Err::Incomplete(Needed::new(1))));\n  }",
+              "documentation": "[test]",
+              "end_line": 1490,
+              "kind": "function",
+              "name": "i16_tests",
+              "parent_id": null,
+              "parent_name": null,
+              "path": "src/number/streaming.rs",
+              "qualified_name": "i16_tests",
+              "signature": "fn i16_tests() {\n    assert_parse!(be_i16(&[0x00, 0x00][..]), Ok((&b\"\"[..], 0)));\n    assert_parse!(be_i16(&[0x7f, 0xff][..]), Ok((&b\"\"[..], 32_767_i16)));\n    assert_parse!(be_i16(&[0xff, 0xff][..]), Ok((&b\"\"[..], -1)));\n    assert_parse!(be_i16(&[0x80, 0x00][..]), Ok((&b\"\"[..], -32_768_i16)));\n    assert_parse!(be_i16(&[][..]), Err(Err::Incomplete(Needed::new(2))));\n    assert_parse!(be_i16(&[0x00][..]), Err(Err::Incomplete(Needed::new(1))));\n  }",
+              "start_line": 1483,
+              "symbol_id": "src/number/streaming.rs#function:i16_tests:1483"
+            },
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "symbol_id": "src/number/streaming.rs#function:i16_tests:1483",
+                "workspace_id": "rs_002_ctx4k"
+              },
+              "durationMs": 4,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "get_symbol",
+              "transport": "in_memory"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 2025,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 9927,
+          "metadata": {},
+          "name": "strategy.local_mcp.execute",
+          "type": "strategy.local_mcp.execute"
+        },
+        {
+          "duration_ms": 9927,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 63,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": null,
+        "cachedInputTokens": 527,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 3,
+        "inputTokens": 6169,
+        "loopControlDurationMsEstimated": 51,
+        "mcpToolCalls": 3,
+        "modelCalls": 4,
+        "modelDurationMs": 9864,
+        "outputTokens": 354,
+        "promptChars": 1043,
+        "questionTokensEstimated": 132,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 441,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 4,
+        "strategyDurationMs": 9927,
+        "taskStatementChars": 873,
+        "toolCalls": 3,
+        "toolDurationMs": 12,
+        "totalDurationMs": 9927,
+        "totalTokens": 6964,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "workspace_id": "rs_002_ctx4k"
+                    },
+                    "id": null,
+                    "name": "list_files",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CpYIAQw51scuIY8VR4dnPbCFecDNupYXqXJAHjynkGv334M6N-MJVFQrBW-vWN73Bi0WMe9gQlmCwt7MYttKvh0BpCopdkOGYIg4EVEmfLC7-aG7jm1tRncpbLTzIi4c-GfqCrqGZrmMITknM5OK0-BB5z0RFqwd0e4TVNkHALiXeJ_LNX8mJKwvybsCkBmtYzOnI9vCtciXM6PYeEWFQEXErUIcOIQtVJru-qyo6QqcP9evDps6VnzWBNjrBKIv84YVqSnSdtaPkdEA9K2Z7y2xNsvHbQxVVT1eBZK8YIJp3K3VLn-KyXLXf9QSA0aHys4_3ejyMebvkXmH8yX34SY1KBDylNVoZSgEs3U1zzG8FfA97czI5IzF7jTA8LdPVV-OMuzxqrQ_W6eCPfwdYl5Sr9xuiUzYAbkJxo12odIOH6IOcbNVpFEmHseto9qou8o0jHiazvhRvRtrTLieuKLKvuejCQTby0VfNOTonUnvHrK3QYPvqwkLpngx_h66RK7A314H3i5MnXa4niExxr53ajw0aE2ijr-Enaku7PxS5ITMoY83cmRA-YoPwAqoM4OZ76WudpfKPRjB14ucrTtqwazdbxaZaRw0cTlakJj_JXW7M9-3Ve6TppANLOTmZRos4_MRibGHYYy_ArXUJfrV4Yj-K7YZy-ALzQNxAZ0LEukYyyM_EYXjxu6i-xjwEpuM5rI_QshbOFxTHLYtY2MykUq9p2ccASNwqmLwwvXfMeqhPxK3P3zyrKUwtT7DslfL7a7aPiW4zf60EeaU-Ry3V1mjZDZNvrE0Z7I4qcT6FMTMqB5Vo1w8UeeFCuGFuUQkCBTdztGtgdCzU7TTnPjyXKy52YdYEyYawoJ9VH09z6W0_eR0IWFjawAiYr8L-3Emndlprqto4KtZ1ggXG3zPf0JAGOh70NxJO6T9oCeNBWs8_zstNMTJo-h5X3dV13EFdIaHc7l9JYkSctAMkKOWfSgA-p1H00ciwY75Qwt7CLcd_OBl124UMIZmP06dbaTGMNt5uPGZ4ch6rXrGfgZ2Gjsvj1M4cDfaQZr8mxEqwtEyJeA1ZCUreVsjis90TMMi9y0wtm_k-LpFzJYuc3jfWrm8C8KZ8YweN-vuLaYcvIeNC3GtKBQnmpFY5EFEGEt7Y0j9DX0IdptKY7fVyvxkSBvv0hC0ArY6X9qUj99ZwRH_1PTGRLPQul15WagG0eMIdtvEMWE2RrnYdXMMnUBI_uFWgrt7wC8XVn0iEAAblp7DyrTTESSLk-_TGCCmzLpJ5ahVnhK7Qncsuc_pSfwLWOhz4OzsHl8-nf7gaEGULW8bKubcOLWDdgjYRfe5rdVFI7d3qZ53wfkqAO3H-LHHGL8eMhWVaQHhyd8I9_Vq4OkdCy3aO6E=",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "xJUUaouTB5fUz7IPpuv9uAQ",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 18:32:37 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1951",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 25,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 614,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 614
+            }
+          ],
+          "thoughts_token_count": 228,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 867,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "kind": "function",
+                      "path": "src/number/streaming.rs",
+                      "workspace_id": "rs_002_ctx4k"
+                    },
+                    "id": null,
+                    "name": "list_symbols",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CoICAQw51sdnEy-9-Rv4ErmGnP4bFPRLSzX-hU0JI036Rvyufv4nM6tvcwmeKSQ5AbiL8eqScnIZS4KrTsS7vfOPJkBqs5gqVQSfgA8IeMKuz4rHdXxoxKE-ECdQYekMF0XO31UvEd8Up3CVN-3VTQaGpPxqaUiRQ1cqsJoK-BnSZ1cL34cV0HrQwtJ7La4s9b4CTKRHY4DqSsetzIP7ZcJ-DMpYgckDzKlzr36LU8CLrt_Ysfco2yXxI5pw70eCF6teOU9528mI-MF6h2tRxpUXiuKOxQ452W3y33eAjqFpu9iLz_yu5v6G16kePbLZzhhcHb6eyn1Y7cTqGwdtv7qqz5Yn",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "xpUUatOFEveHz7IPwvOC6Qw",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 18:32:41 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=3451",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 527
+            }
+          ],
+          "cached_content_token_count": 527,
+          "candidates_token_count": 41,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 699,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 699
+            }
+          ],
+          "thoughts_token_count": 47,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 787,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "symbol_id": "src/number/streaming.rs#function:i16_tests:1483",
+                      "workspace_id": "rs_002_ctx4k"
+                    },
+                    "id": null,
+                    "name": "get_symbol",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "Cp0FAQw51sfsV-7hSgwN64sWkbttORBxKoJE20AfYexcgsw_aWlPHML_BIirVlafbqMtA_u8ekdcbgKz9gYc5oSHlEVzzbqpDIz6-k42YdZzf5UurYOo5aWbEBd2DcLCQN5rvl2vHQE97uoUtdYi9BxpMW1ThneJktH4kUqKGsC5LPKxS80d3vne1KAlLJlxhCg6NUzcfV5QoEgewgWrQXD7NANIj1JU32xuDYvOIiaWlkhYiYdt19ATWUkLXwfCeEqToCWQJ3Wq0BzejdasE5-Zg0qAjndt4EWh-pCjxGBigNUXv1hoyell6At7P8ok1rEv9yc3VERWkt0l3yT-ARZpFGdLbTYEvZZZov3w6JKJLYLLmITS-qAFml-veuUut3eH1W8NmECZno6J0H3i5wpc6r3PWBlLoLsNLEIhT7bTzErcMCk31zMwxuAOJSBwczBDp8CekJ1fFix5Mc7bziKrdoaWt0VXlf9lCzDd5ddqJ2qYXQf10XM2R2JOY0qNmPMT1_gPuP0CbAGS8oIt9py95guhWqUNN93pK6Vlnbq3LjZ19U6yzbXbLvSNfnqxWhjya0jX7W4R8oO5iNSsaDAfsxW1fi6aCIKGAxWxPigr3ZJreB5oVNUGbzgIymBM9lY5sOmIIQ2AAC2RRLZz26FqT9U6qEeYdQdzIeP6Q2H8ZmUZMSJ4Lu5MmcCZXd_EWeQ3GY0ZBv7OXCk74tmV8efzR1Lio0F4VRiDmlskApKXinSBuLYhbrUga3V7XE_lJzxEChBYyHwHi6E40LIU-zDqEgIesYYTNMQtQEmcPkyOiQw8MpI7yw3gBs1g0OQ-Zo-ClSm6stQ03GtATxM2NMxljFXrynRoM_PNgIveQjsgay21ER6XXPDBRwqjrv4m",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "yZUUaveZPM6Hz7IPuvPv2A8",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 18:32:43 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1820",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 51,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 3573,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 3573
+            }
+          ],
+          "thoughts_token_count": 166,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 3790,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": {
+              "citations": [
+                {
+                  "end_index": 450,
+                  "license": "",
+                  "publication_date": null,
+                  "start_index": 8,
+                  "title": null,
+                  "uri": "https://github.com/rust-bakery/nom"
+                }
+              ]
+            },
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": null,
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": "```rust\nfn i16_tests() {\n    assert_parse!(be_i16(&[0x00, 0x00][..]), Ok((&b\"\"[..], 0)));\n    assert_parse!(be_i16(&[0x7f, 0xff][..]), Ok((&b\"\"[..], 32_767_i16)));\n    assert_parse!(be_i16(&[0xff, 0xff][..]), Ok((&b\"\"[..], -1)));\n    assert_parse!(be_i16(&[0x80, 0x00][..]), Ok((&b\"\"[..], -32_768_i16)));\n    assert_parse!(be_i16(&[][..]), Err(Err::Incomplete(Needed::new(2))));\n    assert_parse!(be_i16(&[0x00][..]), Err(Err::Incomplete(Needed::new(1))));\n  }\n```",
+                  "thought": null,
+                  "thought_signature": null,
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                },
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": null,
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": "\n",
+                  "thought": null,
+                  "thought_signature": null,
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "zJUUapqVAfutz7IPz4ayiA0",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 18:32:45 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1820",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 237,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 1283,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 1283
+            }
+          ],
+          "thoughts_token_count": null,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 1520,
+          "traffic_type": null
+        }
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "workspace_id": "rs_002_ctx4k"
+        },
+        "durationMs": 4,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "list_files",
+        "transport": "in_memory"
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/number/streaming.rs",
+          "workspace_id": "rs_002_ctx4k"
+        },
+        "durationMs": 3,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "list_symbols",
+        "transport": "in_memory"
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/number/streaming.rs#function:i16_tests:1483",
+          "workspace_id": "rs_002_ctx4k"
+        },
+        "durationMs": 4,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "get_symbol",
+        "transport": "in_memory"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "workspace_id": "rs_002_ctx4k"
+        },
+        "id": "step-1-tool-1",
+        "isError": false,
+        "name": "list_files",
+        "result": [
+          {
+            "language": "rust",
+            "parse_status": "ok_filtered",
+            "path": "src/number/streaming.rs",
+            "repository": "rust-bakery/nom",
+            "symbol_count": 6
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/number/streaming.rs",
+          "workspace_id": "rs_002_ctx4k"
+        },
+        "id": "step-2-tool-1",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "[test]",
+            "end_line": 1480,
+            "kind": "function",
+            "name": "i8_tests",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "i8_tests",
+            "signature": "fn i8_tests() {\n    assert_parse!(be_i8(&[0x00][..]), Ok((&b\"\"[..], 0)));\n    assert_parse!(be_i8(&[0x7f][..]), Ok((&b\"\"[..], 127)));\n    assert_parse!(be_i8(&[0xff][..]), Ok((&b\"\"[..], -1)));\n    assert_parse!(be_i8(&[0x80][..]), Ok((&b\"\"[..], -128)));\n    assert_parse!(be_i8(&[][..]), Err(Err::Incomplete(Needed::new(1))));\n  }",
+            "start_line": 1474,
+            "symbol_id": "src/number/streaming.rs#function:i8_tests:1474"
+          },
+          {
+            "children": [],
+            "documentation": "[test]",
+            "end_line": 1490,
+            "kind": "function",
+            "name": "i16_tests",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "i16_tests",
+            "signature": "fn i16_tests() {\n    assert_parse!(be_i16(&[0x00, 0x00][..]), Ok((&b\"\"[..], 0)));\n    assert_parse!(be_i16(&[0x7f, 0xff][..]), Ok((&b\"\"[..], 32_767_i16)));\n    assert_parse!(be_i16(&[0xff, 0xff][..]), Ok((&b\"\"[..], -1)));\n    assert_parse!(be_i16(&[0x80, 0x00][..]), Ok((&b\"\"[..], -32_768_i16)));\n    assert_parse!(be_i16(&[][..]), Err(Err::Incomplete(Needed::new(2))));\n    assert_parse!(be_i16(&[0x00][..]), Err(Err::Incomplete(Needed::new(1))));\n  }",
+            "start_line": 1483,
+            "symbol_id": "src/number/streaming.rs#function:i16_tests:1483"
+          },
+          {
+            "children": [],
+            "documentation": "[test]",
+            "end_line": 1506,
+            "kind": "function",
+            "name": "u24_tests",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "u24_tests",
+            "signature": "fn u24_tests() {\n    assert_parse!(be_u24(&[0x00, 0x00, 0x00][..]), Ok((&b\"\"[..], 0)));\n    assert_parse!(be_u24(&[0x00, 0xFF, 0xFF][..]), Ok((&b\"\"[..], 65_535_u32)));\n    assert_parse!(\n      be_u24(&[0x12, 0x34, 0x56][..]),\n      Ok((&b\"\"[..], 1_193_046_u32))\n    );\n    assert_parse!(be_u24(&[][..]), Err(Err::Incomplete(Needed::new(3))));\n    assert_parse!(be_u24(&[0x00][..]), Err(Err::Incomplete(Needed::new(2))));\n    assert_parse!(\n      be_u24(&[0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(1)))\n    );\n  }",
+            "start_line": 1493,
+            "symbol_id": "src/number/streaming.rs#function:u24_tests:1493"
+          },
+          {
+            "children": [],
+            "documentation": "[test]",
+            "end_line": 1522,
+            "kind": "function",
+            "name": "i24_tests",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "i24_tests",
+            "signature": "fn i24_tests() {\n    assert_parse!(be_i24(&[0xFF, 0xFF, 0xFF][..]), Ok((&b\"\"[..], -1_i32)));\n    assert_parse!(be_i24(&[0xFF, 0x00, 0x00][..]), Ok((&b\"\"[..], -65_536_i32)));\n    assert_parse!(\n      be_i24(&[0xED, 0xCB, 0xAA][..]),\n      Ok((&b\"\"[..], -1_193_046_i32))\n    );\n    assert_parse!(be_i24(&[][..]), Err(Err::Incomplete(Needed::new(3))));\n    assert_parse!(be_i24(&[0x00][..]), Err(Err::Incomplete(Needed::new(2))));\n    assert_parse!(\n      be_i24(&[0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(1)))\n    );\n  }",
+            "start_line": 1509,
+            "symbol_id": "src/number/streaming.rs#function:i24_tests:1509"
+          },
+          {
+            "children": [],
+            "documentation": "[test]",
+            "end_line": 1546,
+            "kind": "function",
+            "name": "i32_tests",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "i32_tests",
+            "signature": "fn i32_tests() {\n    assert_parse!(be_i32(&[0x00, 0x00, 0x00, 0x00][..]), Ok((&b\"\"[..], 0)));\n    assert_parse!(\n      be_i32(&[0x7f, 0xff, 0xff, 0xff][..]),\n      Ok((&b\"\"[..], 2_147_483_647_i32))\n    );\n    assert_parse!(be_i32(&[0xff, 0xff, 0xff, 0xff][..]), Ok((&b\"\"[..], -1)));\n    assert_parse!(\n      be_i32(&[0x80, 0x00, 0x00, 0x00][..]),\n      Ok((&b\"\"[..], -2_147_483_648_i32))\n    );\n    assert_parse!(be_i32(&[][..]), Err(Err::Incomplete(Needed::new(4))));\n    assert_parse!(be_i32(&[0x00][..]), Err(Err::Incomplete(Needed::new(3))));\n    assert_parse!(\n      be_i32(&[0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(2)))\n    );\n    assert_parse!(\n      be_i32(&[0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(1)))\n    );\n  }",
+            "start_line": 1525,
+            "symbol_id": "src/number/streaming.rs#function:i32_tests:1525"
+          },
+          {
+            "children": [],
+            "documentation": "[test]",
+            "end_line": 1592,
+            "kind": "function",
+            "name": "i64_tests",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "i64_tests",
+            "signature": "fn i64_tests() {\n    assert_parse!(\n      be_i64(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Ok((&b\"\"[..], 0))\n    );\n    assert_parse!(\n      be_i64(&[0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff][..]),\n      Ok((&b\"\"[..], 9_223_372_036_854_775_807_i64))\n    );\n    assert_parse!(\n      be_i64(&[0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff][..]),\n      Ok((&b\"\"[..], -1))\n    );\n    assert_parse!(\n      be_i64(&[0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Ok((&b\"\"[..], -9_223_372_036_854_775_808_i64))\n    );\n    assert_parse!(be_i64(&[][..]), Err(Err::Incomplete(Needed::new(8))));\n    assert_parse!(be_i64(&[0x00][..]), Err(Err::Incomplete(Needed::new(7))));\n    assert_parse!(\n      be_i64(&[0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(6)))\n    );\n    assert_parse!(\n      be_i64(&[0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(5)))\n    );\n    assert_parse!(\n      be_i64(&[0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(4)))\n    );\n    assert_parse!(\n      be_i64(&[0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(3)))\n    );\n    assert_parse!(\n      be_i64(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(2)))\n    );\n    assert_parse!(\n      be_i64(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(1)))\n    );\n  }",
+            "start_line": 1549,
+            "symbol_id": "src/number/streaming.rs#function:i64_tests:1549"
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/number/streaming.rs#function:i16_tests:1483",
+          "workspace_id": "rs_002_ctx4k"
+        },
+        "id": "step-3-tool-1",
+        "isError": false,
+        "name": "get_symbol",
+        "result": {
+          "children": [],
+          "code": "fn i16_tests() {\n    assert_parse!(be_i16(&[0x00, 0x00][..]), Ok((&b\"\"[..], 0)));\n    assert_parse!(be_i16(&[0x7f, 0xff][..]), Ok((&b\"\"[..], 32_767_i16)));\n    assert_parse!(be_i16(&[0xff, 0xff][..]), Ok((&b\"\"[..], -1)));\n    assert_parse!(be_i16(&[0x80, 0x00][..]), Ok((&b\"\"[..], -32_768_i16)));\n    assert_parse!(be_i16(&[][..]), Err(Err::Incomplete(Needed::new(2))));\n    assert_parse!(be_i16(&[0x00][..]), Err(Err::Incomplete(Needed::new(1))));\n  }",
+          "documentation": "[test]",
+          "end_line": 1490,
+          "kind": "function",
+          "name": "i16_tests",
+          "parent_id": null,
+          "parent_name": null,
+          "path": "src/number/streaming.rs",
+          "qualified_name": "i16_tests",
+          "signature": "fn i16_tests() {\n    assert_parse!(be_i16(&[0x00, 0x00][..]), Ok((&b\"\"[..], 0)));\n    assert_parse!(be_i16(&[0x7f, 0xff][..]), Ok((&b\"\"[..], 32_767_i16)));\n    assert_parse!(be_i16(&[0xff, 0xff][..]), Ok((&b\"\"[..], -1)));\n    assert_parse!(be_i16(&[0x80, 0x00][..]), Ok((&b\"\"[..], -32_768_i16)));\n    assert_parse!(be_i16(&[][..]), Err(Err::Incomplete(Needed::new(2))));\n    assert_parse!(be_i16(&[0x00][..]), Err(Err::Incomplete(Needed::new(1))));\n  }",
+          "start_line": 1483,
+          "symbol_id": "src/number/streaming.rs#function:i16_tests:1483"
+        }
+      }
+    ]
+  },
+  "trialId": "397ed87859"
+}

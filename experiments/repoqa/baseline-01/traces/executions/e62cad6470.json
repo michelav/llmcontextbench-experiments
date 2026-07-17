@@ -1,0 +1,795 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 1176,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-nano",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "java_001_ctx8k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "language": "java",
+                "parse_status": "ok_filtered",
+                "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+                "repository": "google/gson",
+                "symbol_count": 1
+              },
+              {
+                "language": "java",
+                "parse_status": "ok_filtered",
+                "path": "gson/src/main/java/com/google/gson/stream/JsonScope.java",
+                "repository": "google/gson",
+                "symbol_count": 2
+              },
+              {
+                "language": "java",
+                "parse_status": "ok_filtered",
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "repository": "google/gson",
+                "symbol_count": 29
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "java_001_ctx8k"
+              },
+              "durationMs": 0,
+              "toolName": "list_files",
+              "workspace_id": "java_001_ctx8k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1178,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-nano",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+              "workspace_id": "java_001_ctx8k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 946,
+                "kind": "method",
+                "name": "addTypeAdaptersForDate",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+                "qualified_name": "addTypeAdaptersForDate",
+                "signature": "private static void addTypeAdaptersForDate(\n      String datePattern, int dateStyle, int timeStyle, List<TypeAdapterFactory> factories) {\n    TypeAdapterFactory dateAdapterFactory;\n    boolean sqlTypesSupported = SqlTypesSupport.SUPPORTS_SQL_TYPES;\n    TypeAdapterFactory sqlTimestampAdapterFactory = null;\n    TypeAdapterFactory sqlDateAdapterFactory = null;\n\n    if (datePattern != null && !datePattern.trim().isEmpty()) {\n      dateAdapterFactory = DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(datePattern);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(datePattern);\n        sqlDateAdapterFactory = SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(datePattern);\n      }\n    } else if (dateStyle != DateFormat.DEFAULT || timeStyle != DateFormat.DEFAULT) {\n      dateAdapterFactory =\n          DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(dateStyle, timeStyle);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n        sqlDateAdapterFactory =\n            SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n      }\n    } else {\n      return;\n    }\n\n    factories.add(dateAdapterFactory);\n    if (sqlTypesSupported) {\n      factories.add(sqlTimestampAdapterFactory);\n      factories.add(sqlDateAdapterFactory);\n    }\n  }",
+                "start_line": 912,
+                "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:addTypeAdaptersForDate:912"
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+                "workspace_id": "java_001_ctx8k"
+              },
+              "durationMs": 0,
+              "toolName": "list_symbols",
+              "workspace_id": "java_001_ctx8k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 2597,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-nano",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 4970,
+          "metadata": {},
+          "name": "strategy.local_function.execute",
+          "type": "strategy.local_function.execute"
+        },
+        {
+          "duration_ms": 4970,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 19,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": 0,
+        "cachedInputTokens": 0,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 2,
+        "inputTokens": 2189,
+        "loopControlDurationMsEstimated": 19,
+        "mcpToolCalls": 2,
+        "modelCalls": 3,
+        "modelDurationMs": 4951,
+        "outputTokens": 375,
+        "promptChars": 1109,
+        "questionTokensEstimated": 148,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 0,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 3,
+        "strategyDurationMs": 4970,
+        "taskStatementChars": 937,
+        "toolCalls": 2,
+        "toolDurationMs": 0,
+        "totalDurationMs": 4970,
+        "totalTokens": 2564,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779729340.0,
+        "conversation": null,
+        "created_at": 1779729339.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_03781544a6e761ab006a1483bb4d8881909c8a90895f0177d2",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "e62cad6470"
+        },
+        "model": "gpt-5.4-nano-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "arguments": "{\"workspace_id\":\"java_001_ctx8k\"}",
+            "call_id": "call_YjyGic8pt8vCyPCxUERRAEAz",
+            "id": "fc_03781544a6e761ab006a1483bbe2308190a80e744a62b4ebde",
+            "name": "list_files",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including its generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 500,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 24,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 524
+        },
+        "user": null
+      },
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779729341.0,
+        "conversation": null,
+        "created_at": 1779729340.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_03781544a6e761ab006a1483bc77e0819098ec49a5501a643e",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "e62cad6470"
+        },
+        "model": "gpt-5.4-nano-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "arguments": "{\"workspace_id\":\"java_001_ctx8k\",\"path\":\"gson/src/main/java/com/google/gson/GsonBuilder.java\",\"kind\":\"function\"}",
+            "call_id": "call_jQeo8JageS0ZXyXPaUEjBTmo",
+            "id": "fc_03781544a6e761ab006a1483bcf68c819081dcb32af0a21349",
+            "name": "list_symbols",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including its generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 682,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 44,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 726
+        },
+        "user": null
+      },
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779729343.0,
+        "conversation": null,
+        "created_at": 1779729341.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_03781544a6e761ab006a1483bda498819095dce4bf136bf31e",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "e62cad6470"
+        },
+        "model": "gpt-5.4-nano-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "logprobs": [],
+                "text": "```java\nprivate static void addTypeAdaptersForDate(\n      String datePattern, int dateStyle, int timeStyle, List<TypeAdapterFactory> factories) {\n    TypeAdapterFactory dateAdapterFactory;\n    boolean sqlTypesSupported = SqlTypesSupport.SUPPORTS_SQL_TYPES;\n    TypeAdapterFactory sqlTimestampAdapterFactory = null;\n    TypeAdapterFactory sqlDateAdapterFactory = null;\n\n    if (datePattern != null && !datePattern.trim().isEmpty()) {\n      dateAdapterFactory = DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(datePattern);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(datePattern);\n        sqlDateAdapterFactory = SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(datePattern);\n      }\n    } else if (dateStyle != DateFormat.DEFAULT || timeStyle != DateFormat.DEFAULT) {\n      dateAdapterFactory =\n          DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(dateStyle, timeStyle);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n        sqlDateAdapterFactory =\n            SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n      }\n    } else {\n      return;\n    }\n\n    factories.add(dateAdapterFactory);\n    if (sqlTypesSupported) {\n      factories.add(sqlTimestampAdapterFactory);\n      factories.add(sqlDateAdapterFactory);\n    }\n  }\n```",
+                "type": "output_text"
+              }
+            ],
+            "id": "msg_03781544a6e761ab006a1483be08c88190bbaf72271bd7df66",
+            "phase": "final_answer",
+            "role": "assistant",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including its generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 1007,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 307,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 1314
+        },
+        "user": null
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "workspace_id": "java_001_ctx8k"
+        },
+        "durationMs": 0,
+        "toolName": "list_files",
+        "workspace_id": "java_001_ctx8k"
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+          "workspace_id": "java_001_ctx8k"
+        },
+        "durationMs": 0,
+        "toolName": "list_symbols",
+        "workspace_id": "java_001_ctx8k"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "workspace_id": "java_001_ctx8k"
+        },
+        "id": "call_YjyGic8pt8vCyPCxUERRAEAz",
+        "isError": false,
+        "name": "list_files",
+        "result": [
+          {
+            "language": "java",
+            "parse_status": "ok_filtered",
+            "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+            "repository": "google/gson",
+            "symbol_count": 1
+          },
+          {
+            "language": "java",
+            "parse_status": "ok_filtered",
+            "path": "gson/src/main/java/com/google/gson/stream/JsonScope.java",
+            "repository": "google/gson",
+            "symbol_count": 2
+          },
+          {
+            "language": "java",
+            "parse_status": "ok_filtered",
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "repository": "google/gson",
+            "symbol_count": 29
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+          "workspace_id": "java_001_ctx8k"
+        },
+        "id": "call_jQeo8JageS0ZXyXPaUEjBTmo",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 946,
+            "kind": "method",
+            "name": "addTypeAdaptersForDate",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+            "qualified_name": "addTypeAdaptersForDate",
+            "signature": "private static void addTypeAdaptersForDate(\n      String datePattern, int dateStyle, int timeStyle, List<TypeAdapterFactory> factories) {\n    TypeAdapterFactory dateAdapterFactory;\n    boolean sqlTypesSupported = SqlTypesSupport.SUPPORTS_SQL_TYPES;\n    TypeAdapterFactory sqlTimestampAdapterFactory = null;\n    TypeAdapterFactory sqlDateAdapterFactory = null;\n\n    if (datePattern != null && !datePattern.trim().isEmpty()) {\n      dateAdapterFactory = DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(datePattern);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(datePattern);\n        sqlDateAdapterFactory = SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(datePattern);\n      }\n    } else if (dateStyle != DateFormat.DEFAULT || timeStyle != DateFormat.DEFAULT) {\n      dateAdapterFactory =\n          DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(dateStyle, timeStyle);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n        sqlDateAdapterFactory =\n            SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n      }\n    } else {\n      return;\n    }\n\n    factories.add(dateAdapterFactory);\n    if (sqlTypesSupported) {\n      factories.add(sqlTimestampAdapterFactory);\n      factories.add(sqlDateAdapterFactory);\n    }\n  }",
+            "start_line": 912,
+            "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:addTypeAdaptersForDate:912"
+          }
+        ]
+      }
+    ]
+  },
+  "trialId": "e62cad6470"
+}

@@ -1,0 +1,156 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 4440,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-nano",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 4446,
+          "metadata": {},
+          "name": "strategy.inline.execute",
+          "type": "strategy.inline.execute"
+        },
+        {
+          "duration_ms": 4446,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 6,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": 0,
+        "cachedInputTokens": 0,
+        "contextBytes": 104876,
+        "contextChars": 104874,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 0,
+        "inputTokens": 25697,
+        "loopControlDurationMsEstimated": 6,
+        "mcpToolCalls": 0,
+        "modelCalls": 1,
+        "modelDurationMs": 4440,
+        "outputTokens": 480,
+        "promptChars": 105952,
+        "questionTokensEstimated": 160,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 0,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 1,
+        "strategyDurationMs": 4446,
+        "taskStatementChars": 1056,
+        "toolCalls": 0,
+        "toolDurationMs": null,
+        "totalDurationMs": 4446,
+        "totalTokens": 26177,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": {
+      "background": false,
+      "billing": {
+        "payer": "openai"
+      },
+      "completed_at": 1779730516.0,
+      "conversation": null,
+      "created_at": 1779730512.0,
+      "error": null,
+      "frequency_penalty": 0.0,
+      "id": "resp_0336b73389b9585f006a1488504034819f8ee0f222a17ed0a9",
+      "incomplete_details": null,
+      "instructions": "You are an assistant that solves benchmark tasks using only the provided context.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nYour goal is to produce accurate, concise, and context-grounded responses.\nGuidelines:\n- Base your response strictly on the provided context.\n- If the provided context is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+      "max_output_tokens": null,
+      "max_tool_calls": null,
+      "metadata": {
+        "experimentId": "datasets/repoqa",
+        "phase": "execution",
+        "taskId": "snf_retrieve_function",
+        "trialId": "0856ed7cac"
+      },
+      "model": "gpt-5.4-nano-2026-03-17",
+      "moderation": null,
+      "object": "response",
+      "output": [
+        {
+          "content": [
+            {
+              "annotations": [],
+              "logprobs": [],
+              "text": "```javascript\n/**\n * Reshapes a 1-dimensional array into an n-dimensional array, according to the provided dimensions.\n *\n * @example\n *   reshape([10                    ], [1      ]); // Type: number[]      Value: [10]\n *   reshape([1, 2, 3, 4            ], [2, 2   ]); // Type: number[][]    Value: [[1, 2], [3, 4]]\n *   reshape([1, 2, 3, 4, 5, 6, 7, 8], [2, 2, 2]); // Type: number[][][]  Value: [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]\n *   reshape([1, 2, 3, 4, 5, 6, 7, 8], [4, 2   ]); // Type: number[][]    Value: [[1, 2], [3, 4], [5, 6], [7, 8]]\n * @param {T[]|DataArray} data The input array to reshape.\n * @param {DIM} dimensions The target shape/dimensions.\n * @template T\n * @template {[number]|number[]} DIM\n * @returns {NestArray<T, DIM[\"length\"]>} The reshaped array.\n */\n\nfunction reshape(data, dimensions) {\n\n    const totalElements = data.length;\n    const dimensionSize = dimensions.reduce((a, b) => a * b);\n\n    if (totalElements !== dimensionSize) {\n        throw Error(`cannot reshape array of size ${totalElements} into shape (${dimensions})`);\n    }\n\n    /** @type {any} */\n    let reshapedArray = data;\n\n    for (let i = dimensions.length - 1; i >= 0; i--) {\n        reshapedArray = reshapedArray.reduce((acc, val) => {\n            let lastArray = acc[acc.length - 1];\n\n            if (lastArray.length < dimensions[i]) {\n                lastArray.push(val);\n            } else {\n                acc.push([val]);\n            }\n\n            return acc;\n        }, [[]]);\n    }\n\n    return reshapedArray[0];\n}\n```",
+              "type": "output_text"
+            }
+          ],
+          "id": "msg_0336b73389b9585f006a148850f204819f99dd215e162837b1",
+          "phase": "final_answer",
+          "role": "assistant",
+          "status": "completed",
+          "type": "message"
+        }
+      ],
+      "parallel_tool_calls": true,
+      "presence_penalty": 0.0,
+      "previous_response_id": null,
+      "prompt": null,
+      "prompt_cache_key": "inl:code:99ebb70ffdb88b4c651786d98c1549e2",
+      "prompt_cache_retention": "in_memory",
+      "reasoning": {
+        "context": "current_turn",
+        "effort": "none",
+        "generate_summary": null,
+        "summary": null
+      },
+      "safety_identifier": null,
+      "service_tier": "default",
+      "status": "completed",
+      "store": true,
+      "temperature": 1.0,
+      "text": {
+        "format": {
+          "type": "text"
+        },
+        "verbosity": "medium"
+      },
+      "tool_choice": "auto",
+      "tools": [],
+      "top_logprobs": 0,
+      "top_p": 0.98,
+      "truncation": "disabled",
+      "usage": {
+        "input_tokens": 25697,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 480,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 26177
+      },
+      "user": null
+    },
+    "serverMcp": [],
+    "toolCalls": []
+  },
+  "trialId": "0856ed7cac"
+}

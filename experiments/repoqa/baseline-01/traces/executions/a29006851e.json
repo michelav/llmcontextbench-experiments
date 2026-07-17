@@ -1,0 +1,1579 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 1835,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "ts_003_ctx16k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 8,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "language": "typescript",
+                "parse_status": "ok_filtered",
+                "path": "src/pipelines.js",
+                "repository": "xenova/transformers.js",
+                "symbol_count": 130
+              },
+              {
+                "language": "typescript",
+                "parse_status": "ok_filtered",
+                "path": "src/tokenizers.js",
+                "repository": "xenova/transformers.js",
+                "symbol_count": 36
+              }
+            ],
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "ts_003_ctx16k"
+              },
+              "durationMs": 8,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "list_files",
+              "transport": "in_memory"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1529,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "src/pipelines.js",
+              "workspace_id": "ts_003_ctx16k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 7,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "Prepare images for further tasks.\n@param {ImagePipelineInputs} images images to prepare.\n@returns {Promise<RawImage[]>} returns processed images.\n@private",
+                "end_line": 93,
+                "kind": "function",
+                "name": "prepareImages",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/pipelines.js",
+                "qualified_name": "prepareImages",
+                "signature": "async function prepareImages(images) {\n    if (!Array.isArray(images)) {\n        images = [images];\n    }\n\n    // Possibly convert any non-images to images\n    return await Promise.all(images.map(x => RawImage.read(x)));\n}",
+                "start_line": 86,
+                "symbol_id": "src/pipelines.js#function:prepareImages:86"
+              },
+              {
+                "children": [],
+                "documentation": "Prepare audios for further tasks.\n@param {AudioPipelineInputs} audios audios to prepare.\n@param {number} sampling_rate sampling rate of the audios.\n@returns {Promise<Float32Array[]>} The preprocessed audio data.\n@private",
+                "end_line": 120,
+                "kind": "function",
+                "name": "prepareAudios",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/pipelines.js",
+                "qualified_name": "prepareAudios",
+                "signature": "async function prepareAudios(audios, sampling_rate) {\n    if (!Array.isArray(audios)) {\n        audios = [audios];\n    }\n\n    return await Promise.all(audios.map(x => {\n        if (typeof x === 'string' || x instanceof URL) {\n            return read_audio(x, sampling_rate);\n        } else if (x instanceof Float64Array) {\n            return new Float32Array(x);\n        }\n        return x;\n    }));\n}",
+                "start_line": 107,
+                "symbol_id": "src/pipelines.js#function:prepareAudios:107"
+              },
+              {
+                "children": [],
+                "documentation": "Helper function to convert list [xmin, xmax, ymin, ymax] into object { \"xmin\": xmin, ... }\n@param {number[]} box The bounding box as a list.\n@param {boolean} asInteger Whether to cast to integers.\n@returns {BoundingBox} The bounding box as an object.\n@private",
+                "end_line": 144,
+                "kind": "function",
+                "name": "get_bounding_box",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/pipelines.js",
+                "qualified_name": "get_bounding_box",
+                "signature": "function get_bounding_box(box, asInteger) {\n    if (asInteger) {\n        box = box.map(x => x | 0);\n    }\n    const [xmin, ymin, xmax, ymax] = box;\n\n    return { xmin, ymin, xmax, ymax };\n}",
+                "start_line": 137,
+                "symbol_id": "src/pipelines.js#function:get_bounding_box:137"
+              },
+              {
+                "children": [],
+                "documentation": "Create a new Pipeline.\n@param {Object} options An object containing the following properties:\n@param {string} [options.task] The task of the pipeline. Useful for specifying subtasks.\n@param {PreTrainedModel} [options.model] The model used by the pipeline.\n@param {PreTrainedTokenizer} [options.tokenizer=null] The tokenizer used by the pipeline (if any).\n@param {Processor} [options.processor=null] The processor used by the pipeline (if any).",
+                "end_line": 175,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/pipelines.js",
+                "qualified_name": "constructor",
+                "signature": "constructor({ task, model, tokenizer = null, processor = null }) {\n        super();\n        this.task = task;\n        this.model = model;\n        this.tokenizer = tokenizer;\n        this.processor = processor;\n    }",
+                "start_line": 169,
+                "symbol_id": "src/pipelines.js#method:constructor:169"
+              },
+              {
+                "children": [],
+                "documentation": "@type {DisposeType}",
+                "end_line": 180,
+                "kind": "method",
+                "name": "dispose",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/pipelines.js",
+                "qualified_name": "dispose",
+                "signature": "async dispose() {\n        await this.model.dispose();\n    }",
+                "start_line": 178,
+                "symbol_id": "src/pipelines.js#method:dispose:178"
+              },
+              {
+                "children": [],
+                "documentation": "Create a new TextClassificationPipeline.\n@param {TextPipelineConstructorArgs} options An object used to instantiate the pipeline.",
+                "end_line": 276,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/pipelines.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(options) {\n        super(options);\n    }",
+                "start_line": 274,
+                "symbol_id": "src/pipelines.js#method:constructor:274"
+              },
+              {
+                "children": [],
+                "documentation": "@type {TextClassificationPipelineCallback}",
+                "end_line": 317,
+                "kind": "method",
+                "name": "_call",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/pipelines.js",
+                "qualified_name": "_call",
+                "signature": "async _call(texts, {\n        topk = 1\n    } = {}) {\n\n        // Run tokenization\n        const model_inputs = this.tokenizer(texts, {\n            padding: true,\n            truncation: true,\n        });\n\n        // Run model\n        const outputs = await this.model(model_inputs)\n\n        // TODO: Use softmax tensor function\n        const function_to_apply =\n            this.model.config.problem_type === 'multi_label_classification'\n                ? batch => batch.sigmoid().data\n                : batch => softmax(batch.data); // single_label_classification (default)\n\n        const id2label = this.model.config.id2label;\n\n        const toReturn = [];\n        for (const batch of outputs.logits) {\n            const output = function_to_apply(batch);\n            const scores = getTopItems(output, topk);\n\n            const vals = scores.map(x => ({\n                label: id2label[x[0]],\n                score: x[1],\n            }));\n            if (topk === 1) {\n                toReturn.push(...vals);\n            } else {\n                toReturn.push(vals);\n            }\n        }\n\n        return Array.isArray(texts) || topk === 1 ? /** @type {TextClassificationOutput} */ (toReturn) : /** @type {TextClassificationOutput[]} */ (toReturn)[0];\n    }",
+                "start_line": 279,
+                "symbol_id": "src/pipelines.js#method:_call:279"
+              },
+              {
+                "children": [],
+                "documentation": "Create a new TokenClassificationPipeline.\n@param {TextPipelineConstructorArgs} options An object used to instantiate the pipeline.",
+                "end_line": 378,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/pipelines.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(options) {\n        super(options);\n    }",
+                "start_line": 376,
+                "symbol_id": "src/pipelines.js#method:constructor:376"
+              },
+              {
+                "children": [],
+                "documentation": "@type {TokenClassificationPipelineCallback}",
+                "end_line": 439,
+                "kind": "method",
+                "name": "_call",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/pipelines.js",
+                "qualified_name": "_call",
+                "signature": "async _call(texts, {\n        ignore_labels = ['O'],\n    } = {}) {\n\n        const isBatched = Array.isArray(texts);\n\n        // Run tokenization\n        const model_inputs = this.tokenizer(isBatched ? texts : [texts], {\n            padding: true,\n            truncation: true,\n        });\n\n        // Run model\n        const outputs = await this.model(model_inputs)\n\n        const logits = outputs.logits;\n        const id2label = this.model.config.id2label;\n\n        const toReturn = [];\n        for (let i = 0; i < logits.dims[0]; ++i) {\n            const ids = model_inputs.input_ids[i];\n            const batch = logits[i];\n\n            // List of tokens that aren't ignored\n            const tokens = [];\n            for (let j = 0; j < batch.dims[0]; ++j) {\n                const tokenData = batch[j];\n                const topScoreIndex = max(tokenData.data)[1];\n\n                const entity = id2label ? id2label[topScoreIndex] : `LABEL_${topScoreIndex}`;\n                if (ignore_labels.includes(entity)) {\n                    // We predicted a token that should be ignored. So, we skip it.\n                    continue;\n                }\n\n                // TODO add option to keep special tokens?\n                const word = this.tokenizer.decode([ids[j].item()], { skip_special_tokens: true });\n                if (word === '') {\n                    // Was a special token. So, we skip it.\n                    continue;\n                }\n\n                const scores = softmax(tokenData.data);\n\n                tokens.push({\n                    entity: entity,\n                    score: scores[topScoreIndex],\n                    index: j,\n                    word: word,\n\n                    // TODO: null for now, but will add\n                    start: null,\n                    end: null,\n                });\n            }\n            toReturn.push(tokens);\n        }\n        return isBatched ? toReturn : toReturn[0];\n    }",
+                "start_line": 381,
+                "symbol_id": "src/pipelines.js#method:_call:381"
+              },
+              {
+                "children": [],
+                "documentation": "Create a new QuestionAnsweringPipeline.\n@param {TextPipelineConstructorArgs} options An object used to instantiate the pipeline.",
+                "end_line": 484,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/pipelines.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(options) {\n        super(options);\n    }",
+                "start_line": 482,
+                "symbol_id": "src/pipelines.js#method:constructor:482"
+              },
+              {
+                "children": [],
+                "documentation": "@type {QuestionAnsweringPipelineCallback}",
+                "end_line": 537,
+                "kind": "method",
+                "name": "_call",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/pipelines.js",
+                "qualified_name": "_call",
+                "signature": "async _call(question, context, {\n        topk = 1\n    } = {}) {\n\n        // Run tokenization\n        const inputs = this.tokenizer(question, {\n            text_pair: context,\n            padding: true,\n            truncation: true,\n        });\n\n        const output = await this.model(inputs);\n\n        /** @type {QuestionAnsweringOutput[]} */\n        const toReturn = [];\n        for (let j = 0; j < output.start_logits.dims[0]; ++j) {\n            const ids = inputs.input_ids[j];\n            const sepIndex = ids.indexOf(this.tokenizer.sep_token_id);\n\n            const s1 = Array.from(softmax(output.start_logits[j].data))\n                .map((x, i) => [x, i])\n                .filter(x => x[1] > sepIndex);\n            const e1 = Array.from(softmax(output.end_logits[j].data))\n                .map((x, i) => [x, i])\n                .filter(x => x[1] > sepIndex);\n\n            const options = product(s1, e1)\n                .filter(x => x[0][1] <= x[1][1])\n                .map(x => [x[0][1], x[1][1], x[0][0] * x[1][0]])\n                .sort((a, b) => b[2] - a[2]);\n\n            for (let k = 0; k < Math.min(options.length, topk); ++k) {\n                const [start, end, score] = options[k];\n\n                const answer_tokens = [...ids].slice(start, end + 1)\n\n                const answer = this.tokenizer.decode(answer_tokens, {\n                    skip_special_tokens: true,\n                });\n\n                // TODO add start and end?\n                // NOTE: HF returns character index\n                toReturn.push({\n                    answer, score\n                });\n            }\n        }\n\n        // Mimic HF's return type based on topk\n        return (topk === 1) ? toReturn[0] : toReturn;\n    }",
+                "start_line": 487,
+                "symbol_id": "src/pipelines.js#method:_call:487"
+              },
+              {
+                "children": [],
+                "documentation": "Create a new FillMaskPipeline.\n@param {TextPipelineConstructorArgs} options An object used to instantiate the pipeline.",
+                "end_line": 594,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/pipelines.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(options) {\n        super(options);\n    }",
+                "start_line": 592,
+                "symbol_id": "src/pipelines.js#method:constructor:592"
+              },
+              {
+                "children": [],
+                "documentation": "@type {FillMaskPipelineCallback}",
+                "end_line": 637,
+                "kind": "method",
+                "name": "_call",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/pipelines.js",
+                "qualified_name": "_call",
+                "signature": "async _call(texts, {\n        topk = 5\n    } = {}) {\n\n        // Run tokenization\n        const model_inputs = this.tokenizer(texts, {\n            padding: true,\n            truncation: true,\n        });\n\n        // Run model\n        const outputs = await this.model(model_inputs)\n\n        const toReturn = [];\n\n        for (let i = 0; i < model_inputs.input_ids.dims[0]; ++i) {\n            const ids = model_inputs.input_ids[i];\n            const mask_token_index = ids.indexOf(this.tokenizer.mask_token_id)\n\n            if (mask_token_index === -1) {\n                throw Error(`Mask token (${this.tokenizer.mask_token}) not found in text.`)\n            }\n            const logits = outputs.logits[i];\n            const itemLogits = logits[mask_token_index];\n\n            const scores = getTopItems(softmax(itemLogits.data), topk);\n\n            toReturn.push(scores.map(x => {\n                const sequence = [...ids];\n                sequence[mask_token_index] = x[0];\n\n                return {\n                    score: x[1],\n                    token: x[0],\n                    token_str: this.tokenizer.model.vocab[x[0]],\n                    sequence: this.tokenizer.decode(sequence, { skip_special_tokens: true }),\n                }\n            }));\n        }\n        return Array.isArray(texts) ? toReturn : toReturn[0];\n    }",
+                "start_line": 597,
+                "symbol_id": "src/pipelines.js#method:_call:597"
+              },
+              {
+                "children": [],
+                "documentation": "Create a new Text2TextGenerationPipeline.\n@param {TextPipelineConstructorArgs} options An object used to instantiate the pipeline.",
+                "end_line": 676,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/pipelines.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(options) {\n        super(options);\n    }",
+                "start_line": 674,
+                "symbol_id": "src/pipelines.js#method:constructor:674"
+              },
+              {
+                "children": [],
+                "documentation": "@type {Text2TextGenerationPipelineCallback}",
+                "end_line": 722,
+                "kind": "method",
+                "name": "_call",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/pipelines.js",
+                "qualified_name": "_call",
+                "signature": "async _call(texts, generate_kwargs = {}) {\n        if (!Array.isArray(texts)) {\n            texts = [texts];\n        }\n\n\n        // Add global prefix, if present\n        if (this.model.config.prefix) {\n            texts = texts.map(x => this.model.config.prefix + x)\n        }\n\n        // Handle task specific params:\n        const task_specific_params = this.model.config.task_specific_params\n        if (task_specific_params && task_specific_params[this.task]) {\n            // Add prefixes, if present\n            if (task_specific_params[this.task].prefix) {\n                texts = texts.map(x => task_specific_params[this.task].prefix + x)\n            }\n\n            // TODO update generation config\n        }\n\n        const tokenizer = this.tokenizer;\n        const tokenizer_options = {\n            padding: true,\n            truncation: true,\n        }\n        let input_ids;\n        if (this instanceof TranslationPipeline && '_build_translation_inputs' in tokenizer) {\n            // TODO: move to Translation pipeline?\n            // Currently put here to avoid code duplication\n            // @ts-ignore\n            input_ids = tokenizer._build_translation_inputs(texts, tokenizer_options, generate_kwargs).input_ids;\n\n        } else {\n            input_ids = tokenizer(texts, tokenizer_options).input_ids;\n        }\n\n        const outputTokenIds = await this.model.generate(input_ids, generate_kwargs);\n\n        return tokenizer.batch_decode(outputTokenIds, {\n            skip_special_tokens: true,\n        }).map(text => ({ [this._key]: text }));\n    }",
+                "start_line": 679,
+                "symbol_id": "src/pipelines.js#method:_call:679"
+              },
+              {
+                "children": [],
+                "documentation": "Create a new SummarizationPipeline.\n@param {TextPipelineConstructorArgs} options An object used to instantiate the pipeline.",
+                "end_line": 769,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/pipelines.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(options) {\n        super(options);\n    }",
+                "start_line": 767,
+                "symbol_id": "src/pipelines.js#method:constructor:767"
+              },
+              {
+                "children": [],
+                "documentation": "Create a new TranslationPipeline.\n@param {TextPipelineConstructorArgs} options An object used to instantiate the pipeline.",
+                "end_line": 841,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/pipelines.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(options) {\n        super(options);\n    }",
+                "start_line": 839,
+                "symbol_id": "src/pipelines.js#method:constructor:839"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 846,
+                "kind": "function",
+                "name": "isChat",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/pipelines.js",
+                "qualified_name": "isChat",
+                "signature": "function isChat(x) {\n    return Array.isArray(x) && x.every(x => 'role' in x && 'content' in x);\n}",
+                "start_line": 844,
+                "symbol_id": "src/pipelines.js#function:isChat:844"
+              },
+              {
+                "children": [],
+                "documentation": "Create a new TextGenerationPipeline.\n@param {TextPipelineConstructorArgs} options An object used to instantiate the pipeline.",
+                "end_line": 926,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/pipelines.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(options) {\n        super(options);\n    }",
+                "start_line": 924,
+                "symbol_id": "src/pipelines.js#method:constructor:924"
+              },
+              {
+                "children": [],
+                "documentation": "Create a new FeatureExtractionPipeline.\n@param {TextPipelineConstructorArgs} options An object used to instantiate the pipeline.",
+                "end_line": 1233,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/pipelines.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(options) {\n        super(options);\n    }",
+                "start_line": 1231,
+                "symbol_id": "src/pipelines.js#method:constructor:1231"
+              },
+              {
+                "children": [],
+                "documentation": "Create a new ImageFeatureExtractionPipeline.\n@param {ImagePipelineConstructorArgs} options An object used to instantiate the pipeline.",
+                "end_line": 1331,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/pipelines.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(options) {\n        super(options);\n    }",
+                "start_line": 1329,
+                "symbol_id": "src/pipelines.js#method:constructor:1329"
+              },
+              {
+                "children": [],
+                "documentation": "Create a new AudioClassificationPipeline.\n@param {AudioPipelineConstructorArgs} options An object used to instantiate the pipeline.",
+                "end_line": 1420,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/pipelines.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(options) {\n        super(options);\n    }",
+                "start_line": 1418,
+                "symbol_id": "src/pipelines.js#method:constructor:1418"
+              },
+              {
+                "children": [],
+                "documentation": "Create a new ZeroShotAudioClassificationPipeline.\n@param {TextAudioPipelineConstructorArgs} options An object used to instantiate the pipeline.",
+                "end_line": 1504,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/pipelines.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(options) {\n        super(options);\n    }",
+                "start_line": 1502,
+                "symbol_id": "src/pipelines.js#method:constructor:1502"
+              },
+              {
+                "children": [],
+                "documentation": "Create a new AutomaticSpeechRecognitionPipeline.\n@param {TextAudioPipelineConstructorArgs} options An object used to instantiate the pipeline.",
+                "end_line": 1668,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/pipelines.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(options) {\n        super(options);\n    }",
+                "start_line": 1666,
+                "symbol_id": "src/pipelines.js#method:constructor:1666"
+              },
+              {
+                "children": [],
+                "documentation": "Create a new ImageToTextPipeline.\n@param {TextImagePipelineConstructorArgs} options An object used to instantiate the pipeline.",
+                "end_line": 1889,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/pipelines.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(options) {\n        super(options);\n    }",
+                "start_line": 1887,
+                "symbol_id": "src/pipelines.js#method:constructor:1887"
+              },
+              {
+                "children": [],
+                "documentation": "Create a new ImageClassificationPipeline.\n@param {ImagePipelineConstructorArgs} options An object used to instantiate the pipeline.",
+                "end_line": 1978,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/pipelines.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(options) {\n        super(options);\n    }",
+                "start_line": 1976,
+                "symbol_id": "src/pipelines.js#method:constructor:1976"
+              },
+              {
+                "children": [],
+                "documentation": "Create a new ZeroShotImageClassificationPipeline.\n@param {TextImagePipelineConstructorArgs} options An object used to instantiate the pipeline.",
+                "end_line": 2202,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/pipelines.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(options) {\n        super(options);\n    }",
+                "start_line": 2200,
+                "symbol_id": "src/pipelines.js#method:constructor:2200"
+              },
+              {
+                "children": [],
+                "documentation": "Create a new ObjectDetectionPipeline.\n@param {ImagePipelineConstructorArgs} options An object used to instantiate the pipeline.",
+                "end_line": 2302,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/pipelines.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(options) {\n        super(options);\n    }",
+                "start_line": 2300,
+                "symbol_id": "src/pipelines.js#method:constructor:2300"
+              },
+              {
+                "children": [],
+                "documentation": "Create a new ZeroShotObjectDetectionPipeline.\n@param {TextImagePipelineConstructorArgs} options An object used to instantiate the pipeline.",
+                "end_line": 2437,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/pipelines.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(options) {\n        super(options);\n    }",
+                "start_line": 2435,
+                "symbol_id": "src/pipelines.js#method:constructor:2435"
+              },
+              {
+                "children": [],
+                "documentation": "Create a new DocumentQuestionAnsweringPipeline.\n@param {TextImagePipelineConstructorArgs} options An object used to instantiate the pipeline.",
+                "end_line": 2523,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/pipelines.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(options) {\n        super(options);\n    }",
+                "start_line": 2521,
+                "symbol_id": "src/pipelines.js#method:constructor:2521"
+              },
+              {
+                "children": [],
+                "documentation": "Create a new ImageToImagePipeline.\n@param {ImagePipelineConstructorArgs} options An object used to instantiate the pipeline.",
+                "end_line": 2744,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/pipelines.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(options) {\n        super(options);\n    }",
+                "start_line": 2742,
+                "symbol_id": "src/pipelines.js#method:constructor:2742"
+              },
+              {
+                "children": [],
+                "documentation": "Create a new DepthEstimationPipeline.\n@param {ImagePipelineConstructorArgs} options An object used to instantiate the pipeline.",
+                "end_line": 2807,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/pipelines.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(options) {\n        super(options);\n    }",
+                "start_line": 2805,
+                "symbol_id": "src/pipelines.js#method:constructor:2805"
+              }
+            ],
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "src/pipelines.js",
+                "workspace_id": "ts_003_ctx16k"
+              },
+              "durationMs": 6,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "list_symbols",
+              "transport": "in_memory"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 2634,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "symbol_id": "src/pipelines.js#function:prepareImages:86",
+              "workspace_id": "ts_003_ctx16k"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 4,
+          "metadata": {
+            "is_error": false,
+            "result": {
+              "children": [],
+              "code": "async function prepareImages(images) {\n    if (!Array.isArray(images)) {\n        images = [images];\n    }\n\n    // Possibly convert any non-images to images\n    return await Promise.all(images.map(x => RawImage.read(x)));\n}",
+              "documentation": "Prepare images for further tasks.\n@param {ImagePipelineInputs} images images to prepare.\n@returns {Promise<RawImage[]>} returns processed images.\n@private",
+              "end_line": 93,
+              "kind": "function",
+              "name": "prepareImages",
+              "parent_id": null,
+              "parent_name": null,
+              "path": "src/pipelines.js",
+              "qualified_name": "prepareImages",
+              "signature": "async function prepareImages(images) {\n    if (!Array.isArray(images)) {\n        images = [images];\n    }\n\n    // Possibly convert any non-images to images\n    return await Promise.all(images.map(x => RawImage.read(x)));\n}",
+              "start_line": 86,
+              "symbol_id": "src/pipelines.js#function:prepareImages:86"
+            },
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "symbol_id": "src/pipelines.js#function:prepareImages:86",
+                "workspace_id": "ts_003_ctx16k"
+              },
+              "durationMs": 4,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "get_symbol",
+              "transport": "in_memory"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1287,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 7365,
+          "metadata": {},
+          "name": "strategy.local_mcp.execute",
+          "type": "strategy.local_mcp.execute"
+        },
+        {
+          "duration_ms": 7365,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 80,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": null,
+        "cachedInputTokens": 592,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 3,
+        "inputTokens": 9838,
+        "loopControlDurationMsEstimated": 61,
+        "mcpToolCalls": 3,
+        "modelCalls": 4,
+        "modelDurationMs": 7285,
+        "outputTokens": 179,
+        "promptChars": 978,
+        "questionTokensEstimated": 136,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 517,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 4,
+        "strategyDurationMs": 7365,
+        "taskStatementChars": 807,
+        "toolCalls": 3,
+        "toolDurationMs": 19,
+        "totalDurationMs": 7365,
+        "totalTokens": 10534,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "workspace_id": "ts_003_ctx16k"
+                    },
+                    "id": null,
+                    "name": "list_files",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CrsGAQw51sf3b1k-Rvu0ITE3aGrq9FKoznyqv63IkLXohDYLD32H8gBAWyw8RFCWp0KwkwsxVUn2o16YNYOS94llGcvkdXsrNGljRa0QZOdH_a_03ZCS6QaQDC_ussVvWZQWRqiKv-Wk2R8XMUFBgnu891cAaV50z35OXcTJR14gj7WgR2aWdanl8flqIHUGTIhExVsTLceV6Rd7OMb3a6thgnF7vEkC4h1B5oi3F1fXZtIV2Npj3ZHyaWGlKms0Ge8kWpD0eGrazM85TIIrTCn7YFTheVLlQjO_YXXUc9XcvW4R9EVbixsfKM1bN5hkNOf_8CBr7OKW5OcSO3b7pS43i-RtbBCIPNWvpKVCjfzOi5wsVRmHq05mhStb6id0Idaqf7iGeESngk2jP3dIVwplgGdtIDiOStIfBBlQT_ogekMRUKEZxY-QlCQof-rrmUbjBIlsq3mfZzCc5RoIJlgMSNbBDITqgGE7016e1xn0EA_frSi9jC2PFqCDcOImxqbkplCSoI7PIrD0ou8dAncU_EqQzjx-yws4L-Q5k78wVco5xiWVthAK4_SqJByH83MR13qk5Csw3ug-4ZWst5Op07bpgOxOO-gDgrAoLpTYFmJeIUbCqMeZXoHZceEkEHjx-z66Np6suoAQV_KUV9wnXcLusgk18IvjvtHFv61QDzKbtnSzctrgfA7zfbEHnpaYuDAUiL1bOjwXK-J_O17l8vkx04HQXxpcJXRw37uqNb_xWVUVWc72_zfEByTDBeh7DNqumJoQNvAGnP0w7Rrtn0B48ulC0rDuyTGk0DkyAhp6QcQ9WqTioyExP2hSJ5RhfRJBNP0EL9w039mCAidQbavLnglMf2l-xvUXrETtmB6zGJKjcSp4dcJbz9gdzvojAu06Ov60dQf6oFdzsW2qRPmsVSFaqQtxmykMgrUwyWSW1L2h1mTnLT-uATcKAXsV_lz0TYDlm_oxCFivKUWPlfaUEnq1w25rbMkftVVzaDIjohCvBv7DqcHmkZwFL75ROATmXFuXdS7L7lPQsqjhOs-lZR1C6yhtMJa1WTVYUF6YoqvTx1MyOLrpiTQIsv4jKxDnXfu3hW5AQ1M=",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "YYoUaqecAsasz7IPjLW1qQ4",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:44:02 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1620",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 26,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 605,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 605
+            }
+          ],
+          "thoughts_token_count": 176,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 807,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "kind": "function",
+                      "path": "src/pipelines.js",
+                      "workspace_id": "ts_003_ctx16k"
+                    },
+                    "id": null,
+                    "name": "list_symbols",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CvkCAQw51seLTrycxBU-J70crjsjDpYOW9qOjly4891sse7Q99UxgFQ2Y_RF0Yp-C2N-uzlznZW40o5422AQX-n01HLw7__pZzTQqCDnIKNZkkCXMinMVmE_cyySycqeBmD8_fTKqq0_HfMWwR1BeccHlvmBz7uGL0KrQfeFfLdNEgg1Vzt_W5XTomw49vpAjuHlqEWR9kvHVjMfVxJGsqcNhxY6O5xuX0oFiMrgvzTGD2cWkiApXQQ7kUThx4oo-1ms60vQY_-zp36FQm4O3J4BHbVpS53OhKQl28uoqeQsj3gur-RBoZefEjo3m0a2U0BW-L5B5PYMUlS2Hsk8kmcrnRLLT1d4MPaO6HjYlYREhU-WV-7rT02AgcEcAAhoDzWhFDxII3yutOipU9BdttTTT-EMQRBkK_H79POLeeKhVaaZgavnIEJ_HFktPVQtQM6ANmYxmMPhWncLcaNFxlVhnl21pf6gBGnsCQMR1bvZoDfYwAhQ6RKeI_4=",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "YooUauXlNqiEz7IP_PmpoQc",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:44:04 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1312",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 40,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 738,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 738
+            }
+          ],
+          "thoughts_token_count": 90,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 868,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "symbol_id": "src/pipelines.js#function:prepareImages:86",
+                      "workspace_id": "ts_003_ctx16k"
+                    },
+                    "id": null,
+                    "name": "get_symbol",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CtMIAQw51sd3iTQjqz-MWEabpM1Q82DlFRQR-sIa4GDD4HMnNcU_hZylOuVuHzSuFm04rAOEOF-jxX5a3f0SKgifEuEifo-8t0HMOtlvXjQhpoR2RAPd69Qnp2hMvmx9Vrrf0LxuNo1Ubdpeox0iBkjvgbMVRLrzoBSXBOlk_9NX3vY_djMLIWx_gRmR5A5cle7WS5tQTjqLsoDW363iF_6DEC95TR0ZA0WXn9xIseMXDQ2jAp3S6OOuzwxtDFzPZdUwMbDys0HZWrp_WUSPmoDEJVbQNKP-T3U918dZL4EArAg-AEWh5OOlvTQmi8G7HZiUO1kvn2BYGTUMIBzBhtBr2KgBbw_9WyJJTTBJwoAiUNtXzGsyVQIrCjMfYZSkY_m4FLy0J3upxSxut3vf7DrniuyUj6Q-FgpMlQPyKN_4a7xFEdqdo077oatI4dFAbkVAHKy_STmWIEdB9HM_zzx2DO_GzE-4oW9zQVT6uOTzzPxy4TmsIMDVf9gqb0y_oqG5zTQ0c_QtWs6IVS7iNPdPMjB5ERizHZZa6ASVWOin-ALZre46ftOZdKII6oLeuW20xbU9qd916fusqp5ln0c9pmD4BRLWA0Fh25lKkb6OgacI4lBm7xhsS-UpL1SmGEUksDtvm-r5abEJ2T8Ut_GrJECg1foy9FqPjNIszoUJnv8ioKx-B5QPKM1w0UUeKdVane7MxNoBwWFjbUAHR7N89ihIxQrjFCByWKs9z4X_EyGAaodckAbvhD6mjWIjWhGb_0CfT0KMkZjPV_wvdHMqho7CoYlUGgBvnk7BGNqoDMtL0xYzDTfe4hwJ8y8OJT9vOPDh-54BB_aBjeGwvJNl0ZRii5_DIFq5aNke92xutZn4YyxzLl4Vhuc5ot83tzKrdCLC_ggufAlGhcr2aBvtmUZWSJwPSOZ95NGUT-lF1-0qn9EARjcTh7uMpv313sf1RzVC6K0hS7VoOvluIzi7hu7qzOkMKeSmryOxzbUdvdYYyqPjpAed_hJvOnsH3c8ruhXlUG5Ured136nqKKlFYo9_uhCyZOvqt5cMtCI4Vp0pFrVD410oi9xzSEfq2iftTtV52x0U4xHJQLpSUx3qKwajmc7rYFqQZ0IXlpu1RLI86Idy3TIND8fnkAPbUlZR2OaqS7exAVXxYayw4DlnyGZmwHbNGcpW12sAQXRoPeiS9n1EfqCIZDdnZtSs9Fj5MMc-1YLNOZZ9PM4SknnJZKipXRSDz7LnzuyauMDqoLyAORWzyPdGDHs_DPIHaxj1cvq8yriMjxK5ePt5Ea8aMs7up3W97m3FlgtNO8Wjz0TuGFMd9las1Q-g3qOL6yQ19pjA4359s86gHdzE2xNAJNLuSCzMDU7KLtVPvu38OJ1LLcpWV6ccNgr6OYGwFsDKVfE7cTsSGPE9hRNyqUBPdGVYoFiCrB1K_uiKLmOSVdfw9ESJys-SqQ8jC2PMj9z98SAn",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "ZIoUarH_IozVz7IPutHKqQo",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:44:06 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=2425",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 45,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 7559,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 7559
+            }
+          ],
+          "thoughts_token_count": 251,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 7855,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": null,
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": "```javascript\nasync function prepareImages(images) {\n    if (!Array.isArray(images)) {\n        images = [images];\n    }\n\n    // Possibly convert any non-images to images\n    return await Promise.all(images.map(x => RawImage.read(x)));\n}\n```",
+                  "thought": null,
+                  "thought_signature": null,
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                },
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": null,
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": "\n",
+                  "thought": null,
+                  "thought_signature": null,
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "Z4oUaq3lBZaFz7IP9MrqwQo",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:44:07 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1082",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 592
+            }
+          ],
+          "cached_content_token_count": 592,
+          "candidates_token_count": 68,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 936,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 936
+            }
+          ],
+          "thoughts_token_count": null,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 1004,
+          "traffic_type": null
+        }
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "workspace_id": "ts_003_ctx16k"
+        },
+        "durationMs": 8,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "list_files",
+        "transport": "in_memory"
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/pipelines.js",
+          "workspace_id": "ts_003_ctx16k"
+        },
+        "durationMs": 6,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "list_symbols",
+        "transport": "in_memory"
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/pipelines.js#function:prepareImages:86",
+          "workspace_id": "ts_003_ctx16k"
+        },
+        "durationMs": 4,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "get_symbol",
+        "transport": "in_memory"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "workspace_id": "ts_003_ctx16k"
+        },
+        "id": "step-1-tool-1",
+        "isError": false,
+        "name": "list_files",
+        "result": [
+          {
+            "language": "typescript",
+            "parse_status": "ok_filtered",
+            "path": "src/pipelines.js",
+            "repository": "xenova/transformers.js",
+            "symbol_count": 130
+          },
+          {
+            "language": "typescript",
+            "parse_status": "ok_filtered",
+            "path": "src/tokenizers.js",
+            "repository": "xenova/transformers.js",
+            "symbol_count": 36
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/pipelines.js",
+          "workspace_id": "ts_003_ctx16k"
+        },
+        "id": "step-2-tool-1",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "Prepare images for further tasks.\n@param {ImagePipelineInputs} images images to prepare.\n@returns {Promise<RawImage[]>} returns processed images.\n@private",
+            "end_line": 93,
+            "kind": "function",
+            "name": "prepareImages",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/pipelines.js",
+            "qualified_name": "prepareImages",
+            "signature": "async function prepareImages(images) {\n    if (!Array.isArray(images)) {\n        images = [images];\n    }\n\n    // Possibly convert any non-images to images\n    return await Promise.all(images.map(x => RawImage.read(x)));\n}",
+            "start_line": 86,
+            "symbol_id": "src/pipelines.js#function:prepareImages:86"
+          },
+          {
+            "children": [],
+            "documentation": "Prepare audios for further tasks.\n@param {AudioPipelineInputs} audios audios to prepare.\n@param {number} sampling_rate sampling rate of the audios.\n@returns {Promise<Float32Array[]>} The preprocessed audio data.\n@private",
+            "end_line": 120,
+            "kind": "function",
+            "name": "prepareAudios",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/pipelines.js",
+            "qualified_name": "prepareAudios",
+            "signature": "async function prepareAudios(audios, sampling_rate) {\n    if (!Array.isArray(audios)) {\n        audios = [audios];\n    }\n\n    return await Promise.all(audios.map(x => {\n        if (typeof x === 'string' || x instanceof URL) {\n            return read_audio(x, sampling_rate);\n        } else if (x instanceof Float64Array) {\n            return new Float32Array(x);\n        }\n        return x;\n    }));\n}",
+            "start_line": 107,
+            "symbol_id": "src/pipelines.js#function:prepareAudios:107"
+          },
+          {
+            "children": [],
+            "documentation": "Helper function to convert list [xmin, xmax, ymin, ymax] into object { \"xmin\": xmin, ... }\n@param {number[]} box The bounding box as a list.\n@param {boolean} asInteger Whether to cast to integers.\n@returns {BoundingBox} The bounding box as an object.\n@private",
+            "end_line": 144,
+            "kind": "function",
+            "name": "get_bounding_box",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/pipelines.js",
+            "qualified_name": "get_bounding_box",
+            "signature": "function get_bounding_box(box, asInteger) {\n    if (asInteger) {\n        box = box.map(x => x | 0);\n    }\n    const [xmin, ymin, xmax, ymax] = box;\n\n    return { xmin, ymin, xmax, ymax };\n}",
+            "start_line": 137,
+            "symbol_id": "src/pipelines.js#function:get_bounding_box:137"
+          },
+          {
+            "children": [],
+            "documentation": "Create a new Pipeline.\n@param {Object} options An object containing the following properties:\n@param {string} [options.task] The task of the pipeline. Useful for specifying subtasks.\n@param {PreTrainedModel} [options.model] The model used by the pipeline.\n@param {PreTrainedTokenizer} [options.tokenizer=null] The tokenizer used by the pipeline (if any).\n@param {Processor} [options.processor=null] The processor used by the pipeline (if any).",
+            "end_line": 175,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/pipelines.js",
+            "qualified_name": "constructor",
+            "signature": "constructor({ task, model, tokenizer = null, processor = null }) {\n        super();\n        this.task = task;\n        this.model = model;\n        this.tokenizer = tokenizer;\n        this.processor = processor;\n    }",
+            "start_line": 169,
+            "symbol_id": "src/pipelines.js#method:constructor:169"
+          },
+          {
+            "children": [],
+            "documentation": "@type {DisposeType}",
+            "end_line": 180,
+            "kind": "method",
+            "name": "dispose",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/pipelines.js",
+            "qualified_name": "dispose",
+            "signature": "async dispose() {\n        await this.model.dispose();\n    }",
+            "start_line": 178,
+            "symbol_id": "src/pipelines.js#method:dispose:178"
+          },
+          {
+            "children": [],
+            "documentation": "Create a new TextClassificationPipeline.\n@param {TextPipelineConstructorArgs} options An object used to instantiate the pipeline.",
+            "end_line": 276,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/pipelines.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(options) {\n        super(options);\n    }",
+            "start_line": 274,
+            "symbol_id": "src/pipelines.js#method:constructor:274"
+          },
+          {
+            "children": [],
+            "documentation": "@type {TextClassificationPipelineCallback}",
+            "end_line": 317,
+            "kind": "method",
+            "name": "_call",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/pipelines.js",
+            "qualified_name": "_call",
+            "signature": "async _call(texts, {\n        topk = 1\n    } = {}) {\n\n        // Run tokenization\n        const model_inputs = this.tokenizer(texts, {\n            padding: true,\n            truncation: true,\n        });\n\n        // Run model\n        const outputs = await this.model(model_inputs)\n\n        // TODO: Use softmax tensor function\n        const function_to_apply =\n            this.model.config.problem_type === 'multi_label_classification'\n                ? batch => batch.sigmoid().data\n                : batch => softmax(batch.data); // single_label_classification (default)\n\n        const id2label = this.model.config.id2label;\n\n        const toReturn = [];\n        for (const batch of outputs.logits) {\n            const output = function_to_apply(batch);\n            const scores = getTopItems(output, topk);\n\n            const vals = scores.map(x => ({\n                label: id2label[x[0]],\n                score: x[1],\n            }));\n            if (topk === 1) {\n                toReturn.push(...vals);\n            } else {\n                toReturn.push(vals);\n            }\n        }\n\n        return Array.isArray(texts) || topk === 1 ? /** @type {TextClassificationOutput} */ (toReturn) : /** @type {TextClassificationOutput[]} */ (toReturn)[0];\n    }",
+            "start_line": 279,
+            "symbol_id": "src/pipelines.js#method:_call:279"
+          },
+          {
+            "children": [],
+            "documentation": "Create a new TokenClassificationPipeline.\n@param {TextPipelineConstructorArgs} options An object used to instantiate the pipeline.",
+            "end_line": 378,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/pipelines.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(options) {\n        super(options);\n    }",
+            "start_line": 376,
+            "symbol_id": "src/pipelines.js#method:constructor:376"
+          },
+          {
+            "children": [],
+            "documentation": "@type {TokenClassificationPipelineCallback}",
+            "end_line": 439,
+            "kind": "method",
+            "name": "_call",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/pipelines.js",
+            "qualified_name": "_call",
+            "signature": "async _call(texts, {\n        ignore_labels = ['O'],\n    } = {}) {\n\n        const isBatched = Array.isArray(texts);\n\n        // Run tokenization\n        const model_inputs = this.tokenizer(isBatched ? texts : [texts], {\n            padding: true,\n            truncation: true,\n        });\n\n        // Run model\n        const outputs = await this.model(model_inputs)\n\n        const logits = outputs.logits;\n        const id2label = this.model.config.id2label;\n\n        const toReturn = [];\n        for (let i = 0; i < logits.dims[0]; ++i) {\n            const ids = model_inputs.input_ids[i];\n            const batch = logits[i];\n\n            // List of tokens that aren't ignored\n            const tokens = [];\n            for (let j = 0; j < batch.dims[0]; ++j) {\n                const tokenData = batch[j];\n                const topScoreIndex = max(tokenData.data)[1];\n\n                const entity = id2label ? id2label[topScoreIndex] : `LABEL_${topScoreIndex}`;\n                if (ignore_labels.includes(entity)) {\n                    // We predicted a token that should be ignored. So, we skip it.\n                    continue;\n                }\n\n                // TODO add option to keep special tokens?\n                const word = this.tokenizer.decode([ids[j].item()], { skip_special_tokens: true });\n                if (word === '') {\n                    // Was a special token. So, we skip it.\n                    continue;\n                }\n\n                const scores = softmax(tokenData.data);\n\n                tokens.push({\n                    entity: entity,\n                    score: scores[topScoreIndex],\n                    index: j,\n                    word: word,\n\n                    // TODO: null for now, but will add\n                    start: null,\n                    end: null,\n                });\n            }\n            toReturn.push(tokens);\n        }\n        return isBatched ? toReturn : toReturn[0];\n    }",
+            "start_line": 381,
+            "symbol_id": "src/pipelines.js#method:_call:381"
+          },
+          {
+            "children": [],
+            "documentation": "Create a new QuestionAnsweringPipeline.\n@param {TextPipelineConstructorArgs} options An object used to instantiate the pipeline.",
+            "end_line": 484,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/pipelines.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(options) {\n        super(options);\n    }",
+            "start_line": 482,
+            "symbol_id": "src/pipelines.js#method:constructor:482"
+          },
+          {
+            "children": [],
+            "documentation": "@type {QuestionAnsweringPipelineCallback}",
+            "end_line": 537,
+            "kind": "method",
+            "name": "_call",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/pipelines.js",
+            "qualified_name": "_call",
+            "signature": "async _call(question, context, {\n        topk = 1\n    } = {}) {\n\n        // Run tokenization\n        const inputs = this.tokenizer(question, {\n            text_pair: context,\n            padding: true,\n            truncation: true,\n        });\n\n        const output = await this.model(inputs);\n\n        /** @type {QuestionAnsweringOutput[]} */\n        const toReturn = [];\n        for (let j = 0; j < output.start_logits.dims[0]; ++j) {\n            const ids = inputs.input_ids[j];\n            const sepIndex = ids.indexOf(this.tokenizer.sep_token_id);\n\n            const s1 = Array.from(softmax(output.start_logits[j].data))\n                .map((x, i) => [x, i])\n                .filter(x => x[1] > sepIndex);\n            const e1 = Array.from(softmax(output.end_logits[j].data))\n                .map((x, i) => [x, i])\n                .filter(x => x[1] > sepIndex);\n\n            const options = product(s1, e1)\n                .filter(x => x[0][1] <= x[1][1])\n                .map(x => [x[0][1], x[1][1], x[0][0] * x[1][0]])\n                .sort((a, b) => b[2] - a[2]);\n\n            for (let k = 0; k < Math.min(options.length, topk); ++k) {\n                const [start, end, score] = options[k];\n\n                const answer_tokens = [...ids].slice(start, end + 1)\n\n                const answer = this.tokenizer.decode(answer_tokens, {\n                    skip_special_tokens: true,\n                });\n\n                // TODO add start and end?\n                // NOTE: HF returns character index\n                toReturn.push({\n                    answer, score\n                });\n            }\n        }\n\n        // Mimic HF's return type based on topk\n        return (topk === 1) ? toReturn[0] : toReturn;\n    }",
+            "start_line": 487,
+            "symbol_id": "src/pipelines.js#method:_call:487"
+          },
+          {
+            "children": [],
+            "documentation": "Create a new FillMaskPipeline.\n@param {TextPipelineConstructorArgs} options An object used to instantiate the pipeline.",
+            "end_line": 594,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/pipelines.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(options) {\n        super(options);\n    }",
+            "start_line": 592,
+            "symbol_id": "src/pipelines.js#method:constructor:592"
+          },
+          {
+            "children": [],
+            "documentation": "@type {FillMaskPipelineCallback}",
+            "end_line": 637,
+            "kind": "method",
+            "name": "_call",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/pipelines.js",
+            "qualified_name": "_call",
+            "signature": "async _call(texts, {\n        topk = 5\n    } = {}) {\n\n        // Run tokenization\n        const model_inputs = this.tokenizer(texts, {\n            padding: true,\n            truncation: true,\n        });\n\n        // Run model\n        const outputs = await this.model(model_inputs)\n\n        const toReturn = [];\n\n        for (let i = 0; i < model_inputs.input_ids.dims[0]; ++i) {\n            const ids = model_inputs.input_ids[i];\n            const mask_token_index = ids.indexOf(this.tokenizer.mask_token_id)\n\n            if (mask_token_index === -1) {\n                throw Error(`Mask token (${this.tokenizer.mask_token}) not found in text.`)\n            }\n            const logits = outputs.logits[i];\n            const itemLogits = logits[mask_token_index];\n\n            const scores = getTopItems(softmax(itemLogits.data), topk);\n\n            toReturn.push(scores.map(x => {\n                const sequence = [...ids];\n                sequence[mask_token_index] = x[0];\n\n                return {\n                    score: x[1],\n                    token: x[0],\n                    token_str: this.tokenizer.model.vocab[x[0]],\n                    sequence: this.tokenizer.decode(sequence, { skip_special_tokens: true }),\n                }\n            }));\n        }\n        return Array.isArray(texts) ? toReturn : toReturn[0];\n    }",
+            "start_line": 597,
+            "symbol_id": "src/pipelines.js#method:_call:597"
+          },
+          {
+            "children": [],
+            "documentation": "Create a new Text2TextGenerationPipeline.\n@param {TextPipelineConstructorArgs} options An object used to instantiate the pipeline.",
+            "end_line": 676,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/pipelines.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(options) {\n        super(options);\n    }",
+            "start_line": 674,
+            "symbol_id": "src/pipelines.js#method:constructor:674"
+          },
+          {
+            "children": [],
+            "documentation": "@type {Text2TextGenerationPipelineCallback}",
+            "end_line": 722,
+            "kind": "method",
+            "name": "_call",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/pipelines.js",
+            "qualified_name": "_call",
+            "signature": "async _call(texts, generate_kwargs = {}) {\n        if (!Array.isArray(texts)) {\n            texts = [texts];\n        }\n\n\n        // Add global prefix, if present\n        if (this.model.config.prefix) {\n            texts = texts.map(x => this.model.config.prefix + x)\n        }\n\n        // Handle task specific params:\n        const task_specific_params = this.model.config.task_specific_params\n        if (task_specific_params && task_specific_params[this.task]) {\n            // Add prefixes, if present\n            if (task_specific_params[this.task].prefix) {\n                texts = texts.map(x => task_specific_params[this.task].prefix + x)\n            }\n\n            // TODO update generation config\n        }\n\n        const tokenizer = this.tokenizer;\n        const tokenizer_options = {\n            padding: true,\n            truncation: true,\n        }\n        let input_ids;\n        if (this instanceof TranslationPipeline && '_build_translation_inputs' in tokenizer) {\n            // TODO: move to Translation pipeline?\n            // Currently put here to avoid code duplication\n            // @ts-ignore\n            input_ids = tokenizer._build_translation_inputs(texts, tokenizer_options, generate_kwargs).input_ids;\n\n        } else {\n            input_ids = tokenizer(texts, tokenizer_options).input_ids;\n        }\n\n        const outputTokenIds = await this.model.generate(input_ids, generate_kwargs);\n\n        return tokenizer.batch_decode(outputTokenIds, {\n            skip_special_tokens: true,\n        }).map(text => ({ [this._key]: text }));\n    }",
+            "start_line": 679,
+            "symbol_id": "src/pipelines.js#method:_call:679"
+          },
+          {
+            "children": [],
+            "documentation": "Create a new SummarizationPipeline.\n@param {TextPipelineConstructorArgs} options An object used to instantiate the pipeline.",
+            "end_line": 769,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/pipelines.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(options) {\n        super(options);\n    }",
+            "start_line": 767,
+            "symbol_id": "src/pipelines.js#method:constructor:767"
+          },
+          {
+            "children": [],
+            "documentation": "Create a new TranslationPipeline.\n@param {TextPipelineConstructorArgs} options An object used to instantiate the pipeline.",
+            "end_line": 841,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/pipelines.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(options) {\n        super(options);\n    }",
+            "start_line": 839,
+            "symbol_id": "src/pipelines.js#method:constructor:839"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 846,
+            "kind": "function",
+            "name": "isChat",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/pipelines.js",
+            "qualified_name": "isChat",
+            "signature": "function isChat(x) {\n    return Array.isArray(x) && x.every(x => 'role' in x && 'content' in x);\n}",
+            "start_line": 844,
+            "symbol_id": "src/pipelines.js#function:isChat:844"
+          },
+          {
+            "children": [],
+            "documentation": "Create a new TextGenerationPipeline.\n@param {TextPipelineConstructorArgs} options An object used to instantiate the pipeline.",
+            "end_line": 926,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/pipelines.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(options) {\n        super(options);\n    }",
+            "start_line": 924,
+            "symbol_id": "src/pipelines.js#method:constructor:924"
+          },
+          {
+            "children": [],
+            "documentation": "Create a new FeatureExtractionPipeline.\n@param {TextPipelineConstructorArgs} options An object used to instantiate the pipeline.",
+            "end_line": 1233,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/pipelines.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(options) {\n        super(options);\n    }",
+            "start_line": 1231,
+            "symbol_id": "src/pipelines.js#method:constructor:1231"
+          },
+          {
+            "children": [],
+            "documentation": "Create a new ImageFeatureExtractionPipeline.\n@param {ImagePipelineConstructorArgs} options An object used to instantiate the pipeline.",
+            "end_line": 1331,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/pipelines.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(options) {\n        super(options);\n    }",
+            "start_line": 1329,
+            "symbol_id": "src/pipelines.js#method:constructor:1329"
+          },
+          {
+            "children": [],
+            "documentation": "Create a new AudioClassificationPipeline.\n@param {AudioPipelineConstructorArgs} options An object used to instantiate the pipeline.",
+            "end_line": 1420,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/pipelines.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(options) {\n        super(options);\n    }",
+            "start_line": 1418,
+            "symbol_id": "src/pipelines.js#method:constructor:1418"
+          },
+          {
+            "children": [],
+            "documentation": "Create a new ZeroShotAudioClassificationPipeline.\n@param {TextAudioPipelineConstructorArgs} options An object used to instantiate the pipeline.",
+            "end_line": 1504,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/pipelines.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(options) {\n        super(options);\n    }",
+            "start_line": 1502,
+            "symbol_id": "src/pipelines.js#method:constructor:1502"
+          },
+          {
+            "children": [],
+            "documentation": "Create a new AutomaticSpeechRecognitionPipeline.\n@param {TextAudioPipelineConstructorArgs} options An object used to instantiate the pipeline.",
+            "end_line": 1668,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/pipelines.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(options) {\n        super(options);\n    }",
+            "start_line": 1666,
+            "symbol_id": "src/pipelines.js#method:constructor:1666"
+          },
+          {
+            "children": [],
+            "documentation": "Create a new ImageToTextPipeline.\n@param {TextImagePipelineConstructorArgs} options An object used to instantiate the pipeline.",
+            "end_line": 1889,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/pipelines.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(options) {\n        super(options);\n    }",
+            "start_line": 1887,
+            "symbol_id": "src/pipelines.js#method:constructor:1887"
+          },
+          {
+            "children": [],
+            "documentation": "Create a new ImageClassificationPipeline.\n@param {ImagePipelineConstructorArgs} options An object used to instantiate the pipeline.",
+            "end_line": 1978,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/pipelines.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(options) {\n        super(options);\n    }",
+            "start_line": 1976,
+            "symbol_id": "src/pipelines.js#method:constructor:1976"
+          },
+          {
+            "children": [],
+            "documentation": "Create a new ZeroShotImageClassificationPipeline.\n@param {TextImagePipelineConstructorArgs} options An object used to instantiate the pipeline.",
+            "end_line": 2202,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/pipelines.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(options) {\n        super(options);\n    }",
+            "start_line": 2200,
+            "symbol_id": "src/pipelines.js#method:constructor:2200"
+          },
+          {
+            "children": [],
+            "documentation": "Create a new ObjectDetectionPipeline.\n@param {ImagePipelineConstructorArgs} options An object used to instantiate the pipeline.",
+            "end_line": 2302,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/pipelines.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(options) {\n        super(options);\n    }",
+            "start_line": 2300,
+            "symbol_id": "src/pipelines.js#method:constructor:2300"
+          },
+          {
+            "children": [],
+            "documentation": "Create a new ZeroShotObjectDetectionPipeline.\n@param {TextImagePipelineConstructorArgs} options An object used to instantiate the pipeline.",
+            "end_line": 2437,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/pipelines.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(options) {\n        super(options);\n    }",
+            "start_line": 2435,
+            "symbol_id": "src/pipelines.js#method:constructor:2435"
+          },
+          {
+            "children": [],
+            "documentation": "Create a new DocumentQuestionAnsweringPipeline.\n@param {TextImagePipelineConstructorArgs} options An object used to instantiate the pipeline.",
+            "end_line": 2523,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/pipelines.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(options) {\n        super(options);\n    }",
+            "start_line": 2521,
+            "symbol_id": "src/pipelines.js#method:constructor:2521"
+          },
+          {
+            "children": [],
+            "documentation": "Create a new ImageToImagePipeline.\n@param {ImagePipelineConstructorArgs} options An object used to instantiate the pipeline.",
+            "end_line": 2744,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/pipelines.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(options) {\n        super(options);\n    }",
+            "start_line": 2742,
+            "symbol_id": "src/pipelines.js#method:constructor:2742"
+          },
+          {
+            "children": [],
+            "documentation": "Create a new DepthEstimationPipeline.\n@param {ImagePipelineConstructorArgs} options An object used to instantiate the pipeline.",
+            "end_line": 2807,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/pipelines.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(options) {\n        super(options);\n    }",
+            "start_line": 2805,
+            "symbol_id": "src/pipelines.js#method:constructor:2805"
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/pipelines.js#function:prepareImages:86",
+          "workspace_id": "ts_003_ctx16k"
+        },
+        "id": "step-3-tool-1",
+        "isError": false,
+        "name": "get_symbol",
+        "result": {
+          "children": [],
+          "code": "async function prepareImages(images) {\n    if (!Array.isArray(images)) {\n        images = [images];\n    }\n\n    // Possibly convert any non-images to images\n    return await Promise.all(images.map(x => RawImage.read(x)));\n}",
+          "documentation": "Prepare images for further tasks.\n@param {ImagePipelineInputs} images images to prepare.\n@returns {Promise<RawImage[]>} returns processed images.\n@private",
+          "end_line": 93,
+          "kind": "function",
+          "name": "prepareImages",
+          "parent_id": null,
+          "parent_name": null,
+          "path": "src/pipelines.js",
+          "qualified_name": "prepareImages",
+          "signature": "async function prepareImages(images) {\n    if (!Array.isArray(images)) {\n        images = [images];\n    }\n\n    // Possibly convert any non-images to images\n    return await Promise.all(images.map(x => RawImage.read(x)));\n}",
+          "start_line": 86,
+          "symbol_id": "src/pipelines.js#function:prepareImages:86"
+        }
+      }
+    ]
+  },
+  "trialId": "a29006851e"
+}

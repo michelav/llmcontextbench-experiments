@@ -1,0 +1,1300 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 1881,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "rs_001_ctx16k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 1,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "language": "rust",
+                "parse_status": "ok_filtered",
+                "path": "src/bytes/tests.rs",
+                "repository": "rust-bakery/nom",
+                "symbol_count": 49
+              },
+              {
+                "language": "rust",
+                "parse_status": "ok_filtered",
+                "path": "src/bytes/mod.rs",
+                "repository": "rust-bakery/nom",
+                "symbol_count": 42
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "rs_001_ctx16k"
+              },
+              "durationMs": 1,
+              "toolName": "list_files",
+              "workspace_id": "rs_001_ctx16k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1610,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "src/bytes/mod.rs",
+              "workspace_id": "rs_001_ctx16k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "Recognizes a pattern.\n\nThe input data will be compared to the tag combinator's argument and will return the part of\nthe input that matches the argument.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::streaming::tag;\n\nfn parser(s: &str) -> IResult<&str, &str> {\ntag(\"Hello\")(s)\n}\n\nassert_eq!(parser(\"Hello, World!\"), Ok((\", World!\", \"Hello\")));\nassert_eq!(parser(\"Something\"), Err(Err::Error(Error::new(\"Something\", ErrorKind::Tag))));\nassert_eq!(parser(\"S\"), Err(Err::Error(Error::new(\"S\", ErrorKind::Tag))));\nassert_eq!(parser(\"H\"), Err(Err::Incomplete(Needed::new(4))));\n```",
+                "end_line": 54,
+                "kind": "function",
+                "name": "tag",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "tag",
+                "signature": "pub fn tag<T, I, Error: ParseError<I>>(tag: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,\n{\n  Tag {\n    tag,\n    e: PhantomData,\n  }\n}",
+                "start_line": 45,
+                "symbol_id": "src/bytes/mod.rs#function:tag:45"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 92,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let tag_len = self.tag.input_len();\n    let t = self.tag.clone();\n\n    match i.compare(t) {\n      CompareResult::Ok => Ok((i.take_from(tag_len), OM::Output::bind(|| i.take(tag_len)))),\n      CompareResult::Incomplete => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(Needed::new(tag_len - i.input_len())))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::Tag;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      CompareResult::Error => Err(Err::Error(OM::Error::bind(|| {\n        let e: ErrorKind = ErrorKind::Tag;\n        Error::from_error_kind(i, e)\n      }))),\n    }\n  }",
+                "start_line": 71,
+                "symbol_id": "src/bytes/mod.rs#function:process:71"
+              },
+              {
+                "children": [],
+                "documentation": "Recognizes a case insensitive pattern.\n\nThe input data will be compared to the tag combinator's argument and will return the part of\nthe input that matches the argument with no regard to case.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::streaming::tag_no_case;\n\nfn parser(s: &str) -> IResult<&str, &str> {\ntag_no_case(\"hello\")(s)\n}\n\nassert_eq!(parser(\"Hello, World!\"), Ok((\", World!\", \"Hello\")));\nassert_eq!(parser(\"hello, World!\"), Ok((\", World!\", \"hello\")));\nassert_eq!(parser(\"HeLlO, World!\"), Ok((\", World!\", \"HeLlO\")));\nassert_eq!(parser(\"Something\"), Err(Err::Error(Error::new(\"Something\", ErrorKind::Tag))));\nassert_eq!(parser(\"\"), Err(Err::Incomplete(Needed::new(5))));\n```",
+                "end_line": 123,
+                "kind": "function",
+                "name": "tag_no_case",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "tag_no_case",
+                "signature": "pub fn tag_no_case<T, I, Error: ParseError<I>>(tag: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,\n{\n  TagNoCase {\n    tag,\n    e: PhantomData,\n  }\n}",
+                "start_line": 114,
+                "symbol_id": "src/bytes/mod.rs#function:tag_no_case:114"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 161,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let tag_len = self.tag.input_len();\n    let t = self.tag.clone();\n\n    match i.compare_no_case(t) {\n      CompareResult::Ok => Ok((i.take_from(tag_len), OM::Output::bind(|| i.take(tag_len)))),\n      CompareResult::Incomplete => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(Needed::new(tag_len - i.input_len())))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::Tag;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      CompareResult::Error => Err(Err::Error(OM::Error::bind(|| {\n        let e: ErrorKind = ErrorKind::Tag;\n        Error::from_error_kind(i, e)\n      }))),\n    }\n  }",
+                "start_line": 140,
+                "symbol_id": "src/bytes/mod.rs#function:process:140"
+              },
+              {
+                "children": [],
+                "documentation": "[inline(always)]",
+                "end_line": 182,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    i.split_at_position_mode::<OM, _, _>(|c| (self.predicate)(c))\n  }",
+                "start_line": 180,
+                "symbol_id": "src/bytes/mod.rs#function:process:180"
+              },
+              {
+                "children": [],
+                "documentation": "[inline(always)]",
+                "end_line": 204,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    i.split_at_position_mode1::<OM, _, _>(|c| (self.predicate)(c), self.e)\n  }",
+                "start_line": 202,
+                "symbol_id": "src/bytes/mod.rs#function:process:202"
+              },
+              {
+                "children": [],
+                "documentation": "Parse till certain characters are met.\n\nThe parser will return the longest slice till one of the characters of the combinator's argument are met.\n\nIt doesn't consume the matched character.\n\nIt will return a `Err::Error((\"\", ErrorKind::IsNot))` if the pattern wasn't met.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::complete::is_not;\n\nfn not_space(s: &str) -> IResult<&str, &str> {\nis_not(\" \\t\\r\\n\")(s)\n}\n\nassert_eq!(not_space(\"Hello, World!\"), Ok((\" World!\", \"Hello,\")));\nassert_eq!(not_space(\"Sometimes\\t\"), Ok((\"\\t\", \"Sometimes\")));\nassert_eq!(not_space(\"Nospace\"), Ok((\"\", \"Nospace\")));\nassert_eq!(not_space(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::IsNot))));\n```",
+                "end_line": 238,
+                "kind": "function",
+                "name": "is_not",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "is_not",
+                "signature": "pub fn is_not<T, I, Error: ParseError<I>>(arr: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  T: FindToken<<I as Input>::Item>,\n{\n  SplitPosition1 {\n    e: ErrorKind::IsNot,\n    predicate: move |c| arr.find_token(c),\n    error: PhantomData,\n  }\n}",
+                "start_line": 228,
+                "symbol_id": "src/bytes/mod.rs#function:is_not:228"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the longest slice of the matches the pattern.\n\nThe parser will return the longest slice consisting of the characters in provided in the\ncombinator's argument.\n\nIt will return a `Err(Err::Error((_, ErrorKind::IsA)))` if the pattern wasn't met.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::complete::is_a;\n\nfn hex(s: &str) -> IResult<&str, &str> {\nis_a(\"1234567890ABCDEF\")(s)\n}\n\nassert_eq!(hex(\"123 and voila\"), Ok((\" and voila\", \"123\")));\nassert_eq!(hex(\"DEADBEEF and others\"), Ok((\" and others\", \"DEADBEEF\")));\nassert_eq!(hex(\"BADBABEsomething\"), Ok((\"something\", \"BADBABE\")));\nassert_eq!(hex(\"D15EA5E\"), Ok((\"\", \"D15EA5E\")));\nassert_eq!(hex(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::IsA))));\n```",
+                "end_line": 271,
+                "kind": "function",
+                "name": "is_a",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "is_a",
+                "signature": "pub fn is_a<T, I, Error: ParseError<I>>(arr: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  T: FindToken<<I as Input>::Item>,\n{\n  SplitPosition1 {\n    e: ErrorKind::IsA,\n    predicate: move |c| !arr.find_token(c),\n    error: PhantomData,\n  }\n}",
+                "start_line": 261,
+                "symbol_id": "src/bytes/mod.rs#function:is_a:261"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the longest input slice (if any) that matches the predicate.\n\nThe parser will return the longest slice that matches the given predicate *(a function that\ntakes the input and returns a bool)*.\n# Example\n```rust\n# use nom::{Err, error::ErrorKind, Needed, IResult};\nuse nom::bytes::complete::take_while;\nuse nom::character::is_alphabetic;\n\nfn alpha(s: &[u8]) -> IResult<&[u8], &[u8]> {\ntake_while(is_alphabetic)(s)\n}\n\nassert_eq!(alpha(b\"latin123\"), Ok((&b\"123\"[..], &b\"latin\"[..])));\nassert_eq!(alpha(b\"12345\"), Ok((&b\"12345\"[..], &b\"\"[..])));\nassert_eq!(alpha(b\"latin\"), Ok((&b\"\"[..], &b\"latin\"[..])));\nassert_eq!(alpha(b\"\"), Ok((&b\"\"[..], &b\"\"[..])));\n```",
+                "end_line": 301,
+                "kind": "function",
+                "name": "take_while",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "take_while",
+                "signature": "pub fn take_while<F, I, Error: ParseError<I>>(cond: F) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,\n{\n  SplitPosition {\n    predicate: move |c| !cond(c),\n    error: PhantomData,\n  }\n}",
+                "start_line": 292,
+                "symbol_id": "src/bytes/mod.rs#function:take_while:292"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the longest (at least 1) input slice that matches the predicate.\n\nThe parser will return the longest slice that matches the given predicate *(a function that\ntakes the input and returns a bool)*.\n\nIt will return an `Err(Err::Error((_, ErrorKind::TakeWhile1)))` if the pattern wasn't met.\n\n# Streaming Specific\n*Streaming version* will return a `Err::Incomplete(Needed::new(1))` or if the pattern reaches the end of the input.\n\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::streaming::take_while1;\nuse nom::character::is_alphabetic;\n\nfn alpha(s: &[u8]) -> IResult<&[u8], &[u8]> {\ntake_while1(is_alphabetic)(s)\n}\n\nassert_eq!(alpha(b\"latin123\"), Ok((&b\"123\"[..], &b\"latin\"[..])));\nassert_eq!(alpha(b\"latin\"), Err(Err::Incomplete(Needed::new(1))));\nassert_eq!(alpha(b\"12345\"), Err(Err::Error(Error::new(&b\"12345\"[..], ErrorKind::TakeWhile1))));\n```",
+                "end_line": 337,
+                "kind": "function",
+                "name": "take_while1",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "take_while1",
+                "signature": "pub fn take_while1<F, I, Error: ParseError<I>>(cond: F) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,\n{\n  SplitPosition1 {\n    e: ErrorKind::TakeWhile1,\n    predicate: move |c| !cond(c),\n    error: PhantomData,\n  }\n}",
+                "start_line": 327,
+                "symbol_id": "src/bytes/mod.rs#function:take_while1:327"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the longest (m <= len <= n) input slice  that matches the predicate.\n\nThe parser will return the longest slice that matches the given predicate *(a function that\ntakes the input and returns a bool)*.\n\nIt will return an `Err::Error((_, ErrorKind::TakeWhileMN))` if the pattern wasn't met.\n# Streaming Specific\n*Streaming version* will return a `Err::Incomplete(Needed::new(1))`  if the pattern reaches the end of the input or is too short.\n\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::streaming::take_while_m_n;\nuse nom::character::is_alphabetic;\n\nfn short_alpha(s: &[u8]) -> IResult<&[u8], &[u8]> {\ntake_while_m_n(3, 6, is_alphabetic)(s)\n}\n\nassert_eq!(short_alpha(b\"latin123\"), Ok((&b\"123\"[..], &b\"latin\"[..])));\nassert_eq!(short_alpha(b\"lengthy\"), Ok((&b\"y\"[..], &b\"length\"[..])));\nassert_eq!(short_alpha(b\"latin\"), Err(Err::Incomplete(Needed::new(1))));\nassert_eq!(short_alpha(b\"ed\"), Err(Err::Incomplete(Needed::new(1))));\nassert_eq!(short_alpha(b\"12345\"), Err(Err::Error(Error::new(&b\"12345\"[..], ErrorKind::TakeWhileMN))));\n```",
+                "end_line": 379,
+                "kind": "function",
+                "name": "take_while_m_n",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "take_while_m_n",
+                "signature": "pub fn take_while_m_n<F, I, Error: ParseError<I>>(\n  m: usize,\n  n: usize,\n  predicate: F,\n) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,\n{\n  TakeWhileMN {\n    m,\n    n,\n    predicate,\n    e: PhantomData,\n  }\n}",
+                "start_line": 364,
+                "symbol_id": "src/bytes/mod.rs#function:take_while_m_n:364"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 443,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(\n    &mut self,\n    input: I,\n  ) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let mut count = 0;\n    for (i, (index, item)) in input.iter_indices().enumerate() {\n      if i == self.n {\n        return Ok((\n          input.take_from(index),\n          OM::Output::bind(|| input.take(index)),\n        ));\n      }\n\n      if !(self.predicate)(item) {\n        if i >= self.m {\n          return Ok((\n            input.take_from(index),\n            OM::Output::bind(|| input.take(index)),\n          ));\n        } else {\n          return Err(Err::Error(OM::Error::bind(|| {\n            Error::from_error_kind(input, ErrorKind::TakeWhileMN)\n          })));\n        }\n      }\n      count += 1;\n    }\n\n    let input_len = input.input_len();\n    if OM::Incomplete::is_streaming() {\n      let needed = if self.m > input_len {\n        self.m - input_len\n      } else {\n        1\n      };\n      Err(Err::Incomplete(Needed::new(needed)))\n    } else if count >= self.m {\n      Ok((\n        input.take_from(input_len),\n        OM::Output::bind(|| input.take(input_len)),\n      ))\n    } else {\n      Err(Err::Error(OM::Error::bind(|| {\n        Error::from_error_kind(input, ErrorKind::TakeWhileMN)\n      })))\n    }\n  }",
+                "start_line": 397,
+                "symbol_id": "src/bytes/mod.rs#function:process:397"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the longest input slice (if any) till a predicate is met.\n\nThe parser will return the longest slice till the given predicate *(a function that\ntakes the input and returns a bool)*.\n# Example\n```rust\n# use nom::{Err, error::ErrorKind, Needed, IResult};\nuse nom::bytes::complete::take_till;\n\nfn till_colon(s: &str) -> IResult<&str, &str> {\ntake_till(|c| c == ':')(s)\n}\n\nassert_eq!(till_colon(\"latin:123\"), Ok((\":123\", \"latin\")));\nassert_eq!(till_colon(\":empty matched\"), Ok((\":empty matched\", \"\"))); //allowed\nassert_eq!(till_colon(\"12345\"), Ok((\"\", \"12345\")));\nassert_eq!(till_colon(\"\"), Ok((\"\", \"\")));\n```\n[allow(clippy::redundant_closure)]",
+                "end_line": 474,
+                "kind": "function",
+                "name": "take_till",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "take_till",
+                "signature": "pub fn take_till<F, I, Error: ParseError<I>>(cond: F) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,\n{\n  SplitPosition {\n    predicate: cond,\n    error: PhantomData,\n  }\n}",
+                "start_line": 465,
+                "symbol_id": "src/bytes/mod.rs#function:take_till:465"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the longest (at least 1) input slice till a predicate is met.\n\nThe parser will return the longest slice till the given predicate *(a function that\ntakes the input and returns a bool)*.\n\n# Streaming Specific\n*Streaming version* will return a `Err::Incomplete(Needed::new(1))` if the match reaches the\nend of input or if there was not match.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::streaming::take_till1;\n\nfn till_colon(s: &str) -> IResult<&str, &str> {\ntake_till1(|c| c == ':')(s)\n}\n\nassert_eq!(till_colon(\"latin:123\"), Ok((\":123\", \"latin\")));\nassert_eq!(till_colon(\":empty matched\"), Err(Err::Error(Error::new(\":empty matched\", ErrorKind::TakeTill1))));\nassert_eq!(till_colon(\"12345\"), Err(Err::Incomplete(Needed::new(1))));\nassert_eq!(till_colon(\"\"), Err(Err::Incomplete(Needed::new(1))));\n```\n[allow(clippy::redundant_closure)]",
+                "end_line": 509,
+                "kind": "function",
+                "name": "take_till1",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "take_till1",
+                "signature": "pub fn take_till1<F, I, Error: ParseError<I>>(cond: F) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,\n{\n  SplitPosition1 {\n    e: ErrorKind::TakeTill1,\n    predicate: cond,\n    error: PhantomData,\n  }\n}",
+                "start_line": 499,
+                "symbol_id": "src/bytes/mod.rs#function:take_till1:499"
+              },
+              {
+                "children": [],
+                "documentation": "Returns an input slice containing the first N input elements (Input[..N]).\n\n# Streaming Specific\n*Streaming version* if the input has less than N elements, `take` will\nreturn a `Err::Incomplete(Needed::new(M))` where M is the number of\nadditional bytes the parser would need to succeed.\nIt is well defined for `&[u8]` as the number of elements is the byte size,\nbut for types like `&str`, we cannot know how many bytes correspond for\nthe next few chars, so the result will be `Err::Incomplete(Needed::Unknown)`\n\n# Example\n```rust\n# use nom::{Err, error::ErrorKind, Needed, IResult};\nuse nom::bytes::streaming::take;\n\nfn take6(s: &str) -> IResult<&str, &str> {\ntake(6usize)(s)\n}\n\nassert_eq!(take6(\"1234567\"), Ok((\"7\", \"123456\")));\nassert_eq!(take6(\"things\"), Ok((\"\", \"things\")));\nassert_eq!(take6(\"short\"), Err(Err::Incomplete(Needed::Unknown)));\n```",
+                "end_line": 543,
+                "kind": "function",
+                "name": "take",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "take",
+                "signature": "pub fn take<C, I, Error: ParseError<I>>(count: C) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  C: ToUsize,\n{\n  Take {\n    length: count.to_usize(),\n    e: PhantomData,\n  }\n}",
+                "start_line": 534,
+                "symbol_id": "src/bytes/mod.rs#function:take:534"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 572,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    match i.slice_index(self.length) {\n      Err(needed) => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(needed))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::Eof;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      Ok(index) => Ok((i.take_from(index), OM::Output::bind(|| i.take(index)))),\n    }\n  }",
+                "start_line": 558,
+                "symbol_id": "src/bytes/mod.rs#function:process:558"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the input slice up to the first occurrence of the pattern.\n\nIt doesn't consume the pattern.\n\n# Streaming Specific\n*Streaming version* will return a `Err::Incomplete(Needed::new(N))` if the input doesn't\ncontain the pattern or if the input is smaller than the pattern.\n# Example\n```rust\n# use nom::{Err, error::ErrorKind, Needed, IResult};\nuse nom::bytes::streaming::take_until;\n\nfn until_eof(s: &str) -> IResult<&str, &str> {\ntake_until(\"eof\")(s)\n}\n\nassert_eq!(until_eof(\"hello, worldeof\"), Ok((\"eof\", \"hello, world\")));\nassert_eq!(until_eof(\"hello, world\"), Err(Err::Incomplete(Needed::Unknown)));\nassert_eq!(until_eof(\"hello, worldeo\"), Err(Err::Incomplete(Needed::Unknown)));\nassert_eq!(until_eof(\"1eof2eof\"), Ok((\"eof2eof\", \"1\")));\n```",
+                "end_line": 605,
+                "kind": "function",
+                "name": "take_until",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "take_until",
+                "signature": "pub fn take_until<T, I, Error: ParseError<I>>(tag: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + FindSubstring<T>,\n  T: Clone,\n{\n  TakeUntil {\n    tag,\n    e: PhantomData,\n  }\n}",
+                "start_line": 596,
+                "symbol_id": "src/bytes/mod.rs#function:take_until:596"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 635,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    match i.find_substring(self.tag.clone()) {\n      None => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(Needed::Unknown))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::TakeUntil;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      Some(index) => Ok((i.take_from(index), OM::Output::bind(|| i.take(index)))),\n    }\n  }",
+                "start_line": 621,
+                "symbol_id": "src/bytes/mod.rs#function:process:621"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the non empty input slice up to the first occurrence of the pattern.\n\nIt doesn't consume the pattern.\n\n# Streaming Specific\n*Streaming version* will return a `Err::Incomplete(Needed::new(N))` if the input doesn't\ncontain the pattern or if the input is smaller than the pattern.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::streaming::take_until1;\n\nfn until_eof(s: &str) -> IResult<&str, &str> {\ntake_until1(\"eof\")(s)\n}\n\nassert_eq!(until_eof(\"hello, worldeof\"), Ok((\"eof\", \"hello, world\")));\nassert_eq!(until_eof(\"hello, world\"), Err(Err::Incomplete(Needed::Unknown)));\nassert_eq!(until_eof(\"hello, worldeo\"), Err(Err::Incomplete(Needed::Unknown)));\nassert_eq!(until_eof(\"1eof2eof\"), Ok((\"eof2eof\", \"1\")));\nassert_eq!(until_eof(\"eof\"),  Err(Err::Error(Error::new(\"eof\", ErrorKind::TakeUntil))));\n```",
+                "end_line": 669,
+                "kind": "function",
+                "name": "take_until1",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "take_until1",
+                "signature": "pub fn take_until1<T, I, Error: ParseError<I>>(tag: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + FindSubstring<T>,\n  T: Clone,\n{\n  TakeUntil1 {\n    tag,\n    e: PhantomData,\n  }\n}",
+                "start_line": 660,
+                "symbol_id": "src/bytes/mod.rs#function:take_until1:660"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 703,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    match i.find_substring(self.tag.clone()) {\n      None => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(Needed::Unknown))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::TakeUntil;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      Some(0) => Err(Err::Error(OM::Error::bind(|| {\n        Error::from_error_kind(i, ErrorKind::TakeUntil)\n      }))),\n\n      Some(index) => Ok((i.take_from(index), OM::Output::bind(|| i.take(index)))),\n    }\n  }",
+                "start_line": 685,
+                "symbol_id": "src/bytes/mod.rs#function:process:685"
+              },
+              {
+                "children": [],
+                "documentation": "Matches a byte string with escaped characters.\n\n* The first argument matches the normal characters (it must not accept the control character)\n* The second argument is the control character (like `\\` in most languages)\n* The third argument matches the escaped characters\n# Example\n```\n# use nom::{Err, error::ErrorKind, Needed, IResult};\n# use nom::character::complete::digit1;\nuse nom::bytes::streaming::escaped;\nuse nom::character::streaming::one_of;\n\nfn esc(s: &str) -> IResult<&str, &str> {\nescaped(digit1, '\\\\', one_of(\"\\\"n\\\\\"))(s)\n}\n\nassert_eq!(esc(\"123;\"), Ok((\";\", \"123\")));\nassert_eq!(esc(\"12\\\\\\\"34;\"), Ok((\";\", \"12\\\\\\\"34\")));\n```",
+                "end_line": 744,
+                "kind": "function",
+                "name": "escaped",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "escaped",
+                "signature": "pub fn escaped<I, Error, F, G>(\n  normal: F,\n  control_char: char,\n  escapable: G,\n) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + Clone + crate::traits::Offset,\n  <I as Input>::Item: crate::traits::AsChar,\n  F: Parser<I, Error = Error>,\n  G: Parser<I, Error = Error>,\n  Error: ParseError<I>,\n{\n  Escaped {\n    normal,\n    escapable,\n    control_char,\n    e: PhantomData,\n  }\n}",
+                "start_line": 726,
+                "symbol_id": "src/bytes/mod.rs#function:escaped:726"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 866,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(\n    &mut self,\n    input: I,\n  ) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let mut i = input.clone();\n\n    while i.input_len() > 0 {\n      let current_len = i.input_len();\n\n      match self\n        .normal\n        .process::<OutputM<Check, Check, OM::Incomplete>>(i.clone())\n      {\n        Ok((i2, _)) => {\n          if i2.input_len() == 0 {\n            if OM::Incomplete::is_streaming() {\n              return Err(Err::Incomplete(Needed::Unknown));\n            } else {\n              let index = input.input_len();\n              return Ok((\n                input.take_from(index),\n                OM::Output::bind(|| input.take(index)),\n              ));\n            }\n          } else if i2.input_len() == current_len {\n            let index = input.offset(&i2);\n            return Ok((\n              input.take_from(index),\n              OM::Output::bind(|| input.take(index)),\n            ));\n          } else {\n            i = i2;\n          }\n        }\n        Err(Err::Error(_)) => {\n          // unwrap() should be safe here since index < $i.input_len()\n          if i.iter_elements().next().unwrap().as_char() == self.control_char {\n            let next = self.control_char.len_utf8();\n            if next >= i.input_len() {\n              if OM::Incomplete::is_streaming() {\n                return Err(Err::Incomplete(Needed::new(1)));\n              } else {\n                return Err(Err::Error(OM::Error::bind(|| {\n                  Error::from_error_kind(input, ErrorKind::Escaped)\n                })));\n              }\n            } else {\n              match self\n                .escapable\n                .process::<OutputM<Check, OM::Error, OM::Incomplete>>(i.take_from(next))\n              {\n                Ok((i2, _)) => {\n                  if i2.input_len() == 0 {\n                    if OM::Incomplete::is_streaming() {\n                      return Err(Err::Incomplete(Needed::Unknown));\n                    } else {\n                      let index = input.input_len();\n                      return Ok((\n                        input.take_from(index),\n                        OM::Output::bind(|| input.take(index)),\n                      ));\n                    }\n                  } else {\n                    i = i2;\n                  }\n                }\n                Err(e) => return Err(e),\n              }\n            }\n          } else {\n            let index = input.offset(&i);\n            if index == 0 {\n              return Err(Err::Error(OM::Error::bind(|| {\n                Error::from_error_kind(input, ErrorKind::Escaped)\n              })));\n            } else {\n              return Ok((\n                input.take_from(index),\n                OM::Output::bind(|| input.take(index)),\n              ));\n            }\n          }\n        }\n        Err(Err::Failure(e)) => {\n          return Err(Err::Failure(e));\n        }\n        Err(Err::Incomplete(i)) => {\n          return Err(Err::Incomplete(i));\n        }\n      }\n    }\n\n    if OM::Incomplete::is_streaming() {\n      Err(Err::Incomplete(Needed::Unknown))\n    } else {\n      let index = input.input_len();\n      Ok((\n        input.take_from(index),\n        OM::Output::bind(|| input.take(index)),\n      ))\n    }\n  }",
+                "start_line": 765,
+                "symbol_id": "src/bytes/mod.rs#function:process:765"
+              },
+              {
+                "children": [],
+                "documentation": "Matches a byte string with escaped characters.\n\n* The first argument matches the normal characters (it must not match the control character)\n* The second argument is the control character (like `\\` in most languages)\n* The third argument matches the escaped characters and transforms them\n\nAs an example, the chain `abc\\tdef` could be `abc    def` (it also consumes the control character)\n\n```\n# use nom::{Err, error::ErrorKind, Needed, IResult};\n# use std::str::from_utf8;\nuse nom::bytes::streaming::{escaped_transform, tag};\nuse nom::character::streaming::alpha1;\nuse nom::branch::alt;\nuse nom::combinator::value;\n\nfn parser(input: &str) -> IResult<&str, String> {\nescaped_transform(\nalpha1,\n'\\\\',\nalt((\nvalue(\"\\\\\", tag(\"\\\\\")),\nvalue(\"\\\"\", tag(\"\\\"\")),\nvalue(\"\\n\", tag(\"n\")),\n))\n)(input)\n}\n\nassert_eq!(parser(\"ab\\\\\\\"cd\\\"\"), Ok((\"\\\"\", String::from(\"ab\\\"cd\"))));\n```\n[cfg(feature = \"alloc\")]\n[cfg_attr(feature = \"docsrs\", doc(cfg(feature = \"alloc\")))]",
+                "end_line": 924,
+                "kind": "function",
+                "name": "escaped_transform",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "escaped_transform",
+                "signature": "pub fn escaped_transform<I, Error, F, G, ExtendItem, Output>(\n  normal: F,\n  control_char: char,\n  transform: G,\n) -> impl Parser<I, Output = Output, Error = Error>\nwhere\n  I: Clone + crate::traits::Offset + Input,\n  I: crate::traits::ExtendInto<Item = ExtendItem, Extender = Output>,\n  <F as Parser<I>>::Output: crate::traits::ExtendInto<Item = ExtendItem, Extender = Output>,\n  <G as Parser<I>>::Output: crate::traits::ExtendInto<Item = ExtendItem, Extender = Output>,\n  <I as Input>::Item: crate::traits::AsChar,\n  F: Parser<I, Error = Error>,\n  G: Parser<I, Error = Error>,\n  Error: ParseError<I>,\n{\n  EscapedTransform {\n    normal,\n    control_char,\n    transform,\n    e: PhantomData,\n    extend: PhantomData,\n    o: PhantomData,\n  }\n}",
+                "start_line": 901,
+                "symbol_id": "src/bytes/mod.rs#function:escaped_transform:901"
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "src/bytes/mod.rs",
+                "workspace_id": "rs_001_ctx16k"
+              },
+              "durationMs": 0,
+              "toolName": "list_symbols",
+              "workspace_id": "rs_001_ctx16k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 6733,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "symbol_id": "src/bytes/mod.rs#function:is_a:261",
+              "workspace_id": "rs_001_ctx16k"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": {
+              "children": [],
+              "code": "pub fn is_a<T, I, Error: ParseError<I>>(arr: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  T: FindToken<<I as Input>::Item>,\n{\n  SplitPosition1 {\n    e: ErrorKind::IsA,\n    predicate: move |c| !arr.find_token(c),\n    error: PhantomData,\n  }\n}",
+              "documentation": "Returns the longest slice of the matches the pattern.\n\nThe parser will return the longest slice consisting of the characters in provided in the\ncombinator's argument.\n\nIt will return a `Err(Err::Error((_, ErrorKind::IsA)))` if the pattern wasn't met.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::complete::is_a;\n\nfn hex(s: &str) -> IResult<&str, &str> {\nis_a(\"1234567890ABCDEF\")(s)\n}\n\nassert_eq!(hex(\"123 and voila\"), Ok((\" and voila\", \"123\")));\nassert_eq!(hex(\"DEADBEEF and others\"), Ok((\" and others\", \"DEADBEEF\")));\nassert_eq!(hex(\"BADBABEsomething\"), Ok((\"something\", \"BADBABE\")));\nassert_eq!(hex(\"D15EA5E\"), Ok((\"\", \"D15EA5E\")));\nassert_eq!(hex(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::IsA))));\n```",
+              "end_line": 271,
+              "kind": "function",
+              "name": "is_a",
+              "parent_id": null,
+              "parent_name": null,
+              "path": "src/bytes/mod.rs",
+              "qualified_name": "is_a",
+              "signature": "pub fn is_a<T, I, Error: ParseError<I>>(arr: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  T: FindToken<<I as Input>::Item>,\n{\n  SplitPosition1 {\n    e: ErrorKind::IsA,\n    predicate: move |c| !arr.find_token(c),\n    error: PhantomData,\n  }\n}",
+              "start_line": 261,
+              "symbol_id": "src/bytes/mod.rs#function:is_a:261"
+            },
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "symbol_id": "src/bytes/mod.rs#function:is_a:261",
+                "workspace_id": "rs_001_ctx16k"
+              },
+              "durationMs": 0,
+              "toolName": "get_symbol",
+              "workspace_id": "rs_001_ctx16k"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 2645,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 12923,
+          "metadata": {},
+          "name": "strategy.local_function.execute",
+          "type": "strategy.local_function.execute"
+        },
+        {
+          "duration_ms": 12923,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 54,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": null,
+        "cachedInputTokens": null,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 3,
+        "inputTokens": 13629,
+        "loopControlDurationMsEstimated": 53,
+        "mcpToolCalls": 3,
+        "modelCalls": 4,
+        "modelDurationMs": 12869,
+        "outputTokens": 225,
+        "promptChars": 902,
+        "questionTokensEstimated": 117,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 1695,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 4,
+        "strategyDurationMs": 12923,
+        "taskStatementChars": 731,
+        "toolCalls": 3,
+        "toolDurationMs": 1,
+        "totalDurationMs": 12923,
+        "totalTokens": 15549,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "workspace_id": "rs_001_ctx16k"
+                    },
+                    "id": null,
+                    "name": "list_files",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CqwHAQw51scYZA99F9JPEid8kFX5QlQlcU2OeJ_dLiUz_WEBnQzaMDowZd9E0NmZA0AxSzLt577q5ZhEfYJ16LqaH9XjfhrS_2FCIkek_6CNLD039GNMkpR6GGiWDlDqK-kLw8Igv1J4dAZgnJIqGMuTGyG9HZcedZAaZiopXCJP0R1qlAgWN81LlF6ljUbWJlgAoSfmkdJ4SkTDbgFNn6LawOER5wg-mzEVRKdm9PhVVpF-pBlI_m221alux-b1mLdkv2cOJ8AJkVXmsP5kmr646M_PoKb2tO4egC5YDogTVaqeDpC9O0zS4zhCPvWNH-SSSmJbA0sDEVCIw28qP_ZXFevXdrBnC9Xru3H3aMad0LalK818VqZ1sYW87sF-sQ9E86PwJdQE-bo3JRRvRzDDs8iIK4mhzdQ5GhWM80I88GwEJfSWlzwlym3YIgwpwqVkPfmPxTPAd99zJd_zLT0HvHOjEHYvH3Npw7FhE3ar5xlEHCanBVjAaDS0itK8-wMOHBzwO8paT_ZvJnXNjGEXDmI6yzwaOC82o0Phtx8Sp6OAgI351ulVStn1GqK4Hw6Tlp8WLo2CrwISkhmvT0zgxLeXw9pcxfzcXd5IbwQj2ptUrnTrDS4qq4hFWoKfGNfab_4On-rjl8PntTkYtOE3yjrHdOQMjf9wy9pHaPK6-twbmtNDTJMZXUV695hiSwVmI8y0IbKZH7YPmSMzY7y8fTxke0iIpJAgBbtlqHhZtIdR5ZycRoI7QS7MC62hLcnfmeFTTXEhQvwlpXwxiqPbVftL6kzww5RuCk9hg3AwjqDOaei4RF18N2DOO0krDPy-KOcTV7RANdoUeyYe3uE5BOFQF8c6Yp7OEDb4j7VDpNYnv0a3yb0fNIikHwEHDOZj9sBswWrmgf30v79iTGfNa2W9NEaM5XYDMqeo809kyH4Ug_M7YXJ3JFcSvu22lxnmQ450Rl4tiIjV1ydc7CS-Miz887I3OL9JJ5-4NpfS4Kgjhgwic22_04iQDPjqtv_Bs20SntRFvA5O0gi836pHelpaMNGVQOUHzV93BDzVaBkmwjOZKmMzIohKrsgxE_-KId90pqrOOSBjGnAlkyXUCgaeZ3L88mbo9gWA1UzISlasolECzeV-lOpB27u61Mp5HNl6WJmLksSWnqFiWvQD0QSMgihx_Z9a5_8gpsQ81tM9gZ6x-XHFhL6zWIFFr3pfDcmTXQfJReP_4Ci-ro13qPn2mV84Ts9qdNTpDg==",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "co0UavzVCuXoz7IPm53zuAw",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:57:07 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1668",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 26,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 580,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 580
+            }
+          ],
+          "thoughts_token_count": 195,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 801,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "kind": "function",
+                      "path": "src/bytes/mod.rs",
+                      "workspace_id": "rs_001_ctx16k"
+                    },
+                    "id": null,
+                    "name": "list_symbols",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CpEDAQw51se7NlozNerTUoIW4dFMlTksVvrDnuIUOLcLjmejFyAB5p5ahgeWcdREQNc-39lBAylEGctFu7bCgl5qBKIEkc83u01QxrJQOiMwpvUWrOxeSmyWnD6trO6e8G48CIBGL0kvUxZLHJlBkCmQIn-YJWtB78uWZM3L0DwREwyRhSBHRyAIJEJyDpnq2kVH8yI-fImS8iHkD0K_SiIfatWXS2TETdcogNCsJWt-CnE9GhFOpyX5fkILePueQj9WFaMa7EoiuziHM_c8oVVVarbAuOT6R0mUbA8vf3bdsjkuPTkrgJb__TdsMpEY-Cmm1d_vBRiPp6Ra7R4zD3lkhw4TrDCqmp7KGShUWcRRIliioQEWHSmHra0j2L1tHOvT-_8Jp8yEWLJH8jsmB3Y3moNDAZAverHiktfdaJZdMgAcaGSeObfQ8bFTjNyr1wV-LpZERhnZVfF_WYsTDQxWGbzgL7dupyO-6NsCYdtJvY5-I4U1wLrlZhe1PAFYPpJ-piwtVb2a7f8ET0PGgXeA9vw=",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "dI0UavG1BMKHz7IPpczZ0Q8",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:57:09 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1397",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 42,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 715,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 715
+            }
+          ],
+          "thoughts_token_count": 103,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 860,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "symbol_id": "src/bytes/mod.rs#function:is_a:261",
+                      "workspace_id": "rs_001_ctx16k"
+                    },
+                    "id": null,
+                    "name": "get_symbol",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CochAQw51seEgQ7RGdIsqyexeF1DJi0hL_eatgSka1D-BRwEGFThmkeL3bPDbKPa2Bdgpc8hZOZxmzHGCGJq2Iao6p6zjGqH54VXXFWYFz95r5eOwA6bLVuWEf-efdQeTVOLUyX6UJg1qdtlcmJ_U845TNWInDC-w23f3x8kPDs7oBDyUgJDyXfw0HUcOPv4uLppTL3opLS4ab2f8yNtTQ-B4KdZNbK5nVKFJ_nO3aEJTMXkwQLN8rKqre_fdnx0W6CPuU2lLeTZApXD6w6LyUUXiJEw0VI19Icj0Gb0gm5Eu6Mkvfc4Mx0nIq9xOsmA7b19EADrl5sLqVAS1OwjnYTJbjqegSkwVQZy7qc3eXDH02rnUIxAPkWGyW94-Qmqb08t-keQUKK8Ob56nLyX8-NnkmDaE36cBXyfwzmk02MLmC83YXLEF1J6_lSJHcPD71vGIKOtHjbLLTaIt53MPZhh0oQ3tWBUueTIcYjvZAatHjKlFu67BWqXDXq1PRUBheDPJSnMhZbIXS_ZqxcsUNaAAjz2gqCQqDhd7I7bbaujxXDFkSdxBWvMr-1jIfs837uATocMVl4lqjSUVEel9g_g6v4oP7xtgSvn3jlb4vv7g1kta_yhbiqUdSWgBxSWEAOYUfMDL6qBMfRsLuqygJsNpVMhXvIGk6AeLVcvUZXOds-ov0uq7tRZRNUU3DJcatgTMA4io2_SY9vWmuidzT1srcC8MNl714K4jln4N1462wPp6knNYQoBiL3-yurb7KxzO4vys4V1ymYwA8gBXIzZeopQMyPELcy2630M0VOtD5EMMWtbGrB245uchiRmNCzRZFQINFuBUHCU2J-pGJTJDxgKcWAQhuoor8YpBacP_DAA8fkKRELyZvSvQfy9B4Oys02O1dNPCU2wRzzpcozIjT9gIz0aAQPYoTEKFC9CCyr2UbY0nJS1zq_dJsTTWjwm5ISaVddGhmITBHPMw_Q6RCqSAOrSfNMZvhr3u7hOrI6s2pbISLRHxJHY3APa67WDnHbOnV_UlPx4lw79zuHx3-9R1x4YDmpwvFBckuYv3U8AvRCXvfQSI4yDzRx_iDdx8wn0o_7yC84zQHN31HLW3LPWmIC9ZXMoaRFNSJLi8GI3-RQx093lOcpzWjZyfCGOPhjmsVOolDifJ0E-gVSy01zA3Teajo_xAQdm2bCpb5IagjsnCWtqB-H8TjiXsPdTycVDpHsLJgNT8JYV1Ba_TqxirZ0gO79iyYAk7cLJP4SJABXikLrRMTV3YtK2tK0ZkfMjOOi3W5SB24KNYopnEbMxFX-q4PY3i6vbj91wuRwXXRM2llXz9MOsUWFAdeHyd6Ph6toDq6orkVNkLw1fPnSFZY0UsugvlgVEYFvtbQGaS5R3b5Zzkw7frQvvcLRc0PZ1aoPyLHSuCabEd_e1AFjbppDn547kwAW36fGlle_WE4MfPLBeuuWtjoE4DYkCu1Ms21E8KIYlMDFAIBxyvjAS76cxGtYKybxTmLEtowCxJK8_XrSZQ0iU6MMmxIPBJvWNvFNOaGNgsYXNCWr-PqvpOX-5_ebPVPkiVo5UZysu2MVQUcIFkMU7VeSbWHJoimzYJ07aZ2DHrDrlGXNU3KpGv_wMjxLWcQn25gGxS0theeYnjN1RTs4qOjh0zRLruyWVqHIpNYh9cX_804CYxy9I3vav518_1_ujfQzeXxA1w6oQUkw_LjPKMIQ6BNHaceMDkazOZoOAMPzbbPYW4EbmDAoEDus2JdMy823KsPccDyHgJBuCK_NCrG0RgI9uyix-Rvq8lqBHOmbKBec33cZ62pxFAO4h9AJpl3gkd5118Y7i3Af-XuQMBhiMuMARzzYIecM9Hz2nb702hGjQ_Lr0O4qxKEo5dNDYID-D8mwGMw3CfJKJjs4GSSKqaW4-Lp-i9xQokL0-BtZXayn41FK8zrwUQNs17-BQERd9NLZS7Kd7qGRAdUWGWvWpwDNmOb54kpUsKZwlq2dZWJfmoL2CUYM4UpafD5YxtZem9mTCQdJz_Wm9g2rDpCqHGTX4peZBrulp-HHm0sCTtM9eS8jMftjDNdEW134IMMG_yYASgfPa9dkZcw71GHq0VJobSppZVhFnWtqeMpYc46nvj-zYeQjICkErBL6ce_iJMfExebJKeP9iJKghbZwTn7lbV92A3tL2QGZ4msXvmd8_nG703-DayTDYIS96dwmZXxGCHxQCTfAzJl-yj4O0824j5fvVzWfS05uqdXuaZQYv4ITNYo0nw4xZfKtE5Uy97uFdxxio1nXetrggIVdeHKJhGdDJfOKp6l-OO0ODZfFXQCxJF67IatyLKL0fUjs4D3fE-_pxMfUsCwca0P9y2jJnLT3peUFHng3leRRbaNL1SxvehRpBRO-iNIWXQnXi32ras5R_zIt5RZQWbFHXRkiB_zK2Dujm7u--oCFQMk9UtLIUSMhTtk3rQ1mKcCCM9S2AG0-Cv1VZP3iVqZ7Bq3F-oH9MTNC6HD_b2BVM0zq8_ASL0dH9UNu-rGw2phsOcIbp0r02jeMyRoiRmua-RApzP4M4RQeX90axoPwuiqcSkMAbNmoB_iOscc_mqmFoF24q4zVewHdD_NfJ7YRiDijCAhA3WpX17I5WsigmIjL1Kzy2k28HcaGSUG78ciZwUBzWx1wIYSV9Fr-s12TBIfpE9sAQ4UcYr2L1N_BLLIOi51uO2wDzbJcf9irJHKFpU9dULUk87TvS-885TZSH6qPMrDEiWafMC-UGeI1Kw8UL5mbQSGKVFr8NF6gKphK0M48KKjn5ETwVuwV-zp7pDwSvaUrS6CRbCwvnR8XFonZnLcdfS8bv57qBxD1Pxj5x_2zzbJnjvYiLCHoCZ8o0CGyCvvLz0_mx9F8fp3iUBuAmqF9b_Ct69wUNGMCKLyNkOTvksqy5zvaA0Y4adCBvphmJEDg9fGs9AVLAM_wxcoaH_05E1csQG3su6ituSU4hfWbEIkSonOhTlvhBYxEXCEBpieD7pUN0dNi7udujyUrCItTnPztDs5YyRndINFYXn2uw17433WAEfRVDo9eQ9Uu1TwIkFuMSyCZaCeiBDO4ZWg60XYI9n5F-MUZWpD2nUOfMm4twGsj-0qw4TYHvpiZcARAquThFFg9lXxqy9MwdCplXSMqAAYG0CuucqXQsQvS5Y5y-S69S-I2SVj6nGkXOOCOWxvhBw-IeIMe3YS4rJcJbhe7txGyHteZpnbrzrpz14iMh96anRDSIqY15xn9qi_Y7E1O36hbFTQkuh8oBU2AGC4_g1CTAQSbVLofMPYjU413A-9IK3ih8re57Guex0sdrugx1mCr5mEMgLKSf1k55lcRwSaJpX96E_zk62hbUI6znTwUG3eviCiTN11TSarYbZ4CoddxdX0EsCUEE9uR0j1VPgMGd8XyzXtG93q_F0cg4UdqtHPYSY9E5vvjGSkeKhN0N-tZCy5okecL5akXowokmFoy9-EXEbAsiAnO_vZ3uFliZJmT0qQbZRPrDa5MdY6Uc4kVMybObnpESv7OqYhV-1ec3WOiNVqfLdt4eWuBZ5fJHzR-j9oFFVZQJ4trRvBz2n6a70wWfPh4S-AOrDJZ__HeMHRTZMmseTsZn1Ffkzfijp-lZy2QTt6fU587pSUiXnpMxZ2HuwhTsJf6rWPplOFNis0RRZdAgQk4Gg4C8bN2hIxhnHbkxgPIQeSR46tZ97SXV73sktYf6LfZHuARR4lU19GCUHEqPMtJ1ExdNCjaIv-eR1FX9apMFbPN-zqDLynKodf6PVW_2uTt2MgbHY-0HEC0lQKZB7wHruoHv6YMim4rGXyV3MiwIzyzJIAI7giAPDCXnkAvQaDPa113jheBwTfXomh0FmdBP-uTEiJPjsVIduVVIATkPfeoLEKMZyPv_aO60GO129JuF-5JQn3uQquxbkkKVtZ759iZQABMzL_ORsSY8hss3j-63nPi12rAKUiVM3NjR74esjAW6XalPSbB43M6A3nCMLwveGGSLqhXluAfx92WYaqRh_tce2UOuXPiySckMB8r6yRyrnBj273H9kjdC1mc24SRkSNkA_kA0orrjlNvG8rV2fm27KvYq18LPtTuZLPGAB5NIqtfB5dSN-U2aiMPEmZshIydKeJP2mv9vkdgAGDfiHpkUgq2urHaEKRsW8VlEE8_z9W8h8XuQt0W8JRkvPjQZolQIxPFYcGYTNZE7gC8_fPs7FNfRp6Aef7UIr8A0KkrCYBoJiJ3hZUdUwWpxFW_wMT9YbzOBkLhqA6J_olnTgBL_Rr4r2sdH4UAT5FqtwJ924lMMR85PjqacxkIzHdb44qVk-0sZ0jeU-pyxT70nv_-1q1W2aOz-zcS2e6wDkLECzJ9Y8ywOG-ynQzCdNz_IJHgn0o5ipMCrlI1s0LzOQE2V0jNzIOgNZLsLImz9G9VI4RUrMyNicFWtqQOXXj0v2pWLYy1kVuH2toKIbC1rTA7QR7Xn3V4_cicXULu18QXr09_k_PyLbB2LHLxFekXkmxxefNJ-a_203e5hM9g0aSi0go3EdRNUGIHzRubc93DRJCYvx7N-JqRtTTMS1nGjTg5PqaVeiVsrc3IEY86jDwCokSUVF7TKGZUxW15ttSTS2nEqStKMhRw8V3465QxdLXdjKJUzUhsb9kGWCKRMk5BlJRF_LXrV6gm5BENDV2iW8ZeGuyaAa9Q6HGl71eZvCksU42vZwwoZyfOQnvtTxGFbp5CVOEJZjyxUlZdTZZ8-iNt7gQSgZk0ptedNbkBgt8NUzzHt91VlBQoNI5xRE0sJZ4VNbyNP4Tb6oWxW7BlzslbiRojdoZjI3TCcFTZaDz53FC1JqFvI4zNNSwt-qmmyeAQ-DbV1MTbaNnv4oty6EIEiI0CWhPxYC4mTSdyEQw1rj4a3nD3bQh0E2UIts50grlttGr8RkC2NUcoV90Zph8kzkDWC8P7e44Sijr3iLdjYPFdcFNLLlaAvwhCTll02zfx3GUSDHMxmvhOGT_AtTkafmNgl_ksI0Klp3mQhp7fhNSOSSkKwcwlfiWONNR69q4iX3IQzsC5Tk60kHlRu2bk4vihs1sFQQPU970gOE7UdxxZFEqBYu9hLv-m8ArKm1047QXGmQp7TnYHFS_RY4Mp2ey8RKmBwYy7R_GY_gSgYXHgeSYB3MDoNeuvCer08sCzmMY_M8vmozN4nGVfGWQGu6JCgLW4vdPyw4cExg88CSoz0HyH62tCxFKL4SqwK8RI8KnokbVsxdbVA3-Z3etMu3pN2qkNn6327LofJAtWih6UvbYIUuWu9fXkjgVRGWGg1ZkuxleGxO8zJTxrMzYtDMdPfhoOTNwvvCsHJdsio0N80JxkOhg2d8UmACwCGL0WgMYW5SK20tZYcoAr86p7dLNzEGJdV7s_7YbX7vJX9Yiw8lPuc--ZJ7VqIQ_CsvSAPZjxUh-ZQSmPxnpqne1nG4QMXiWLjNYQpq9DOuZuIsj0dYchWnf71ky58zQZVR_5IY7adARHQ-O9TWR_iSLyVUmTMd2WlJBgcG2ctb2NTAbdO_xWy4z6qvM4lT5kt8cqtitwM469hWH9lK6PoTOfZlwn8oLFeC7_KAX1wd2lu44ys6QKqRXfMWDjEhEv31g==",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "dY0UaqjONovrz7IPupu7-AU",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:57:15 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=6518",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 49,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 11076,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 11076
+            }
+          ],
+          "thoughts_token_count": 1104,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 12229,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": null,
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": "```rust\npub fn is_a<T, I, Error: ParseError<I>>(arr: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  T: FindToken<<I as Input>::Item>,\n{\n  SplitPosition1 {\n    e: ErrorKind::IsA,\n    predicate: move |c| !arr.find_token(c),\n    error: PhantomData,\n  }\n}\n```",
+                  "thought": null,
+                  "thought_signature": "CsUFAQw51seh36ZmZn1-V91j46sbmKZk4JQT9wnrCae47sykyx1LFwFoBJZbdfhUA7ZDlEeepyHBoo_NdI1_5zCcQSqddcQuzx2qZ8M_mrOUGkMwuYjGd_KvGLrm095mvf7pYsuVYoiZHj5HXOzoW7-PFv2IJ3_AWPUJyhoMGzue--zNCwHfgaAVMSCKh6_8FIu5fgMnoCnbmluvFIY5OLeoVnI0AQLmNWJ-Cjhjolc6IXwzt_BsDknHUmpGzsUBPPRGWvB0Z35gsWnL0CnCyJVuWucQl-DS6dRJ4Nk5G2AXShAVsZ0GGpj-tK2rcJqN1HoC7BuR9YWA68eqShlJ9z9mEfnAYfQk8VRvEandOjai2a8-0j8d7kwO1FPOtoP3uPHPP1boKCnZ09Q7AG2dqFZ2vUPrGl4oYsFsscNYYHzVCHr4khNvJuzAMKJP06rrxUySc2U95pUQo7vBV02WC18fNYQCmZyc8H2zx3wKAlc3dHOhlXz8AQEtKZ6sZA5EuiDBkhzmfZaf-X-UHqIT-XCulKYSRNKONq8K-vnLFT3ShNhIN_o1k16wGPcmQrn5qmd9oV6xSRp36kFNnI7GarBatd5OFEpIo0wFlL946PH_yCYUvRciQXu17F-oWuexki0-tumIOarKmBXyZ91vDR8FYWYFba9J1q2Lu-GGaHd9sxD6r8Ehm9p-bxnXhlCf6EVCywjXqIKA5RKY11je0V-JX_Rl79tZyF_Y3DYsxuCptqspirPF_Cqu5cvRBdSeRbuOmduW4tmjLmpP63U5Pc_4g5ntzX7V_07IvF6Bxhic-kBjO_kFbqw1gP6-WVzS9-z57LJZYHYaz_zdVh7IdRqeQ4xefzFLxANWopbdTOGRKrC06Yga8ZLFaJbAYETETJI13qoFtOidmvjrjT3EqmqqAUfePDHoTevlTYCyhFmektEYMz7Tpgq1AgEMOdbHDtOc9ZSWQhxYwRZj6s6kqc_bvgdL5CFeRef3IFDr9__3-PIfukbz-CyFIoOjEuWSIztcDWfDuEXNQTp0nRBzBqwZlTYoUrHG3sybgvimKtd2olZy0qBFc7ema4wTGrMRHkvEvN66NGYQHD7hjTUjIxQI0hCLk94-KxFkIQl_6bNuNMLgVEspzxseO6RouJX6huSePKHOEV_cvESO8FhVV_JNMXaWx5v8HZl8rT_ahnY1mMcJw6DUXjRBxQV9WrEZa_RreqfAUCPO13wny331Qpsbe2bXLWhB6K8yUJJi0tit3sOe_6eWmA-PHlRewNxz6xEatmmQohlQZ6TCBuEv_FqRCfGejS5BLovO2jJC6xz3Za9nthcJ58OaXSVPJvMwZHJHcQWw2DpWeA5PPee_tApFAQw51scaCZwXOhUeguLn4rGr5DtyJMUMkiAn1hLX4_i5g_tP2dTsjpogs1D2xcCYE64PTqXk1GhOP4UvTmnqM9ep8tdg",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "fI0UatOEHf7fz7IPwL6U-QE",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:57:18 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=2424",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 108,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 1258,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 1258
+            }
+          ],
+          "thoughts_token_count": 293,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 1659,
+          "traffic_type": null
+        }
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "workspace_id": "rs_001_ctx16k"
+        },
+        "durationMs": 1,
+        "toolName": "list_files",
+        "workspace_id": "rs_001_ctx16k"
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/bytes/mod.rs",
+          "workspace_id": "rs_001_ctx16k"
+        },
+        "durationMs": 0,
+        "toolName": "list_symbols",
+        "workspace_id": "rs_001_ctx16k"
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/bytes/mod.rs#function:is_a:261",
+          "workspace_id": "rs_001_ctx16k"
+        },
+        "durationMs": 0,
+        "toolName": "get_symbol",
+        "workspace_id": "rs_001_ctx16k"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "workspace_id": "rs_001_ctx16k"
+        },
+        "id": "step-1-tool-1",
+        "isError": false,
+        "name": "list_files",
+        "result": [
+          {
+            "language": "rust",
+            "parse_status": "ok_filtered",
+            "path": "src/bytes/tests.rs",
+            "repository": "rust-bakery/nom",
+            "symbol_count": 49
+          },
+          {
+            "language": "rust",
+            "parse_status": "ok_filtered",
+            "path": "src/bytes/mod.rs",
+            "repository": "rust-bakery/nom",
+            "symbol_count": 42
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/bytes/mod.rs",
+          "workspace_id": "rs_001_ctx16k"
+        },
+        "id": "step-2-tool-1",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "Recognizes a pattern.\n\nThe input data will be compared to the tag combinator's argument and will return the part of\nthe input that matches the argument.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::streaming::tag;\n\nfn parser(s: &str) -> IResult<&str, &str> {\ntag(\"Hello\")(s)\n}\n\nassert_eq!(parser(\"Hello, World!\"), Ok((\", World!\", \"Hello\")));\nassert_eq!(parser(\"Something\"), Err(Err::Error(Error::new(\"Something\", ErrorKind::Tag))));\nassert_eq!(parser(\"S\"), Err(Err::Error(Error::new(\"S\", ErrorKind::Tag))));\nassert_eq!(parser(\"H\"), Err(Err::Incomplete(Needed::new(4))));\n```",
+            "end_line": 54,
+            "kind": "function",
+            "name": "tag",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "tag",
+            "signature": "pub fn tag<T, I, Error: ParseError<I>>(tag: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,\n{\n  Tag {\n    tag,\n    e: PhantomData,\n  }\n}",
+            "start_line": 45,
+            "symbol_id": "src/bytes/mod.rs#function:tag:45"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 92,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let tag_len = self.tag.input_len();\n    let t = self.tag.clone();\n\n    match i.compare(t) {\n      CompareResult::Ok => Ok((i.take_from(tag_len), OM::Output::bind(|| i.take(tag_len)))),\n      CompareResult::Incomplete => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(Needed::new(tag_len - i.input_len())))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::Tag;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      CompareResult::Error => Err(Err::Error(OM::Error::bind(|| {\n        let e: ErrorKind = ErrorKind::Tag;\n        Error::from_error_kind(i, e)\n      }))),\n    }\n  }",
+            "start_line": 71,
+            "symbol_id": "src/bytes/mod.rs#function:process:71"
+          },
+          {
+            "children": [],
+            "documentation": "Recognizes a case insensitive pattern.\n\nThe input data will be compared to the tag combinator's argument and will return the part of\nthe input that matches the argument with no regard to case.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::streaming::tag_no_case;\n\nfn parser(s: &str) -> IResult<&str, &str> {\ntag_no_case(\"hello\")(s)\n}\n\nassert_eq!(parser(\"Hello, World!\"), Ok((\", World!\", \"Hello\")));\nassert_eq!(parser(\"hello, World!\"), Ok((\", World!\", \"hello\")));\nassert_eq!(parser(\"HeLlO, World!\"), Ok((\", World!\", \"HeLlO\")));\nassert_eq!(parser(\"Something\"), Err(Err::Error(Error::new(\"Something\", ErrorKind::Tag))));\nassert_eq!(parser(\"\"), Err(Err::Incomplete(Needed::new(5))));\n```",
+            "end_line": 123,
+            "kind": "function",
+            "name": "tag_no_case",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "tag_no_case",
+            "signature": "pub fn tag_no_case<T, I, Error: ParseError<I>>(tag: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,\n{\n  TagNoCase {\n    tag,\n    e: PhantomData,\n  }\n}",
+            "start_line": 114,
+            "symbol_id": "src/bytes/mod.rs#function:tag_no_case:114"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 161,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let tag_len = self.tag.input_len();\n    let t = self.tag.clone();\n\n    match i.compare_no_case(t) {\n      CompareResult::Ok => Ok((i.take_from(tag_len), OM::Output::bind(|| i.take(tag_len)))),\n      CompareResult::Incomplete => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(Needed::new(tag_len - i.input_len())))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::Tag;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      CompareResult::Error => Err(Err::Error(OM::Error::bind(|| {\n        let e: ErrorKind = ErrorKind::Tag;\n        Error::from_error_kind(i, e)\n      }))),\n    }\n  }",
+            "start_line": 140,
+            "symbol_id": "src/bytes/mod.rs#function:process:140"
+          },
+          {
+            "children": [],
+            "documentation": "[inline(always)]",
+            "end_line": 182,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    i.split_at_position_mode::<OM, _, _>(|c| (self.predicate)(c))\n  }",
+            "start_line": 180,
+            "symbol_id": "src/bytes/mod.rs#function:process:180"
+          },
+          {
+            "children": [],
+            "documentation": "[inline(always)]",
+            "end_line": 204,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    i.split_at_position_mode1::<OM, _, _>(|c| (self.predicate)(c), self.e)\n  }",
+            "start_line": 202,
+            "symbol_id": "src/bytes/mod.rs#function:process:202"
+          },
+          {
+            "children": [],
+            "documentation": "Parse till certain characters are met.\n\nThe parser will return the longest slice till one of the characters of the combinator's argument are met.\n\nIt doesn't consume the matched character.\n\nIt will return a `Err::Error((\"\", ErrorKind::IsNot))` if the pattern wasn't met.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::complete::is_not;\n\nfn not_space(s: &str) -> IResult<&str, &str> {\nis_not(\" \\t\\r\\n\")(s)\n}\n\nassert_eq!(not_space(\"Hello, World!\"), Ok((\" World!\", \"Hello,\")));\nassert_eq!(not_space(\"Sometimes\\t\"), Ok((\"\\t\", \"Sometimes\")));\nassert_eq!(not_space(\"Nospace\"), Ok((\"\", \"Nospace\")));\nassert_eq!(not_space(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::IsNot))));\n```",
+            "end_line": 238,
+            "kind": "function",
+            "name": "is_not",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "is_not",
+            "signature": "pub fn is_not<T, I, Error: ParseError<I>>(arr: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  T: FindToken<<I as Input>::Item>,\n{\n  SplitPosition1 {\n    e: ErrorKind::IsNot,\n    predicate: move |c| arr.find_token(c),\n    error: PhantomData,\n  }\n}",
+            "start_line": 228,
+            "symbol_id": "src/bytes/mod.rs#function:is_not:228"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the longest slice of the matches the pattern.\n\nThe parser will return the longest slice consisting of the characters in provided in the\ncombinator's argument.\n\nIt will return a `Err(Err::Error((_, ErrorKind::IsA)))` if the pattern wasn't met.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::complete::is_a;\n\nfn hex(s: &str) -> IResult<&str, &str> {\nis_a(\"1234567890ABCDEF\")(s)\n}\n\nassert_eq!(hex(\"123 and voila\"), Ok((\" and voila\", \"123\")));\nassert_eq!(hex(\"DEADBEEF and others\"), Ok((\" and others\", \"DEADBEEF\")));\nassert_eq!(hex(\"BADBABEsomething\"), Ok((\"something\", \"BADBABE\")));\nassert_eq!(hex(\"D15EA5E\"), Ok((\"\", \"D15EA5E\")));\nassert_eq!(hex(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::IsA))));\n```",
+            "end_line": 271,
+            "kind": "function",
+            "name": "is_a",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "is_a",
+            "signature": "pub fn is_a<T, I, Error: ParseError<I>>(arr: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  T: FindToken<<I as Input>::Item>,\n{\n  SplitPosition1 {\n    e: ErrorKind::IsA,\n    predicate: move |c| !arr.find_token(c),\n    error: PhantomData,\n  }\n}",
+            "start_line": 261,
+            "symbol_id": "src/bytes/mod.rs#function:is_a:261"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the longest input slice (if any) that matches the predicate.\n\nThe parser will return the longest slice that matches the given predicate *(a function that\ntakes the input and returns a bool)*.\n# Example\n```rust\n# use nom::{Err, error::ErrorKind, Needed, IResult};\nuse nom::bytes::complete::take_while;\nuse nom::character::is_alphabetic;\n\nfn alpha(s: &[u8]) -> IResult<&[u8], &[u8]> {\ntake_while(is_alphabetic)(s)\n}\n\nassert_eq!(alpha(b\"latin123\"), Ok((&b\"123\"[..], &b\"latin\"[..])));\nassert_eq!(alpha(b\"12345\"), Ok((&b\"12345\"[..], &b\"\"[..])));\nassert_eq!(alpha(b\"latin\"), Ok((&b\"\"[..], &b\"latin\"[..])));\nassert_eq!(alpha(b\"\"), Ok((&b\"\"[..], &b\"\"[..])));\n```",
+            "end_line": 301,
+            "kind": "function",
+            "name": "take_while",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "take_while",
+            "signature": "pub fn take_while<F, I, Error: ParseError<I>>(cond: F) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,\n{\n  SplitPosition {\n    predicate: move |c| !cond(c),\n    error: PhantomData,\n  }\n}",
+            "start_line": 292,
+            "symbol_id": "src/bytes/mod.rs#function:take_while:292"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the longest (at least 1) input slice that matches the predicate.\n\nThe parser will return the longest slice that matches the given predicate *(a function that\ntakes the input and returns a bool)*.\n\nIt will return an `Err(Err::Error((_, ErrorKind::TakeWhile1)))` if the pattern wasn't met.\n\n# Streaming Specific\n*Streaming version* will return a `Err::Incomplete(Needed::new(1))` or if the pattern reaches the end of the input.\n\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::streaming::take_while1;\nuse nom::character::is_alphabetic;\n\nfn alpha(s: &[u8]) -> IResult<&[u8], &[u8]> {\ntake_while1(is_alphabetic)(s)\n}\n\nassert_eq!(alpha(b\"latin123\"), Ok((&b\"123\"[..], &b\"latin\"[..])));\nassert_eq!(alpha(b\"latin\"), Err(Err::Incomplete(Needed::new(1))));\nassert_eq!(alpha(b\"12345\"), Err(Err::Error(Error::new(&b\"12345\"[..], ErrorKind::TakeWhile1))));\n```",
+            "end_line": 337,
+            "kind": "function",
+            "name": "take_while1",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "take_while1",
+            "signature": "pub fn take_while1<F, I, Error: ParseError<I>>(cond: F) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,\n{\n  SplitPosition1 {\n    e: ErrorKind::TakeWhile1,\n    predicate: move |c| !cond(c),\n    error: PhantomData,\n  }\n}",
+            "start_line": 327,
+            "symbol_id": "src/bytes/mod.rs#function:take_while1:327"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the longest (m <= len <= n) input slice  that matches the predicate.\n\nThe parser will return the longest slice that matches the given predicate *(a function that\ntakes the input and returns a bool)*.\n\nIt will return an `Err::Error((_, ErrorKind::TakeWhileMN))` if the pattern wasn't met.\n# Streaming Specific\n*Streaming version* will return a `Err::Incomplete(Needed::new(1))`  if the pattern reaches the end of the input or is too short.\n\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::streaming::take_while_m_n;\nuse nom::character::is_alphabetic;\n\nfn short_alpha(s: &[u8]) -> IResult<&[u8], &[u8]> {\ntake_while_m_n(3, 6, is_alphabetic)(s)\n}\n\nassert_eq!(short_alpha(b\"latin123\"), Ok((&b\"123\"[..], &b\"latin\"[..])));\nassert_eq!(short_alpha(b\"lengthy\"), Ok((&b\"y\"[..], &b\"length\"[..])));\nassert_eq!(short_alpha(b\"latin\"), Err(Err::Incomplete(Needed::new(1))));\nassert_eq!(short_alpha(b\"ed\"), Err(Err::Incomplete(Needed::new(1))));\nassert_eq!(short_alpha(b\"12345\"), Err(Err::Error(Error::new(&b\"12345\"[..], ErrorKind::TakeWhileMN))));\n```",
+            "end_line": 379,
+            "kind": "function",
+            "name": "take_while_m_n",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "take_while_m_n",
+            "signature": "pub fn take_while_m_n<F, I, Error: ParseError<I>>(\n  m: usize,\n  n: usize,\n  predicate: F,\n) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,\n{\n  TakeWhileMN {\n    m,\n    n,\n    predicate,\n    e: PhantomData,\n  }\n}",
+            "start_line": 364,
+            "symbol_id": "src/bytes/mod.rs#function:take_while_m_n:364"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 443,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(\n    &mut self,\n    input: I,\n  ) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let mut count = 0;\n    for (i, (index, item)) in input.iter_indices().enumerate() {\n      if i == self.n {\n        return Ok((\n          input.take_from(index),\n          OM::Output::bind(|| input.take(index)),\n        ));\n      }\n\n      if !(self.predicate)(item) {\n        if i >= self.m {\n          return Ok((\n            input.take_from(index),\n            OM::Output::bind(|| input.take(index)),\n          ));\n        } else {\n          return Err(Err::Error(OM::Error::bind(|| {\n            Error::from_error_kind(input, ErrorKind::TakeWhileMN)\n          })));\n        }\n      }\n      count += 1;\n    }\n\n    let input_len = input.input_len();\n    if OM::Incomplete::is_streaming() {\n      let needed = if self.m > input_len {\n        self.m - input_len\n      } else {\n        1\n      };\n      Err(Err::Incomplete(Needed::new(needed)))\n    } else if count >= self.m {\n      Ok((\n        input.take_from(input_len),\n        OM::Output::bind(|| input.take(input_len)),\n      ))\n    } else {\n      Err(Err::Error(OM::Error::bind(|| {\n        Error::from_error_kind(input, ErrorKind::TakeWhileMN)\n      })))\n    }\n  }",
+            "start_line": 397,
+            "symbol_id": "src/bytes/mod.rs#function:process:397"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the longest input slice (if any) till a predicate is met.\n\nThe parser will return the longest slice till the given predicate *(a function that\ntakes the input and returns a bool)*.\n# Example\n```rust\n# use nom::{Err, error::ErrorKind, Needed, IResult};\nuse nom::bytes::complete::take_till;\n\nfn till_colon(s: &str) -> IResult<&str, &str> {\ntake_till(|c| c == ':')(s)\n}\n\nassert_eq!(till_colon(\"latin:123\"), Ok((\":123\", \"latin\")));\nassert_eq!(till_colon(\":empty matched\"), Ok((\":empty matched\", \"\"))); //allowed\nassert_eq!(till_colon(\"12345\"), Ok((\"\", \"12345\")));\nassert_eq!(till_colon(\"\"), Ok((\"\", \"\")));\n```\n[allow(clippy::redundant_closure)]",
+            "end_line": 474,
+            "kind": "function",
+            "name": "take_till",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "take_till",
+            "signature": "pub fn take_till<F, I, Error: ParseError<I>>(cond: F) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,\n{\n  SplitPosition {\n    predicate: cond,\n    error: PhantomData,\n  }\n}",
+            "start_line": 465,
+            "symbol_id": "src/bytes/mod.rs#function:take_till:465"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the longest (at least 1) input slice till a predicate is met.\n\nThe parser will return the longest slice till the given predicate *(a function that\ntakes the input and returns a bool)*.\n\n# Streaming Specific\n*Streaming version* will return a `Err::Incomplete(Needed::new(1))` if the match reaches the\nend of input or if there was not match.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::streaming::take_till1;\n\nfn till_colon(s: &str) -> IResult<&str, &str> {\ntake_till1(|c| c == ':')(s)\n}\n\nassert_eq!(till_colon(\"latin:123\"), Ok((\":123\", \"latin\")));\nassert_eq!(till_colon(\":empty matched\"), Err(Err::Error(Error::new(\":empty matched\", ErrorKind::TakeTill1))));\nassert_eq!(till_colon(\"12345\"), Err(Err::Incomplete(Needed::new(1))));\nassert_eq!(till_colon(\"\"), Err(Err::Incomplete(Needed::new(1))));\n```\n[allow(clippy::redundant_closure)]",
+            "end_line": 509,
+            "kind": "function",
+            "name": "take_till1",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "take_till1",
+            "signature": "pub fn take_till1<F, I, Error: ParseError<I>>(cond: F) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,\n{\n  SplitPosition1 {\n    e: ErrorKind::TakeTill1,\n    predicate: cond,\n    error: PhantomData,\n  }\n}",
+            "start_line": 499,
+            "symbol_id": "src/bytes/mod.rs#function:take_till1:499"
+          },
+          {
+            "children": [],
+            "documentation": "Returns an input slice containing the first N input elements (Input[..N]).\n\n# Streaming Specific\n*Streaming version* if the input has less than N elements, `take` will\nreturn a `Err::Incomplete(Needed::new(M))` where M is the number of\nadditional bytes the parser would need to succeed.\nIt is well defined for `&[u8]` as the number of elements is the byte size,\nbut for types like `&str`, we cannot know how many bytes correspond for\nthe next few chars, so the result will be `Err::Incomplete(Needed::Unknown)`\n\n# Example\n```rust\n# use nom::{Err, error::ErrorKind, Needed, IResult};\nuse nom::bytes::streaming::take;\n\nfn take6(s: &str) -> IResult<&str, &str> {\ntake(6usize)(s)\n}\n\nassert_eq!(take6(\"1234567\"), Ok((\"7\", \"123456\")));\nassert_eq!(take6(\"things\"), Ok((\"\", \"things\")));\nassert_eq!(take6(\"short\"), Err(Err::Incomplete(Needed::Unknown)));\n```",
+            "end_line": 543,
+            "kind": "function",
+            "name": "take",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "take",
+            "signature": "pub fn take<C, I, Error: ParseError<I>>(count: C) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  C: ToUsize,\n{\n  Take {\n    length: count.to_usize(),\n    e: PhantomData,\n  }\n}",
+            "start_line": 534,
+            "symbol_id": "src/bytes/mod.rs#function:take:534"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 572,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    match i.slice_index(self.length) {\n      Err(needed) => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(needed))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::Eof;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      Ok(index) => Ok((i.take_from(index), OM::Output::bind(|| i.take(index)))),\n    }\n  }",
+            "start_line": 558,
+            "symbol_id": "src/bytes/mod.rs#function:process:558"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the input slice up to the first occurrence of the pattern.\n\nIt doesn't consume the pattern.\n\n# Streaming Specific\n*Streaming version* will return a `Err::Incomplete(Needed::new(N))` if the input doesn't\ncontain the pattern or if the input is smaller than the pattern.\n# Example\n```rust\n# use nom::{Err, error::ErrorKind, Needed, IResult};\nuse nom::bytes::streaming::take_until;\n\nfn until_eof(s: &str) -> IResult<&str, &str> {\ntake_until(\"eof\")(s)\n}\n\nassert_eq!(until_eof(\"hello, worldeof\"), Ok((\"eof\", \"hello, world\")));\nassert_eq!(until_eof(\"hello, world\"), Err(Err::Incomplete(Needed::Unknown)));\nassert_eq!(until_eof(\"hello, worldeo\"), Err(Err::Incomplete(Needed::Unknown)));\nassert_eq!(until_eof(\"1eof2eof\"), Ok((\"eof2eof\", \"1\")));\n```",
+            "end_line": 605,
+            "kind": "function",
+            "name": "take_until",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "take_until",
+            "signature": "pub fn take_until<T, I, Error: ParseError<I>>(tag: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + FindSubstring<T>,\n  T: Clone,\n{\n  TakeUntil {\n    tag,\n    e: PhantomData,\n  }\n}",
+            "start_line": 596,
+            "symbol_id": "src/bytes/mod.rs#function:take_until:596"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 635,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    match i.find_substring(self.tag.clone()) {\n      None => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(Needed::Unknown))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::TakeUntil;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      Some(index) => Ok((i.take_from(index), OM::Output::bind(|| i.take(index)))),\n    }\n  }",
+            "start_line": 621,
+            "symbol_id": "src/bytes/mod.rs#function:process:621"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the non empty input slice up to the first occurrence of the pattern.\n\nIt doesn't consume the pattern.\n\n# Streaming Specific\n*Streaming version* will return a `Err::Incomplete(Needed::new(N))` if the input doesn't\ncontain the pattern or if the input is smaller than the pattern.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::streaming::take_until1;\n\nfn until_eof(s: &str) -> IResult<&str, &str> {\ntake_until1(\"eof\")(s)\n}\n\nassert_eq!(until_eof(\"hello, worldeof\"), Ok((\"eof\", \"hello, world\")));\nassert_eq!(until_eof(\"hello, world\"), Err(Err::Incomplete(Needed::Unknown)));\nassert_eq!(until_eof(\"hello, worldeo\"), Err(Err::Incomplete(Needed::Unknown)));\nassert_eq!(until_eof(\"1eof2eof\"), Ok((\"eof2eof\", \"1\")));\nassert_eq!(until_eof(\"eof\"),  Err(Err::Error(Error::new(\"eof\", ErrorKind::TakeUntil))));\n```",
+            "end_line": 669,
+            "kind": "function",
+            "name": "take_until1",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "take_until1",
+            "signature": "pub fn take_until1<T, I, Error: ParseError<I>>(tag: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + FindSubstring<T>,\n  T: Clone,\n{\n  TakeUntil1 {\n    tag,\n    e: PhantomData,\n  }\n}",
+            "start_line": 660,
+            "symbol_id": "src/bytes/mod.rs#function:take_until1:660"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 703,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    match i.find_substring(self.tag.clone()) {\n      None => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(Needed::Unknown))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::TakeUntil;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      Some(0) => Err(Err::Error(OM::Error::bind(|| {\n        Error::from_error_kind(i, ErrorKind::TakeUntil)\n      }))),\n\n      Some(index) => Ok((i.take_from(index), OM::Output::bind(|| i.take(index)))),\n    }\n  }",
+            "start_line": 685,
+            "symbol_id": "src/bytes/mod.rs#function:process:685"
+          },
+          {
+            "children": [],
+            "documentation": "Matches a byte string with escaped characters.\n\n* The first argument matches the normal characters (it must not accept the control character)\n* The second argument is the control character (like `\\` in most languages)\n* The third argument matches the escaped characters\n# Example\n```\n# use nom::{Err, error::ErrorKind, Needed, IResult};\n# use nom::character::complete::digit1;\nuse nom::bytes::streaming::escaped;\nuse nom::character::streaming::one_of;\n\nfn esc(s: &str) -> IResult<&str, &str> {\nescaped(digit1, '\\\\', one_of(\"\\\"n\\\\\"))(s)\n}\n\nassert_eq!(esc(\"123;\"), Ok((\";\", \"123\")));\nassert_eq!(esc(\"12\\\\\\\"34;\"), Ok((\";\", \"12\\\\\\\"34\")));\n```",
+            "end_line": 744,
+            "kind": "function",
+            "name": "escaped",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "escaped",
+            "signature": "pub fn escaped<I, Error, F, G>(\n  normal: F,\n  control_char: char,\n  escapable: G,\n) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + Clone + crate::traits::Offset,\n  <I as Input>::Item: crate::traits::AsChar,\n  F: Parser<I, Error = Error>,\n  G: Parser<I, Error = Error>,\n  Error: ParseError<I>,\n{\n  Escaped {\n    normal,\n    escapable,\n    control_char,\n    e: PhantomData,\n  }\n}",
+            "start_line": 726,
+            "symbol_id": "src/bytes/mod.rs#function:escaped:726"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 866,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(\n    &mut self,\n    input: I,\n  ) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let mut i = input.clone();\n\n    while i.input_len() > 0 {\n      let current_len = i.input_len();\n\n      match self\n        .normal\n        .process::<OutputM<Check, Check, OM::Incomplete>>(i.clone())\n      {\n        Ok((i2, _)) => {\n          if i2.input_len() == 0 {\n            if OM::Incomplete::is_streaming() {\n              return Err(Err::Incomplete(Needed::Unknown));\n            } else {\n              let index = input.input_len();\n              return Ok((\n                input.take_from(index),\n                OM::Output::bind(|| input.take(index)),\n              ));\n            }\n          } else if i2.input_len() == current_len {\n            let index = input.offset(&i2);\n            return Ok((\n              input.take_from(index),\n              OM::Output::bind(|| input.take(index)),\n            ));\n          } else {\n            i = i2;\n          }\n        }\n        Err(Err::Error(_)) => {\n          // unwrap() should be safe here since index < $i.input_len()\n          if i.iter_elements().next().unwrap().as_char() == self.control_char {\n            let next = self.control_char.len_utf8();\n            if next >= i.input_len() {\n              if OM::Incomplete::is_streaming() {\n                return Err(Err::Incomplete(Needed::new(1)));\n              } else {\n                return Err(Err::Error(OM::Error::bind(|| {\n                  Error::from_error_kind(input, ErrorKind::Escaped)\n                })));\n              }\n            } else {\n              match self\n                .escapable\n                .process::<OutputM<Check, OM::Error, OM::Incomplete>>(i.take_from(next))\n              {\n                Ok((i2, _)) => {\n                  if i2.input_len() == 0 {\n                    if OM::Incomplete::is_streaming() {\n                      return Err(Err::Incomplete(Needed::Unknown));\n                    } else {\n                      let index = input.input_len();\n                      return Ok((\n                        input.take_from(index),\n                        OM::Output::bind(|| input.take(index)),\n                      ));\n                    }\n                  } else {\n                    i = i2;\n                  }\n                }\n                Err(e) => return Err(e),\n              }\n            }\n          } else {\n            let index = input.offset(&i);\n            if index == 0 {\n              return Err(Err::Error(OM::Error::bind(|| {\n                Error::from_error_kind(input, ErrorKind::Escaped)\n              })));\n            } else {\n              return Ok((\n                input.take_from(index),\n                OM::Output::bind(|| input.take(index)),\n              ));\n            }\n          }\n        }\n        Err(Err::Failure(e)) => {\n          return Err(Err::Failure(e));\n        }\n        Err(Err::Incomplete(i)) => {\n          return Err(Err::Incomplete(i));\n        }\n      }\n    }\n\n    if OM::Incomplete::is_streaming() {\n      Err(Err::Incomplete(Needed::Unknown))\n    } else {\n      let index = input.input_len();\n      Ok((\n        input.take_from(index),\n        OM::Output::bind(|| input.take(index)),\n      ))\n    }\n  }",
+            "start_line": 765,
+            "symbol_id": "src/bytes/mod.rs#function:process:765"
+          },
+          {
+            "children": [],
+            "documentation": "Matches a byte string with escaped characters.\n\n* The first argument matches the normal characters (it must not match the control character)\n* The second argument is the control character (like `\\` in most languages)\n* The third argument matches the escaped characters and transforms them\n\nAs an example, the chain `abc\\tdef` could be `abc    def` (it also consumes the control character)\n\n```\n# use nom::{Err, error::ErrorKind, Needed, IResult};\n# use std::str::from_utf8;\nuse nom::bytes::streaming::{escaped_transform, tag};\nuse nom::character::streaming::alpha1;\nuse nom::branch::alt;\nuse nom::combinator::value;\n\nfn parser(input: &str) -> IResult<&str, String> {\nescaped_transform(\nalpha1,\n'\\\\',\nalt((\nvalue(\"\\\\\", tag(\"\\\\\")),\nvalue(\"\\\"\", tag(\"\\\"\")),\nvalue(\"\\n\", tag(\"n\")),\n))\n)(input)\n}\n\nassert_eq!(parser(\"ab\\\\\\\"cd\\\"\"), Ok((\"\\\"\", String::from(\"ab\\\"cd\"))));\n```\n[cfg(feature = \"alloc\")]\n[cfg_attr(feature = \"docsrs\", doc(cfg(feature = \"alloc\")))]",
+            "end_line": 924,
+            "kind": "function",
+            "name": "escaped_transform",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "escaped_transform",
+            "signature": "pub fn escaped_transform<I, Error, F, G, ExtendItem, Output>(\n  normal: F,\n  control_char: char,\n  transform: G,\n) -> impl Parser<I, Output = Output, Error = Error>\nwhere\n  I: Clone + crate::traits::Offset + Input,\n  I: crate::traits::ExtendInto<Item = ExtendItem, Extender = Output>,\n  <F as Parser<I>>::Output: crate::traits::ExtendInto<Item = ExtendItem, Extender = Output>,\n  <G as Parser<I>>::Output: crate::traits::ExtendInto<Item = ExtendItem, Extender = Output>,\n  <I as Input>::Item: crate::traits::AsChar,\n  F: Parser<I, Error = Error>,\n  G: Parser<I, Error = Error>,\n  Error: ParseError<I>,\n{\n  EscapedTransform {\n    normal,\n    control_char,\n    transform,\n    e: PhantomData,\n    extend: PhantomData,\n    o: PhantomData,\n  }\n}",
+            "start_line": 901,
+            "symbol_id": "src/bytes/mod.rs#function:escaped_transform:901"
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/bytes/mod.rs#function:is_a:261",
+          "workspace_id": "rs_001_ctx16k"
+        },
+        "id": "step-3-tool-1",
+        "isError": false,
+        "name": "get_symbol",
+        "result": {
+          "children": [],
+          "code": "pub fn is_a<T, I, Error: ParseError<I>>(arr: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  T: FindToken<<I as Input>::Item>,\n{\n  SplitPosition1 {\n    e: ErrorKind::IsA,\n    predicate: move |c| !arr.find_token(c),\n    error: PhantomData,\n  }\n}",
+          "documentation": "Returns the longest slice of the matches the pattern.\n\nThe parser will return the longest slice consisting of the characters in provided in the\ncombinator's argument.\n\nIt will return a `Err(Err::Error((_, ErrorKind::IsA)))` if the pattern wasn't met.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::complete::is_a;\n\nfn hex(s: &str) -> IResult<&str, &str> {\nis_a(\"1234567890ABCDEF\")(s)\n}\n\nassert_eq!(hex(\"123 and voila\"), Ok((\" and voila\", \"123\")));\nassert_eq!(hex(\"DEADBEEF and others\"), Ok((\" and others\", \"DEADBEEF\")));\nassert_eq!(hex(\"BADBABEsomething\"), Ok((\"something\", \"BADBABE\")));\nassert_eq!(hex(\"D15EA5E\"), Ok((\"\", \"D15EA5E\")));\nassert_eq!(hex(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::IsA))));\n```",
+          "end_line": 271,
+          "kind": "function",
+          "name": "is_a",
+          "parent_id": null,
+          "parent_name": null,
+          "path": "src/bytes/mod.rs",
+          "qualified_name": "is_a",
+          "signature": "pub fn is_a<T, I, Error: ParseError<I>>(arr: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  T: FindToken<<I as Input>::Item>,\n{\n  SplitPosition1 {\n    e: ErrorKind::IsA,\n    predicate: move |c| !arr.find_token(c),\n    error: PhantomData,\n  }\n}",
+          "start_line": 261,
+          "symbol_id": "src/bytes/mod.rs#function:is_a:261"
+        }
+      }
+    ]
+  },
+  "trialId": "207ecb52c3"
+}

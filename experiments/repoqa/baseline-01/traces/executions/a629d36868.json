@@ -1,0 +1,862 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 2057,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "rs_001_ctx8k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 1,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "language": "rust",
+                "parse_status": "ok_filtered",
+                "path": "src/bytes/tests.rs",
+                "repository": "rust-bakery/nom",
+                "symbol_count": 45
+              },
+              {
+                "language": "rust",
+                "parse_status": "ok_filtered",
+                "path": "src/bytes/mod.rs",
+                "repository": "rust-bakery/nom",
+                "symbol_count": 16
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "rs_001_ctx8k"
+              },
+              "durationMs": 1,
+              "toolName": "list_files",
+              "workspace_id": "rs_001_ctx8k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1483,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "src/bytes/mod.rs",
+              "workspace_id": "rs_001_ctx8k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "Recognizes a pattern.\n\nThe input data will be compared to the tag combinator's argument and will return the part of\nthe input that matches the argument.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::streaming::tag;\n\nfn parser(s: &str) -> IResult<&str, &str> {\ntag(\"Hello\")(s)\n}\n\nassert_eq!(parser(\"Hello, World!\"), Ok((\", World!\", \"Hello\")));\nassert_eq!(parser(\"Something\"), Err(Err::Error(Error::new(\"Something\", ErrorKind::Tag))));\nassert_eq!(parser(\"S\"), Err(Err::Error(Error::new(\"S\", ErrorKind::Tag))));\nassert_eq!(parser(\"H\"), Err(Err::Incomplete(Needed::new(4))));\n```",
+                "end_line": 54,
+                "kind": "function",
+                "name": "tag",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "tag",
+                "signature": "pub fn tag<T, I, Error: ParseError<I>>(tag: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,\n{\n  Tag {\n    tag,\n    e: PhantomData,\n  }\n}",
+                "start_line": 45,
+                "symbol_id": "src/bytes/mod.rs#function:tag:45"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 92,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let tag_len = self.tag.input_len();\n    let t = self.tag.clone();\n\n    match i.compare(t) {\n      CompareResult::Ok => Ok((i.take_from(tag_len), OM::Output::bind(|| i.take(tag_len)))),\n      CompareResult::Incomplete => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(Needed::new(tag_len - i.input_len())))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::Tag;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      CompareResult::Error => Err(Err::Error(OM::Error::bind(|| {\n        let e: ErrorKind = ErrorKind::Tag;\n        Error::from_error_kind(i, e)\n      }))),\n    }\n  }",
+                "start_line": 71,
+                "symbol_id": "src/bytes/mod.rs#function:process:71"
+              },
+              {
+                "children": [],
+                "documentation": "Recognizes a case insensitive pattern.\n\nThe input data will be compared to the tag combinator's argument and will return the part of\nthe input that matches the argument with no regard to case.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::streaming::tag_no_case;\n\nfn parser(s: &str) -> IResult<&str, &str> {\ntag_no_case(\"hello\")(s)\n}\n\nassert_eq!(parser(\"Hello, World!\"), Ok((\", World!\", \"Hello\")));\nassert_eq!(parser(\"hello, World!\"), Ok((\", World!\", \"hello\")));\nassert_eq!(parser(\"HeLlO, World!\"), Ok((\", World!\", \"HeLlO\")));\nassert_eq!(parser(\"Something\"), Err(Err::Error(Error::new(\"Something\", ErrorKind::Tag))));\nassert_eq!(parser(\"\"), Err(Err::Incomplete(Needed::new(5))));\n```",
+                "end_line": 123,
+                "kind": "function",
+                "name": "tag_no_case",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "tag_no_case",
+                "signature": "pub fn tag_no_case<T, I, Error: ParseError<I>>(tag: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,\n{\n  TagNoCase {\n    tag,\n    e: PhantomData,\n  }\n}",
+                "start_line": 114,
+                "symbol_id": "src/bytes/mod.rs#function:tag_no_case:114"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 161,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let tag_len = self.tag.input_len();\n    let t = self.tag.clone();\n\n    match i.compare_no_case(t) {\n      CompareResult::Ok => Ok((i.take_from(tag_len), OM::Output::bind(|| i.take(tag_len)))),\n      CompareResult::Incomplete => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(Needed::new(tag_len - i.input_len())))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::Tag;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      CompareResult::Error => Err(Err::Error(OM::Error::bind(|| {\n        let e: ErrorKind = ErrorKind::Tag;\n        Error::from_error_kind(i, e)\n      }))),\n    }\n  }",
+                "start_line": 140,
+                "symbol_id": "src/bytes/mod.rs#function:process:140"
+              },
+              {
+                "children": [],
+                "documentation": "[inline(always)]",
+                "end_line": 182,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    i.split_at_position_mode::<OM, _, _>(|c| (self.predicate)(c))\n  }",
+                "start_line": 180,
+                "symbol_id": "src/bytes/mod.rs#function:process:180"
+              },
+              {
+                "children": [],
+                "documentation": "[inline(always)]",
+                "end_line": 204,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    i.split_at_position_mode1::<OM, _, _>(|c| (self.predicate)(c), self.e)\n  }",
+                "start_line": 202,
+                "symbol_id": "src/bytes/mod.rs#function:process:202"
+              },
+              {
+                "children": [],
+                "documentation": "Parse till certain characters are met.\n\nThe parser will return the longest slice till one of the characters of the combinator's argument are met.\n\nIt doesn't consume the matched character.\n\nIt will return a `Err::Error((\"\", ErrorKind::IsNot))` if the pattern wasn't met.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::complete::is_not;\n\nfn not_space(s: &str) -> IResult<&str, &str> {\nis_not(\" \\t\\r\\n\")(s)\n}\n\nassert_eq!(not_space(\"Hello, World!\"), Ok((\" World!\", \"Hello,\")));\nassert_eq!(not_space(\"Sometimes\\t\"), Ok((\"\\t\", \"Sometimes\")));\nassert_eq!(not_space(\"Nospace\"), Ok((\"\", \"Nospace\")));\nassert_eq!(not_space(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::IsNot))));\n```",
+                "end_line": 238,
+                "kind": "function",
+                "name": "is_not",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "is_not",
+                "signature": "pub fn is_not<T, I, Error: ParseError<I>>(arr: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  T: FindToken<<I as Input>::Item>,\n{\n  SplitPosition1 {\n    e: ErrorKind::IsNot,\n    predicate: move |c| arr.find_token(c),\n    error: PhantomData,\n  }\n}",
+                "start_line": 228,
+                "symbol_id": "src/bytes/mod.rs#function:is_not:228"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the longest slice of the matches the pattern.\n\nThe parser will return the longest slice consisting of the characters in provided in the\ncombinator's argument.\n\nIt will return a `Err(Err::Error((_, ErrorKind::IsA)))` if the pattern wasn't met.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::complete::is_a;\n\nfn hex(s: &str) -> IResult<&str, &str> {\nis_a(\"1234567890ABCDEF\")(s)\n}\n\nassert_eq!(hex(\"123 and voila\"), Ok((\" and voila\", \"123\")));\nassert_eq!(hex(\"DEADBEEF and others\"), Ok((\" and others\", \"DEADBEEF\")));\nassert_eq!(hex(\"BADBABEsomething\"), Ok((\"something\", \"BADBABE\")));\nassert_eq!(hex(\"D15EA5E\"), Ok((\"\", \"D15EA5E\")));\nassert_eq!(hex(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::IsA))));\n```",
+                "end_line": 271,
+                "kind": "function",
+                "name": "is_a",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "is_a",
+                "signature": "pub fn is_a<T, I, Error: ParseError<I>>(arr: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  T: FindToken<<I as Input>::Item>,\n{\n  SplitPosition1 {\n    e: ErrorKind::IsA,\n    predicate: move |c| !arr.find_token(c),\n    error: PhantomData,\n  }\n}",
+                "start_line": 261,
+                "symbol_id": "src/bytes/mod.rs#function:is_a:261"
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "src/bytes/mod.rs",
+                "workspace_id": "rs_001_ctx8k"
+              },
+              "durationMs": 0,
+              "toolName": "list_symbols",
+              "workspace_id": "rs_001_ctx8k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 3406,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "path": "src/bytes/mod.rs",
+              "workspace_id": "rs_001_ctx8k"
+            },
+            "tool_name": "read_file"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": {
+              "content": "//! Parsers recognizing bytes streams\n\npub mod complete;\npub mod streaming;\n#[cfg(test)]\nmod tests;\n\nuse core::marker::PhantomData;\n\nuse crate::error::ErrorKind;\nuse crate::error::ParseError;\nuse crate::internal::{Err, Needed, Parser};\nuse crate::lib::std::result::Result::*;\nuse crate::traits::{Compare, CompareResult, InputLength};\nuse crate::AsChar;\nuse crate::Check;\nuse crate::ExtendInto;\nuse crate::FindSubstring;\nuse crate::FindToken;\nuse crate::Input;\nuse crate::IsStreaming;\nuse crate::Mode;\nuse crate::OutputM;\nuse crate::OutputMode;\nuse crate::ToUsize;\n\n/// Recognizes a pattern.\n///\n/// The input data will be compared to the tag combinator's argument and will return the part of\n/// the input that matches the argument.\n/// # Example\n/// ```rust\n/// # use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\n/// use nom::bytes::streaming::tag;\n///\n/// fn parser(s: &str) -> IResult<&str, &str> {\n///   tag(\"Hello\")(s)\n/// }\n///\n/// assert_eq!(parser(\"Hello, World!\"), Ok((\", World!\", \"Hello\")));\n/// assert_eq!(parser(\"Something\"), Err(Err::Error(Error::new(\"Something\", ErrorKind::Tag))));\n/// assert_eq!(parser(\"S\"), Err(Err::Error(Error::new(\"S\", ErrorKind::Tag))));\n/// assert_eq!(parser(\"H\"), Err(Err::Incomplete(Needed::new(4))));\n/// ```\npub fn tag<T, I, Error: ParseError<I>>(tag: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,\n{\n  Tag {\n    tag,\n    e: PhantomData,\n  }\n}\n\n/// Tag implementation\npub struct Tag<T, E> {\n  tag: T,\n  e: PhantomData<E>,\n}\n\nimpl<I, Error: ParseError<I>, T> Parser<I> for Tag<T, Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,\n{\n  type Output = I;\n\n  type Error = Error;\n\n  fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let tag_len = self.tag.input_len();\n    let t = self.tag.clone();\n\n    match i.compare(t) {\n      CompareResult::Ok => Ok((i.take_from(tag_len), OM::Output::bind(|| i.take(tag_len)))),\n      CompareResult::Incomplete => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(Needed::new(tag_len - i.input_len())))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::Tag;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      CompareResult::Error => Err(Err::Error(OM::Error::bind(|| {\n        let e: ErrorKind = ErrorKind::Tag;\n        Error::from_error_kind(i, e)\n      }))),\n    }\n  }\n}\n\n/// Recognizes a case insensitive pattern.\n///\n/// The input data will be compared to the tag combinator's argument and will return the part of\n/// the input that matches the argument with no regard to case.\n/// # Example\n/// ```rust\n/// # use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\n/// use nom::bytes::streaming::tag_no_case;\n///\n/// fn parser(s: &str) -> IResult<&str, &str> {\n///   tag_no_case(\"hello\")(s)\n/// }\n///\n/// assert_eq!(parser(\"Hello, World!\"), Ok((\", World!\", \"Hello\")));\n/// assert_eq!(parser(\"hello, World!\"), Ok((\", World!\", \"hello\")));\n/// assert_eq!(parser(\"HeLlO, World!\"), Ok((\", World!\", \"HeLlO\")));\n/// assert_eq!(parser(\"Something\"), Err(Err::Error(Error::new(\"Something\", ErrorKind::Tag))));\n/// assert_eq!(parser(\"\"), Err(Err::Incomplete(Needed::new(5))));\n/// ```\npub fn tag_no_case<T, I, Error: ParseError<I>>(tag: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,\n{\n  TagNoCase {\n    tag,\n    e: PhantomData,\n  }\n}\n\n/// Case insensitive Tag implementation\npub struct TagNoCase<T, E> {\n  tag: T,\n  e: PhantomData<E>,\n}\n\nimpl<I, Error: ParseError<I>, T> Parser<I> for TagNoCase<T, Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,\n{\n  type Output = I;\n\n  type Error = Error;\n\n  fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let tag_len = self.tag.input_len();\n    let t = self.tag.clone();\n\n    match i.compare_no_case(t) {\n      CompareResult::Ok => Ok((i.take_from(tag_len), OM::Output::bind(|| i.take(tag_len)))),\n      CompareResult::Incomplete => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(Needed::new(tag_len - i.input_len())))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::Tag;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      CompareResult::Error => Err(Err::Error(OM::Error::bind(|| {\n        let e: ErrorKind = ErrorKind::Tag;\n        Error::from_error_kind(i, e)\n      }))),\n    }\n  }\n}\n\n/// Parser wrapper for `split_at_position`\npub struct SplitPosition<F, E> {\n  predicate: F,\n  error: PhantomData<E>,\n}\n\nimpl<I, Error: ParseError<I>, F> Parser<I> for SplitPosition<F, Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,\n{\n  type Output = I;\n\n  type Error = Error;\n\n  #[inline(always)]\n  fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    i.split_at_position_mode::<OM, _, _>(|c| (self.predicate)(c))\n  }\n}\n\n/// Parser wrapper for `split_at_position1`\npub struct SplitPosition1<F, E> {\n  e: ErrorKind,\n  predicate: F,\n  error: PhantomData<E>,\n}\n\nimpl<I, Error: ParseError<I>, F> Parser<I> for SplitPosition1<F, Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,\n{\n  type Output = I;\n\n  type Error = Error;\n\n  #[inline(always)]\n  fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    i.split_at_position_mode1::<OM, _, _>(|c| (self.predicate)(c), self.e)\n  }\n}\n\n/// Parse till certain characters are met.\n///\n/// The parser will return the longest slice till one of the characters of the combinator's argument are met.\n///\n/// It doesn't consume the matched character.\n///\n/// It will return a `Err::Error((\"\", ErrorKind::IsNot))` if the pattern wasn't met.\n/// # Example\n/// ```rust\n/// # use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\n/// use nom::bytes::complete::is_not;\n///\n/// fn not_space(s: &str) -> IResult<&str, &str> {\n///   is_not(\" \\t\\r\\n\")(s)\n/// }\n///\n/// assert_eq!(not_space(\"Hello, World!\"), Ok((\" World!\", \"Hello,\")));\n/// assert_eq!(not_space(\"Sometimes\\t\"), Ok((\"\\t\", \"Sometimes\")));\n/// assert_eq!(not_space(\"Nospace\"), Ok((\"\", \"Nospace\")));\n/// assert_eq!(not_space(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::IsNot))));\n/// ```\npub fn is_not<T, I, Error: ParseError<I>>(arr: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  T: FindToken<<I as Input>::Item>,\n{\n  SplitPosition1 {\n    e: ErrorKind::IsNot,\n    predicate: move |c| arr.find_token(c),\n    error: PhantomData,\n  }\n}\n\n/// Returns the longest slice of the matches the pattern.\n///\n/// The parser will return the longest slice consisting of the characters in provided in the\n/// combinator's argument.\n///\n/// It will return a `Err(Err::Error((_, ErrorKind::IsA)))` if the pattern wasn't met.\n/// # Example\n/// ```rust\n/// # use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\n/// use nom::bytes::complete::is_a;\n///\n/// fn hex(s: &str) -> IResult<&str, &str> {\n///   is_a(\"1234567890ABCDEF\")(s)\n/// }\n///\n/// assert_eq!(hex(\"123 and voila\"), Ok((\" and voila\", \"123\")));\n/// assert_eq!(hex(\"DEADBEEF and others\"), Ok((\" and others\", \"DEADBEEF\")));\n/// assert_eq!(hex(\"BADBABEsomething\"), Ok((\"something\", \"BADBABE\")));\n/// assert_eq!(hex(\"D15EA5E\"), Ok((\"\", \"D15EA5E\")));\n/// assert_eq!(hex(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::IsA))));\n/// ```\npub fn is_a<T, I, Error: ParseError<I>>(arr: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  T: FindToken<<I as Input>::Item>,\n{\n  SplitPosition1 {\n    e: ErrorKind::IsA,\n    predicate: move |c| !arr.find_token(c),\n    error: PhantomData,\n  }\n}\n\n/// Returns the longest input slice (if any) that matches the predicate.\n///\n/// The parser will return the longest slice that matches the given predicate *(a function that\n/// takes the input and returns a bool)*.\n/// # Example\n/// ```rust\n/// # use nom::{Err, error::ErrorKind, Needed, IResult};\n/// use nom::bytes::complete::take_while;\n/// use nom::character::is_alphabetic;\n///\n/// fn alpha(s: &[u8]) -> IResult<&[u8], &[u8]> {\n///   take_while(is_alphabetic)(s)\n/// }\n///\n/// assert_eq!(alpha(b\"latin123\"), Ok((&b\"123\"[..], &b\"latin\"[..])));\n/// assert_eq!(alpha(b\"12345\"), Ok((&b\"12345\"[..], &b\"\"[..])));\n/// assert_eq!(alpha(b\"latin\"), Ok((&b\"\"[..], &b\"latin\"[..])));\n/// assert_eq!(alpha(b\"\"), Ok((&b\"\"[..], &b\"\"[..])));\n/// ```\n...\n",
+              "language": "rust",
+              "path": "src/bytes/mod.rs",
+              "repository": "rust-bakery/nom"
+            },
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "path": "src/bytes/mod.rs",
+                "workspace_id": "rs_001_ctx8k"
+              },
+              "durationMs": 0,
+              "toolName": "read_file",
+              "workspace_id": "rs_001_ctx8k"
+            },
+            "tool_name": "read_file"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 2470,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 9472,
+          "metadata": {},
+          "name": "strategy.local_function.execute",
+          "type": "strategy.local_function.execute"
+        },
+        {
+          "duration_ms": 9472,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 56,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": null,
+        "cachedInputTokens": null,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 3,
+        "inputTokens": 8620,
+        "loopControlDurationMsEstimated": 55,
+        "mcpToolCalls": 3,
+        "modelCalls": 4,
+        "modelDurationMs": 9416,
+        "outputTokens": 188,
+        "promptChars": 901,
+        "questionTokensEstimated": 117,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 831,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 4,
+        "strategyDurationMs": 9472,
+        "taskStatementChars": 731,
+        "toolCalls": 3,
+        "toolDurationMs": 1,
+        "totalDurationMs": 9472,
+        "totalTokens": 9639,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "workspace_id": "rs_001_ctx8k"
+                    },
+                    "id": null,
+                    "name": "list_files",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CsgFAQw51sd0tOj6eNUPTOcEbT_KYbIyHVzw_NnpqsLLkYsUQAyUue8wos3iF4fBEmY4z8EUrGVW4E1k7tle03XeGx7VTtqt1WEmhfEDGt1KixjiVpS0F8mUhg67ze_vpnN33MrNCOmfjnCkWb9CmmbhC_lbKYbMB6UrR0BlRsszLcADEzAkJ8Ra4jdcbnCm5_zdPt0C0UzSgl_6md1TiNnn-qz5sQmYmpC17PCGdartou-2J_E4GvFcBFYt-AynDcjFNLN0n_8fhaWAFu3cEU2ET-oQz5GTcj7WkT5cCsMeO_LvKtKwU_lKeu14fO60ht8kjbUg2IhUmHOFxoK3HZ1_2tYS3wqxO0B8iZvQ2eMPomov5BQMKDTyodudjQnyHldmDHf-EPwXs75zDyRAiGNtLigdvVlkE4n_Ey-SCpUZgouobrHPgpz4gXZWDPOVTiLsIxLOIysunXmc7HyXDoZJ2XlnQpWHtxqG90O6YVYlSkLpOjUxN5jP64W1Togkq0_2iqbjR2GfQOmfYB2FQOFTFy8ofkeJnHOX0TvtyvrItSqB2761FN4Dxie5O5x-1pKIDf2FizLPuo_oYO4wrEyJlCu4COjwLq3f-pgwCPKnYbMr8dmm3LOCtVLPlaCJu-15yaIIGo8HgUOjj0dOfy9mXFZwSvvyVj1kXaFfs7WMkhBzcSAt1XGbjF5JnGN6r94KFWDhF7G6ymoV2KSpTFNZt68de0fOIeDC2wYHdZEpKgkNew1bLzRF8iojtUu4HeuHcn-5cSC7kf_PQ9W-pKiEzP0M3VPl8fyP7SafzjVG4PrFOpAuNo6L-0GvypZYVXnqXFO5uqdhfWAmnObtu4Gq80p2nFvO8-NiRNY5beVCurvqe8qES5U1mTv4aDNaOlkbgsWIBzlPuHZk7E1FgBkookdx4VQw0dpE0pXsYZREiCPoTDaX-UuiAg==",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "Jo0UatiQKKKDz7IPpabDsAE",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:55:52 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1843",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 25,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 579,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 579
+            }
+          ],
+          "thoughts_token_count": 157,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 761,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "kind": "function",
+                      "path": "src/bytes/mod.rs",
+                      "workspace_id": "rs_001_ctx8k"
+                    },
+                    "id": null,
+                    "name": "list_symbols",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CrwCAQw51sdZQO66VnU7opLruAfHmTrAHWXrlleqIqCPRFm1v2gXwjfNxtqRgCjBH6dbKIWbvR88FBWby_CiUaFoYLpLmj27QAZafoUiV2protfuIeHfSMde8RTs8fAPQbDyBOSVQ3FiBvIrnfbMpURaevZN4kQ1FrXDDJtpR1YfQMgVh6lv16OTieNp0wvlE3_zoG9IOgvHhyUn-kkauERKL_3GUmT6INvpcESGiK_VZ3U1-Rgeo1wnECcpOXnZTFTW4tDpwlu1gdmqcbY99BHmFt1Fp-TFjpo9ejcAfj_vGA292sO6mpXlg6vrwbPITTpLDjM5tU8BbJc9xfzFgUSmz5rVbTlmUWEDkIvMHmmlr2fiv3xoSPh2ssB8XO6aUx5BbOGZ8Vi2iyubnq1c3_8DK1ooQiSLhah2NN6Svw==",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "KI0Uav3HLMGHz7IPsvzjoQ4",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:55:53 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1257",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 41,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 713,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 713
+            }
+          ],
+          "thoughts_token_count": 73,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 827,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "path": "src/bytes/mod.rs",
+                      "workspace_id": "rs_001_ctx8k"
+                    },
+                    "id": null,
+                    "name": "read_file",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CtoKAQw51sf3gPLbsNiaj0anWdFx4db4L-lTyXfjbbfzzJAjg0DGZzxYV7JWr0_dlzYmcaYfyCqxn5Re3g6OKJvVAHYsoPkaXh1WpP6FUOS9vL6loubOdr8qppnKlRnChTd8cT_oxULHJ-1gV9MZmMLrQin9McM6WfgwbvDh0Zlz780TUzBoRctJsoQ8GOUZKmAun971w8shyphpRWHQWXwa5pDOIzuyHWocdnoO6MIZtmyHTAo_DH_cKSB6zQtWCAEVxLnvilWDup-h1LCyM7BvHCvnfDzrh2h12VbUXoBnQuRshtrAnu1v6QtV5MEF2jyq-UUv9b_lVwyAd2a3U0V3fjOW6VJUXY4ixD-t3moneALxijcrfKTXke8uyKlk0DJB3dNzZn27cSnwZ5AylLyojWiezGItTG8M7oQRtJ7KmFtRpYduJPaxP5hb718vEo9bL7SG-jhBT65q5mU0fpcOqTLjz6mBUji9b3elP70FBBjk2rlVkSe42-J7w4Q0E-CdAFixi9ksD4PkD-Z96tdD9hLN7R7atCa4HyEaq6L1nkD9WjCOR6660T1SrFGK3xMpWS3Z6U4d7ph_EfTm5zTtOod-mweZdO0fLIsQibi9ElFKQ6dc_8oUQKWp3G5bKM0WO992wW6o88E1O-rP5qiBo6iLCMZYjkT4Q3YxVvdrSDBifoRCgjv_K8F4s00nAuiNbhUBG4Eb5YtLoD4F-WfhNhSFP43Lz9EK-IjS609ZMk4gEJmKG0P9fCMpnICZ8tKKyVUu_J3HQGxl_f-56zGmSplnYN6Gj1Ri_pFwY9ja2FtgUJw-mgAtXkhJPuklLFtY-r7BsFkKxqSDTcVI19HAl1pw6vKBFKSeldfuyUOwBFS5XSoHTU6M3rWdtMZ9gzdVU2TdaX8rPi71zUiia1cFhwRJdZ051h8296AJRWZ_C6ZVyOgkGfY2wDvoayDSUp4gDDd8AkkTaNtmURfrfTUsSQWa4GZLdAIGjDn0gWR6sc8dLdAuWO1qv-LInTe3okrJM2OKKKVT5rETwJT-SGP5mU0F-Ibxkn7EPC36pUBljL1MLxNMGerArutiGAqrOVVYeU6uES74GNl9PHiUtP3H73_MeqcCL54UZVGwqdCgb130mOyq-KaqeD16X1o9hubL4HMAbg43LlPvaoWph_8JbTC8AFwTuOh-rl1Blzep2XsoEywhb__TmNsKFdM9mHzmA35jZcQIeOIE2wxNnOBYbPSSNyuDXnN5ftcXaD8j78kVUK45eJnwbwHpzKzc3_wEYRm-maRedIItRjM1pobnMFnzegPzLkXBNRwTkhyd4JmFUf3tQ4s04fuQlTOJleKuSMue1D4Lxt8DCAlim_cdtuOtnfPVvgzAdNV6g3EnehMqfZAbvFhUwVorqJjBmVGwIY9xi7licpoFlOksXzLkLM_4s18Ob-TMkztEi7PI6Kc659GOqR3GXfDhtzQWwbmxDlNUiQjW5dI7lJQJkGttNoabe9JS0RQTT-nxRY-cpn7NBUxGd63QwGs3nzrP1cDpse4GuBvoMOHM2_9jJ3gPx_EQHYoInxtPb57z7xlBJmyZ30i8hzl4BnuxV4gHbC23iyiwcUfe6NYzHIzVeaSklrpJ186wW4TG2z00zi0lMTt_0FnT4feb4BfMrOjdLk78Lcx2NcSz7Dyk7Hl4N-E1Nner-0rzyvgWCsb128bczkn9Ts3tVksqZbAc4tMoXUaeTRcxCiieiHV1WuBRbpzPqXVlpd4jf347CxehtQgX0p0GkWi9DvrS0KCevjw8UTt_54xTDWUootRkztf_QzgRknFeOO8wd1CmGlg=",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "Ko0UasXHEb7oz7IP9I3GkA8",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:55:57 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=3198",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 36,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 3533,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 3533
+            }
+          ],
+          "thoughts_token_count": 322,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 3891,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": null,
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": "```rust\npub fn take_while<F, I, Error: ParseError<I>>(predicate: F) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,\n{\n  TakeWhile {\n    predicate,\n    e: PhantomData,\n  }\n}\n```",
+                  "thought": null,
+                  "thought_signature": "CtIJAQw51seO3q8YwIpZiOxNyxEQ-QiU0eaBmm64E7h8eL4048K8toMpicd4M-mVbmZMLycpmB-xYgv4FlyULVwZPljDmCIItp2_AflgK8Mk6lcAwN0wTwOWIBCuO4gaRlFIh2eJz7YzpFosBaJsPocOBLnv8Bc5uv8ONYQv_8vNGU7QbIq0Ys4hVFRhtij0bOlrElDAG--JpKoiVdlBPU2jcKVlx082x4iH_LkVnaoLoJIyWH69gSVsI0GijWnhGD_Swxxfc-3A21VjtPiRYLm61TZc5dgcUt5pGBVOTUEn0aIezz-qxso6fhB_GIkgjFftaUaI5DHt9crajOqN0LCgTR0xPpu-X7GlPWien0PdJhxa1Ic5hI4saJ6gkFXP_W8JM9wumkQdMPa6q3ItbVEi791X0FmM1LGPUUBUxt7e8n1Ot9f348sSZ-y1KUSSzDpKfa_Ug4mnBrR5EKnzyP-9tpmsabh1Xzs-Ji14sObOIX5Tb5_9jEU4RNzXZ6uwwYaQicZ-yIu7CD-hyvbt8Fl6ZNlrPluj56FX2MwzO3aVgMbA8IyOkMg3yZvar--wq3_xlqj1E9igDwmW6PRMYtea9rYRr9YN_ungiG8ahb_7MOHEaa7vdb-PKAD_kb4WhlOOH5-rNLRsQR5KIEnOX_Y8dwpuYALccTQbeo6M068vVSQF4SEqfkbx7STeuzAK7jYLRGRO0ZOUKV1jxKZ_byGYmaIIz0tNeSqV4mJFzqoK_XabtUetRSwV1qtZusxR3vqRCInsKUJz8sjtuLbZh_5fqqbzmwK0g_Lr8aWvde_9AowsvwRuhcwqDK2aqjJgCnXB5RLDtzo5qyw2UhSugxG9G8-7HeEIAB4QhTkNT4yNXoJtrefMX72K2-PIpHQAJrcXnfH6NxNx5R-1R7aPNie1uT3BeQmxP5M9iTq_W92wo-jLmDgZWBhDhKdgB6Yv2w1sUmUorlCRi5hSr6ZMxj3hL4kWX7jjhKJZP7CPUD4r9v4TCQ-LnklNopYJihZKS8jQMp3zSGbxbYeYJuD7tOr5qAZtQ8lEx0QgSOVn5m4R8dhx8cCmr4ygWVplcuOzYo7wfwYebaYH0PL6r8f63fe53N1cbvvcusjusa7N_Oc35lKN568NvpFEVJ7-wQzj__Y3GYeiSmb_ivcixEw9fv3xWAkYdxfjYL8Su-3RzkSPP25Xq9fJofZTi044klolwsbNa7BES7_OCqi_NHPC7lclVSfiVfmE1fyOib6bXRGbYsgzpKoQJOKBYazifQ48WuueudJPnDQDEdP0zLL_DeGojD07YxFO8XsLeq4AgMCgimRIBPQyVuQV7Un6N5gC3pRg3R84y_nu0OjsibjYQCNNDlULgJa5nXNinX9GXXNcwp5k8kAduEbMrJKbZCVJ_1hwycOODxM62_YKPLQch9JJH_6vXFk8kAxwPSPhe7Gl-ECsHnWHxofVZQCiAGutK-nkfVQ43U4HOGLq-PEpV_8IWKxZYkv_azN-ZPjHV277BCSYTbMnLpdOdjuM3tvC2VlCKdCfxFd9TnkR5NNVJcy9uPrjpeQupjHCrvt2bQ7Ndt6wCSV0Ze0nJgTfMneQqzhkCOKUkuDXxGDuPVoBhtH_SE1i4acjHWD3vfdLz3iTs837Zw==",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "LY0UauK4KZfUz7IP84DZsA4",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:55:59 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=2253",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 86,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 3795,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 3795
+            }
+          ],
+          "thoughts_token_count": 279,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 4160,
+          "traffic_type": null
+        }
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "workspace_id": "rs_001_ctx8k"
+        },
+        "durationMs": 1,
+        "toolName": "list_files",
+        "workspace_id": "rs_001_ctx8k"
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/bytes/mod.rs",
+          "workspace_id": "rs_001_ctx8k"
+        },
+        "durationMs": 0,
+        "toolName": "list_symbols",
+        "workspace_id": "rs_001_ctx8k"
+      },
+      {
+        "arguments": {
+          "path": "src/bytes/mod.rs",
+          "workspace_id": "rs_001_ctx8k"
+        },
+        "durationMs": 0,
+        "toolName": "read_file",
+        "workspace_id": "rs_001_ctx8k"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "workspace_id": "rs_001_ctx8k"
+        },
+        "id": "step-1-tool-1",
+        "isError": false,
+        "name": "list_files",
+        "result": [
+          {
+            "language": "rust",
+            "parse_status": "ok_filtered",
+            "path": "src/bytes/tests.rs",
+            "repository": "rust-bakery/nom",
+            "symbol_count": 45
+          },
+          {
+            "language": "rust",
+            "parse_status": "ok_filtered",
+            "path": "src/bytes/mod.rs",
+            "repository": "rust-bakery/nom",
+            "symbol_count": 16
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/bytes/mod.rs",
+          "workspace_id": "rs_001_ctx8k"
+        },
+        "id": "step-2-tool-1",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "Recognizes a pattern.\n\nThe input data will be compared to the tag combinator's argument and will return the part of\nthe input that matches the argument.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::streaming::tag;\n\nfn parser(s: &str) -> IResult<&str, &str> {\ntag(\"Hello\")(s)\n}\n\nassert_eq!(parser(\"Hello, World!\"), Ok((\", World!\", \"Hello\")));\nassert_eq!(parser(\"Something\"), Err(Err::Error(Error::new(\"Something\", ErrorKind::Tag))));\nassert_eq!(parser(\"S\"), Err(Err::Error(Error::new(\"S\", ErrorKind::Tag))));\nassert_eq!(parser(\"H\"), Err(Err::Incomplete(Needed::new(4))));\n```",
+            "end_line": 54,
+            "kind": "function",
+            "name": "tag",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "tag",
+            "signature": "pub fn tag<T, I, Error: ParseError<I>>(tag: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,\n{\n  Tag {\n    tag,\n    e: PhantomData,\n  }\n}",
+            "start_line": 45,
+            "symbol_id": "src/bytes/mod.rs#function:tag:45"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 92,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let tag_len = self.tag.input_len();\n    let t = self.tag.clone();\n\n    match i.compare(t) {\n      CompareResult::Ok => Ok((i.take_from(tag_len), OM::Output::bind(|| i.take(tag_len)))),\n      CompareResult::Incomplete => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(Needed::new(tag_len - i.input_len())))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::Tag;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      CompareResult::Error => Err(Err::Error(OM::Error::bind(|| {\n        let e: ErrorKind = ErrorKind::Tag;\n        Error::from_error_kind(i, e)\n      }))),\n    }\n  }",
+            "start_line": 71,
+            "symbol_id": "src/bytes/mod.rs#function:process:71"
+          },
+          {
+            "children": [],
+            "documentation": "Recognizes a case insensitive pattern.\n\nThe input data will be compared to the tag combinator's argument and will return the part of\nthe input that matches the argument with no regard to case.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::streaming::tag_no_case;\n\nfn parser(s: &str) -> IResult<&str, &str> {\ntag_no_case(\"hello\")(s)\n}\n\nassert_eq!(parser(\"Hello, World!\"), Ok((\", World!\", \"Hello\")));\nassert_eq!(parser(\"hello, World!\"), Ok((\", World!\", \"hello\")));\nassert_eq!(parser(\"HeLlO, World!\"), Ok((\", World!\", \"HeLlO\")));\nassert_eq!(parser(\"Something\"), Err(Err::Error(Error::new(\"Something\", ErrorKind::Tag))));\nassert_eq!(parser(\"\"), Err(Err::Incomplete(Needed::new(5))));\n```",
+            "end_line": 123,
+            "kind": "function",
+            "name": "tag_no_case",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "tag_no_case",
+            "signature": "pub fn tag_no_case<T, I, Error: ParseError<I>>(tag: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,\n{\n  TagNoCase {\n    tag,\n    e: PhantomData,\n  }\n}",
+            "start_line": 114,
+            "symbol_id": "src/bytes/mod.rs#function:tag_no_case:114"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 161,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let tag_len = self.tag.input_len();\n    let t = self.tag.clone();\n\n    match i.compare_no_case(t) {\n      CompareResult::Ok => Ok((i.take_from(tag_len), OM::Output::bind(|| i.take(tag_len)))),\n      CompareResult::Incomplete => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(Needed::new(tag_len - i.input_len())))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::Tag;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      CompareResult::Error => Err(Err::Error(OM::Error::bind(|| {\n        let e: ErrorKind = ErrorKind::Tag;\n        Error::from_error_kind(i, e)\n      }))),\n    }\n  }",
+            "start_line": 140,
+            "symbol_id": "src/bytes/mod.rs#function:process:140"
+          },
+          {
+            "children": [],
+            "documentation": "[inline(always)]",
+            "end_line": 182,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    i.split_at_position_mode::<OM, _, _>(|c| (self.predicate)(c))\n  }",
+            "start_line": 180,
+            "symbol_id": "src/bytes/mod.rs#function:process:180"
+          },
+          {
+            "children": [],
+            "documentation": "[inline(always)]",
+            "end_line": 204,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    i.split_at_position_mode1::<OM, _, _>(|c| (self.predicate)(c), self.e)\n  }",
+            "start_line": 202,
+            "symbol_id": "src/bytes/mod.rs#function:process:202"
+          },
+          {
+            "children": [],
+            "documentation": "Parse till certain characters are met.\n\nThe parser will return the longest slice till one of the characters of the combinator's argument are met.\n\nIt doesn't consume the matched character.\n\nIt will return a `Err::Error((\"\", ErrorKind::IsNot))` if the pattern wasn't met.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::complete::is_not;\n\nfn not_space(s: &str) -> IResult<&str, &str> {\nis_not(\" \\t\\r\\n\")(s)\n}\n\nassert_eq!(not_space(\"Hello, World!\"), Ok((\" World!\", \"Hello,\")));\nassert_eq!(not_space(\"Sometimes\\t\"), Ok((\"\\t\", \"Sometimes\")));\nassert_eq!(not_space(\"Nospace\"), Ok((\"\", \"Nospace\")));\nassert_eq!(not_space(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::IsNot))));\n```",
+            "end_line": 238,
+            "kind": "function",
+            "name": "is_not",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "is_not",
+            "signature": "pub fn is_not<T, I, Error: ParseError<I>>(arr: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  T: FindToken<<I as Input>::Item>,\n{\n  SplitPosition1 {\n    e: ErrorKind::IsNot,\n    predicate: move |c| arr.find_token(c),\n    error: PhantomData,\n  }\n}",
+            "start_line": 228,
+            "symbol_id": "src/bytes/mod.rs#function:is_not:228"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the longest slice of the matches the pattern.\n\nThe parser will return the longest slice consisting of the characters in provided in the\ncombinator's argument.\n\nIt will return a `Err(Err::Error((_, ErrorKind::IsA)))` if the pattern wasn't met.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::complete::is_a;\n\nfn hex(s: &str) -> IResult<&str, &str> {\nis_a(\"1234567890ABCDEF\")(s)\n}\n\nassert_eq!(hex(\"123 and voila\"), Ok((\" and voila\", \"123\")));\nassert_eq!(hex(\"DEADBEEF and others\"), Ok((\" and others\", \"DEADBEEF\")));\nassert_eq!(hex(\"BADBABEsomething\"), Ok((\"something\", \"BADBABE\")));\nassert_eq!(hex(\"D15EA5E\"), Ok((\"\", \"D15EA5E\")));\nassert_eq!(hex(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::IsA))));\n```",
+            "end_line": 271,
+            "kind": "function",
+            "name": "is_a",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "is_a",
+            "signature": "pub fn is_a<T, I, Error: ParseError<I>>(arr: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  T: FindToken<<I as Input>::Item>,\n{\n  SplitPosition1 {\n    e: ErrorKind::IsA,\n    predicate: move |c| !arr.find_token(c),\n    error: PhantomData,\n  }\n}",
+            "start_line": 261,
+            "symbol_id": "src/bytes/mod.rs#function:is_a:261"
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "path": "src/bytes/mod.rs",
+          "workspace_id": "rs_001_ctx8k"
+        },
+        "id": "step-3-tool-1",
+        "isError": false,
+        "name": "read_file",
+        "result": {
+          "content": "//! Parsers recognizing bytes streams\n\npub mod complete;\npub mod streaming;\n#[cfg(test)]\nmod tests;\n\nuse core::marker::PhantomData;\n\nuse crate::error::ErrorKind;\nuse crate::error::ParseError;\nuse crate::internal::{Err, Needed, Parser};\nuse crate::lib::std::result::Result::*;\nuse crate::traits::{Compare, CompareResult, InputLength};\nuse crate::AsChar;\nuse crate::Check;\nuse crate::ExtendInto;\nuse crate::FindSubstring;\nuse crate::FindToken;\nuse crate::Input;\nuse crate::IsStreaming;\nuse crate::Mode;\nuse crate::OutputM;\nuse crate::OutputMode;\nuse crate::ToUsize;\n\n/// Recognizes a pattern.\n///\n/// The input data will be compared to the tag combinator's argument and will return the part of\n/// the input that matches the argument.\n/// # Example\n/// ```rust\n/// # use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\n/// use nom::bytes::streaming::tag;\n///\n/// fn parser(s: &str) -> IResult<&str, &str> {\n///   tag(\"Hello\")(s)\n/// }\n///\n/// assert_eq!(parser(\"Hello, World!\"), Ok((\", World!\", \"Hello\")));\n/// assert_eq!(parser(\"Something\"), Err(Err::Error(Error::new(\"Something\", ErrorKind::Tag))));\n/// assert_eq!(parser(\"S\"), Err(Err::Error(Error::new(\"S\", ErrorKind::Tag))));\n/// assert_eq!(parser(\"H\"), Err(Err::Incomplete(Needed::new(4))));\n/// ```\npub fn tag<T, I, Error: ParseError<I>>(tag: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,\n{\n  Tag {\n    tag,\n    e: PhantomData,\n  }\n}\n\n/// Tag implementation\npub struct Tag<T, E> {\n  tag: T,\n  e: PhantomData<E>,\n}\n\nimpl<I, Error: ParseError<I>, T> Parser<I> for Tag<T, Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,\n{\n  type Output = I;\n\n  type Error = Error;\n\n  fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let tag_len = self.tag.input_len();\n    let t = self.tag.clone();\n\n    match i.compare(t) {\n      CompareResult::Ok => Ok((i.take_from(tag_len), OM::Output::bind(|| i.take(tag_len)))),\n      CompareResult::Incomplete => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(Needed::new(tag_len - i.input_len())))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::Tag;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      CompareResult::Error => Err(Err::Error(OM::Error::bind(|| {\n        let e: ErrorKind = ErrorKind::Tag;\n        Error::from_error_kind(i, e)\n      }))),\n    }\n  }\n}\n\n/// Recognizes a case insensitive pattern.\n///\n/// The input data will be compared to the tag combinator's argument and will return the part of\n/// the input that matches the argument with no regard to case.\n/// # Example\n/// ```rust\n/// # use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\n/// use nom::bytes::streaming::tag_no_case;\n///\n/// fn parser(s: &str) -> IResult<&str, &str> {\n///   tag_no_case(\"hello\")(s)\n/// }\n///\n/// assert_eq!(parser(\"Hello, World!\"), Ok((\", World!\", \"Hello\")));\n/// assert_eq!(parser(\"hello, World!\"), Ok((\", World!\", \"hello\")));\n/// assert_eq!(parser(\"HeLlO, World!\"), Ok((\", World!\", \"HeLlO\")));\n/// assert_eq!(parser(\"Something\"), Err(Err::Error(Error::new(\"Something\", ErrorKind::Tag))));\n/// assert_eq!(parser(\"\"), Err(Err::Incomplete(Needed::new(5))));\n/// ```\npub fn tag_no_case<T, I, Error: ParseError<I>>(tag: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,\n{\n  TagNoCase {\n    tag,\n    e: PhantomData,\n  }\n}\n\n/// Case insensitive Tag implementation\npub struct TagNoCase<T, E> {\n  tag: T,\n  e: PhantomData<E>,\n}\n\nimpl<I, Error: ParseError<I>, T> Parser<I> for TagNoCase<T, Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,\n{\n  type Output = I;\n\n  type Error = Error;\n\n  fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let tag_len = self.tag.input_len();\n    let t = self.tag.clone();\n\n    match i.compare_no_case(t) {\n      CompareResult::Ok => Ok((i.take_from(tag_len), OM::Output::bind(|| i.take(tag_len)))),\n      CompareResult::Incomplete => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(Needed::new(tag_len - i.input_len())))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::Tag;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      CompareResult::Error => Err(Err::Error(OM::Error::bind(|| {\n        let e: ErrorKind = ErrorKind::Tag;\n        Error::from_error_kind(i, e)\n      }))),\n    }\n  }\n}\n\n/// Parser wrapper for `split_at_position`\npub struct SplitPosition<F, E> {\n  predicate: F,\n  error: PhantomData<E>,\n}\n\nimpl<I, Error: ParseError<I>, F> Parser<I> for SplitPosition<F, Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,\n{\n  type Output = I;\n\n  type Error = Error;\n\n  #[inline(always)]\n  fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    i.split_at_position_mode::<OM, _, _>(|c| (self.predicate)(c))\n  }\n}\n\n/// Parser wrapper for `split_at_position1`\npub struct SplitPosition1<F, E> {\n  e: ErrorKind,\n  predicate: F,\n  error: PhantomData<E>,\n}\n\nimpl<I, Error: ParseError<I>, F> Parser<I> for SplitPosition1<F, Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,\n{\n  type Output = I;\n\n  type Error = Error;\n\n  #[inline(always)]\n  fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    i.split_at_position_mode1::<OM, _, _>(|c| (self.predicate)(c), self.e)\n  }\n}\n\n/// Parse till certain characters are met.\n///\n/// The parser will return the longest slice till one of the characters of the combinator's argument are met.\n///\n/// It doesn't consume the matched character.\n///\n/// It will return a `Err::Error((\"\", ErrorKind::IsNot))` if the pattern wasn't met.\n/// # Example\n/// ```rust\n/// # use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\n/// use nom::bytes::complete::is_not;\n///\n/// fn not_space(s: &str) -> IResult<&str, &str> {\n///   is_not(\" \\t\\r\\n\")(s)\n/// }\n///\n/// assert_eq!(not_space(\"Hello, World!\"), Ok((\" World!\", \"Hello,\")));\n/// assert_eq!(not_space(\"Sometimes\\t\"), Ok((\"\\t\", \"Sometimes\")));\n/// assert_eq!(not_space(\"Nospace\"), Ok((\"\", \"Nospace\")));\n/// assert_eq!(not_space(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::IsNot))));\n/// ```\npub fn is_not<T, I, Error: ParseError<I>>(arr: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  T: FindToken<<I as Input>::Item>,\n{\n  SplitPosition1 {\n    e: ErrorKind::IsNot,\n    predicate: move |c| arr.find_token(c),\n    error: PhantomData,\n  }\n}\n\n/// Returns the longest slice of the matches the pattern.\n///\n/// The parser will return the longest slice consisting of the characters in provided in the\n/// combinator's argument.\n///\n/// It will return a `Err(Err::Error((_, ErrorKind::IsA)))` if the pattern wasn't met.\n/// # Example\n/// ```rust\n/// # use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\n/// use nom::bytes::complete::is_a;\n///\n/// fn hex(s: &str) -> IResult<&str, &str> {\n///   is_a(\"1234567890ABCDEF\")(s)\n/// }\n///\n/// assert_eq!(hex(\"123 and voila\"), Ok((\" and voila\", \"123\")));\n/// assert_eq!(hex(\"DEADBEEF and others\"), Ok((\" and others\", \"DEADBEEF\")));\n/// assert_eq!(hex(\"BADBABEsomething\"), Ok((\"something\", \"BADBABE\")));\n/// assert_eq!(hex(\"D15EA5E\"), Ok((\"\", \"D15EA5E\")));\n/// assert_eq!(hex(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::IsA))));\n/// ```\npub fn is_a<T, I, Error: ParseError<I>>(arr: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  T: FindToken<<I as Input>::Item>,\n{\n  SplitPosition1 {\n    e: ErrorKind::IsA,\n    predicate: move |c| !arr.find_token(c),\n    error: PhantomData,\n  }\n}\n\n/// Returns the longest input slice (if any) that matches the predicate.\n///\n/// The parser will return the longest slice that matches the given predicate *(a function that\n/// takes the input and returns a bool)*.\n/// # Example\n/// ```rust\n/// # use nom::{Err, error::ErrorKind, Needed, IResult};\n/// use nom::bytes::complete::take_while;\n/// use nom::character::is_alphabetic;\n///\n/// fn alpha(s: &[u8]) -> IResult<&[u8], &[u8]> {\n///   take_while(is_alphabetic)(s)\n/// }\n///\n/// assert_eq!(alpha(b\"latin123\"), Ok((&b\"123\"[..], &b\"latin\"[..])));\n/// assert_eq!(alpha(b\"12345\"), Ok((&b\"12345\"[..], &b\"\"[..])));\n/// assert_eq!(alpha(b\"latin\"), Ok((&b\"\"[..], &b\"latin\"[..])));\n/// assert_eq!(alpha(b\"\"), Ok((&b\"\"[..], &b\"\"[..])));\n/// ```\n...\n",
+          "language": "rust",
+          "path": "src/bytes/mod.rs",
+          "repository": "rust-bakery/nom"
+        }
+      }
+    ]
+  },
+  "trialId": "a629d36868"
+}

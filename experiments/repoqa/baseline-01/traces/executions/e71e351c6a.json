@@ -1,0 +1,847 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 1624,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "workspace_id": "java_002_ctx16k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "Parses the specified JSON string into a parse tree. An exception is thrown if the JSON string\nhas multiple top-level JSON elements, or if there is trailing data.\n\n<p>The JSON string is parsed in {@linkplain JsonReader#setStrictness(Strictness) lenient mode}.\n\n@param json JSON text\n@return a parse tree of {@link JsonElement}s corresponding to the specified JSON\n@throws JsonParseException if the specified text is not valid JSON\n@since 2.8.6",
+                "end_line": 54,
+                "kind": "method",
+                "name": "parseString",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+                "qualified_name": "parseString",
+                "signature": "public static JsonElement parseString(String json) throws JsonSyntaxException {\n    return parseReader(new StringReader(json));\n  }",
+                "start_line": 52,
+                "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parseString:52"
+              },
+              {
+                "children": [],
+                "documentation": "Parses the complete JSON string provided by the reader into a parse tree. An exception is\nthrown if the JSON string has multiple top-level JSON elements, or if there is trailing data.\n\n<p>The JSON data is parsed in {@linkplain JsonReader#setStrictness(Strictness) lenient mode}.\n\n@param reader JSON text\n@return a parse tree of {@link JsonElement}s corresponding to the specified JSON\n@throws JsonParseException if there is an IOException or if the specified text is not valid\nJSON\n@since 2.8.6",
+                "end_line": 83,
+                "kind": "method",
+                "name": "parseReader",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+                "qualified_name": "parseReader",
+                "signature": "public static JsonElement parseReader(Reader reader) throws JsonIOException, JsonSyntaxException {\n    try {\n      JsonReader jsonReader = new JsonReader(reader);\n      JsonElement element = parseReader(jsonReader);\n      if (!element.isJsonNull() && jsonReader.peek() != JsonToken.END_DOCUMENT) {\n        throw new JsonSyntaxException(\"Did not consume the entire document.\");\n      }\n      return element;\n    } catch (MalformedJsonException e) {\n      throw new JsonSyntaxException(e);\n    } catch (IOException e) {\n      throw new JsonIOException(e);\n    } catch (NumberFormatException e) {\n      throw new JsonSyntaxException(e);\n    }\n  }",
+                "start_line": 68,
+                "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parseReader:68"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the next value from the JSON stream as a parse tree. Unlike the other {@code parse}\nmethods, no exception is thrown if the JSON data has multiple top-level JSON elements, or if\nthere is trailing data.\n\n<p>The JSON data is parsed in {@linkplain JsonReader#setStrictness(Strictness) lenient mode},\nregardless of the strictness setting of the provided reader. The strictness setting of the\nreader is restored once this method returns.\n\n@throws JsonParseException if there is an IOException or if the specified text is not valid\nJSON\n@since 2.8.6",
+                "end_line": 111,
+                "kind": "method",
+                "name": "parseReader",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+                "qualified_name": "parseReader",
+                "signature": "public static JsonElement parseReader(JsonReader reader)\n      throws JsonIOException, JsonSyntaxException {\n    Strictness strictness = reader.getStrictness();\n    reader.setStrictness(Strictness.LENIENT);\n    try {\n      return Streams.parse(reader);\n    } catch (StackOverflowError e) {\n      throw new JsonParseException(\"Failed parsing JSON source: \" + reader + \" to Json\", e);\n    } catch (OutOfMemoryError e) {\n      throw new JsonParseException(\"Failed parsing JSON source: \" + reader + \" to Json\", e);\n    } finally {\n      reader.setStrictness(strictness);\n    }\n  }",
+                "start_line": 98,
+                "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parseReader:98"
+              },
+              {
+                "children": [],
+                "documentation": "@deprecated Use {@link JsonParser#parseString}",
+                "end_line": 120,
+                "kind": "method",
+                "name": "parse",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+                "qualified_name": "parse",
+                "signature": "@Deprecated\n  @InlineMe(replacement = \"JsonParser.parseString(json)\", imports = \"com.google.gson.JsonParser\")\n  public JsonElement parse(String json) throws JsonSyntaxException {\n    return parseString(json);\n  }",
+                "start_line": 116,
+                "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parse:116"
+              },
+              {
+                "children": [],
+                "documentation": "@deprecated Use {@link JsonParser#parseReader(Reader)}",
+                "end_line": 129,
+                "kind": "method",
+                "name": "parse",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+                "qualified_name": "parse",
+                "signature": "@Deprecated\n  @InlineMe(replacement = \"JsonParser.parseReader(json)\", imports = \"com.google.gson.JsonParser\")\n  public JsonElement parse(Reader json) throws JsonIOException, JsonSyntaxException {\n    return parseReader(json);\n  }",
+                "start_line": 125,
+                "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parse:125"
+              },
+              {
+                "children": [],
+                "documentation": "@deprecated Use {@link JsonParser#parseReader(JsonReader)}",
+                "end_line": 138,
+                "kind": "method",
+                "name": "parse",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+                "qualified_name": "parse",
+                "signature": "@Deprecated\n  @InlineMe(replacement = \"JsonParser.parseReader(json)\", imports = \"com.google.gson.JsonParser\")\n  public JsonElement parse(JsonReader json) throws JsonIOException, JsonSyntaxException {\n    return parseReader(json);\n  }",
+                "start_line": 134,
+                "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parse:134"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the next available {@link JsonElement} on the reader. Throws a {@link\nNoSuchElementException} if no element is available.\n\n@return the next available {@code JsonElement} on the reader.\n@throws JsonParseException if the incoming stream is malformed JSON.\n@throws NoSuchElementException if no {@code JsonElement} is available.\n@since 1.4",
+                "end_line": 95,
+                "kind": "method",
+                "name": "next",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/JsonStreamParser.java",
+                "qualified_name": "next",
+                "signature": "@Override\n  public JsonElement next() throws JsonParseException {\n    if (!hasNext()) {\n      throw new NoSuchElementException();\n    }\n\n    try {\n      return Streams.parse(parser);\n    } catch (StackOverflowError e) {\n      throw new JsonParseException(\"Failed parsing JSON source to Json\", e);\n    } catch (OutOfMemoryError e) {\n      throw new JsonParseException(\"Failed parsing JSON source to Json\", e);\n    }\n  }",
+                "start_line": 82,
+                "symbol_id": "gson/src/main/java/com/google/gson/JsonStreamParser.java#method:next:82"
+              },
+              {
+                "children": [],
+                "documentation": "Returns true if a {@link JsonElement} is available on the input for consumption\n\n@return true if a {@link JsonElement} is available on the input, false otherwise\n@throws JsonParseException if the incoming stream is malformed JSON.\n@since 1.4",
+                "end_line": 115,
+                "kind": "method",
+                "name": "hasNext",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/JsonStreamParser.java",
+                "qualified_name": "hasNext",
+                "signature": "@Override\n  public boolean hasNext() {\n    synchronized (lock) {\n      try {\n        return parser.peek() != JsonToken.END_DOCUMENT;\n      } catch (MalformedJsonException e) {\n        throw new JsonSyntaxException(e);\n      } catch (IOException e) {\n        throw new JsonIOException(e);\n      }\n    }\n  }",
+                "start_line": 104,
+                "symbol_id": "gson/src/main/java/com/google/gson/JsonStreamParser.java#method:hasNext:104"
+              },
+              {
+                "children": [],
+                "documentation": "This optional {@link Iterator} method is not relevant for stream parsing and hence is not\nimplemented.\n\n@since 1.4",
+                "end_line": 126,
+                "kind": "method",
+                "name": "remove",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/JsonStreamParser.java",
+                "qualified_name": "remove",
+                "signature": "@Override\n  public void remove() {\n    throw new UnsupportedOperationException();\n  }",
+                "start_line": 123,
+                "symbol_id": "gson/src/main/java/com/google/gson/JsonStreamParser.java#method:remove:123"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 41,
+                "kind": "method",
+                "name": "read",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/internal/bind/TypeAdapterRuntimeTypeWrapper.java",
+                "qualified_name": "read",
+                "signature": "@Override\n  public T read(JsonReader in) throws IOException {\n    return delegate.read(in);\n  }",
+                "start_line": 38,
+                "symbol_id": "gson/src/main/java/com/google/gson/internal/bind/TypeAdapterRuntimeTypeWrapper.java#method:read:38"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 74,
+                "kind": "method",
+                "name": "write",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/internal/bind/TypeAdapterRuntimeTypeWrapper.java",
+                "qualified_name": "write",
+                "signature": "@Override\n  public void write(JsonWriter out, T value) throws IOException {\n    // Order of preference for choosing type adapters\n    // First preference: a type adapter registered for the runtime type\n    // Second preference: a type adapter registered for the declared type\n    // Third preference: reflective type adapter for the runtime type\n    //                   (if it is a subclass of the declared type)\n    // Fourth preference: reflective type adapter for the declared type\n\n    TypeAdapter<T> chosen = delegate;\n    Type runtimeType = getRuntimeTypeIfMoreSpecific(type, value);\n    if (runtimeType != type) {\n      @SuppressWarnings(\"unchecked\")\n      TypeAdapter<T> runtimeTypeAdapter =\n          (TypeAdapter<T>) context.getAdapter(TypeToken.get(runtimeType));\n      // For backward compatibility only check ReflectiveTypeAdapterFactory.Adapter here but not any\n      // other wrapping adapters, see\n      // https://github.com/google/gson/pull/1787#issuecomment-1222175189\n      if (!(runtimeTypeAdapter instanceof ReflectiveTypeAdapterFactory.Adapter)) {\n        // The user registered a type adapter for the runtime type, so we will use that\n        chosen = runtimeTypeAdapter;\n      } else if (!isReflective(delegate)) {\n        // The user registered a type adapter for Base class, so we prefer it over the\n        // reflective type adapter for the runtime type\n        chosen = delegate;\n      } else {\n        // Use the type adapter for runtime type\n        chosen = runtimeTypeAdapter;\n      }\n    }\n    chosen.write(out, value);\n  }",
+                "start_line": 43,
+                "symbol_id": "gson/src/main/java/com/google/gson/internal/bind/TypeAdapterRuntimeTypeWrapper.java#method:write:43"
+              },
+              {
+                "children": [],
+                "documentation": "Returns whether the type adapter uses reflection.\n\n@param typeAdapter the type adapter to check.",
+                "end_line": 94,
+                "kind": "method",
+                "name": "isReflective",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/internal/bind/TypeAdapterRuntimeTypeWrapper.java",
+                "qualified_name": "isReflective",
+                "signature": "private static boolean isReflective(TypeAdapter<?> typeAdapter) {\n    // Run this in loop in case multiple delegating adapters are nested\n    while (typeAdapter instanceof SerializationDelegatingTypeAdapter) {\n      TypeAdapter<?> delegate =\n          ((SerializationDelegatingTypeAdapter<?>) typeAdapter).getSerializationDelegate();\n      // Break if adapter does not delegate serialization\n      if (delegate == typeAdapter) {\n        break;\n      }\n      typeAdapter = delegate;\n    }\n\n    return typeAdapter instanceof ReflectiveTypeAdapterFactory.Adapter;\n  }",
+                "start_line": 81,
+                "symbol_id": "gson/src/main/java/com/google/gson/internal/bind/TypeAdapterRuntimeTypeWrapper.java#method:isReflective:81"
+              },
+              {
+                "children": [],
+                "documentation": "Finds a compatible runtime type if it is more specific",
+                "end_line": 102,
+                "kind": "method",
+                "name": "getRuntimeTypeIfMoreSpecific",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/internal/bind/TypeAdapterRuntimeTypeWrapper.java",
+                "qualified_name": "getRuntimeTypeIfMoreSpecific",
+                "signature": "private static Type getRuntimeTypeIfMoreSpecific(Type type, Object value) {\n    if (value != null && (type instanceof Class<?> || type instanceof TypeVariable<?>)) {\n      type = value.getClass();\n    }\n    return type;\n  }",
+                "start_line": 97,
+                "symbol_id": "gson/src/main/java/com/google/gson/internal/bind/TypeAdapterRuntimeTypeWrapper.java#method:getRuntimeTypeIfMoreSpecific:97"
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "workspace_id": "java_002_ctx16k"
+              },
+              "durationMs": 0,
+              "toolName": "list_symbols",
+              "workspace_id": "java_002_ctx16k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 3794,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parseString:52",
+              "workspace_id": "java_002_ctx16k"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": {
+              "children": [],
+              "code": "public static JsonElement parseString(String json) throws JsonSyntaxException {\n    return parseReader(new StringReader(json));\n  }",
+              "documentation": "Parses the specified JSON string into a parse tree. An exception is thrown if the JSON string\nhas multiple top-level JSON elements, or if there is trailing data.\n\n<p>The JSON string is parsed in {@linkplain JsonReader#setStrictness(Strictness) lenient mode}.\n\n@param json JSON text\n@return a parse tree of {@link JsonElement}s corresponding to the specified JSON\n@throws JsonParseException if the specified text is not valid JSON\n@since 2.8.6",
+              "end_line": 54,
+              "kind": "method",
+              "name": "parseString",
+              "parent_id": null,
+              "parent_name": null,
+              "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+              "qualified_name": "parseString",
+              "signature": "public static JsonElement parseString(String json) throws JsonSyntaxException {\n    return parseReader(new StringReader(json));\n  }",
+              "start_line": 52,
+              "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parseString:52"
+            },
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parseString:52",
+                "workspace_id": "java_002_ctx16k"
+              },
+              "durationMs": 0,
+              "toolName": "get_symbol",
+              "workspace_id": "java_002_ctx16k"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1147,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 6601,
+          "metadata": {},
+          "name": "strategy.local_function.execute",
+          "type": "strategy.local_function.execute"
+        },
+        {
+          "duration_ms": 6601,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 36,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": null,
+        "cachedInputTokens": 903,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 2,
+        "inputTokens": 5889,
+        "loopControlDurationMsEstimated": 36,
+        "mcpToolCalls": 2,
+        "modelCalls": 3,
+        "modelDurationMs": 6565,
+        "outputTokens": 124,
+        "promptChars": 974,
+        "questionTokensEstimated": 130,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 741,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 3,
+        "strategyDurationMs": 6601,
+        "taskStatementChars": 801,
+        "toolCalls": 2,
+        "toolDurationMs": 0,
+        "totalDurationMs": 6601,
+        "totalTokens": 6754,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "kind": "function",
+                      "workspace_id": "java_002_ctx16k"
+                    },
+                    "id": null,
+                    "name": "list_symbols",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CocFAQw51sdYeKxAgvX7lvQ_57t4yc4Lva5D8GDvvfIGvHjHXEZJ__37y0UP0Mr5zVCYgVeVbjSJ2mDPpOQs6igUSdEWmXcFXgkXdY86leAkJef3kqudT5Qqkm3_aZGUyjim1M292opmpnOzfNK0IYFpk2OnvbNs4czhoSIQtk4tmF45qYyrGNF86UEUL9euN-MOadJKmV0ZK73FDZsP-oQdUhzlqzGOl09OV6xk3pqYTFbNTtwmgnybD-diwmMZhaymFb21GkzCRTGDM4mQlTyutWgzTDGD-vRNkPn-UjzehCftWPA2S86H-urD1XyAbMp3t6jxjtVJS3CDQK0Cd0no0Hi4D_iy1W3eudIkShLVfFMaa-W9-TAMtQ6hCuLjfJOQJeWjj42QXdTe3Nb6RNxftZAEioXXxbk5-DMPTRSh9IoYrTp9YAPgwxKcI6NFOH_oATFZ11TeslLrumsKtdTkAB_kO0YoC-OwSRMDFWhvW7ogoJjYQGEZ0MMAgJ5Sk-ugZOJe1skvz5hfBPvhIsqItihd-Z7F_XdUjyF_whCBuZJB1d19cTlXxsWJPGyNKhbj5Y-6EculbJOtwcP6rCzjEmWQA6YIglMKOJlb0bJiAFwlblm6RAMfmtKCCF85cteOSVzAOdZIMruTiSMB7xfd1WfFJLzsNsMVxO6EhcnCJKp9q2S0ZV5oX4ZZVzsBfdw9ASiHrBcn2DOb6h3uFVUvfM-togjq9FIYXThb2WqsMt4WpcbwV-Cj8kzry-BUWO-269nucv27LQ0NKwRWHpdu8cZUNty1oNx-013yFcZ5_SEqW1LU38cAFl7atAxYjv_3LCeI_FMcBQQGrRuVsZVr-7PcIBJpi0A=",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "PZQUar6_J5fUz7IPpuv9uAQ",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 18:26:06 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1410",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 31,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 616,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 616
+            }
+          ],
+          "thoughts_token_count": 138,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 785,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parseString:52",
+                      "workspace_id": "java_002_ctx16k"
+                    },
+                    "id": null,
+                    "name": "get_symbol",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "Cv4TAQw51seDNdIoOBI--dQBizbrBIQjGWPluKuimHV7R3bSEAhjSzdUO5k1l4BBN4gZ59K1dOOiZngTncb_BUOAxvoM8lsw9d5StLtOECefTAqfcwApdBFi1QrRMT-hYqXwNPpXT6Kwmdxlf3UjdC_A4zP6KZWAoa88aAJBOGy7Glkuf5p5voX8FPHlWIYISRjvjmEztxF7Yhl-TRHlASnyYVXbjRsm31CDchuXSg7-hM9koAdLZNf9mFwu_sGwQhz0Bq0pJLhVqgXe3AJU8HdUTdZp8bryGWlBxpTHZLz22V0fGF-Wfeh3dfnPfgAX25eZTV1-L4kfE0_QDJ9RAKFPklvwrtjXN5XH41IKsnbawTbh41byjcchhyuB4vLEYlXsu09bi8jdPwaldgN2Hkp2vgz6P-QDd8wY_6uN2Qobg5XAgtrvs47Y-IP4qJClq7fNLZ7ozs3RDFUAiYo58l0Bu8n33u0azRdY8-Pf_RYtC0rQ9pA_wyjW0upNQY2gppOIdP3rUI-u2oDUfwuDGOmPV8WPxUt6jfilwjbB_eB2VfbGJCfPmzoXlVcz4ds6motP3vWx246QheaPCoA8tHMYr4BZ_DgL03lUDpTNqHE3eGOej220jt2mXyrY_UR-M9jygNjo6kVOs0kIwQLe1rVb58aK5IM6DyWsCUQEeV2nyL8UpToD8A6QZnqfPWOu0NKiKXtl1M_bK580x6NpLW4b6UpBLe7UkVgMQxJWt0DtGeIUPYTmDOrJSoNzz1racGU48NRssXchW4JcjAFJmZ97srU6QgBagbODn3CNy-5IdMCCjY0fI4wbN1q28mRd73e_i9oYoUayNLgIDaQHyQZvxS4KendujZ8eOdbH5gx-2L2nYDSfjWoPekaPHSA-64OHnhgMP_Q7bh6aJE6l74J6Mz7Gn6FVlXnuZQz2VrKjIEeh5_4BPJNoyvPkCmcdQVZF4ytTvfcM2bGz-LOpH8l9oFMUDKiim_P5qN4aghaKfl9_k1BNQQZ34gT_D_7mhDMnrxrOr78t3hU1PKFXh8WCiWhfxCVHJrvPUUA7AMIWlI1ZKWyl8NcfVXgG3DnnnCU-x1i5u0_N3Q4Hyb-Z8tMWmkmj3ZFQU0U6Ce8BTdZ6tCD2Os9jyeD48wl9fuyO2jqx8TSCIMEiLW77ssBO5HNQ0WaZaBMqzKEnO82oqksqBzgin4mboaJMD5fAnOa7K9rRJOUfUvJeATsxVgtyiKjrww0CKTCrpLU5L-Gq5uOjD_x2f1eiJcktajRATmTncRGSXRfX1jBxzDilQBt33enigTyvDaXyx_g4-_B32sOFCH93GoQFyfpgUJyN3iVfHQPjovRuj6PoMyYUnHtA20UQ6Ngx7MSPWzSSoq249yp0Esv_-NsheLbqA216kUfdNHzp_BAxg0dKKTpi1TTySYLQ8nxO4WgDsOrOXm3BUeqNhaT6GkdID2y9LdcM8RWdla1HJM6UOAWf7e7vTZsivpcelwLUyhjaCTqeZmfJwpWmrzCOCpkE-uuZKdcAXYf5Fkm2pz-ll4k8VIK_QLscloxJgA1Zc7D1_iOOpTd-OKyHMfVYjLHuqnFvoTGEk-mVUGhGkA1rsL3k4Cgvio0VJOwat5MUmD5e4CeSIjaUrxDh8M7JXlCOdPmAd6bB8X5uFA51vcSj8VooQXDRT7MJvSIJzVV2w2iu9ktoCLCaPdpGJN2v9jPKAj6Bygazbt9H5seip9buQlNwcX-VE0aQuMLsBayfc2q6RMQ8o7yelumiG1vmh-cP6pYR4j4wwyEvg8UJ1v9pL3_r9q7Zqyz0GMNe-w_s4xmw5mcvW0UyL0qPX2_caFhVHfl60XQn2T0hTbfCFV6RkHRgUd5KXdpph9Ohvv8-MOPaBPFKwbXc776up2HWVZ2AdnpX1IXojSENmBSLw7oczPZp4WTYBByyP4b0Faq7Lt0Gwc-ALKl77apKF7iPCxXp10TcBzN-lWAE0FL9Z5tNaz4fDwhGYknDn22wbZu9Q6NjJlR7Tu1ZkPWU89LNHT3ztd0ExaPbkorjz3A3y6oBTU5pUU8Vih9RTlzz65oloNaFeSDIZdahQ8hRlpxjBmRJ5A2YnpZrX6ewDRJsSvVMZ4cHcTLkY5H93l6wCsII0z7iisnwl_AS-UrN3e27e24p_8-E6xl63qChY5cfELoLYO_sfbBFw8uRQ23y9KkJywGYqLhFLdtyIGEXLw69XHssRjV-H2HJBYW_pJx8ev8IKVbBoSxnfoKpKuyD0tYHzuq61ZUptWFciAw7Wy7ATpMJ1M5huH5IWZEOf2vzxjCGeB8g4gPM7Qm0Z6on9wTduUWkW4k3nbqGKpzlbHGj71d9n-QriibBlLcgeJPOYlGPH0EG2VpYeFI1vJ5QSrWhQzdBSZNBbgrWBe6xTvVHfvTUqfWb2oW6OOyTyC4ht7sGcy1AoWiUXEn3-xXJ55F6Nyna2viotq_atdUpiOl9oDO3xGdIa4ixX7ijXqa7j0yXqMGB1RBTdQ_dWGntMD6gwnKJwQg27l6KpJbv8z8Pvy88Ba08fBz8OP8qA6kFeXzdqWpa3K9MwzaYXuHlrXPEs0fKVPd0YuHlEjd7yj-7c8gMk-dtfLZrXrBqsqnawaCW5uE2tLxuPqca4WQX-2yClmlrr7h4YESzzjlXvDszqH2uyKgeLW0scIvpKyjcI9JZRx-rnknUfNsB56JwkXJPkGJ-mdkEY-CVrFKjEzn_hDk_96oBJChCLl1nDFa1obLZJAZvGqON96Rt2-qGTZ7AX1lJxnFFwpps-6_Y4h-cbtNFapmNeNskFg3cv6Y7mPsHu-BLujFXb5XrHM60fGLkt2nmiNa0SxE0P72NHX4GR9yorQRWZw28Smh-zxRqMuGJPNIxY7ln4kMAGfcFwQfjjvIGrG73CghUKNJPnhGx3lIvMqe6Wg7X2PzLL94mAjWfTOp3DykhqRE-nJmbCIC_xYolcXHBwK4yI96FDS-XhkJso6UaMreZbP4TItIq3uuI9ewlGd4brNFyohzAPSbYV0kgjHZT8Q5bS88PSsB7NyZ8ZzxWICDhTOJ7shDq6eGoC1JjzGc0k4kAzJ4A-9GK7VZD6dasddx9OkyfptujPdi0k3haaOix49Xs20XCopviYolljQ9h9jM_W7CbAPWX3H6kkgbr8ZQNn7hIwFH3HYrFHmTtGta4UnoxxjtQrSR3w4ISl3tS5pz8749q78OkVlHUYOOdkLoNyuaQ5H2y3LE9ImHRUU5_gydN0CCengL8I6RyhpscATCkTY2jnoZFedrt_2XKuBpLubMZwhjlGRISjvVgvqNBm6xLNx0M9gi2f5ioymyn9XwSIeEY4WvIigwgmUbDFy3ZSMZURZFs2FJUImxha2TTqmddWopnW2vfmWwnoS7tlwwbSUQ=",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "P5QUasaqFsKHz7IPpczZ0Q8",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 18:26:10 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=3584",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 903
+            }
+          ],
+          "cached_content_token_count": 903,
+          "candidates_token_count": 58,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 4282,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 4282
+            }
+          ],
+          "thoughts_token_count": 603,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 4943,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": null,
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": "```java\npublic static JsonElement parseString(String json) throws JsonSyntaxException {\n    return parseReader(new StringReader(json));\n  }\n```",
+                  "thought": null,
+                  "thought_signature": null,
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "Q5QUarOiBrekqtsP6OrMoQk",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 18:26:11 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=939",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 35,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 991,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 991
+            }
+          ],
+          "thoughts_token_count": null,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 1026,
+          "traffic_type": null
+        }
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "kind": "function",
+          "workspace_id": "java_002_ctx16k"
+        },
+        "durationMs": 0,
+        "toolName": "list_symbols",
+        "workspace_id": "java_002_ctx16k"
+      },
+      {
+        "arguments": {
+          "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parseString:52",
+          "workspace_id": "java_002_ctx16k"
+        },
+        "durationMs": 0,
+        "toolName": "get_symbol",
+        "workspace_id": "java_002_ctx16k"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "kind": "function",
+          "workspace_id": "java_002_ctx16k"
+        },
+        "id": "step-1-tool-1",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "Parses the specified JSON string into a parse tree. An exception is thrown if the JSON string\nhas multiple top-level JSON elements, or if there is trailing data.\n\n<p>The JSON string is parsed in {@linkplain JsonReader#setStrictness(Strictness) lenient mode}.\n\n@param json JSON text\n@return a parse tree of {@link JsonElement}s corresponding to the specified JSON\n@throws JsonParseException if the specified text is not valid JSON\n@since 2.8.6",
+            "end_line": 54,
+            "kind": "method",
+            "name": "parseString",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+            "qualified_name": "parseString",
+            "signature": "public static JsonElement parseString(String json) throws JsonSyntaxException {\n    return parseReader(new StringReader(json));\n  }",
+            "start_line": 52,
+            "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parseString:52"
+          },
+          {
+            "children": [],
+            "documentation": "Parses the complete JSON string provided by the reader into a parse tree. An exception is\nthrown if the JSON string has multiple top-level JSON elements, or if there is trailing data.\n\n<p>The JSON data is parsed in {@linkplain JsonReader#setStrictness(Strictness) lenient mode}.\n\n@param reader JSON text\n@return a parse tree of {@link JsonElement}s corresponding to the specified JSON\n@throws JsonParseException if there is an IOException or if the specified text is not valid\nJSON\n@since 2.8.6",
+            "end_line": 83,
+            "kind": "method",
+            "name": "parseReader",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+            "qualified_name": "parseReader",
+            "signature": "public static JsonElement parseReader(Reader reader) throws JsonIOException, JsonSyntaxException {\n    try {\n      JsonReader jsonReader = new JsonReader(reader);\n      JsonElement element = parseReader(jsonReader);\n      if (!element.isJsonNull() && jsonReader.peek() != JsonToken.END_DOCUMENT) {\n        throw new JsonSyntaxException(\"Did not consume the entire document.\");\n      }\n      return element;\n    } catch (MalformedJsonException e) {\n      throw new JsonSyntaxException(e);\n    } catch (IOException e) {\n      throw new JsonIOException(e);\n    } catch (NumberFormatException e) {\n      throw new JsonSyntaxException(e);\n    }\n  }",
+            "start_line": 68,
+            "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parseReader:68"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the next value from the JSON stream as a parse tree. Unlike the other {@code parse}\nmethods, no exception is thrown if the JSON data has multiple top-level JSON elements, or if\nthere is trailing data.\n\n<p>The JSON data is parsed in {@linkplain JsonReader#setStrictness(Strictness) lenient mode},\nregardless of the strictness setting of the provided reader. The strictness setting of the\nreader is restored once this method returns.\n\n@throws JsonParseException if there is an IOException or if the specified text is not valid\nJSON\n@since 2.8.6",
+            "end_line": 111,
+            "kind": "method",
+            "name": "parseReader",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+            "qualified_name": "parseReader",
+            "signature": "public static JsonElement parseReader(JsonReader reader)\n      throws JsonIOException, JsonSyntaxException {\n    Strictness strictness = reader.getStrictness();\n    reader.setStrictness(Strictness.LENIENT);\n    try {\n      return Streams.parse(reader);\n    } catch (StackOverflowError e) {\n      throw new JsonParseException(\"Failed parsing JSON source: \" + reader + \" to Json\", e);\n    } catch (OutOfMemoryError e) {\n      throw new JsonParseException(\"Failed parsing JSON source: \" + reader + \" to Json\", e);\n    } finally {\n      reader.setStrictness(strictness);\n    }\n  }",
+            "start_line": 98,
+            "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parseReader:98"
+          },
+          {
+            "children": [],
+            "documentation": "@deprecated Use {@link JsonParser#parseString}",
+            "end_line": 120,
+            "kind": "method",
+            "name": "parse",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+            "qualified_name": "parse",
+            "signature": "@Deprecated\n  @InlineMe(replacement = \"JsonParser.parseString(json)\", imports = \"com.google.gson.JsonParser\")\n  public JsonElement parse(String json) throws JsonSyntaxException {\n    return parseString(json);\n  }",
+            "start_line": 116,
+            "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parse:116"
+          },
+          {
+            "children": [],
+            "documentation": "@deprecated Use {@link JsonParser#parseReader(Reader)}",
+            "end_line": 129,
+            "kind": "method",
+            "name": "parse",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+            "qualified_name": "parse",
+            "signature": "@Deprecated\n  @InlineMe(replacement = \"JsonParser.parseReader(json)\", imports = \"com.google.gson.JsonParser\")\n  public JsonElement parse(Reader json) throws JsonIOException, JsonSyntaxException {\n    return parseReader(json);\n  }",
+            "start_line": 125,
+            "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parse:125"
+          },
+          {
+            "children": [],
+            "documentation": "@deprecated Use {@link JsonParser#parseReader(JsonReader)}",
+            "end_line": 138,
+            "kind": "method",
+            "name": "parse",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+            "qualified_name": "parse",
+            "signature": "@Deprecated\n  @InlineMe(replacement = \"JsonParser.parseReader(json)\", imports = \"com.google.gson.JsonParser\")\n  public JsonElement parse(JsonReader json) throws JsonIOException, JsonSyntaxException {\n    return parseReader(json);\n  }",
+            "start_line": 134,
+            "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parse:134"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the next available {@link JsonElement} on the reader. Throws a {@link\nNoSuchElementException} if no element is available.\n\n@return the next available {@code JsonElement} on the reader.\n@throws JsonParseException if the incoming stream is malformed JSON.\n@throws NoSuchElementException if no {@code JsonElement} is available.\n@since 1.4",
+            "end_line": 95,
+            "kind": "method",
+            "name": "next",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/JsonStreamParser.java",
+            "qualified_name": "next",
+            "signature": "@Override\n  public JsonElement next() throws JsonParseException {\n    if (!hasNext()) {\n      throw new NoSuchElementException();\n    }\n\n    try {\n      return Streams.parse(parser);\n    } catch (StackOverflowError e) {\n      throw new JsonParseException(\"Failed parsing JSON source to Json\", e);\n    } catch (OutOfMemoryError e) {\n      throw new JsonParseException(\"Failed parsing JSON source to Json\", e);\n    }\n  }",
+            "start_line": 82,
+            "symbol_id": "gson/src/main/java/com/google/gson/JsonStreamParser.java#method:next:82"
+          },
+          {
+            "children": [],
+            "documentation": "Returns true if a {@link JsonElement} is available on the input for consumption\n\n@return true if a {@link JsonElement} is available on the input, false otherwise\n@throws JsonParseException if the incoming stream is malformed JSON.\n@since 1.4",
+            "end_line": 115,
+            "kind": "method",
+            "name": "hasNext",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/JsonStreamParser.java",
+            "qualified_name": "hasNext",
+            "signature": "@Override\n  public boolean hasNext() {\n    synchronized (lock) {\n      try {\n        return parser.peek() != JsonToken.END_DOCUMENT;\n      } catch (MalformedJsonException e) {\n        throw new JsonSyntaxException(e);\n      } catch (IOException e) {\n        throw new JsonIOException(e);\n      }\n    }\n  }",
+            "start_line": 104,
+            "symbol_id": "gson/src/main/java/com/google/gson/JsonStreamParser.java#method:hasNext:104"
+          },
+          {
+            "children": [],
+            "documentation": "This optional {@link Iterator} method is not relevant for stream parsing and hence is not\nimplemented.\n\n@since 1.4",
+            "end_line": 126,
+            "kind": "method",
+            "name": "remove",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/JsonStreamParser.java",
+            "qualified_name": "remove",
+            "signature": "@Override\n  public void remove() {\n    throw new UnsupportedOperationException();\n  }",
+            "start_line": 123,
+            "symbol_id": "gson/src/main/java/com/google/gson/JsonStreamParser.java#method:remove:123"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 41,
+            "kind": "method",
+            "name": "read",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/internal/bind/TypeAdapterRuntimeTypeWrapper.java",
+            "qualified_name": "read",
+            "signature": "@Override\n  public T read(JsonReader in) throws IOException {\n    return delegate.read(in);\n  }",
+            "start_line": 38,
+            "symbol_id": "gson/src/main/java/com/google/gson/internal/bind/TypeAdapterRuntimeTypeWrapper.java#method:read:38"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 74,
+            "kind": "method",
+            "name": "write",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/internal/bind/TypeAdapterRuntimeTypeWrapper.java",
+            "qualified_name": "write",
+            "signature": "@Override\n  public void write(JsonWriter out, T value) throws IOException {\n    // Order of preference for choosing type adapters\n    // First preference: a type adapter registered for the runtime type\n    // Second preference: a type adapter registered for the declared type\n    // Third preference: reflective type adapter for the runtime type\n    //                   (if it is a subclass of the declared type)\n    // Fourth preference: reflective type adapter for the declared type\n\n    TypeAdapter<T> chosen = delegate;\n    Type runtimeType = getRuntimeTypeIfMoreSpecific(type, value);\n    if (runtimeType != type) {\n      @SuppressWarnings(\"unchecked\")\n      TypeAdapter<T> runtimeTypeAdapter =\n          (TypeAdapter<T>) context.getAdapter(TypeToken.get(runtimeType));\n      // For backward compatibility only check ReflectiveTypeAdapterFactory.Adapter here but not any\n      // other wrapping adapters, see\n      // https://github.com/google/gson/pull/1787#issuecomment-1222175189\n      if (!(runtimeTypeAdapter instanceof ReflectiveTypeAdapterFactory.Adapter)) {\n        // The user registered a type adapter for the runtime type, so we will use that\n        chosen = runtimeTypeAdapter;\n      } else if (!isReflective(delegate)) {\n        // The user registered a type adapter for Base class, so we prefer it over the\n        // reflective type adapter for the runtime type\n        chosen = delegate;\n      } else {\n        // Use the type adapter for runtime type\n        chosen = runtimeTypeAdapter;\n      }\n    }\n    chosen.write(out, value);\n  }",
+            "start_line": 43,
+            "symbol_id": "gson/src/main/java/com/google/gson/internal/bind/TypeAdapterRuntimeTypeWrapper.java#method:write:43"
+          },
+          {
+            "children": [],
+            "documentation": "Returns whether the type adapter uses reflection.\n\n@param typeAdapter the type adapter to check.",
+            "end_line": 94,
+            "kind": "method",
+            "name": "isReflective",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/internal/bind/TypeAdapterRuntimeTypeWrapper.java",
+            "qualified_name": "isReflective",
+            "signature": "private static boolean isReflective(TypeAdapter<?> typeAdapter) {\n    // Run this in loop in case multiple delegating adapters are nested\n    while (typeAdapter instanceof SerializationDelegatingTypeAdapter) {\n      TypeAdapter<?> delegate =\n          ((SerializationDelegatingTypeAdapter<?>) typeAdapter).getSerializationDelegate();\n      // Break if adapter does not delegate serialization\n      if (delegate == typeAdapter) {\n        break;\n      }\n      typeAdapter = delegate;\n    }\n\n    return typeAdapter instanceof ReflectiveTypeAdapterFactory.Adapter;\n  }",
+            "start_line": 81,
+            "symbol_id": "gson/src/main/java/com/google/gson/internal/bind/TypeAdapterRuntimeTypeWrapper.java#method:isReflective:81"
+          },
+          {
+            "children": [],
+            "documentation": "Finds a compatible runtime type if it is more specific",
+            "end_line": 102,
+            "kind": "method",
+            "name": "getRuntimeTypeIfMoreSpecific",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/internal/bind/TypeAdapterRuntimeTypeWrapper.java",
+            "qualified_name": "getRuntimeTypeIfMoreSpecific",
+            "signature": "private static Type getRuntimeTypeIfMoreSpecific(Type type, Object value) {\n    if (value != null && (type instanceof Class<?> || type instanceof TypeVariable<?>)) {\n      type = value.getClass();\n    }\n    return type;\n  }",
+            "start_line": 97,
+            "symbol_id": "gson/src/main/java/com/google/gson/internal/bind/TypeAdapterRuntimeTypeWrapper.java#method:getRuntimeTypeIfMoreSpecific:97"
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parseString:52",
+          "workspace_id": "java_002_ctx16k"
+        },
+        "id": "step-2-tool-1",
+        "isError": false,
+        "name": "get_symbol",
+        "result": {
+          "children": [],
+          "code": "public static JsonElement parseString(String json) throws JsonSyntaxException {\n    return parseReader(new StringReader(json));\n  }",
+          "documentation": "Parses the specified JSON string into a parse tree. An exception is thrown if the JSON string\nhas multiple top-level JSON elements, or if there is trailing data.\n\n<p>The JSON string is parsed in {@linkplain JsonReader#setStrictness(Strictness) lenient mode}.\n\n@param json JSON text\n@return a parse tree of {@link JsonElement}s corresponding to the specified JSON\n@throws JsonParseException if the specified text is not valid JSON\n@since 2.8.6",
+          "end_line": 54,
+          "kind": "method",
+          "name": "parseString",
+          "parent_id": null,
+          "parent_name": null,
+          "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+          "qualified_name": "parseString",
+          "signature": "public static JsonElement parseString(String json) throws JsonSyntaxException {\n    return parseReader(new StringReader(json));\n  }",
+          "start_line": 52,
+          "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parseString:52"
+        }
+      }
+    ]
+  },
+  "trialId": "e71e351c6a"
+}

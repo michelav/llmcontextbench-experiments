@@ -1,0 +1,191 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 2855,
+          "metadata": {
+            "model": "gemini-2.5-flash-lite",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 2868,
+          "metadata": {},
+          "name": "strategy.inline.execute",
+          "type": "strategy.inline.execute"
+        },
+        {
+          "duration_ms": 2868,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 13,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": null,
+        "cachedInputTokens": null,
+        "contextBytes": 13747,
+        "contextChars": 13747,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 0,
+        "inputTokens": 4025,
+        "loopControlDurationMsEstimated": 13,
+        "mcpToolCalls": 0,
+        "modelCalls": 1,
+        "modelDurationMs": 2855,
+        "outputTokens": 507,
+        "promptChars": 15236,
+        "questionTokensEstimated": 225,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": null,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 1,
+        "strategyDurationMs": 2868,
+        "taskStatementChars": 1467,
+        "toolCalls": 0,
+        "toolDurationMs": null,
+        "totalDurationMs": 2868,
+        "totalTokens": 4532,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": {
+      "automatic_function_calling_history": [],
+      "candidates": [
+        {
+          "avg_logprobs": null,
+          "citation_metadata": {
+            "citations": [
+              {
+                "end_index": 757,
+                "license": "",
+                "publication_date": null,
+                "start_index": 10,
+                "title": null,
+                "uri": "https://github.com/JakeMurrayMcGuirk/SDEV-CA2"
+              },
+              {
+                "end_index": 1023,
+                "license": "",
+                "publication_date": null,
+                "start_index": 603,
+                "title": null,
+                "uri": "https://coveralls.io/builds/56478451/source?filename=src%2Fblack%2Flinegen.py"
+              },
+              {
+                "end_index": 1192,
+                "license": "",
+                "publication_date": null,
+                "start_index": 888,
+                "title": null,
+                "uri": "https://github.com/JakeMurrayMcGuirk/SDEV-CA2"
+              },
+              {
+                "end_index": 1378,
+                "license": "",
+                "publication_date": null,
+                "start_index": 1051,
+                "title": null,
+                "uri": "https://coveralls.io/builds/56478451/source?filename=src%2Fblack%2Flinegen.py"
+              },
+              {
+                "end_index": 1773,
+                "license": "",
+                "publication_date": null,
+                "start_index": 1227,
+                "title": null,
+                "uri": "https://github.com/JakeMurrayMcGuirk/SDEV-CA2"
+              }
+            ]
+          },
+          "content": {
+            "parts": [
+              {
+                "code_execution_result": null,
+                "executable_code": null,
+                "file_data": null,
+                "function_call": null,
+                "function_response": null,
+                "inline_data": null,
+                "media_resolution": null,
+                "part_metadata": null,
+                "text": "```python\ndef run_transformer(\n    line: Line,\n    transform: Transformer,\n    mode: Mode,\n    features: Collection[Feature],\n    *,\n    line_str: str = \"\",\n) -> List[Line]:\n    if not line_str:\n        line_str = line_to_string(line)\n    result: List[Line] = []\n    for transformed_line in transform(line, features, mode):\n        if str(transformed_line).strip(\"\\n\") == line_str:\n            raise CannotTransform(\"Line transformer returned an unchanged result\")\n\n        result.extend(transform_line(transformed_line, mode=mode, features=features))\n\n    features_set = set(features)\n    if (\n        Feature.FORCE_OPTIONAL_PARENTHESES in features_set\n        or transform.__class__.__name__ != \"rhs\"\n        or not line.bracket_tracker.invisible\n        or any(bracket.value for bracket in line.bracket_tracker.invisible)\n        or line.contains_multiline_strings()\n        or result[0].contains_uncollapsable_type_comments()\n        or result[0].contains_unsplittable_type_ignore()\n        or is_line_short_enough(result[0], mode=mode)\n        # If any leaves have no parents (which _can_ occur since\n        # `transform(line)` potentially destroys the line's underlying node\n        # structure), then we can't proceed. Doing so would cause the below\n        # call to `append_leaves()` to fail.\n        or any(leaf.parent is None for leaf in line.leaves)\n    ):\n        return result\n\n    line_copy = line.clone()\n    append_leaves(line_copy, line, line.leaves)\n    features_fop = features_set | {Feature.FORCE_OPTIONAL_PARENTHESES}\n    second_opinion = run_transformer(\n        line_copy, transform, mode, features_fop, line_str=line_str\n    )\n    if all(is_line_short_enough(ln, mode=mode) for ln in second_opinion):\n        result = second_opinion\n    return result\n```",
+                "thought": null,
+                "thought_signature": null,
+                "tool_call": null,
+                "tool_response": null,
+                "video_metadata": null
+              }
+            ],
+            "role": "model"
+          },
+          "finish_message": null,
+          "finish_reason": "STOP",
+          "grounding_metadata": null,
+          "index": 0,
+          "logprobs_result": null,
+          "safety_ratings": null,
+          "token_count": null,
+          "url_context_metadata": null
+        }
+      ],
+      "create_time": null,
+      "model_status": null,
+      "model_version": "gemini-2.5-flash-lite",
+      "parsed": null,
+      "prompt_feedback": null,
+      "response_id": "EYEUau-AHsKHz7IPpczZ0Q8",
+      "sdk_http_response": {
+        "body": null,
+        "headers": {
+          "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+          "content-encoding": "gzip",
+          "content-type": "application/json; charset=UTF-8",
+          "date": "Mon, 25 May 2026 17:04:19 GMT",
+          "server": "scaffolding on HTTPServer2",
+          "server-timing": "gfet4t7; dur=2646",
+          "transfer-encoding": "chunked",
+          "vary": "Origin, X-Origin, Referer",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "x-gemini-service-tier": "standard",
+          "x-xss-protection": "0"
+        }
+      },
+      "usage_metadata": {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 507,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 4025,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 4025
+          }
+        ],
+        "thoughts_token_count": null,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 4532,
+        "traffic_type": null
+      }
+    },
+    "serverMcp": [],
+    "toolCalls": []
+  },
+  "trialId": "c99859f574"
+}

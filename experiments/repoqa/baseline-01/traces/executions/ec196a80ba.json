@@ -1,0 +1,719 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 2206,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "java_001_ctx8k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "language": "java",
+                "parse_status": "ok_filtered",
+                "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+                "repository": "google/gson",
+                "symbol_count": 1
+              },
+              {
+                "language": "java",
+                "parse_status": "ok_filtered",
+                "path": "gson/src/main/java/com/google/gson/stream/JsonScope.java",
+                "repository": "google/gson",
+                "symbol_count": 2
+              },
+              {
+                "language": "java",
+                "parse_status": "ok_filtered",
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "repository": "google/gson",
+                "symbol_count": 29
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "java_001_ctx8k"
+              },
+              "durationMs": 0,
+              "toolName": "list_files",
+              "workspace_id": "java_001_ctx8k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1781,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+              "workspace_id": "java_001_ctx8k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 946,
+                "kind": "method",
+                "name": "addTypeAdaptersForDate",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+                "qualified_name": "addTypeAdaptersForDate",
+                "signature": "private static void addTypeAdaptersForDate(\n      String datePattern, int dateStyle, int timeStyle, List<TypeAdapterFactory> factories) {\n    TypeAdapterFactory dateAdapterFactory;\n    boolean sqlTypesSupported = SqlTypesSupport.SUPPORTS_SQL_TYPES;\n    TypeAdapterFactory sqlTimestampAdapterFactory = null;\n    TypeAdapterFactory sqlDateAdapterFactory = null;\n\n    if (datePattern != null && !datePattern.trim().isEmpty()) {\n      dateAdapterFactory = DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(datePattern);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(datePattern);\n        sqlDateAdapterFactory = SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(datePattern);\n      }\n    } else if (dateStyle != DateFormat.DEFAULT || timeStyle != DateFormat.DEFAULT) {\n      dateAdapterFactory =\n          DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(dateStyle, timeStyle);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n        sqlDateAdapterFactory =\n            SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n      }\n    } else {\n      return;\n    }\n\n    factories.add(dateAdapterFactory);\n    if (sqlTypesSupported) {\n      factories.add(sqlTimestampAdapterFactory);\n      factories.add(sqlDateAdapterFactory);\n    }\n  }",
+                "start_line": 912,
+                "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:addTypeAdaptersForDate:912"
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+                "workspace_id": "java_001_ctx8k"
+              },
+              "durationMs": 0,
+              "toolName": "list_symbols",
+              "workspace_id": "java_001_ctx8k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 2704,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:addTypeAdaptersForDate:912",
+              "workspace_id": "java_001_ctx8k"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": {
+              "children": [],
+              "code": "private static void addTypeAdaptersForDate(\n      String datePattern, int dateStyle, int timeStyle, List<TypeAdapterFactory> factories) {\n    TypeAdapterFactory dateAdapterFactory;\n    boolean sqlTypesSupported = SqlTypesSupport.SUPPORTS_SQL_TYPES;\n    TypeAdapterFactory sqlTimestampAdapterFactory = null;\n    TypeAdapterFactory sqlDateAdapterFactory = null;\n\n    if (datePattern != null && !datePattern.trim().isEmpty()) {\n      dateAdapterFactory = DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(datePattern);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(datePattern);\n        sqlDateAdapterFactory = SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(datePattern);\n      }\n    } else if (dateStyle != DateFormat.DEFAULT || timeStyle != DateFormat.DEFAULT) {\n      dateAdapterFactory =\n          DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(dateStyle, timeStyle);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n        sqlDateAdapterFactory =\n            SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n      }\n    } else {\n      return;\n    }\n\n    factories.add(dateAdapterFactory);\n    if (sqlTypesSupported) {\n      factories.add(sqlTimestampAdapterFactory);\n      factories.add(sqlDateAdapterFactory);\n    }\n  }",
+              "documentation": null,
+              "end_line": 946,
+              "kind": "method",
+              "name": "addTypeAdaptersForDate",
+              "parent_id": null,
+              "parent_name": null,
+              "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+              "qualified_name": "addTypeAdaptersForDate",
+              "signature": "private static void addTypeAdaptersForDate(\n      String datePattern, int dateStyle, int timeStyle, List<TypeAdapterFactory> factories) {\n    TypeAdapterFactory dateAdapterFactory;\n    boolean sqlTypesSupported = SqlTypesSupport.SUPPORTS_SQL_TYPES;\n    TypeAdapterFactory sqlTimestampAdapterFactory = null;\n    TypeAdapterFactory sqlDateAdapterFactory = null;\n\n    if (datePattern != null && !datePattern.trim().isEmpty()) {\n      dateAdapterFactory = DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(datePattern);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(datePattern);\n        sqlDateAdapterFactory = SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(datePattern);\n      }\n    } else if (dateStyle != DateFormat.DEFAULT || timeStyle != DateFormat.DEFAULT) {\n      dateAdapterFactory =\n          DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(dateStyle, timeStyle);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n        sqlDateAdapterFactory =\n            SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n      }\n    } else {\n      return;\n    }\n\n    factories.add(dateAdapterFactory);\n    if (sqlTypesSupported) {\n      factories.add(sqlTimestampAdapterFactory);\n      factories.add(sqlDateAdapterFactory);\n    }\n  }",
+              "start_line": 912,
+              "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:addTypeAdaptersForDate:912"
+            },
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:addTypeAdaptersForDate:912",
+                "workspace_id": "java_001_ctx8k"
+              },
+              "durationMs": 0,
+              "toolName": "get_symbol",
+              "workspace_id": "java_001_ctx8k"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 2493,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 9231,
+          "metadata": {},
+          "name": "strategy.local_function.execute",
+          "type": "strategy.local_function.execute"
+        },
+        {
+          "duration_ms": 9231,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 47,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": null,
+        "cachedInputTokens": 1273,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 3,
+        "inputTokens": 4235,
+        "loopControlDurationMsEstimated": 47,
+        "mcpToolCalls": 3,
+        "modelCalls": 4,
+        "modelDurationMs": 9184,
+        "outputTokens": 514,
+        "promptChars": 1109,
+        "questionTokensEstimated": 148,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 645,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 4,
+        "strategyDurationMs": 9231,
+        "taskStatementChars": 937,
+        "toolCalls": 3,
+        "toolDurationMs": 0,
+        "totalDurationMs": 9231,
+        "totalTokens": 5394,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "workspace_id": "java_001_ctx8k"
+                    },
+                    "id": null,
+                    "name": "list_files",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "Cv0HAQw51sfeXrIReBAz9hUhIyGYiZAtqJxsWImEk-zP_11jkKZdr1QCEh5rZMOIawo3aVXPyUV_asPfrKXHY2uiZd616MeXXjAhyn67dB7JM8ETBXh3dUz2optMqcwKx6G5Iwet_ynwBU4eNQFSfHWLckhRc2r3HhNDEQ5XWl_QbDzgA-FQ8vffNvXz1BoKWhZGdXZmC8ZLI5-JmBE3Glxn824Lwt-CNm1XZg-Hb1oD1gGjv_3RBX6DSkpXL13yS1x2Z3wetdvJCq6JiSKtO37yls8Jh-ICF-BkOVWN4jS-VqrcAzsKcnS1zgoF99VyzQsylWJ89Q79R8UfMj2LIwHdV3cHbM6oQDm3lMH7uT1-mms1yLxoZJmM_-Em1Xc1n_Vr3hK6xFm1Y2wVeCcG9_vg1zV53LNghkjUVzAwNtxQqdevU2bXDl1xeBChPJ79rsnxbXZ-U-V0DXrjiOUG0uD-roCFLZMooIIsdDSB6WQ69uhNhDA8l2jlF1FDpY5xWuBsCEFN3IA4d0hnexnDhqXZ2b8l3gcta2ALBCSb782JTAPeICqDDYKOIKhimydR9ygKqSFFUmPkfNVUslgVDTlAMR5p8y4ZvtOH15QQmPgZRIOa030d4hUbqfuu_O8cQIcRYwdPiPG4espApGUEUc9IujHVYxnOFB55P3DPaMiwYUG4nfTsQafOg0EfBYhsNJ7pd0Wx_0YmqrHzjXBWnf8pqSaKqZynt5DUv-2B9bAfVDQv_XZXD2BtIe-SP58-KbI2cnUUCGaHiZ7e5ANkTPNTCjyYSwgiphDp2DeY91bvUgS0MoWfQpDkbSCkxBQB9tP4VL8W7JAKbAtTNiwSz2gFuGI3udh_dSj9dAEx4jxmD5EAdPUdwoGRCEZ9IJgP00fyQlDtkUEleJ5msKh1L-vRlTcYkWfBAXlFzFcBS4pj-tFcIOAlG_a-CY5Pm3xJ7o8Kfa7ZZy4N0xI_ycyjBKgaoyyM00g9ZizqJeiS17yybhHH0LakDygpRQnk7xwKEju6pRAS21Q6a94_4oluEaCG5RIT5GC3hr1uUcCjVKgjPJDkzosro96R2_u_x3r0ef6SRCg2Ip1Zu_k-Ou7cSPBqJWgiMfgvJudbNH0ZpX0I3Jc6arjEqXNk1HvXGwDhteAK7wFI8Qv0G0TXF9ToWAyoa_jwc3FbL-zocd5iqxS7HjN88niXf6xx3ualeJyi9wI8Lh_2mvBouc9ckzmxdVa1dSqyS99-7MdhRZs1UZVuUu7KzyRjxFCxHFIMv8fQzQUyLeDFK8lfExHWIpa5esnPmqGG2HfJ5jHNxtWIeNreE-Hc4TVwfiXDRaaA-wh8jVBaCWn2ORyJyA0OoH5uIw==",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "24MUatXNJ5OIz7IPxaC_yAw",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:16:13 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1989",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 25,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 618,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 618
+            }
+          ],
+          "thoughts_token_count": 206,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 849,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "kind": "function",
+                      "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+                      "workspace_id": "java_001_ctx8k"
+                    },
+                    "id": null,
+                    "name": "list_symbols",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "Ct8DAQw51seDvp3HaznuyA3sW0hHNUGuCGdN_NvvkIySLF4LETCmOMTonkkuDJqfEfoFsldUCF8wHX3TOWqfpn0Wv_GsejAgv7Ap0EFAOEiIV6XA7op7urE-FCdE8BzL6_o4QhQf5sBK01JmBPn48HiZ4BFQmfZBVq7CAQEiJTJ-v-VgSmUY342QiYnAf1cmL6ObjurOuzoyx4Jjd-bxsxt0CmbWN62LWfcaDFqOGREfN2Cgqq9qQcqhjhv173dNN89vmUOEg3YyAX0tkikW2B0Vun67bPYOkn_GWAEs9LXzof2DV_-iBk8-dNSnOKU2VZQZHAKB41CzVUxjByjifl8of-vKC7YKxYbNVglirhEFl0mrmZ6ho9IproGU2-FHazUMDvgIlRZIUsgB5T4M6q2KfVEBJFerrQp4T8V0GhlcaNVBBtQD9q32noLieeCQkTDGMoC0ybhnKrCjZ7lb3_iO-ACF-fVDwhM5ETaDLaXXuvq3fPSnfkN5jJdDzWPOf2GhExDq8u4DkRmF34DLU9J9jSUrmLayxUWfygGILu_HfUA8lQK9502qvcUVGZkdlV6v4Vn0KI70wBvVnpQCDuFWhyVtKVp7qsVtICPWJ2v0tDG6O-8wguj_MxAkDsS5qT4=",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "3YMUau6CNtuwqtsPufG_4Qo",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:16:15 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1571",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 578
+            }
+          ],
+          "cached_content_token_count": 578,
+          "candidates_token_count": 52,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 826,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 826
+            }
+          ],
+          "thoughts_token_count": 118,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 996,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:addTypeAdaptersForDate:912",
+                      "workspace_id": "java_001_ctx8k"
+                    },
+                    "id": null,
+                    "name": "get_symbol",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CtoLAQw51sc0AyoIXeMFHtOHXgTMaN2UJyQow7H1jNVYGMyah7LWU2bG4dEz-VS7dfmQY_ClaSQfFFh40PAF7nZT49Lu3U03tUplWA2mKvendJ5J67CPKN_inA9O2I6-tegV_j4kutvjzNQjGqHSSs_dCziJo6rZz_KyXf9DJC5SDVPpUmlLXNxizNEMQN3ypiyFsT4ahGVYWSHH3chP4DFCl6QsPw97RrNnwUQCVe60LWs7y7q0WrFi-sqqjUls7ljcVqXQgaI8l10ULps7FlYiyYnpBSgnuakWVAZc_-Mj1nsUQIH_6GbzeyhDNaJV9wU9wRW0g9ErCl4JQA_yDsKuVe7Mcz4-DRM5MC7ETkguU7J52eHtGZ0LW8kCXRDkhEgIGLZNXUZqJxU4Az4gF6x9Zejdp7Rt5SPaRO2MCk8Cg_axSF6QwWioutbzg4VBpfoyInvh6jkd5wDnUQMlVJ_y_4sw64TQ_1mljPAFtrLgzejnY-e33Vd3j3XRwH6F5fw8EWLrX_uFKw3muapIMOJbe69L9SpaOqmWgZmOO56HFxTPQnxHV2NeC4PJdrMxVp6yDIcqIxSqhedh_U6CtUs8A6i13j9q7AUQNlqEBC_blAxqQSgsb9QBLaj4dslNrpbrMzOCvQCXocw8XJWzTUrH8Xn2pCWwOqsxAF4A402h_d3oFe_Gjw9uYZEkgxd25meFL7DTBgT3-MXYxVRMpVyQkvLy6ZS21nUxGmxNh7p3hNaVdSea9AoEleu5swyP50Sc4X23xz2xA_yGBCtMUAepJ21R-4EaeMwIph2DfjJp9Rex79zmJw3Hv8ohMwzTYVlwKF8wj_gQv51wBS7CoCaxobxjL5iKQRfzny0pLrVj4O9rLYdpoHBkWeU1WfHohO_If-U49dQt2VH3teXggjGgoVN6gme4lAl1h-KzLQOba85n1J4ZuuPMJwXqz4_VaT1Vbanyi6qpfETfRF3CkiS6AlQXwGApFILGH5ZToSCtpbkWRGrwWxVAfpZycZ_iw8vo37Qhn9_MrSYPa1l9GwiyVOh-9JC-UwFXCEczApazMfZzooj-Lvk7IyL5ZRk_0gyJ82J8o7Q6dyJk5AMq9RlXW1GPA946riiGQOM-E8-XX1DHK8UkygvYKNSE0Ll7AAmfXx1T86d2WTm189VQ2q_Pky51DXZj6P0yHcf9HcE6d_zeZQp98JkDuppf0JBjnXBIaUxnrBOdFIg5WvA3kaKo8I7W-Oj85Raawni6Niv0RlMfBlaKhWbDdpcfK-OkiWqldtoRCDbB9fI6rGoBmr1RRyyvZ-NqcEDwv5mgfIpvUiJFUX4T2WVJp0VsEhXYwdfRDz2C4ZCtUE3qhxuY9oaYwHejuLwLGV-17qYK9cBPK2Ehksh22DxJumpgKRjLZ9LwqETHNOeZWjRZSrQYw9I42rehzowNe6woXRX-uJE-AANtDwb1cyww4bz5i7KJcntgumXSHvnJdDWp99VE2oD940siCO1-CS_1hYRC3dTnLMZwWW7qJCWB1f_UrmqS1LPIsFbt22NskHOXH2IBP4miYKe0fUsVzUJHhAjyv9chNtTVsh8gBwQNWEsPlop8vIcczn8WvxqLqLzOtsBbZPLaDKUyb5pLQnOJ5D77M-YF9xz6GQLe700AzSlyf5FLRpgZ3BfjpdjYS33SBpvHkphk3dLmL1TC04IS8-EIWKu2P7wF_bcv6gJSW4bMkGcl_YbAmtSsrLBqr4a_KNnfqY3lS8Gl2nlzZKP5SjDvCVCwWJ9j40pPtOt21I3OMsae27ix6y6i1TwM34KDGv3xtq1T64D8APAjgiIeW2qLEycg4Dvv9TTel3lO0bSGwpH6iKUOWBcSmgaIa5pSZtOCBGu-G64w1d7mZihDrnxQGc630iUK0wZSs45Rth6wr_-ifpuS8bQjbfobNb9VBTMubfSGdKO-G6IaOEhOZ3m0rP9507X3VG2-wDiVkJ2rmzfN7SpyGLMkd4-x4LAaEw==",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "34MUatKGKcasz7IPjLW1qQ4",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:16:17 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=2491",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 62,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 1200,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 1200
+            }
+          ],
+          "thoughts_token_count": 321,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 1583,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": {
+              "citations": [
+                {
+                  "end_index": 1473,
+                  "license": "",
+                  "publication_date": null,
+                  "start_index": 8,
+                  "title": null,
+                  "uri": "https://github.com/google/gson"
+                }
+              ]
+            },
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": null,
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": "```java\nprivate static void addTypeAdaptersForDate(\n      String datePattern, int dateStyle, int timeStyle, List<TypeAdapterFactory> factories) {\n    TypeAdapterFactory dateAdapterFactory;\n    boolean sqlTypesSupported = SqlTypesSupport.SUPPORTS_SQL_TYPES;\n    TypeAdapterFactory sqlTimestampAdapterFactory = null;\n    TypeAdapterFactory sqlDateAdapterFactory = null;\n\n    if (datePattern != null && !datePattern.trim().isEmpty()) {\n      dateAdapterFactory = DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(datePattern);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(datePattern);\n        sqlDateAdapterFactory = SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(datePattern);\n      }\n    } else if (dateStyle != DateFormat.DEFAULT || timeStyle != DateFormat.DEFAULT) {\n      dateAdapterFactory =\n          DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(dateStyle, timeStyle);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n        sqlDateAdapterFactory =\n            SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n      }\n    } else {\n      return;\n    }\n\n    factories.add(dateAdapterFactory);\n    if (sqlTypesSupported) {\n      factories.add(sqlTimestampAdapterFactory);\n      factories.add(sqlDateAdapterFactory);\n    }\n  }\n```",
+                  "thought": null,
+                  "thought_signature": null,
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "4oMUapzcF6KGz7IPqKj2qAw",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:16:20 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=2284",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 695
+            }
+          ],
+          "cached_content_token_count": 695,
+          "candidates_token_count": 375,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 1591,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 1591
+            }
+          ],
+          "thoughts_token_count": null,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 1966,
+          "traffic_type": null
+        }
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "workspace_id": "java_001_ctx8k"
+        },
+        "durationMs": 0,
+        "toolName": "list_files",
+        "workspace_id": "java_001_ctx8k"
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+          "workspace_id": "java_001_ctx8k"
+        },
+        "durationMs": 0,
+        "toolName": "list_symbols",
+        "workspace_id": "java_001_ctx8k"
+      },
+      {
+        "arguments": {
+          "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:addTypeAdaptersForDate:912",
+          "workspace_id": "java_001_ctx8k"
+        },
+        "durationMs": 0,
+        "toolName": "get_symbol",
+        "workspace_id": "java_001_ctx8k"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "workspace_id": "java_001_ctx8k"
+        },
+        "id": "step-1-tool-1",
+        "isError": false,
+        "name": "list_files",
+        "result": [
+          {
+            "language": "java",
+            "parse_status": "ok_filtered",
+            "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+            "repository": "google/gson",
+            "symbol_count": 1
+          },
+          {
+            "language": "java",
+            "parse_status": "ok_filtered",
+            "path": "gson/src/main/java/com/google/gson/stream/JsonScope.java",
+            "repository": "google/gson",
+            "symbol_count": 2
+          },
+          {
+            "language": "java",
+            "parse_status": "ok_filtered",
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "repository": "google/gson",
+            "symbol_count": 29
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+          "workspace_id": "java_001_ctx8k"
+        },
+        "id": "step-2-tool-1",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 946,
+            "kind": "method",
+            "name": "addTypeAdaptersForDate",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+            "qualified_name": "addTypeAdaptersForDate",
+            "signature": "private static void addTypeAdaptersForDate(\n      String datePattern, int dateStyle, int timeStyle, List<TypeAdapterFactory> factories) {\n    TypeAdapterFactory dateAdapterFactory;\n    boolean sqlTypesSupported = SqlTypesSupport.SUPPORTS_SQL_TYPES;\n    TypeAdapterFactory sqlTimestampAdapterFactory = null;\n    TypeAdapterFactory sqlDateAdapterFactory = null;\n\n    if (datePattern != null && !datePattern.trim().isEmpty()) {\n      dateAdapterFactory = DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(datePattern);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(datePattern);\n        sqlDateAdapterFactory = SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(datePattern);\n      }\n    } else if (dateStyle != DateFormat.DEFAULT || timeStyle != DateFormat.DEFAULT) {\n      dateAdapterFactory =\n          DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(dateStyle, timeStyle);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n        sqlDateAdapterFactory =\n            SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n      }\n    } else {\n      return;\n    }\n\n    factories.add(dateAdapterFactory);\n    if (sqlTypesSupported) {\n      factories.add(sqlTimestampAdapterFactory);\n      factories.add(sqlDateAdapterFactory);\n    }\n  }",
+            "start_line": 912,
+            "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:addTypeAdaptersForDate:912"
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:addTypeAdaptersForDate:912",
+          "workspace_id": "java_001_ctx8k"
+        },
+        "id": "step-3-tool-1",
+        "isError": false,
+        "name": "get_symbol",
+        "result": {
+          "children": [],
+          "code": "private static void addTypeAdaptersForDate(\n      String datePattern, int dateStyle, int timeStyle, List<TypeAdapterFactory> factories) {\n    TypeAdapterFactory dateAdapterFactory;\n    boolean sqlTypesSupported = SqlTypesSupport.SUPPORTS_SQL_TYPES;\n    TypeAdapterFactory sqlTimestampAdapterFactory = null;\n    TypeAdapterFactory sqlDateAdapterFactory = null;\n\n    if (datePattern != null && !datePattern.trim().isEmpty()) {\n      dateAdapterFactory = DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(datePattern);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(datePattern);\n        sqlDateAdapterFactory = SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(datePattern);\n      }\n    } else if (dateStyle != DateFormat.DEFAULT || timeStyle != DateFormat.DEFAULT) {\n      dateAdapterFactory =\n          DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(dateStyle, timeStyle);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n        sqlDateAdapterFactory =\n            SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n      }\n    } else {\n      return;\n    }\n\n    factories.add(dateAdapterFactory);\n    if (sqlTypesSupported) {\n      factories.add(sqlTimestampAdapterFactory);\n      factories.add(sqlDateAdapterFactory);\n    }\n  }",
+          "documentation": null,
+          "end_line": 946,
+          "kind": "method",
+          "name": "addTypeAdaptersForDate",
+          "parent_id": null,
+          "parent_name": null,
+          "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+          "qualified_name": "addTypeAdaptersForDate",
+          "signature": "private static void addTypeAdaptersForDate(\n      String datePattern, int dateStyle, int timeStyle, List<TypeAdapterFactory> factories) {\n    TypeAdapterFactory dateAdapterFactory;\n    boolean sqlTypesSupported = SqlTypesSupport.SUPPORTS_SQL_TYPES;\n    TypeAdapterFactory sqlTimestampAdapterFactory = null;\n    TypeAdapterFactory sqlDateAdapterFactory = null;\n\n    if (datePattern != null && !datePattern.trim().isEmpty()) {\n      dateAdapterFactory = DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(datePattern);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(datePattern);\n        sqlDateAdapterFactory = SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(datePattern);\n      }\n    } else if (dateStyle != DateFormat.DEFAULT || timeStyle != DateFormat.DEFAULT) {\n      dateAdapterFactory =\n          DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(dateStyle, timeStyle);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n        sqlDateAdapterFactory =\n            SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n      }\n    } else {\n      return;\n    }\n\n    factories.add(dateAdapterFactory);\n    if (sqlTypesSupported) {\n      factories.add(sqlTimestampAdapterFactory);\n      factories.add(sqlDateAdapterFactory);\n    }\n  }",
+          "start_line": 912,
+          "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:addTypeAdaptersForDate:912"
+        }
+      }
+    ]
+  },
+  "trialId": "ec196a80ba"
+}

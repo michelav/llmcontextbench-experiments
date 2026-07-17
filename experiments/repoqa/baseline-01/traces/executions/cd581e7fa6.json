@@ -1,0 +1,1156 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 2440,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "py_003_ctx4k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "language": "python",
+                "parse_status": "ok_filtered",
+                "path": "src/black/nodes.py",
+                "repository": "psf/black",
+                "symbol_count": 18
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "py_003_ctx4k"
+              },
+              "durationMs": 0,
+              "toolName": "list_files",
+              "workspace_id": "py_003_ctx4k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1241,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "src/black/nodes.py",
+              "workspace_id": "py_003_ctx4k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "Generate a normalized prefix string.",
+                "end_line": 425,
+                "kind": "function",
+                "name": "make_simple_prefix",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "make_simple_prefix",
+                "signature": "def make_simple_prefix(nl_count: int, form_feed: bool, empty_line: str = \"\\n\") -> str",
+                "start_line": 421,
+                "symbol_id": "src/black/nodes.py#function:make_simple_prefix:421"
+              },
+              {
+                "children": [],
+                "documentation": "Return the first leaf that precedes `node`, if any.",
+                "end_line": 443,
+                "kind": "function",
+                "name": "preceding_leaf",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "preceding_leaf",
+                "signature": "def preceding_leaf(node: Optional[LN]) -> Optional[Leaf]",
+                "start_line": 428,
+                "symbol_id": "src/black/nodes.py#function:preceding_leaf:428"
+              },
+              {
+                "children": [],
+                "documentation": "Return if the `node` and its previous siblings match types against the provided\nlist of tokens; the provided `node`has its type matched against the last element in\nthe list.  `None` can be used as the first element to declare that the start of the\nlist is anchored at the start of its parent's children.",
+                "end_line": 459,
+                "kind": "function",
+                "name": "prev_siblings_are",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "prev_siblings_are",
+                "signature": "def prev_siblings_are(node: Optional[LN], tokens: List[Optional[NodeType]]) -> bool",
+                "start_line": 446,
+                "symbol_id": "src/black/nodes.py#function:prev_siblings_are:446"
+              },
+              {
+                "children": [],
+                "documentation": "Returns:\n    @node.parent.type, if @node is not None and has a parent.\n        OR\n    None, otherwise.",
+                "end_line": 472,
+                "kind": "function",
+                "name": "parent_type",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "parent_type",
+                "signature": "def parent_type(node: Optional[LN]) -> Optional[NodeType]",
+                "start_line": 462,
+                "symbol_id": "src/black/nodes.py#function:parent_type:462"
+              },
+              {
+                "children": [],
+                "documentation": "Return the child of `ancestor` that contains `descendant`.",
+                "end_line": 480,
+                "kind": "function",
+                "name": "child_towards",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "child_towards",
+                "signature": "def child_towards(ancestor: Node, descendant: LN) -> Optional[LN]",
+                "start_line": 475,
+                "symbol_id": "src/black/nodes.py#function:child_towards:475"
+              },
+              {
+                "children": [],
+                "documentation": "Side Effects:\n    * If @old_child.parent is set, replace @old_child with @new_child in\n    @old_child's underlying Node structure.\n        OR\n    * Otherwise, this function does nothing.",
+                "end_line": 497,
+                "kind": "function",
+                "name": "replace_child",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "replace_child",
+                "signature": "def replace_child(old_child: LN, new_child: LN) -> None",
+                "start_line": 483,
+                "symbol_id": "src/black/nodes.py#function:replace_child:483"
+              },
+              {
+                "children": [],
+                "documentation": "Return `leaf` or one of its ancestors that is the topmost container of it.\n\nBy \"container\" we mean a node where `leaf` is the very first child.",
+                "end_line": 522,
+                "kind": "function",
+                "name": "container_of",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "container_of",
+                "signature": "def container_of(leaf: Leaf) -> LN",
+                "start_line": 500,
+                "symbol_id": "src/black/nodes.py#function:container_of:500"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the first leaf of the node tree.",
+                "end_line": 532,
+                "kind": "function",
+                "name": "first_leaf_of",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "first_leaf_of",
+                "signature": "def first_leaf_of(node: LN) -> Optional[Leaf]",
+                "start_line": 525,
+                "symbol_id": "src/black/nodes.py#function:first_leaf_of:525"
+              },
+              {
+                "children": [],
+                "documentation": "Whether node is an arithmetic or a binary arithmetic expression",
+                "end_line": 542,
+                "kind": "function",
+                "name": "is_arith_like",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_arith_like",
+                "signature": "def is_arith_like(node: LN) -> bool",
+                "start_line": 535,
+                "symbol_id": "src/black/nodes.py#function:is_arith_like:535"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 574,
+                "kind": "function",
+                "name": "is_docstring",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_docstring",
+                "signature": "def is_docstring(leaf: Leaf, mode: Mode) -> bool",
+                "start_line": 545,
+                "symbol_id": "src/black/nodes.py#function:is_docstring:545"
+              },
+              {
+                "children": [],
+                "documentation": "Return True if `node` holds an empty tuple.",
+                "end_line": 584,
+                "kind": "function",
+                "name": "is_empty_tuple",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_empty_tuple",
+                "signature": "def is_empty_tuple(node: LN) -> bool",
+                "start_line": 577,
+                "symbol_id": "src/black/nodes.py#function:is_empty_tuple:577"
+              },
+              {
+                "children": [],
+                "documentation": "Return True if `node` holds a tuple with one element, with or without parens.",
+                "end_line": 600,
+                "kind": "function",
+                "name": "is_one_tuple",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_one_tuple",
+                "signature": "def is_one_tuple(node: LN) -> bool",
+                "start_line": 587,
+                "symbol_id": "src/black/nodes.py#function:is_one_tuple:587"
+              },
+              {
+                "children": [],
+                "documentation": "Return True if `node` holds a tuple that contains a walrus operator.",
+                "end_line": 611,
+                "kind": "function",
+                "name": "is_tuple_containing_walrus",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_tuple_containing_walrus",
+                "signature": "def is_tuple_containing_walrus(node: LN) -> bool",
+                "start_line": 603,
+                "symbol_id": "src/black/nodes.py#function:is_tuple_containing_walrus:603"
+              },
+              {
+                "children": [],
+                "documentation": "Return True if content between `opening` and `closing` is a one-sequence.",
+                "end_line": 648,
+                "kind": "function",
+                "name": "is_one_sequence_between",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_one_sequence_between",
+                "signature": "def is_one_sequence_between(\n    opening: Leaf,\n    closing: Leaf,\n    leaves: List[Leaf],\n    brackets: Tuple[int, int] = (token.LPAR, token.RPAR),\n) -> bool",
+                "start_line": 614,
+                "symbol_id": "src/black/nodes.py#function:is_one_sequence_between:614"
+              },
+              {
+                "children": [],
+                "documentation": "Return True iff `node` is of the shape ( test := test )",
+                "end_line": 654,
+                "kind": "function",
+                "name": "is_walrus_assignment",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_walrus_assignment",
+                "signature": "def is_walrus_assignment(node: LN) -> bool",
+                "start_line": 651,
+                "symbol_id": "src/black/nodes.py#function:is_walrus_assignment:651"
+              },
+              {
+                "children": [],
+                "documentation": "Return True iff `node` is a trailer valid in a simple decorator",
+                "end_line": 680,
+                "kind": "function",
+                "name": "is_simple_decorator_trailer",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_simple_decorator_trailer",
+                "signature": "def is_simple_decorator_trailer(node: LN, last: bool = False) -> bool",
+                "start_line": 657,
+                "symbol_id": "src/black/nodes.py#function:is_simple_decorator_trailer:657"
+              },
+              {
+                "children": [],
+                "documentation": "Return True iff `node` could be a 'dotted name' decorator\n\nThis function takes the node of the 'namedexpr_test' of the new decorator\ngrammar and test if it would be valid under the old decorator grammar.\n\nThe old grammar was: decorator: @ dotted_name [arguments] NEWLINE\nThe new grammar is : decorator: @ namedexpr_test NEWLINE",
+                "end_line": 704,
+                "kind": "function",
+                "name": "is_simple_decorator_expression",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_simple_decorator_expression",
+                "signature": "def is_simple_decorator_expression(node: LN) -> bool",
+                "start_line": 683,
+                "symbol_id": "src/black/nodes.py#function:is_simple_decorator_expression:683"
+              },
+              {
+                "children": [],
+                "documentation": "Return True if `node` holds a `yield` or `yield from` expression.",
+                "end_line": 725,
+                "kind": "function",
+                "name": "is_yield",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_yield",
+                "signature": "def is_yield(node: LN) -> bool",
+                "start_line": 707,
+                "symbol_id": "src/black/nodes.py#function:is_yield:707"
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "src/black/nodes.py",
+                "workspace_id": "py_003_ctx4k"
+              },
+              "durationMs": 0,
+              "toolName": "list_symbols",
+              "workspace_id": "py_003_ctx4k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 2435,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "symbol_id": "src/black/nodes.py#function:make_simple_prefix:421",
+              "workspace_id": "py_003_ctx4k"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": {
+              "children": [],
+              "code": "def make_simple_prefix(nl_count: int, form_feed: bool, empty_line: str = \"\\n\") -> str:\n    \"\"\"Generate a normalized prefix string.\"\"\"\n    if form_feed:\n        return (empty_line * (nl_count - 1)) + \"\\f\" + empty_line\n    return empty_line * nl_count",
+              "documentation": "Generate a normalized prefix string.",
+              "end_line": 425,
+              "kind": "function",
+              "name": "make_simple_prefix",
+              "parent_id": null,
+              "parent_name": null,
+              "path": "src/black/nodes.py",
+              "qualified_name": "make_simple_prefix",
+              "signature": "def make_simple_prefix(nl_count: int, form_feed: bool, empty_line: str = \"\\n\") -> str",
+              "start_line": 421,
+              "symbol_id": "src/black/nodes.py#function:make_simple_prefix:421"
+            },
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "symbol_id": "src/black/nodes.py#function:make_simple_prefix:421",
+                "workspace_id": "py_003_ctx4k"
+              },
+              "durationMs": 0,
+              "toolName": "get_symbol",
+              "workspace_id": "py_003_ctx4k"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 3745,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 9908,
+          "metadata": {},
+          "name": "strategy.local_function.execute",
+          "type": "strategy.local_function.execute"
+        },
+        {
+          "duration_ms": 9908,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 47,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": null,
+        "cachedInputTokens": 1399,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 3,
+        "inputTokens": 5828,
+        "loopControlDurationMsEstimated": 47,
+        "mcpToolCalls": 3,
+        "modelCalls": 4,
+        "modelDurationMs": 9861,
+        "outputTokens": 202,
+        "promptChars": 1272,
+        "questionTokensEstimated": 171,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 1236,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 4,
+        "strategyDurationMs": 9908,
+        "taskStatementChars": 1102,
+        "toolCalls": 3,
+        "toolDurationMs": 0,
+        "totalDurationMs": 9908,
+        "totalTokens": 7266,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "workspace_id": "py_003_ctx4k"
+                    },
+                    "id": null,
+                    "name": "list_files",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CrwKAQw51sfx9fyOLfDeiFltX4xtLMkno_rpXkPm3kg1IUcdkHTRgxdfy4ZvKVyRKJbJyRIsZS8F3WWTqN1nd0efX6LPRAAXytg5Lzs_xlgu3KA3O-owIXmI58rDVvSt6q4rVwnbt0GPOXWR7l3JjDz3fyzPmO1fxZMVHemiK6Ek9esu062aMXXNPrZCzF2B6E9ZjI25Zg9iQqjsFtLneu90KB3XkNS8Ycp5YvAZ-g4I60oc0jNhbgDNFsMIDf6tURRxnVOViLMmRV_dXdFXDQhVr-LcwTBn7kWp7KISj0RYyEPm6yK3SwIY8z0kNka4KHrtyXLqwT918xa73yilfXqBsxyRz6h_QySXcfg94DoVptKD4EKBA16FIEpx103l360vtNO5DPfCOqfYukeeqpxmT4PJyUN3l9okJEF0J6a3hULiWH1G71PQw9hghrWtvgfpB5_o6-spZqcsybEIWX76yMktJ5LI0aBhg3NMd70npLvK9IAtiOMWvH3s9wIloTgnNJL1BJ8ado23GvFS6g82TxaozupiuGDoDPkV_dJ_nbdZnqzdqnQ_3jJlHfOk5hpPoHjhTWt1cNo34O-wqaYSzFtKk1NOydDe_RO2f_2z4LTWQsSxUj8X4iwwu7SugqcDnHs3AurMW5RtVAb9V15djKwoy2YMwPTpBE1qU4_LfKIVgoh3AcGcCovjgJtjtWgHcE-Ev0gFXrh-PcM5fcJNj1jSCu72MktYoZtGstbdGDH-3gq62l_eopcewfyqHVfGbyYjIhPC-mm2L47Z8F1_g5Xu5JjeRRJSXhSBAnpnttKZSxlLr_WpmI4DROx5VMKeTOhUIOCYYNRaQUugSf008JV7_usK5YndaUChaITAAI5a7eOFu1RXfjjfXamXA0dn5gdSUDP5n5VAT7PcAOGH_ZNrhKDSAr4LTeCstk4tgWlIi5HHbyjalEAIARgkXtU5ptAa1VWvuqt9KS6CTU0mMOgJtwia-UlBY2woW3A4m_k12WljBm_8_q8DGQqY1QhFABOfQr3kt0iiewrmCPtu5nxBDipKpE3cyp0eqwvkmPgHAkFsB_y7PnDMXCRHvyh-pSaS8-Ni3I85jZ0MDLq0pDtDn2NmHZWF88btU8gE3sPm4rRSNb0jlfrrPQJJuLbM2nAO5W2pmwi4pbf81DOV_aUVOEQnHfYnEmdisN2nS7Bj4sGi9LEAuHgR8PIV-7DRkb-TkA0jukAqzd818-X1dhpXjZo7vAIPTlnEqW85_VrTd-5Yu1EScy80Pfn6JmNN0JgC2tcJ1fY1C_XCIHFHQClFKmHPAPW82v5lZXGkrmE_mayM_MeVk1y3om2mYGNrwMuDWT_ejWfLocC1JOGTf2ruKaj_izTqWzDm_EIohySHK0P6CwLe7WW9ESWXJaBPcFVQhw4WFL_dZVZSPs_tqi3wc-4_caN0JMUIjqF0C7iEsfWZ9fpXT1wQc0-7XcL5r9Jv2Wn9W8nTIP8esZr72MZhSnT_ObN0tWkt23Q1AmIqzqS0IXVZNA5-VpaWWHSNnMS3FM1yc2MkoIBj1KPm0rMAk_JaivZgZ7G0wYn73SW2oFf2JMz8obfVxgwpR-hoHXrmGZANvmchUo44VCvMlWEh1TNqd_GYr5pq_TY_DbMfGD3YX0cgu6llHcBus54dpEi3Czz67YjdRhgbXWZ0tkblmi1wrIInXS1C9DiA3uawHTJaTz5Ff_nswi2pNgGH9rdqDmlzosyxhuCKKMA2uZbl26e23eu1OqKIHYHjQx8V2ym8oX33rUVk-Y4=",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "AYAUas_JD6KDz7IPpabDsAE",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 16:59:47 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=2229",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 25,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 643,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 643
+            }
+          ],
+          "thoughts_token_count": 335,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 1003,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "kind": "function",
+                      "path": "src/black/nodes.py",
+                      "workspace_id": "py_003_ctx4k"
+                    },
+                    "id": null,
+                    "name": "list_symbols",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CsQBAQw51sfuvbp3X3A_CTloABzh3pSe0I5HXHO0FYHa-OkY1PTUhihQEE84mC9IqKxsd6aKHtPL99qM7DAkPoz-pRu_apP8GJYv4OD96QYJWWHB4_EtQWnjk4PlxXBNiu0oU6hCQvR2yzGZmxXKNYLjKJzdrVQHA2yv_f8UgLA6j6_PpLGJI5EbXN434TqBlNr3PbfxJcdCuHFGCptjLiCzcrbqyhviP1qLLMORlgC99liF-3AzhbNyI9cBSyx2jmTYZgfASw==",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "A4AUasDbK42_qtsP8Pn1wAc",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 16:59:48 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1035",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 498
+            }
+          ],
+          "cached_content_token_count": 498,
+          "candidates_token_count": 41,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 727,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 727
+            }
+          ],
+          "thoughts_token_count": 44,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 812,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "symbol_id": "src/black/nodes.py#function:make_simple_prefix:421",
+                      "workspace_id": "py_003_ctx4k"
+                    },
+                    "id": null,
+                    "name": "get_symbol",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CtIKAQw51scgIritOK8jTf6HuoK-Cw0R72BEa0GVkYGHKjYcZm1wnfwpM6hAqMV20GmOvG_5YtnDc6lF8SoIFYB8pv6pTvDBn9rsUEPRp5dpehX2l1-1E7IalsNWCPEJJkr6VLySQwRjGZviES1FSxvaMqLG9M79ApVZttjphWHYfhXuQSwVBKOFmtyFG10bb37aRQ4ntNat1VC7XPMwbzRLqghZpJWCrrJgAWrwOxYbxISdlzePRwVTUUv-TzpfKvTidyW0lGWMxeQ1IugnDsc8IaaH8QKMQLAPq1uKVRhQfzb7pmePvQuizxSglXneM_-ZELapAu6c2cYlwbktm__f1gtRftdsigXDaEdDeN4tECkt5Yj4oJtN63O0BQZFL8pnU2Tjt1X64bPDVMHs1FNiiWaCSzyW3lpOaQishLNDS5VvDP_wlcCK2ja0J2YJQHL2Ww-qXAvrVGugVVnaDurlGp1wt1Ycn7cPuNbOEwfJMT_AiBuRIiGAHjj3yQP2hwNTfYh4K284AWQzkA6gpDFXyrMtgcbXRnKwsxZYpHRm65P7_t5qBvth2j142uBnwtKCKSNw0qrybAhw6KmVfKB9wNNdr1r-9oOx1Lh5aSvwWsPHZ2M1dyMy80MDK_xf8K2Xte_i_GGaRIFGvr1DyEwkTlmok9X_KjgNaD6yC-fYg6hAWjQCnK84yYH6aemaTcmHEE9u4Fw4OBFGaBGK3zpvn70TJahSIi14ulWOyCF3RZhJJUmNPbr4SsKQxnkG8qPGwtbbQIGwVqbCtGEpJ1kgE60qlhiooMdKb10iHR8IACQyo7jXw6mHsXlvQ3BzMVAJaDkjKvQG4w7dVSzYnCMDE-WniqrpjCesbeAaT-7EaI5nw1BhO89flF0WjFOlOgNZuJ5PCCN34U0R4r-xulKApg4J1dwpVeuodf2Xq1gdbBFtpZTny_zSe4eMs3oQkMJYl30J6auB0MeIVPWuNmJoEalRPCN4LUkcc9sy76nd2Om53iZccWR-MEwndyQZKwD5icuS2XHtF18GAdy2Lkv3L0gCankDLgGnuC8tn4dTOjzIlZOv_ZRzBDLiXAIPUJ4fqz3runnaMoYrVEeUGmbXdKNEZZiYhFXlErXjwfzEmHqZ5wiMsJTZ_9Loh6qGF0i3jbxV6mUMhN4huFPREZptdiP_i6s1KMdEDxAueisjRy8jN88I1E9IFoI0Wl0_gPgwjgMJd5Azai9ltdeIG_xST_wGAhyNCEXmaS5IHDM-w4ZY5IloAdGw_HyossjAuJwn7_JtZjrnQDRPIkarcJUxlJPr3KE1HBspcxMRTOBqpB7FUd9-zJOn3Ce637iRJ0rvcx2mNMGCC3TmBpKUT6qdxAG0qcBJZloJRWX1rRnwvCrE-PVYx6HHmpuIVi2Zn985YZmnikuH_kO-PL9zos8Rp8IlZGdyjHL6qhL85NxPuWDrbGKUFT97petdRJm4-9KdBo9eu70IoODCBPbfY7NxGwEhd2o1qrER-D9seQKoRuORakGWMxPEcmZDhMcoNq50VwWUk4Z1Mtpja0RPiiARF7YGZz5iThXFtMYweqnzQ2qylDTbaC1jgXQ67Szn5muTzAomQlQHaA6YKSHeCELuDeqhVl8mQxodz2xUIRB4HZNi1c3ui8xL4IlNzNxUy_XD4qzl8eDCcpRkVTJYJ8FfEKY_bPrAJIrDUFkvPg_46oftV99LK8rb2gg28rL02XpEhgHh75YUQVXrsKfw1IGi6CnOrT_XHB6aDGLd1CgYfYwyLzQnPqB-hZzhXX_PLtS9MwbvACLtPX9WBr7uZtV2xXrs",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "BYAUasiWApaFz7IP2srqwQo",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 16:59:50 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=2173",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 901
+            }
+          ],
+          "cached_content_token_count": 901,
+          "candidates_token_count": 50,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 3509,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 3509
+            }
+          ],
+          "thoughts_token_count": 275,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 3834,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": null,
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": "```python\ndef make_simple_prefix(nl_count: int, form_feed: bool, empty_line: str = \"\\n\") -> str:\n    \"\"\"Generate a normalized prefix string.\"\"\"\n    if form_feed:\n        return (empty_line * (nl_count - 1)) + \"\\f\" + empty_line\n    return empty_line * nl_count\n```",
+                  "thought": null,
+                  "thought_signature": "ClIBDDnWx0ftl4jjHjWt7k4DmqBPfUQwTUfAwi_I6tk7KphzV7JGGOZ5T2uviCNoTN5O976B1PcAL6uv8FFZD4AoXiLsQpQ2MQsZEcvHlFGMnYV0CqgCAQw51sclSTYz60qgotQ8cyyXYBO7T21xtAQF6N8-r-X-J4aCGj6VfrEVc_RFrAFZRFqeocNuTVwnAkHmLY3jB2wLoCva_GXCVXw1hzjliKg9dEmcFI46QnD92LIilIYhgsHJJzu2YHRNBqMva4WEi4QdkRLObkliui7F6R3SuU72c4tDtbYdfg5YdtFXnbG_nvMlSsl20jdZRiAV4Lk5lAzld1h06H-BwfEHtKPWzEUbOV13sI9BTcqNAUytpIllSyHogVxV-0tF3UXsKWH217B9LR2FOc3vcOxIMZg7ncHCy-EErzLK-16hPdGv6_30-uzvAHd1Ly577245ecsuI0hyzqdgZvFzGRe8SAtPMGCCGHb1cxP67sklnqPkmXrUvtpEGyjsIJoKnBABDDnWx_K-9MtSUKCFax3zG-CneP-1EElX2FDDBpZF39fTR_begRqKtuHNVMyIBj8pJYp8GULb4kZ-BZpcnhwQMBdTsLDxwTHzMfjora5uBdgZHgb7B0ClVdJPpwMXopJ7b2dTwVpFG5TMUriEgT4S_WSfmfODORMtXJIj4npJ99UrmUF6gmdMFeC_I2ZG-8u98-gY3mPyNQPJC_0M4aqzotGtLaK2FpvaagOxKvAIZKyKEUc0B-wzQxsEfvw5ZjtRV_GweTF8zUBPk1HQqrLHpkMjYWOtfb4gDQ_NaNMDjbjvO5HTPM5Hl7iOd5_5-xiezJ83mfmVpVYsppq6Pkp0I10JlDdt9w1NRXG8tW1a01tjVSp4HFjw4EwQ6JeJ8aZsCyPpbS59W7GBlMIIMHwxWROdN4ogOldlGy7zXp_hNTSTbYxz0N7zeHQYsmyZiEpdSM5hQkbY_GAnl55Hr7VCe6C2DuTeI6bUTopKWJmqBUn1iSkb0TC-gVY5m5yTxl38gdv6CCQVuW9qrdggifaVjSgrulPJc1gu3nqGwEyapk6yDwc2gDQueypS68dajxCuEfaMhrmZru1T353ZGg_MSgxijCZ2k1ZPBnMicesB1ktMckyHaHXH_7FoJzacKVYikXLxeqEeXU0b3eGqsqpFYXQw-lRLJy4oYcujZEZd-sMX2ECbgOotB43KtuplbvRpAhdBEvtpib5kfX4qf9B7MYEaSuacUiZjcsJIxy0Bu3QgdwyNJf2lYAM8CqF_mB76ggVBePAqP4pJSZ2FSoOlcOQ6Xj139tvBaOmUH-FrsIHixDndmztu8lN6IUu1WuL8BjCInDfsn6O133t0HojZMrPMpM3oZDHS87Wrw8HTXG8i1JmIku3JujsE5tvvqkTkcWSB-uO8C8FRJXDFF8FCIdaTcz_qchcA0bQZBDRg1cAXgSRYPpTEIy-6__7NgXJP_5Q2K-_PFqMn6CtD5xjkzf6QLjZax6n7w8i1QUHQJYyOAmgmR6dyszzOcajCEgHEOCavE2nEj81lkEIA0vdliCwam2AJH2X7dDk7oseUCy3H2JO24kXF9IeGUFgRwTg8DfHgDDbPnzzdCfInl0R6AWHeig2yTlyygEH99QNThUi28il6cKIWApCLJNL10iKoUj3LNSSXAuC3PT82iDzx8K-DT_Uqv2A3-ZHstZfTfXlqmei7UROTNyvOCi864-JfRKwX6XCQbVJD2vC10pluU0eNylW-4l5mh6ZxoAse32mm5escEldDWUbCXhU8Ih0WUeWhqiY2Z-CVvnDVGUJjAPVK1u-F2exjeC_KLMsYQNDkwYRedpO3lr-m0UwNCKJVsqQoaVIjnOZmmaQEMQcLs0L-FvAXCcpbpujtwGvGUPbhTxdRS8rxWy1J6fpppm3uraGiFhR6wtAVZm-sDOivF530UEHa_XtMDYnrXn8N_jdNWfCH6mzY8u_kt6AXjHuQb7zPa0aLXKfaW0g1WIa9eikdmf2at_fKkJ93zsxSfjIbeEiTEgxTpv9asAzs0O7ZdkL3Tgs_rPCc0qcCP7NjIYaeyCJEH_gPGIolF1k2hXN9yzI5InZCe_wjw_gpQ6Pt8p7FJwydGBKsyry87FA1OKo5Dw9sJ9FXl2Ni0ZWTxQPQbYd3fEZeQW52Oi8gktb3HhcoQGVWKDogUJ0WjBMDAzJrPsMgkYHRzP1Hgp1BBMFn-oA1HZ8CtQoewuBmESMC_fsqgA0vgf_HVF3CTFvuAubMJnyGQhXaaPZbkvE3-hswNOqKxUAkqoqHJ8lUazV_-pGeJ70-EdkasiudpMKHXfN_TuS42vA8w6YFuK82VbFXNcc8OAaXYz91uRAWiAZxqwLFTRi_txc2LteS6nQjj231BDJJmzqql0M1ScnuVOU2J4Hd2QmQ7Ta_cL46c-bpKrso62B2s3fDxDDxNkwFasF54GrSVO6xLyfKbZLSSSiSeyPv-f_4MSUAGG3ja6JZIRBeQJSgU62P4EbLVz0JBanLmAYq_jK_eNtJAWYSW5-nC2hcP2r11-0U069_LuXzy2KiAapA-OQx9_1dKLt_MWmJvmLtSPyHcArhWKMMehI4jliExgbezLvpE99_dLzuHJJzrLBsSmVLPr2Dg-zj-ijZ1GuOahEUp9qjCaR_mwuC1SrgoVtRZLzmsCtmnQzjnYzBPd6S7VSByPjk0wgClN2AmyfGe3RPK1dVibN4RAUAFNDSuvAnUy_qc0gwbOmS6L5NoS_9o5UgJE7VI8OVgT3TMkpPI_WzTxTo_u-gvQm40keQORjBWpsIPWk759mY0z8PYjp_rB9jU_1UCiKqEE0WTpj6IcN4Yl-xRdLAvK9tkqy8kVNJPI89lcvJU7uTVPbl6uVXJmIjPuciKLBAYxTDAZhuKXYLr2lZ8WYh6-XHq0tc-masHA1G2-CQkxW1u9ivp5YWRsX90UTdJ2vtHTTXbAE3Rk4xboW3wMNdmdU47tURfeoOHHW7_NbvNLNhIBBUvpBk_WB442R00RIGxJVoggTJzj6XxzohKnPqM8062uhSr3eky5_I6OwTayUdDRXEozJqMptOKBy7lrIsUCK22r4S6qaMmPQ6DoHxsOQu5zIYs_BSHgktJXcFrnDbX3Ym7g4Ly5FlhjfJFpWimNeGaj-MZnNkCFImWSZn7OLXtSuxPzfZBTAcMu5Cw95NMZf6GN0pQBbALz9ARw6l-JrSMjUl2NL8tEnL6DU_iRnD1JYPEt34YIKo0FhLXrHWmG6IMouPnjtmEg4=",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "B4AUaqzbGbrgz7IPyKijqQw",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 16:59:54 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=3530",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 86,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 949,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 949
+            }
+          ],
+          "thoughts_token_count": 582,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 1617,
+          "traffic_type": null
+        }
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "workspace_id": "py_003_ctx4k"
+        },
+        "durationMs": 0,
+        "toolName": "list_files",
+        "workspace_id": "py_003_ctx4k"
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/black/nodes.py",
+          "workspace_id": "py_003_ctx4k"
+        },
+        "durationMs": 0,
+        "toolName": "list_symbols",
+        "workspace_id": "py_003_ctx4k"
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/black/nodes.py#function:make_simple_prefix:421",
+          "workspace_id": "py_003_ctx4k"
+        },
+        "durationMs": 0,
+        "toolName": "get_symbol",
+        "workspace_id": "py_003_ctx4k"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "workspace_id": "py_003_ctx4k"
+        },
+        "id": "step-1-tool-1",
+        "isError": false,
+        "name": "list_files",
+        "result": [
+          {
+            "language": "python",
+            "parse_status": "ok_filtered",
+            "path": "src/black/nodes.py",
+            "repository": "psf/black",
+            "symbol_count": 18
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/black/nodes.py",
+          "workspace_id": "py_003_ctx4k"
+        },
+        "id": "step-2-tool-1",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "Generate a normalized prefix string.",
+            "end_line": 425,
+            "kind": "function",
+            "name": "make_simple_prefix",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "make_simple_prefix",
+            "signature": "def make_simple_prefix(nl_count: int, form_feed: bool, empty_line: str = \"\\n\") -> str",
+            "start_line": 421,
+            "symbol_id": "src/black/nodes.py#function:make_simple_prefix:421"
+          },
+          {
+            "children": [],
+            "documentation": "Return the first leaf that precedes `node`, if any.",
+            "end_line": 443,
+            "kind": "function",
+            "name": "preceding_leaf",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "preceding_leaf",
+            "signature": "def preceding_leaf(node: Optional[LN]) -> Optional[Leaf]",
+            "start_line": 428,
+            "symbol_id": "src/black/nodes.py#function:preceding_leaf:428"
+          },
+          {
+            "children": [],
+            "documentation": "Return if the `node` and its previous siblings match types against the provided\nlist of tokens; the provided `node`has its type matched against the last element in\nthe list.  `None` can be used as the first element to declare that the start of the\nlist is anchored at the start of its parent's children.",
+            "end_line": 459,
+            "kind": "function",
+            "name": "prev_siblings_are",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "prev_siblings_are",
+            "signature": "def prev_siblings_are(node: Optional[LN], tokens: List[Optional[NodeType]]) -> bool",
+            "start_line": 446,
+            "symbol_id": "src/black/nodes.py#function:prev_siblings_are:446"
+          },
+          {
+            "children": [],
+            "documentation": "Returns:\n    @node.parent.type, if @node is not None and has a parent.\n        OR\n    None, otherwise.",
+            "end_line": 472,
+            "kind": "function",
+            "name": "parent_type",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "parent_type",
+            "signature": "def parent_type(node: Optional[LN]) -> Optional[NodeType]",
+            "start_line": 462,
+            "symbol_id": "src/black/nodes.py#function:parent_type:462"
+          },
+          {
+            "children": [],
+            "documentation": "Return the child of `ancestor` that contains `descendant`.",
+            "end_line": 480,
+            "kind": "function",
+            "name": "child_towards",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "child_towards",
+            "signature": "def child_towards(ancestor: Node, descendant: LN) -> Optional[LN]",
+            "start_line": 475,
+            "symbol_id": "src/black/nodes.py#function:child_towards:475"
+          },
+          {
+            "children": [],
+            "documentation": "Side Effects:\n    * If @old_child.parent is set, replace @old_child with @new_child in\n    @old_child's underlying Node structure.\n        OR\n    * Otherwise, this function does nothing.",
+            "end_line": 497,
+            "kind": "function",
+            "name": "replace_child",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "replace_child",
+            "signature": "def replace_child(old_child: LN, new_child: LN) -> None",
+            "start_line": 483,
+            "symbol_id": "src/black/nodes.py#function:replace_child:483"
+          },
+          {
+            "children": [],
+            "documentation": "Return `leaf` or one of its ancestors that is the topmost container of it.\n\nBy \"container\" we mean a node where `leaf` is the very first child.",
+            "end_line": 522,
+            "kind": "function",
+            "name": "container_of",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "container_of",
+            "signature": "def container_of(leaf: Leaf) -> LN",
+            "start_line": 500,
+            "symbol_id": "src/black/nodes.py#function:container_of:500"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the first leaf of the node tree.",
+            "end_line": 532,
+            "kind": "function",
+            "name": "first_leaf_of",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "first_leaf_of",
+            "signature": "def first_leaf_of(node: LN) -> Optional[Leaf]",
+            "start_line": 525,
+            "symbol_id": "src/black/nodes.py#function:first_leaf_of:525"
+          },
+          {
+            "children": [],
+            "documentation": "Whether node is an arithmetic or a binary arithmetic expression",
+            "end_line": 542,
+            "kind": "function",
+            "name": "is_arith_like",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_arith_like",
+            "signature": "def is_arith_like(node: LN) -> bool",
+            "start_line": 535,
+            "symbol_id": "src/black/nodes.py#function:is_arith_like:535"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 574,
+            "kind": "function",
+            "name": "is_docstring",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_docstring",
+            "signature": "def is_docstring(leaf: Leaf, mode: Mode) -> bool",
+            "start_line": 545,
+            "symbol_id": "src/black/nodes.py#function:is_docstring:545"
+          },
+          {
+            "children": [],
+            "documentation": "Return True if `node` holds an empty tuple.",
+            "end_line": 584,
+            "kind": "function",
+            "name": "is_empty_tuple",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_empty_tuple",
+            "signature": "def is_empty_tuple(node: LN) -> bool",
+            "start_line": 577,
+            "symbol_id": "src/black/nodes.py#function:is_empty_tuple:577"
+          },
+          {
+            "children": [],
+            "documentation": "Return True if `node` holds a tuple with one element, with or without parens.",
+            "end_line": 600,
+            "kind": "function",
+            "name": "is_one_tuple",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_one_tuple",
+            "signature": "def is_one_tuple(node: LN) -> bool",
+            "start_line": 587,
+            "symbol_id": "src/black/nodes.py#function:is_one_tuple:587"
+          },
+          {
+            "children": [],
+            "documentation": "Return True if `node` holds a tuple that contains a walrus operator.",
+            "end_line": 611,
+            "kind": "function",
+            "name": "is_tuple_containing_walrus",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_tuple_containing_walrus",
+            "signature": "def is_tuple_containing_walrus(node: LN) -> bool",
+            "start_line": 603,
+            "symbol_id": "src/black/nodes.py#function:is_tuple_containing_walrus:603"
+          },
+          {
+            "children": [],
+            "documentation": "Return True if content between `opening` and `closing` is a one-sequence.",
+            "end_line": 648,
+            "kind": "function",
+            "name": "is_one_sequence_between",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_one_sequence_between",
+            "signature": "def is_one_sequence_between(\n    opening: Leaf,\n    closing: Leaf,\n    leaves: List[Leaf],\n    brackets: Tuple[int, int] = (token.LPAR, token.RPAR),\n) -> bool",
+            "start_line": 614,
+            "symbol_id": "src/black/nodes.py#function:is_one_sequence_between:614"
+          },
+          {
+            "children": [],
+            "documentation": "Return True iff `node` is of the shape ( test := test )",
+            "end_line": 654,
+            "kind": "function",
+            "name": "is_walrus_assignment",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_walrus_assignment",
+            "signature": "def is_walrus_assignment(node: LN) -> bool",
+            "start_line": 651,
+            "symbol_id": "src/black/nodes.py#function:is_walrus_assignment:651"
+          },
+          {
+            "children": [],
+            "documentation": "Return True iff `node` is a trailer valid in a simple decorator",
+            "end_line": 680,
+            "kind": "function",
+            "name": "is_simple_decorator_trailer",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_simple_decorator_trailer",
+            "signature": "def is_simple_decorator_trailer(node: LN, last: bool = False) -> bool",
+            "start_line": 657,
+            "symbol_id": "src/black/nodes.py#function:is_simple_decorator_trailer:657"
+          },
+          {
+            "children": [],
+            "documentation": "Return True iff `node` could be a 'dotted name' decorator\n\nThis function takes the node of the 'namedexpr_test' of the new decorator\ngrammar and test if it would be valid under the old decorator grammar.\n\nThe old grammar was: decorator: @ dotted_name [arguments] NEWLINE\nThe new grammar is : decorator: @ namedexpr_test NEWLINE",
+            "end_line": 704,
+            "kind": "function",
+            "name": "is_simple_decorator_expression",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_simple_decorator_expression",
+            "signature": "def is_simple_decorator_expression(node: LN) -> bool",
+            "start_line": 683,
+            "symbol_id": "src/black/nodes.py#function:is_simple_decorator_expression:683"
+          },
+          {
+            "children": [],
+            "documentation": "Return True if `node` holds a `yield` or `yield from` expression.",
+            "end_line": 725,
+            "kind": "function",
+            "name": "is_yield",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_yield",
+            "signature": "def is_yield(node: LN) -> bool",
+            "start_line": 707,
+            "symbol_id": "src/black/nodes.py#function:is_yield:707"
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/black/nodes.py#function:make_simple_prefix:421",
+          "workspace_id": "py_003_ctx4k"
+        },
+        "id": "step-3-tool-1",
+        "isError": false,
+        "name": "get_symbol",
+        "result": {
+          "children": [],
+          "code": "def make_simple_prefix(nl_count: int, form_feed: bool, empty_line: str = \"\\n\") -> str:\n    \"\"\"Generate a normalized prefix string.\"\"\"\n    if form_feed:\n        return (empty_line * (nl_count - 1)) + \"\\f\" + empty_line\n    return empty_line * nl_count",
+          "documentation": "Generate a normalized prefix string.",
+          "end_line": 425,
+          "kind": "function",
+          "name": "make_simple_prefix",
+          "parent_id": null,
+          "parent_name": null,
+          "path": "src/black/nodes.py",
+          "qualified_name": "make_simple_prefix",
+          "signature": "def make_simple_prefix(nl_count: int, form_feed: bool, empty_line: str = \"\\n\") -> str",
+          "start_line": 421,
+          "symbol_id": "src/black/nodes.py#function:make_simple_prefix:421"
+        }
+      }
+    ]
+  },
+  "trialId": "cd581e7fa6"
+}

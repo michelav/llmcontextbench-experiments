@@ -1,0 +1,2359 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 1573,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "rs_001_ctx32k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 8,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "language": "rust",
+                "parse_status": "ok_filtered",
+                "path": "src/bytes/tests.rs",
+                "repository": "rust-bakery/nom",
+                "symbol_count": 52
+              },
+              {
+                "language": "rust",
+                "parse_status": "ok_filtered",
+                "path": "src/bytes/mod.rs",
+                "repository": "rust-bakery/nom",
+                "symbol_count": 44
+              },
+              {
+                "language": "rust",
+                "parse_status": "ok_filtered",
+                "path": "src/bytes/streaming.rs",
+                "repository": "rust-bakery/nom",
+                "symbol_count": 14
+              },
+              {
+                "language": "rust",
+                "parse_status": "ok_filtered",
+                "path": "src/number/mod.rs",
+                "repository": "rust-bakery/nom",
+                "symbol_count": 35
+              }
+            ],
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "rs_001_ctx32k"
+              },
+              "durationMs": 7,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "list_files",
+              "transport": "in_memory"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1736,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "src/number/mod.rs",
+              "workspace_id": "rs_001_ctx32k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 4,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "creates a big endian unsigned integer parser\n\n* `bound`: the number of bytes that will be read\n* `Uint`: the output type\n[inline]",
+                "end_line": 47,
+                "kind": "function",
+                "name": "be_uint",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/mod.rs",
+                "qualified_name": "be_uint",
+                "signature": "fn be_uint<I, Uint, E: ParseError<I>>(bound: usize) -> impl Parser<I, Output = Uint, Error = E>\nwhere\n  I: Input<Item = u8>,\n  Uint: Default + Shl<u8, Output = Uint> + Add<Uint, Output = Uint> + From<u8>,\n{\n  BeUint {\n    bound,\n    e: PhantomData,\n    u: PhantomData,\n  }\n}",
+                "start_line": 37,
+                "symbol_id": "src/number/mod.rs#function:be_uint:37"
+              },
+              {
+                "children": [],
+                "documentation": "[inline(always)]",
+                "end_line": 97,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: crate::OutputMode>(\n    &mut self,\n    input: I,\n  ) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    if input.input_len() < self.bound {\n      if OM::Incomplete::is_streaming() {\n        Err(Err::Incomplete(Needed::new(self.bound - input.input_len())))\n      } else {\n        Err(Err::Error(OM::Error::bind(|| {\n          make_error(input, ErrorKind::Eof)\n        })))\n      }\n    } else {\n      let res = OM::Output::bind(|| {\n        let mut res = Uint::default();\n\n        // special case to avoid shift a byte with overflow\n        if self.bound > 1 {\n          for byte in input.iter_elements().take(self.bound) {\n            res = (res << 8) + byte.into();\n          }\n        } else {\n          for byte in input.iter_elements().take(self.bound) {\n            res = byte.into();\n          }\n        }\n\n        res\n      });\n\n      Ok((input.take_from(self.bound), res))\n    }\n  }",
+                "start_line": 65,
+                "symbol_id": "src/number/mod.rs#function:process:65"
+              },
+              {
+                "children": [],
+                "documentation": "Recognizes an unsigned 1 byte integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::be_u8;\n\nlet parser = |s| {\nbe_u8::<_, (_, ErrorKind)>().parse(s)\n};\n\nassert_eq!(parser(&b\"\\x00\\x01abcd\"[..]), Ok((&b\"\\x01abcd\"[..], 0x00)));\nassert_eq!(parser(&b\"\"[..]), Err(Err::Incomplete(Needed::new(1))));\n```\n[inline]",
+                "end_line": 119,
+                "kind": "function",
+                "name": "be_u8",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/mod.rs",
+                "qualified_name": "be_u8",
+                "signature": "pub fn be_u8<I, E: ParseError<I>>() -> impl Parser<I, Output = u8, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  be_uint(1)\n}",
+                "start_line": 114,
+                "symbol_id": "src/number/mod.rs#function:be_u8:114"
+              },
+              {
+                "children": [],
+                "documentation": "Recognizes a big endian unsigned 2 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::be_u16;\n\nlet parser = |s| {\nbe_u16::<_, (_, ErrorKind)>().parse(s)\n};\n\nassert_eq!(parser(&b\"\\x00\\x01abcd\"[..]), Ok((&b\"abcd\"[..], 0x0001)));\nassert_eq!(parser(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(1))));\n```\n[inline]",
+                "end_line": 140,
+                "kind": "function",
+                "name": "be_u16",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/mod.rs",
+                "qualified_name": "be_u16",
+                "signature": "pub fn be_u16<I, E: ParseError<I>>() -> impl Parser<I, Output = u16, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  be_uint(2)\n}",
+                "start_line": 135,
+                "symbol_id": "src/number/mod.rs#function:be_u16:135"
+              },
+              {
+                "children": [],
+                "documentation": "Recognizes a big endian unsigned 3 byte integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::be_u24;\n\nlet parser = |s| {\nbe_u24::<_, (_, ErrorKind)>().parse(s)\n};\n\nassert_eq!(parser(&b\"\\x00\\x01\\x02abcd\"[..]), Ok((&b\"abcd\"[..], 0x000102)));\nassert_eq!(parser(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(2))));\n```\n[inline]",
+                "end_line": 161,
+                "kind": "function",
+                "name": "be_u24",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/mod.rs",
+                "qualified_name": "be_u24",
+                "signature": "pub fn be_u24<I, E: ParseError<I>>() -> impl Parser<I, Output = u32, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  be_uint(3)\n}",
+                "start_line": 156,
+                "symbol_id": "src/number/mod.rs#function:be_u24:156"
+              },
+              {
+                "children": [],
+                "documentation": "Recognizes a big endian unsigned 4 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::be_u32;\n\nlet parser = |s| {\nbe_u32::<_, (_, ErrorKind)>().parse(s)\n};\n\nassert_eq!(parser(&b\"\\x00\\x01\\x02\\x03abcd\"[..]), Ok((&b\"abcd\"[..], 0x00010203)));\nassert_eq!(parser(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(3))));\n```\n[inline]",
+                "end_line": 182,
+                "kind": "function",
+                "name": "be_u32",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/mod.rs",
+                "qualified_name": "be_u32",
+                "signature": "pub fn be_u32<I, E: ParseError<I>>() -> impl Parser<I, Output = u32, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  be_uint(4)\n}",
+                "start_line": 177,
+                "symbol_id": "src/number/mod.rs#function:be_u32:177"
+              },
+              {
+                "children": [],
+                "documentation": "Recognizes a big endian unsigned 8 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::be_u64;\n\nlet parser = |s| {\nbe_u64::<_, (_, ErrorKind)>().parse(s)\n};\n\nassert_eq!(parser(&b\"\\x00\\x01\\x02\\x03\\x04\\x05\\x06\\x07abcd\"[..]), Ok((&b\"abcd\"[..], 0x0001020304050607)));\nassert_eq!(parser(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(7))));\n```\n[inline]",
+                "end_line": 203,
+                "kind": "function",
+                "name": "be_u64",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/mod.rs",
+                "qualified_name": "be_u64",
+                "signature": "pub fn be_u64<I, E: ParseError<I>>() -> impl Parser<I, Output = u64, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  be_uint(8)\n}",
+                "start_line": 198,
+                "symbol_id": "src/number/mod.rs#function:be_u64:198"
+              },
+              {
+                "children": [],
+                "documentation": "Recognizes a big endian unsigned 16 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::be_u128;\n\nlet parser = |s| {\nbe_u128::<_, (_, ErrorKind)>().parse(s)\n};\n\nassert_eq!(parser(&b\"\\x00\\x01\\x02\\x03\\x04\\x05\\x06\\x07\\x08\\x09\\x10\\x11\\x12\\x13\\x14\\x15abcd\"[..]), Ok((&b\"abcd\"[..], 0x00010203040506070809101112131415)));\nassert_eq!(parser(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(15))));\n```\n[inline]",
+                "end_line": 224,
+                "kind": "function",
+                "name": "be_u128",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/mod.rs",
+                "qualified_name": "be_u128",
+                "signature": "pub fn be_u128<I, E: ParseError<I>>() -> impl Parser<I, Output = u128, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  be_uint(16)\n}",
+                "start_line": 219,
+                "symbol_id": "src/number/mod.rs#function:be_u128:219"
+              },
+              {
+                "children": [],
+                "documentation": "Recognizes a signed 1 byte integer.\n\n*Streaming version*: Will return `Err(nom::Err::Incomplete(_))` if there is not enough data.\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::be_i8;\n\nlet mut parser = be_i8::<_, (_, ErrorKind)>();\n\nassert_eq!(parser.parse(&b\"\\x00\\x01abcd\"[..]), Ok((&b\"\\x01abcd\"[..], 0x00)));\nassert_eq!(parser.parse(&b\"\"[..]), Err(Err::Incomplete(Needed::new(1))));\n```\n[inline]",
+                "end_line": 244,
+                "kind": "function",
+                "name": "be_i8",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/mod.rs",
+                "qualified_name": "be_i8",
+                "signature": "pub fn be_i8<I, E: ParseError<I>>() -> impl Parser<I, Output = i8, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  be_u8().map(|x| x as i8)\n}",
+                "start_line": 239,
+                "symbol_id": "src/number/mod.rs#function:be_i8:239"
+              },
+              {
+                "children": [],
+                "documentation": "Recognizes a big endian signed 2 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::be_i16;\n\nlet mut parser = be_i16::<_, (_, ErrorKind)>();\n\nassert_eq!(parser.parse(&b\"\\x00\\x01abcd\"[..]), Ok((&b\"abcd\"[..], 0x0001)));\nassert_eq!(parser.parse(&b\"\"[..]), Err(Err::Incomplete(Needed::new(2))));\n```\n[inline]",
+                "end_line": 263,
+                "kind": "function",
+                "name": "be_i16",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/mod.rs",
+                "qualified_name": "be_i16",
+                "signature": "pub fn be_i16<I, E: ParseError<I>>() -> impl Parser<I, Output = i16, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  be_u16().map(|x| x as i16)\n}",
+                "start_line": 258,
+                "symbol_id": "src/number/mod.rs#function:be_i16:258"
+              },
+              {
+                "children": [],
+                "documentation": "Recognizes a big endian signed 3 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::be_i24;\n\nlet mut parser = be_i24::<_, (_, ErrorKind)>();\n\nassert_eq!(parser.parse(&b\"\\x00\\x01\\x02abcd\"[..]), Ok((&b\"abcd\"[..], 0x000102)));\nassert_eq!(parser.parse(&b\"\"[..]), Err(Err::Incomplete(Needed::new(3))));\n```\n[inline]",
+                "end_line": 289,
+                "kind": "function",
+                "name": "be_i24",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/mod.rs",
+                "qualified_name": "be_i24",
+                "signature": "pub fn be_i24<I, E: ParseError<I>>() -> impl Parser<I, Output = i32, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  // Same as the unsigned version but we need to sign-extend manually here\n  be_u24().map(|x| {\n    if x & 0x80_00_00 != 0 {\n      (x | 0xff_00_00_00) as i32\n    } else {\n      x as i32\n    }\n  })\n}",
+                "start_line": 277,
+                "symbol_id": "src/number/mod.rs#function:be_i24:277"
+              },
+              {
+                "children": [],
+                "documentation": "Recognizes a big endian signed 4 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::be_i32;\n\nlet mut parser = be_i32::<_, (_, ErrorKind)>();\n\nassert_eq!(parser.parse(&b\"\\x00\\x01\\x02\\x03abcd\"[..]), Ok((&b\"abcd\"[..], 0x00010203)));\nassert_eq!(parser.parse(&b\"\"[..]), Err(Err::Incomplete(Needed::new(4))));\n```\n[inline]",
+                "end_line": 308,
+                "kind": "function",
+                "name": "be_i32",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/mod.rs",
+                "qualified_name": "be_i32",
+                "signature": "pub fn be_i32<I, E: ParseError<I>>() -> impl Parser<I, Output = i32, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  be_u32().map(|x| x as i32)\n}",
+                "start_line": 303,
+                "symbol_id": "src/number/mod.rs#function:be_i32:303"
+              },
+              {
+                "children": [],
+                "documentation": "Recognizes a big endian signed 8 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::be_i64;\n\nlet mut parser = be_i64::<_, (_, ErrorKind)>();\n\nassert_eq!(parser.parse(&b\"\\x00\\x01\\x02\\x03\\x04\\x05\\x06\\x07abcd\"[..]), Ok((&b\"abcd\"[..], 0x0001020304050607)));\nassert_eq!(parser.parse(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(7))));\n```\n[inline]",
+                "end_line": 327,
+                "kind": "function",
+                "name": "be_i64",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/mod.rs",
+                "qualified_name": "be_i64",
+                "signature": "pub fn be_i64<I, E: ParseError<I>>() -> impl Parser<I, Output = i64, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  be_u64().map(|x| x as i64)\n}",
+                "start_line": 322,
+                "symbol_id": "src/number/mod.rs#function:be_i64:322"
+              },
+              {
+                "children": [],
+                "documentation": "Recognizes a big endian signed 16 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::be_i128;\n\nlet mut parser = be_i128::<_, (_, ErrorKind)>();\n\nassert_eq!(parser.parse(&b\"\\x00\\x01\\x02\\x03\\x04\\x05\\x06\\x07\\x08\\x09\\x10\\x11\\x12\\x13\\x14\\x15abcd\"[..]), Ok((&b\"abcd\"[..], 0x00010203040506070809101112131415)));\nassert_eq!(parser.parse(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(15))));\n```\n[inline]",
+                "end_line": 346,
+                "kind": "function",
+                "name": "be_i128",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/mod.rs",
+                "qualified_name": "be_i128",
+                "signature": "pub fn be_i128<I, E: ParseError<I>>() -> impl Parser<I, Output = i128, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  be_u128().map(|x| x as i128)\n}",
+                "start_line": 341,
+                "symbol_id": "src/number/mod.rs#function:be_i128:341"
+              },
+              {
+                "children": [],
+                "documentation": "creates a little endian unsigned integer parser\n\n* `bound`: the number of bytes that will be read\n* `Uint`: the output type\n[inline]",
+                "end_line": 363,
+                "kind": "function",
+                "name": "le_uint",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/mod.rs",
+                "qualified_name": "le_uint",
+                "signature": "fn le_uint<I, Uint, E: ParseError<I>>(bound: usize) -> impl Parser<I, Output = Uint, Error = E>\nwhere\n  I: Input<Item = u8>,\n  Uint: Default + Shl<u8, Output = Uint> + Add<Uint, Output = Uint> + From<u8>,\n{\n  LeUint {\n    bound,\n    e: PhantomData,\n    u: PhantomData,\n  }\n}",
+                "start_line": 353,
+                "symbol_id": "src/number/mod.rs#function:le_uint:353"
+              },
+              {
+                "children": [],
+                "documentation": "[inline(always)]",
+                "end_line": 405,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: crate::OutputMode>(\n    &mut self,\n    input: I,\n  ) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    if input.input_len() < self.bound {\n      if OM::Incomplete::is_streaming() {\n        Err(Err::Incomplete(Needed::new(self.bound - input.input_len())))\n      } else {\n        Err(Err::Error(OM::Error::bind(|| {\n          make_error(input, ErrorKind::Eof)\n        })))\n      }\n    } else {\n      let res = OM::Output::bind(|| {\n        let mut res = Uint::default();\n        for (index, byte) in input.iter_elements().take(self.bound).enumerate() {\n          res = res + (Uint::from(byte) << (8 * index as u8));\n        }\n\n        res\n      });\n\n      Ok((input.take_from(self.bound), res))\n    }\n  }",
+                "start_line": 381,
+                "symbol_id": "src/number/mod.rs#function:process:381"
+              },
+              {
+                "children": [],
+                "documentation": "Recognizes an unsigned 1 byte integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::le_u8;\n\nlet mut parser = le_u8::<_, (_, ErrorKind)>();\n\nassert_eq!(parser.parse(&b\"\\x00\\x01abcd\"[..]), Ok((&b\"\\x01abcd\"[..], 0x00)));\nassert_eq!(parser.parse(&b\"\"[..]), Err(Err::Incomplete(Needed::new(1))));\n```\n[inline]",
+                "end_line": 425,
+                "kind": "function",
+                "name": "le_u8",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/mod.rs",
+                "qualified_name": "le_u8",
+                "signature": "pub fn le_u8<I, E: ParseError<I>>() -> impl Parser<I, Output = u8, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  le_uint(1)\n}",
+                "start_line": 420,
+                "symbol_id": "src/number/mod.rs#function:le_u8:420"
+              },
+              {
+                "children": [],
+                "documentation": "Recognizes a little endian unsigned 2 bytes integer.\n\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::le_u16;\n\nlet parser = |s| {\nle_u16::<_, (_, ErrorKind)>().parse(s)\n};\n\nassert_eq!(parser(&b\"\\x00\\x01abcd\"[..]), Ok((&b\"abcd\"[..], 0x0100)));\nassert_eq!(parser(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(1))));\n```\n[inline]",
+                "end_line": 447,
+                "kind": "function",
+                "name": "le_u16",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/mod.rs",
+                "qualified_name": "le_u16",
+                "signature": "pub fn le_u16<I, E: ParseError<I>>() -> impl Parser<I, Output = u16, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  le_uint(2)\n}",
+                "start_line": 442,
+                "symbol_id": "src/number/mod.rs#function:le_u16:442"
+              },
+              {
+                "children": [],
+                "documentation": "Recognizes a little endian unsigned 3 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::le_u24;\n\nlet parser = |s| {\nle_u24::<_, (_, ErrorKind)>().parse(s)\n};\n\nassert_eq!(parser(&b\"\\x00\\x01\\x02abcd\"[..]), Ok((&b\"abcd\"[..], 0x020100)));\nassert_eq!(parser(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(2))));\n```\n[inline]",
+                "end_line": 468,
+                "kind": "function",
+                "name": "le_u24",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/mod.rs",
+                "qualified_name": "le_u24",
+                "signature": "pub fn le_u24<I, E: ParseError<I>>() -> impl Parser<I, Output = u32, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  le_uint(3)\n}",
+                "start_line": 463,
+                "symbol_id": "src/number/mod.rs#function:le_u24:463"
+              },
+              {
+                "children": [],
+                "documentation": "Recognizes a little endian unsigned 4 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::le_u32;\n\nlet parser = |s| {\nle_u32::<_, (_, ErrorKind)>().parse(s)\n};\n\nassert_eq!(parser(&b\"\\x00\\x01\\x02\\x03abcd\"[..]), Ok((&b\"abcd\"[..], 0x03020100)));\nassert_eq!(parser(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(3))));\n```\n[inline]",
+                "end_line": 489,
+                "kind": "function",
+                "name": "le_u32",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/mod.rs",
+                "qualified_name": "le_u32",
+                "signature": "pub fn le_u32<I, E: ParseError<I>>() -> impl Parser<I, Output = u32, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  le_uint(4)\n}",
+                "start_line": 484,
+                "symbol_id": "src/number/mod.rs#function:le_u32:484"
+              },
+              {
+                "children": [],
+                "documentation": "Recognizes a little endian unsigned 8 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::le_u64;\n\nlet parser = |s| {\nle_u64::<_, (_, ErrorKind)>().parse(s)\n};\n\nassert_eq!(parser(&b\"\\x00\\x01\\x02\\x03\\x04\\x05\\x06\\x07abcd\"[..]), Ok((&b\"abcd\"[..], 0x0706050403020100)));\nassert_eq!(parser(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(7))));\n```\n[inline]",
+                "end_line": 510,
+                "kind": "function",
+                "name": "le_u64",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/mod.rs",
+                "qualified_name": "le_u64",
+                "signature": "pub fn le_u64<I, E: ParseError<I>>() -> impl Parser<I, Output = u64, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  le_uint(8)\n}",
+                "start_line": 505,
+                "symbol_id": "src/number/mod.rs#function:le_u64:505"
+              },
+              {
+                "children": [],
+                "documentation": "Recognizes a little endian unsigned 16 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::le_u128;\n\nlet mut parser = |s| {\nle_u128::<_, (_, ErrorKind)>().parse(s)\n};\n\nassert_eq!(parser(&b\"\\x00\\x01\\x02\\x03\\x04\\x05\\x06\\x07\\x08\\x09\\x10\\x11\\x12\\x13\\x14\\x15abcd\"[..]), Ok((&b\"abcd\"[..], 0x15141312111009080706050403020100)));\nassert_eq!(parser(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(15))));\n```\n[inline]",
+                "end_line": 531,
+                "kind": "function",
+                "name": "le_u128",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/mod.rs",
+                "qualified_name": "le_u128",
+                "signature": "pub fn le_u128<I, E: ParseError<I>>() -> impl Parser<I, Output = u128, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  le_uint(16)\n}",
+                "start_line": 526,
+                "symbol_id": "src/number/mod.rs#function:le_u128:526"
+              },
+              {
+                "children": [],
+                "documentation": "Recognizes a signed 1 byte integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::le_i8;\n\nlet mut parser = le_i8::<_, (_, ErrorKind)>();\n\nassert_eq!(parser.parse(&b\"\\x00\\x01abcd\"[..]), Ok((&b\"\\x01abcd\"[..], 0x00)));\nassert_eq!(parser.parse(&b\"\"[..]), Err(Err::Incomplete(Needed::new(1))));\n```\n[inline]",
+                "end_line": 550,
+                "kind": "function",
+                "name": "le_i8",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/mod.rs",
+                "qualified_name": "le_i8",
+                "signature": "pub fn le_i8<I, E: ParseError<I>>() -> impl Parser<I, Output = i8, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  le_u8().map(|x| x as i8)\n}",
+                "start_line": 545,
+                "symbol_id": "src/number/mod.rs#function:le_i8:545"
+              },
+              {
+                "children": [],
+                "documentation": "Recognizes a little endian signed 2 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::le_i16;\n\nlet parser = |s| {\nle_i16::<_, (_, ErrorKind)>().parse(s)\n};\n\nassert_eq!(parser(&b\"\\x00\\x01abcd\"[..]), Ok((&b\"abcd\"[..], 0x0100)));\nassert_eq!(parser(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(1))));\n```\n[inline]",
+                "end_line": 571,
+                "kind": "function",
+                "name": "le_i16",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/mod.rs",
+                "qualified_name": "le_i16",
+                "signature": "pub fn le_i16<I, E: ParseError<I>>() -> impl Parser<I, Output = i16, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  le_u16().map(|x| x as i16)\n}",
+                "start_line": 566,
+                "symbol_id": "src/number/mod.rs#function:le_i16:566"
+              },
+              {
+                "children": [],
+                "documentation": "Recognizes a little endian signed 3 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::le_i24;\n\nlet parser = |s| {\nle_i24::<_, (_, ErrorKind)>().parse(s)\n};\n\nassert_eq!(parser(&b\"\\x00\\x01\\x02abcd\"[..]), Ok((&b\"abcd\"[..], 0x020100)));\nassert_eq!(parser(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(2))));\n```\n[inline]",
+                "end_line": 599,
+                "kind": "function",
+                "name": "le_i24",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/mod.rs",
+                "qualified_name": "le_i24",
+                "signature": "pub fn le_i24<I, E: ParseError<I>>() -> impl Parser<I, Output = i32, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  // Same as the unsigned version but we need to sign-extend manually here\n  le_u24().map(|x| {\n    if x & 0x80_00_00 != 0 {\n      (x | 0xff_00_00_00) as i32\n    } else {\n      x as i32\n    }\n  })\n}",
+                "start_line": 587,
+                "symbol_id": "src/number/mod.rs#function:le_i24:587"
+              },
+              {
+                "children": [],
+                "documentation": "Recognizes a little endian signed 4 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::le_i32;\n\nlet parser = |s| {\nle_i32::<_, (_, ErrorKind)>().parse(s)\n};\n\nassert_eq!(parser(&b\"\\x00\\x01\\x02\\x03abcd\"[..]), Ok((&b\"abcd\"[..], 0x03020100)));\nassert_eq!(parser(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(3))));\n```\n[inline]",
+                "end_line": 620,
+                "kind": "function",
+                "name": "le_i32",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/mod.rs",
+                "qualified_name": "le_i32",
+                "signature": "pub fn le_i32<I, E: ParseError<I>>() -> impl Parser<I, Output = i32, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  le_u32().map(|x| x as i32)\n}",
+                "start_line": 615,
+                "symbol_id": "src/number/mod.rs#function:le_i32:615"
+              },
+              {
+                "children": [],
+                "documentation": "Recognizes a little endian signed 8 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::le_i64;\n\nlet parser = |s| {\nle_i64::<_, (_, ErrorKind)>().parse(s)\n};\n\nassert_eq!(parser(&b\"\\x00\\x01\\x02\\x03\\x04\\x05\\x06\\x07abcd\"[..]), Ok((&b\"abcd\"[..], 0x0706050403020100)));\nassert_eq!(parser(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(7))));\n```\n[inline]",
+                "end_line": 641,
+                "kind": "function",
+                "name": "le_i64",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/mod.rs",
+                "qualified_name": "le_i64",
+                "signature": "pub fn le_i64<I, E: ParseError<I>>() -> impl Parser<I, Output = i64, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  le_u64().map(|x| x as i64)\n}",
+                "start_line": 636,
+                "symbol_id": "src/number/mod.rs#function:le_i64:636"
+              },
+              {
+                "children": [],
+                "documentation": "Recognizes a little endian signed 16 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::le_i128;\n\nlet parser = |s| {\nle_i128::<_, (_, ErrorKind)>().parse(s)\n};\n\nassert_eq!(parser(&b\"\\x00\\x01\\x02\\x03\\x04\\x05\\x06\\x07\\x08\\x09\\x10\\x11\\x12\\x13\\x14\\x15abcd\"[..]), Ok((&b\"abcd\"[..], 0x15141312111009080706050403020100)));\nassert_eq!(parser(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(15))));\n```\n[inline]",
+                "end_line": 662,
+                "kind": "function",
+                "name": "le_i128",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/mod.rs",
+                "qualified_name": "le_i128",
+                "signature": "pub fn le_i128<I, E: ParseError<I>>() -> impl Parser<I, Output = i128, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  le_u128().map(|x| x as i128)\n}",
+                "start_line": 657,
+                "symbol_id": "src/number/mod.rs#function:le_i128:657"
+              },
+              {
+                "children": [],
+                "documentation": "Recognizes an unsigned 1 byte integer\n\nNote that endianness does not apply to 1 byte numbers.\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\n# use nom::Needed::Size;\nuse nom::number::u8;\n\nlet parser = |s| {\nu8::<_, (_, ErrorKind)>().parse(s)\n};\n\nassert_eq!(parser(&b\"\\x00\\x03abcefg\"[..]), Ok((&b\"\\x03abcefg\"[..], 0x00)));\nassert_eq!(parser(&b\"\"[..]), Err(Err::Incomplete(Needed::new(1))));\n```\n[inline]",
+                "end_line": 685,
+                "kind": "function",
+                "name": "u8",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/mod.rs",
+                "qualified_name": "u8",
+                "signature": "pub fn u8<I, E: ParseError<I>>() -> impl Parser<I, Output = u8, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  be_u8()\n}",
+                "start_line": 680,
+                "symbol_id": "src/number/mod.rs#function:u8:680"
+              },
+              {
+                "children": [],
+                "documentation": "Recognizes an unsigned 2 bytes integer\n\nIf the parameter is `nom::number::Endianness::Big`, parse a big endian u16 integer,\notherwise if `nom::number::Endianness::Little` parse a little endian u16 integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\n# use nom::Needed::Size;\nuse nom::number::u16;\n\nlet be_u16 = |s| {\nu16::<_, (_, ErrorKind)>(nom::number::Endianness::Big).parse(s)\n};\n\nassert_eq!(be_u16(&b\"\\x00\\x03abcefg\"[..]), Ok((&b\"abcefg\"[..], 0x0003)));\nassert_eq!(be_u16(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(1))));\n\nlet le_u16 = |s| {\nu16::<_, (_, ErrorKind)>(nom::number::Endianness::Little).parse(s)\n};\n\nassert_eq!(le_u16(&b\"\\x00\\x03abcefg\"[..]), Ok((&b\"abcefg\"[..], 0x0300)));\nassert_eq!(le_u16(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(1))));\n```\n[inline]",
+                "end_line": 726,
+                "kind": "function",
+                "name": "u16",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/mod.rs",
+                "qualified_name": "u16",
+                "signature": "pub fn u16<I, E: ParseError<I>>(\n  endian: crate::number::Endianness,\n) -> impl Parser<I, Output = u16, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  match endian {\n    crate::number::Endianness::Big => Either::Left(be_u16()),\n    crate::number::Endianness::Little => Either::Right(le_u16()),\n    #[cfg(target_endian = \"big\")]\n    crate::number::Endianness::Native => Either::Left(be_u16()),\n    #[cfg(target_endian = \"little\")]\n    crate::number::Endianness::Native => Either::Right(le_u16()),\n  }\n}",
+                "start_line": 712,
+                "symbol_id": "src/number/mod.rs#function:u16:712"
+              }
+            ],
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "src/number/mod.rs",
+                "workspace_id": "rs_001_ctx32k"
+              },
+              "durationMs": 4,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "list_symbols",
+              "transport": "in_memory"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 3218,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "src/bytes/mod.rs",
+              "workspace_id": "rs_001_ctx32k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 4,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "Recognizes a pattern.\n\nThe input data will be compared to the tag combinator's argument and will return the part of\nthe input that matches the argument.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::streaming::tag;\n\nfn parser(s: &str) -> IResult<&str, &str> {\ntag(\"Hello\")(s)\n}\n\nassert_eq!(parser(\"Hello, World!\"), Ok((\", World!\", \"Hello\")));\nassert_eq!(parser(\"Something\"), Err(Err::Error(Error::new(\"Something\", ErrorKind::Tag))));\nassert_eq!(parser(\"S\"), Err(Err::Error(Error::new(\"S\", ErrorKind::Tag))));\nassert_eq!(parser(\"H\"), Err(Err::Incomplete(Needed::new(4))));\n```",
+                "end_line": 54,
+                "kind": "function",
+                "name": "tag",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "tag",
+                "signature": "pub fn tag<T, I, Error: ParseError<I>>(tag: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,\n{\n  Tag {\n    tag,\n    e: PhantomData,\n  }\n}",
+                "start_line": 45,
+                "symbol_id": "src/bytes/mod.rs#function:tag:45"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 92,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let tag_len = self.tag.input_len();\n    let t = self.tag.clone();\n\n    match i.compare(t) {\n      CompareResult::Ok => Ok((i.take_from(tag_len), OM::Output::bind(|| i.take(tag_len)))),\n      CompareResult::Incomplete => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(Needed::new(tag_len - i.input_len())))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::Tag;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      CompareResult::Error => Err(Err::Error(OM::Error::bind(|| {\n        let e: ErrorKind = ErrorKind::Tag;\n        Error::from_error_kind(i, e)\n      }))),\n    }\n  }",
+                "start_line": 71,
+                "symbol_id": "src/bytes/mod.rs#function:process:71"
+              },
+              {
+                "children": [],
+                "documentation": "Recognizes a case insensitive pattern.\n\nThe input data will be compared to the tag combinator's argument and will return the part of\nthe input that matches the argument with no regard to case.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::streaming::tag_no_case;\n\nfn parser(s: &str) -> IResult<&str, &str> {\ntag_no_case(\"hello\")(s)\n}\n\nassert_eq!(parser(\"Hello, World!\"), Ok((\", World!\", \"Hello\")));\nassert_eq!(parser(\"hello, World!\"), Ok((\", World!\", \"hello\")));\nassert_eq!(parser(\"HeLlO, World!\"), Ok((\", World!\", \"HeLlO\")));\nassert_eq!(parser(\"Something\"), Err(Err::Error(Error::new(\"Something\", ErrorKind::Tag))));\nassert_eq!(parser(\"\"), Err(Err::Incomplete(Needed::new(5))));\n```",
+                "end_line": 123,
+                "kind": "function",
+                "name": "tag_no_case",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "tag_no_case",
+                "signature": "pub fn tag_no_case<T, I, Error: ParseError<I>>(tag: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,\n{\n  TagNoCase {\n    tag,\n    e: PhantomData,\n  }\n}",
+                "start_line": 114,
+                "symbol_id": "src/bytes/mod.rs#function:tag_no_case:114"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 161,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let tag_len = self.tag.input_len();\n    let t = self.tag.clone();\n\n    match i.compare_no_case(t) {\n      CompareResult::Ok => Ok((i.take_from(tag_len), OM::Output::bind(|| i.take(tag_len)))),\n      CompareResult::Incomplete => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(Needed::new(tag_len - i.input_len())))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::Tag;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      CompareResult::Error => Err(Err::Error(OM::Error::bind(|| {\n        let e: ErrorKind = ErrorKind::Tag;\n        Error::from_error_kind(i, e)\n      }))),\n    }\n  }",
+                "start_line": 140,
+                "symbol_id": "src/bytes/mod.rs#function:process:140"
+              },
+              {
+                "children": [],
+                "documentation": "[inline(always)]",
+                "end_line": 182,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    i.split_at_position_mode::<OM, _, _>(|c| (self.predicate)(c))\n  }",
+                "start_line": 180,
+                "symbol_id": "src/bytes/mod.rs#function:process:180"
+              },
+              {
+                "children": [],
+                "documentation": "[inline(always)]",
+                "end_line": 204,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    i.split_at_position_mode1::<OM, _, _>(|c| (self.predicate)(c), self.e)\n  }",
+                "start_line": 202,
+                "symbol_id": "src/bytes/mod.rs#function:process:202"
+              },
+              {
+                "children": [],
+                "documentation": "Parse till certain characters are met.\n\nThe parser will return the longest slice till one of the characters of the combinator's argument are met.\n\nIt doesn't consume the matched character.\n\nIt will return a `Err::Error((\"\", ErrorKind::IsNot))` if the pattern wasn't met.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::complete::is_not;\n\nfn not_space(s: &str) -> IResult<&str, &str> {\nis_not(\" \\t\\r\\n\")(s)\n}\n\nassert_eq!(not_space(\"Hello, World!\"), Ok((\" World!\", \"Hello,\")));\nassert_eq!(not_space(\"Sometimes\\t\"), Ok((\"\\t\", \"Sometimes\")));\nassert_eq!(not_space(\"Nospace\"), Ok((\"\", \"Nospace\")));\nassert_eq!(not_space(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::IsNot))));\n```",
+                "end_line": 238,
+                "kind": "function",
+                "name": "is_not",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "is_not",
+                "signature": "pub fn is_not<T, I, Error: ParseError<I>>(arr: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  T: FindToken<<I as Input>::Item>,\n{\n  SplitPosition1 {\n    e: ErrorKind::IsNot,\n    predicate: move |c| arr.find_token(c),\n    error: PhantomData,\n  }\n}",
+                "start_line": 228,
+                "symbol_id": "src/bytes/mod.rs#function:is_not:228"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the longest slice of the matches the pattern.\n\nThe parser will return the longest slice consisting of the characters in provided in the\ncombinator's argument.\n\nIt will return a `Err(Err::Error((_, ErrorKind::IsA)))` if the pattern wasn't met.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::complete::is_a;\n\nfn hex(s: &str) -> IResult<&str, &str> {\nis_a(\"1234567890ABCDEF\")(s)\n}\n\nassert_eq!(hex(\"123 and voila\"), Ok((\" and voila\", \"123\")));\nassert_eq!(hex(\"DEADBEEF and others\"), Ok((\" and others\", \"DEADBEEF\")));\nassert_eq!(hex(\"BADBABEsomething\"), Ok((\"something\", \"BADBABE\")));\nassert_eq!(hex(\"D15EA5E\"), Ok((\"\", \"D15EA5E\")));\nassert_eq!(hex(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::IsA))));\n```",
+                "end_line": 271,
+                "kind": "function",
+                "name": "is_a",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "is_a",
+                "signature": "pub fn is_a<T, I, Error: ParseError<I>>(arr: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  T: FindToken<<I as Input>::Item>,\n{\n  SplitPosition1 {\n    e: ErrorKind::IsA,\n    predicate: move |c| !arr.find_token(c),\n    error: PhantomData,\n  }\n}",
+                "start_line": 261,
+                "symbol_id": "src/bytes/mod.rs#function:is_a:261"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the longest input slice (if any) that matches the predicate.\n\nThe parser will return the longest slice that matches the given predicate *(a function that\ntakes the input and returns a bool)*.\n# Example\n```rust\n# use nom::{Err, error::ErrorKind, Needed, IResult};\nuse nom::bytes::complete::take_while;\nuse nom::character::is_alphabetic;\n\nfn alpha(s: &[u8]) -> IResult<&[u8], &[u8]> {\ntake_while(is_alphabetic)(s)\n}\n\nassert_eq!(alpha(b\"latin123\"), Ok((&b\"123\"[..], &b\"latin\"[..])));\nassert_eq!(alpha(b\"12345\"), Ok((&b\"12345\"[..], &b\"\"[..])));\nassert_eq!(alpha(b\"latin\"), Ok((&b\"\"[..], &b\"latin\"[..])));\nassert_eq!(alpha(b\"\"), Ok((&b\"\"[..], &b\"\"[..])));\n```",
+                "end_line": 301,
+                "kind": "function",
+                "name": "take_while",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "take_while",
+                "signature": "pub fn take_while<F, I, Error: ParseError<I>>(cond: F) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,\n{\n  SplitPosition {\n    predicate: move |c| !cond(c),\n    error: PhantomData,\n  }\n}",
+                "start_line": 292,
+                "symbol_id": "src/bytes/mod.rs#function:take_while:292"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the longest (at least 1) input slice that matches the predicate.\n\nThe parser will return the longest slice that matches the given predicate *(a function that\ntakes the input and returns a bool)*.\n\nIt will return an `Err(Err::Error((_, ErrorKind::TakeWhile1)))` if the pattern wasn't met.\n\n# Streaming Specific\n*Streaming version* will return a `Err::Incomplete(Needed::new(1))` or if the pattern reaches the end of the input.\n\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::streaming::take_while1;\nuse nom::character::is_alphabetic;\n\nfn alpha(s: &[u8]) -> IResult<&[u8], &[u8]> {\ntake_while1(is_alphabetic)(s)\n}\n\nassert_eq!(alpha(b\"latin123\"), Ok((&b\"123\"[..], &b\"latin\"[..])));\nassert_eq!(alpha(b\"latin\"), Err(Err::Incomplete(Needed::new(1))));\nassert_eq!(alpha(b\"12345\"), Err(Err::Error(Error::new(&b\"12345\"[..], ErrorKind::TakeWhile1))));\n```",
+                "end_line": 337,
+                "kind": "function",
+                "name": "take_while1",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "take_while1",
+                "signature": "pub fn take_while1<F, I, Error: ParseError<I>>(cond: F) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,\n{\n  SplitPosition1 {\n    e: ErrorKind::TakeWhile1,\n    predicate: move |c| !cond(c),\n    error: PhantomData,\n  }\n}",
+                "start_line": 327,
+                "symbol_id": "src/bytes/mod.rs#function:take_while1:327"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the longest (m <= len <= n) input slice  that matches the predicate.\n\nThe parser will return the longest slice that matches the given predicate *(a function that\ntakes the input and returns a bool)*.\n\nIt will return an `Err::Error((_, ErrorKind::TakeWhileMN))` if the pattern wasn't met.\n# Streaming Specific\n*Streaming version* will return a `Err::Incomplete(Needed::new(1))`  if the pattern reaches the end of the input or is too short.\n\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::streaming::take_while_m_n;\nuse nom::character::is_alphabetic;\n\nfn short_alpha(s: &[u8]) -> IResult<&[u8], &[u8]> {\ntake_while_m_n(3, 6, is_alphabetic)(s)\n}\n\nassert_eq!(short_alpha(b\"latin123\"), Ok((&b\"123\"[..], &b\"latin\"[..])));\nassert_eq!(short_alpha(b\"lengthy\"), Ok((&b\"y\"[..], &b\"length\"[..])));\nassert_eq!(short_alpha(b\"latin\"), Err(Err::Incomplete(Needed::new(1))));\nassert_eq!(short_alpha(b\"ed\"), Err(Err::Incomplete(Needed::new(1))));\nassert_eq!(short_alpha(b\"12345\"), Err(Err::Error(Error::new(&b\"12345\"[..], ErrorKind::TakeWhileMN))));\n```",
+                "end_line": 379,
+                "kind": "function",
+                "name": "take_while_m_n",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "take_while_m_n",
+                "signature": "pub fn take_while_m_n<F, I, Error: ParseError<I>>(\n  m: usize,\n  n: usize,\n  predicate: F,\n) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,\n{\n  TakeWhileMN {\n    m,\n    n,\n    predicate,\n    e: PhantomData,\n  }\n}",
+                "start_line": 364,
+                "symbol_id": "src/bytes/mod.rs#function:take_while_m_n:364"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 443,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(\n    &mut self,\n    input: I,\n  ) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let mut count = 0;\n    for (i, (index, item)) in input.iter_indices().enumerate() {\n      if i == self.n {\n        return Ok((\n          input.take_from(index),\n          OM::Output::bind(|| input.take(index)),\n        ));\n      }\n\n      if !(self.predicate)(item) {\n        if i >= self.m {\n          return Ok((\n            input.take_from(index),\n            OM::Output::bind(|| input.take(index)),\n          ));\n        } else {\n          return Err(Err::Error(OM::Error::bind(|| {\n            Error::from_error_kind(input, ErrorKind::TakeWhileMN)\n          })));\n        }\n      }\n      count += 1;\n    }\n\n    let input_len = input.input_len();\n    if OM::Incomplete::is_streaming() {\n      let needed = if self.m > input_len {\n        self.m - input_len\n      } else {\n        1\n      };\n      Err(Err::Incomplete(Needed::new(needed)))\n    } else if count >= self.m {\n      Ok((\n        input.take_from(input_len),\n        OM::Output::bind(|| input.take(input_len)),\n      ))\n    } else {\n      Err(Err::Error(OM::Error::bind(|| {\n        Error::from_error_kind(input, ErrorKind::TakeWhileMN)\n      })))\n    }\n  }",
+                "start_line": 397,
+                "symbol_id": "src/bytes/mod.rs#function:process:397"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the longest input slice (if any) till a predicate is met.\n\nThe parser will return the longest slice till the given predicate *(a function that\ntakes the input and returns a bool)*.\n# Example\n```rust\n# use nom::{Err, error::ErrorKind, Needed, IResult};\nuse nom::bytes::complete::take_till;\n\nfn till_colon(s: &str) -> IResult<&str, &str> {\ntake_till(|c| c == ':')(s)\n}\n\nassert_eq!(till_colon(\"latin:123\"), Ok((\":123\", \"latin\")));\nassert_eq!(till_colon(\":empty matched\"), Ok((\":empty matched\", \"\"))); //allowed\nassert_eq!(till_colon(\"12345\"), Ok((\"\", \"12345\")));\nassert_eq!(till_colon(\"\"), Ok((\"\", \"\")));\n```\n[allow(clippy::redundant_closure)]",
+                "end_line": 474,
+                "kind": "function",
+                "name": "take_till",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "take_till",
+                "signature": "pub fn take_till<F, I, Error: ParseError<I>>(cond: F) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,\n{\n  SplitPosition {\n    predicate: cond,\n    error: PhantomData,\n  }\n}",
+                "start_line": 465,
+                "symbol_id": "src/bytes/mod.rs#function:take_till:465"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the longest (at least 1) input slice till a predicate is met.\n\nThe parser will return the longest slice till the given predicate *(a function that\ntakes the input and returns a bool)*.\n\n# Streaming Specific\n*Streaming version* will return a `Err::Incomplete(Needed::new(1))` if the match reaches the\nend of input or if there was not match.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::streaming::take_till1;\n\nfn till_colon(s: &str) -> IResult<&str, &str> {\ntake_till1(|c| c == ':')(s)\n}\n\nassert_eq!(till_colon(\"latin:123\"), Ok((\":123\", \"latin\")));\nassert_eq!(till_colon(\":empty matched\"), Err(Err::Error(Error::new(\":empty matched\", ErrorKind::TakeTill1))));\nassert_eq!(till_colon(\"12345\"), Err(Err::Incomplete(Needed::new(1))));\nassert_eq!(till_colon(\"\"), Err(Err::Incomplete(Needed::new(1))));\n```\n[allow(clippy::redundant_closure)]",
+                "end_line": 509,
+                "kind": "function",
+                "name": "take_till1",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "take_till1",
+                "signature": "pub fn take_till1<F, I, Error: ParseError<I>>(cond: F) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,\n{\n  SplitPosition1 {\n    e: ErrorKind::TakeTill1,\n    predicate: cond,\n    error: PhantomData,\n  }\n}",
+                "start_line": 499,
+                "symbol_id": "src/bytes/mod.rs#function:take_till1:499"
+              },
+              {
+                "children": [],
+                "documentation": "Returns an input slice containing the first N input elements (Input[..N]).\n\n# Streaming Specific\n*Streaming version* if the input has less than N elements, `take` will\nreturn a `Err::Incomplete(Needed::new(M))` where M is the number of\nadditional bytes the parser would need to succeed.\nIt is well defined for `&[u8]` as the number of elements is the byte size,\nbut for types like `&str`, we cannot know how many bytes correspond for\nthe next few chars, so the result will be `Err::Incomplete(Needed::Unknown)`\n\n# Example\n```rust\n# use nom::{Err, error::ErrorKind, Needed, IResult};\nuse nom::bytes::streaming::take;\n\nfn take6(s: &str) -> IResult<&str, &str> {\ntake(6usize)(s)\n}\n\nassert_eq!(take6(\"1234567\"), Ok((\"7\", \"123456\")));\nassert_eq!(take6(\"things\"), Ok((\"\", \"things\")));\nassert_eq!(take6(\"short\"), Err(Err::Incomplete(Needed::Unknown)));\n```",
+                "end_line": 543,
+                "kind": "function",
+                "name": "take",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "take",
+                "signature": "pub fn take<C, I, Error: ParseError<I>>(count: C) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  C: ToUsize,\n{\n  Take {\n    length: count.to_usize(),\n    e: PhantomData,\n  }\n}",
+                "start_line": 534,
+                "symbol_id": "src/bytes/mod.rs#function:take:534"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 572,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    match i.slice_index(self.length) {\n      Err(needed) => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(needed))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::Eof;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      Ok(index) => Ok((i.take_from(index), OM::Output::bind(|| i.take(index)))),\n    }\n  }",
+                "start_line": 558,
+                "symbol_id": "src/bytes/mod.rs#function:process:558"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the input slice up to the first occurrence of the pattern.\n\nIt doesn't consume the pattern.\n\n# Streaming Specific\n*Streaming version* will return a `Err::Incomplete(Needed::new(N))` if the input doesn't\ncontain the pattern or if the input is smaller than the pattern.\n# Example\n```rust\n# use nom::{Err, error::ErrorKind, Needed, IResult};\nuse nom::bytes::streaming::take_until;\n\nfn until_eof(s: &str) -> IResult<&str, &str> {\ntake_until(\"eof\")(s)\n}\n\nassert_eq!(until_eof(\"hello, worldeof\"), Ok((\"eof\", \"hello, world\")));\nassert_eq!(until_eof(\"hello, world\"), Err(Err::Incomplete(Needed::Unknown)));\nassert_eq!(until_eof(\"hello, worldeo\"), Err(Err::Incomplete(Needed::Unknown)));\nassert_eq!(until_eof(\"1eof2eof\"), Ok((\"eof2eof\", \"1\")));\n```",
+                "end_line": 605,
+                "kind": "function",
+                "name": "take_until",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "take_until",
+                "signature": "pub fn take_until<T, I, Error: ParseError<I>>(tag: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + FindSubstring<T>,\n  T: Clone,\n{\n  TakeUntil {\n    tag,\n    e: PhantomData,\n  }\n}",
+                "start_line": 596,
+                "symbol_id": "src/bytes/mod.rs#function:take_until:596"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 635,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    match i.find_substring(self.tag.clone()) {\n      None => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(Needed::Unknown))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::TakeUntil;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      Some(index) => Ok((i.take_from(index), OM::Output::bind(|| i.take(index)))),\n    }\n  }",
+                "start_line": 621,
+                "symbol_id": "src/bytes/mod.rs#function:process:621"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the non empty input slice up to the first occurrence of the pattern.\n\nIt doesn't consume the pattern.\n\n# Streaming Specific\n*Streaming version* will return a `Err::Incomplete(Needed::new(N))` if the input doesn't\ncontain the pattern or if the input is smaller than the pattern.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::streaming::take_until1;\n\nfn until_eof(s: &str) -> IResult<&str, &str> {\ntake_until1(\"eof\")(s)\n}\n\nassert_eq!(until_eof(\"hello, worldeof\"), Ok((\"eof\", \"hello, world\")));\nassert_eq!(until_eof(\"hello, world\"), Err(Err::Incomplete(Needed::Unknown)));\nassert_eq!(until_eof(\"hello, worldeo\"), Err(Err::Incomplete(Needed::Unknown)));\nassert_eq!(until_eof(\"1eof2eof\"), Ok((\"eof2eof\", \"1\")));\nassert_eq!(until_eof(\"eof\"),  Err(Err::Error(Error::new(\"eof\", ErrorKind::TakeUntil))));\n```",
+                "end_line": 669,
+                "kind": "function",
+                "name": "take_until1",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "take_until1",
+                "signature": "pub fn take_until1<T, I, Error: ParseError<I>>(tag: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + FindSubstring<T>,\n  T: Clone,\n{\n  TakeUntil1 {\n    tag,\n    e: PhantomData,\n  }\n}",
+                "start_line": 660,
+                "symbol_id": "src/bytes/mod.rs#function:take_until1:660"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 703,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    match i.find_substring(self.tag.clone()) {\n      None => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(Needed::Unknown))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::TakeUntil;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      Some(0) => Err(Err::Error(OM::Error::bind(|| {\n        Error::from_error_kind(i, ErrorKind::TakeUntil)\n      }))),\n\n      Some(index) => Ok((i.take_from(index), OM::Output::bind(|| i.take(index)))),\n    }\n  }",
+                "start_line": 685,
+                "symbol_id": "src/bytes/mod.rs#function:process:685"
+              },
+              {
+                "children": [],
+                "documentation": "Matches a byte string with escaped characters.\n\n* The first argument matches the normal characters (it must not accept the control character)\n* The second argument is the control character (like `\\` in most languages)\n* The third argument matches the escaped characters\n# Example\n```\n# use nom::{Err, error::ErrorKind, Needed, IResult};\n# use nom::character::complete::digit1;\nuse nom::bytes::streaming::escaped;\nuse nom::character::streaming::one_of;\n\nfn esc(s: &str) -> IResult<&str, &str> {\nescaped(digit1, '\\\\', one_of(\"\\\"n\\\\\"))(s)\n}\n\nassert_eq!(esc(\"123;\"), Ok((\";\", \"123\")));\nassert_eq!(esc(\"12\\\\\\\"34;\"), Ok((\";\", \"12\\\\\\\"34\")));\n```",
+                "end_line": 744,
+                "kind": "function",
+                "name": "escaped",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "escaped",
+                "signature": "pub fn escaped<I, Error, F, G>(\n  normal: F,\n  control_char: char,\n  escapable: G,\n) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + Clone + crate::traits::Offset,\n  <I as Input>::Item: crate::traits::AsChar,\n  F: Parser<I, Error = Error>,\n  G: Parser<I, Error = Error>,\n  Error: ParseError<I>,\n{\n  Escaped {\n    normal,\n    escapable,\n    control_char,\n    e: PhantomData,\n  }\n}",
+                "start_line": 726,
+                "symbol_id": "src/bytes/mod.rs#function:escaped:726"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 866,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(\n    &mut self,\n    input: I,\n  ) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let mut i = input.clone();\n\n    while i.input_len() > 0 {\n      let current_len = i.input_len();\n\n      match self\n        .normal\n        .process::<OutputM<Check, Check, OM::Incomplete>>(i.clone())\n      {\n        Ok((i2, _)) => {\n          if i2.input_len() == 0 {\n            if OM::Incomplete::is_streaming() {\n              return Err(Err::Incomplete(Needed::Unknown));\n            } else {\n              let index = input.input_len();\n              return Ok((\n                input.take_from(index),\n                OM::Output::bind(|| input.take(index)),\n              ));\n            }\n          } else if i2.input_len() == current_len {\n            let index = input.offset(&i2);\n            return Ok((\n              input.take_from(index),\n              OM::Output::bind(|| input.take(index)),\n            ));\n          } else {\n            i = i2;\n          }\n        }\n        Err(Err::Error(_)) => {\n          // unwrap() should be safe here since index < $i.input_len()\n          if i.iter_elements().next().unwrap().as_char() == self.control_char {\n            let next = self.control_char.len_utf8();\n            if next >= i.input_len() {\n              if OM::Incomplete::is_streaming() {\n                return Err(Err::Incomplete(Needed::new(1)));\n              } else {\n                return Err(Err::Error(OM::Error::bind(|| {\n                  Error::from_error_kind(input, ErrorKind::Escaped)\n                })));\n              }\n            } else {\n              match self\n                .escapable\n                .process::<OutputM<Check, OM::Error, OM::Incomplete>>(i.take_from(next))\n              {\n                Ok((i2, _)) => {\n                  if i2.input_len() == 0 {\n                    if OM::Incomplete::is_streaming() {\n                      return Err(Err::Incomplete(Needed::Unknown));\n                    } else {\n                      let index = input.input_len();\n                      return Ok((\n                        input.take_from(index),\n                        OM::Output::bind(|| input.take(index)),\n                      ));\n                    }\n                  } else {\n                    i = i2;\n                  }\n                }\n                Err(e) => return Err(e),\n              }\n            }\n          } else {\n            let index = input.offset(&i);\n            if index == 0 {\n              return Err(Err::Error(OM::Error::bind(|| {\n                Error::from_error_kind(input, ErrorKind::Escaped)\n              })));\n            } else {\n              return Ok((\n                input.take_from(index),\n                OM::Output::bind(|| input.take(index)),\n              ));\n            }\n          }\n        }\n        Err(Err::Failure(e)) => {\n          return Err(Err::Failure(e));\n        }\n        Err(Err::Incomplete(i)) => {\n          return Err(Err::Incomplete(i));\n        }\n      }\n    }\n\n    if OM::Incomplete::is_streaming() {\n      Err(Err::Incomplete(Needed::Unknown))\n    } else {\n      let index = input.input_len();\n      Ok((\n        input.take_from(index),\n        OM::Output::bind(|| input.take(index)),\n      ))\n    }\n  }",
+                "start_line": 765,
+                "symbol_id": "src/bytes/mod.rs#function:process:765"
+              },
+              {
+                "children": [],
+                "documentation": "Matches a byte string with escaped characters.\n\n* The first argument matches the normal characters (it must not match the control character)\n* The second argument is the control character (like `\\` in most languages)\n* The third argument matches the escaped characters and transforms them\n\nAs an example, the chain `abc\\tdef` could be `abc    def` (it also consumes the control character)\n\n```\n# use nom::{Err, error::ErrorKind, Needed, IResult};\n# use std::str::from_utf8;\nuse nom::bytes::streaming::{escaped_transform, tag};\nuse nom::character::streaming::alpha1;\nuse nom::branch::alt;\nuse nom::combinator::value;\n\nfn parser(input: &str) -> IResult<&str, String> {\nescaped_transform(\nalpha1,\n'\\\\',\nalt((\nvalue(\"\\\\\", tag(\"\\\\\")),\nvalue(\"\\\"\", tag(\"\\\"\")),\nvalue(\"\\n\", tag(\"n\")),\n))\n)(input)\n}\n\nassert_eq!(parser(\"ab\\\\\\\"cd\\\"\"), Ok((\"\\\"\", String::from(\"ab\\\"cd\"))));\n```\n[cfg(feature = \"alloc\")]\n[cfg_attr(feature = \"docsrs\", doc(cfg(feature = \"alloc\")))]",
+                "end_line": 924,
+                "kind": "function",
+                "name": "escaped_transform",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "escaped_transform",
+                "signature": "pub fn escaped_transform<I, Error, F, G, ExtendItem, Output>(\n  normal: F,\n  control_char: char,\n  transform: G,\n) -> impl Parser<I, Output = Output, Error = Error>\nwhere\n  I: Clone + crate::traits::Offset + Input,\n  I: crate::traits::ExtendInto<Item = ExtendItem, Extender = Output>,\n  <F as Parser<I>>::Output: crate::traits::ExtendInto<Item = ExtendItem, Extender = Output>,\n  <G as Parser<I>>::Output: crate::traits::ExtendInto<Item = ExtendItem, Extender = Output>,\n  <I as Input>::Item: crate::traits::AsChar,\n  F: Parser<I, Error = Error>,\n  G: Parser<I, Error = Error>,\n  Error: ParseError<I>,\n{\n  EscapedTransform {\n    normal,\n    control_char,\n    transform,\n    e: PhantomData,\n    extend: PhantomData,\n    o: PhantomData,\n  }\n}",
+                "start_line": 901,
+                "symbol_id": "src/bytes/mod.rs#function:escaped_transform:901"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1043,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(\n    &mut self,\n    input: I,\n  ) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let mut index = 0;\n    let mut res = OM::Output::bind(|| input.new_builder());\n\n    while index < input.input_len() {\n      let current_len = input.input_len();\n      let remainder = input.take_from(index);\n      match self.normal.process::<OM>(remainder.clone()) {\n        Ok((i2, o)) => {\n          res = OM::Output::combine(o, res, |o, mut res| {\n            o.extend_into(&mut res);\n            res\n          });\n          if i2.input_len() == 0 {\n            if OM::Incomplete::is_streaming() {\n              return Err(Err::Incomplete(Needed::Unknown));\n            } else {\n              let index = input.input_len();\n              return Ok((input.take_from(index), res));\n            }\n          } else if i2.input_len() == current_len {\n            return Ok((remainder, res));\n          } else {\n            index = input.offset(&i2);\n          }\n        }\n        Err(Err::Error(_)) => {\n          // unwrap() should be safe here since index < $i.input_len()\n          if remainder.iter_elements().next().unwrap().as_char() == self.control_char {\n            let next = index + self.control_char.len_utf8();\n            let input_len = input.input_len();\n\n            if next >= input_len {\n              if OM::Incomplete::is_streaming() {\n                return Err(Err::Incomplete(Needed::Unknown));\n              } else {\n                return Err(Err::Error(OM::Error::bind(|| {\n                  Error::from_error_kind(remainder, ErrorKind::EscapedTransform)\n                })));\n              }\n            } else {\n              match self.transform.process::<OM>(input.take_from(next)) {\n                Ok((i2, o)) => {\n                  res = OM::Output::combine(o, res, |o, mut res| {\n                    o.extend_into(&mut res);\n                    res\n                  });\n                  if i2.input_len() == 0 {\n                    if OM::Incomplete::is_streaming() {\n                      return Err(Err::Incomplete(Needed::Unknown));\n                    } else {\n                      return Ok((input.take_from(input.input_len()), res));\n                    }\n                  } else {\n                    index = input.offset(&i2);\n                  }\n                }\n                Err(Err::Error(e)) => return Err(Err::Error(e)),\n                Err(Err::Failure(e)) => {\n                  return Err(Err::Failure(e));\n                }\n                Err(Err::Incomplete(i)) => {\n                  return Err(Err::Incomplete(i));\n                }\n              }\n            }\n          } else {\n            if index == 0 {\n              return Err(Err::Error(OM::Error::bind(|| {\n                Error::from_error_kind(remainder, ErrorKind::EscapedTransform)\n              })));\n            }\n            return Ok((remainder, res));\n          }\n        }\n        Err(Err::Failure(e)) => {\n          return Err(Err::Failure(e));\n        }\n        Err(Err::Incomplete(i)) => {\n          return Err(Err::Incomplete(i));\n        }\n      }\n    }\n\n    if OM::Incomplete::is_streaming() {\n      Err(Err::Incomplete(Needed::Unknown))\n    } else {\n      Ok((input.take_from(index), res))\n    }\n  }",
+                "start_line": 951,
+                "symbol_id": "src/bytes/mod.rs#function:process:951"
+              }
+            ],
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "src/bytes/mod.rs",
+                "workspace_id": "rs_001_ctx32k"
+              },
+              "durationMs": 4,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "list_symbols",
+              "transport": "in_memory"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 3559,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "symbol_id": "src/bytes/mod.rs#function:take_while:292",
+              "workspace_id": "rs_001_ctx32k"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 3,
+          "metadata": {
+            "is_error": false,
+            "result": {
+              "children": [],
+              "code": "pub fn take_while<F, I, Error: ParseError<I>>(cond: F) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,\n{\n  SplitPosition {\n    predicate: move |c| !cond(c),\n    error: PhantomData,\n  }\n}",
+              "documentation": "Returns the longest input slice (if any) that matches the predicate.\n\nThe parser will return the longest slice that matches the given predicate *(a function that\ntakes the input and returns a bool)*.\n# Example\n```rust\n# use nom::{Err, error::ErrorKind, Needed, IResult};\nuse nom::bytes::complete::take_while;\nuse nom::character::is_alphabetic;\n\nfn alpha(s: &[u8]) -> IResult<&[u8], &[u8]> {\ntake_while(is_alphabetic)(s)\n}\n\nassert_eq!(alpha(b\"latin123\"), Ok((&b\"123\"[..], &b\"latin\"[..])));\nassert_eq!(alpha(b\"12345\"), Ok((&b\"12345\"[..], &b\"\"[..])));\nassert_eq!(alpha(b\"latin\"), Ok((&b\"\"[..], &b\"latin\"[..])));\nassert_eq!(alpha(b\"\"), Ok((&b\"\"[..], &b\"\"[..])));\n```",
+              "end_line": 301,
+              "kind": "function",
+              "name": "take_while",
+              "parent_id": null,
+              "parent_name": null,
+              "path": "src/bytes/mod.rs",
+              "qualified_name": "take_while",
+              "signature": "pub fn take_while<F, I, Error: ParseError<I>>(cond: F) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,\n{\n  SplitPosition {\n    predicate: move |c| !cond(c),\n    error: PhantomData,\n  }\n}",
+              "start_line": 292,
+              "symbol_id": "src/bytes/mod.rs#function:take_while:292"
+            },
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "symbol_id": "src/bytes/mod.rs#function:take_while:292",
+                "workspace_id": "rs_001_ctx32k"
+              },
+              "durationMs": 3,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "get_symbol",
+              "transport": "in_memory"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1241,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 11411,
+          "metadata": {},
+          "name": "strategy.local_mcp.execute",
+          "type": "strategy.local_mcp.execute"
+        },
+        {
+          "duration_ms": 11411,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 84,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": null,
+        "cachedInputTokens": null,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 4,
+        "inputTokens": 26190,
+        "loopControlDurationMsEstimated": 65,
+        "mcpToolCalls": 4,
+        "modelCalls": 5,
+        "modelDurationMs": 11327,
+        "outputTokens": 254,
+        "promptChars": 902,
+        "questionTokensEstimated": 117,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 600,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 5,
+        "strategyDurationMs": 11411,
+        "taskStatementChars": 731,
+        "toolCalls": 4,
+        "toolDurationMs": 19,
+        "totalDurationMs": 11411,
+        "totalTokens": 27044,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "workspace_id": "rs_001_ctx32k"
+                    },
+                    "id": null,
+                    "name": "list_files",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CuYDAQw51sdhTGcejfE86DBqojjRw5pGAACVPwqxvgPqjKzhDu-yXsNYKkzBkRJ6hTes35th0gcmkP5eP4Zq7MARHc1YNiPlt2-DnfKHHlXgrz1slg-MiLrWkrrhjRcFzW3QF4jAJgQmR4vjL-QF2-sfCr_3i-1kbx4sYXwi1oB-lW6V3tcTtlGpIpX_R_CL_6EznclSGS11KkQLIogHWGF80K6ZCEUWtYVF7n9oKUFLiKld1-_B-crM0Zow4cexZ4F4S4owiyVNg9JOlEFokNlcrnWEhyDlE7IDOLo7adPVHg-lVapOzdCASrcORIgmLPgfGlc11ijuhmdbEAsac88DsKPSXaFfk4v3jx2A57VL1YJCpStMo0tVnzFe1psI4ddsnfiTNV6wN7kgX0x_Fz9oZctpanESQNZd1PZWXOlK0UPRQqMjIhcO0bnqxbFk_c_MLbxu6i6JEp0W-grV7kBQdUpHVAMPKL04LPPqC475Z0iDE2_lCXAWAm2utNnMnKnccX97hXFdcWzc2rjTsCVE7N0_kX8PmDZEoqxULdUx32Us2s_3KY-eXABl2AODsI4fO1pZtl51vYV6jpdsacEGpHBxTVle8MMGakCyFQC-UHs3W6DW5fERvQ96LmPHCbE1nvTCNlBt",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "ipsUaufwCqfRz7IP1byE4Qw",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 18:57:15 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1263",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 26,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 583,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 583
+            }
+          ],
+          "thoughts_token_count": 106,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 715,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "kind": "function",
+                      "path": "src/number/mod.rs",
+                      "workspace_id": "rs_001_ctx32k"
+                    },
+                    "id": null,
+                    "name": "list_symbols",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CoQEAQw51sfbLHgAb-I4woCcPKCOU5_9eCbgdSWaAgmJ23RmuZcrUc9nA4_HcBPUnTktF8xIH36M-nO2hKOfFKrtpiaTG8oAuQuTwp5lga7e7-ZrCOmpP2jWmKTIXcHr05jxbEAXIDs311y563mWHz1YDXPucKt71V7NwMWcOSnnpCtg24s5nMMChRZ6eslRC1Lx1Y4UZ_NcJaPtyq9nIW4PRMqSO3geBrArP0m7CnY1ZxqQQXO6k9pAF0KhUeUN0EwwwRbvrgCYBwQlrtceWZQo5jNF6EkEVFoIwTei7q3FytKIU9vfGm4YWwDo-1TENG6oyAoCfguKpZXkS-Nhpn64la7ih4qttjDD8joNeoxavBONdD2bwyMDsx4JB5W1NBxiIDcd_pGlSH78IhogTyNKgambEjosatujS1l3FGCR9pk5o9lfSm5QyoQmu_aO6JMRqnYV1SKXrJHNNzM8vYW8bgRZppzsigNxFnM2uXDhmx0-wK7WoS-J_EAyVdRHlWpvEdwFSgDql9_rO_4uAj2XIA9Zqpex8J7ZnLP-pNU6db3HeRXbpOSUO35NjlMeKOaERlSNRHuOHWVFbp9XfIx79Z4mfT0KQLZFvdHuaQui5q1R8AenZOxzsfgfAgBDNBIPqbEN6CyRqjIU1jEBPwFSry7DGWWQfwKWQUXkuC-uaawIXt0f",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "i5sUavOsKafRz7IP1byE4Qw",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 18:57:16 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1517",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 42,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 814,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 814
+            }
+          ],
+          "thoughts_token_count": 119,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 975,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "kind": "function",
+                      "path": "src/bytes/mod.rs",
+                      "workspace_id": "rs_001_ctx32k"
+                    },
+                    "id": null,
+                    "name": "list_symbols",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CswCAQw51sejDBxgYkdI6n8F-On-qsoP9wrnx_wpxuGgKXfySh5bcNluW5YLiNNUzgGCgmUWRPULFy2koYgYlpmy33BaOVFvBCTaP3VhgFEL_x6snVLq2N4OtokbduwhCnayekqJ64Oe-Lh_nJh8UWcvrcEpY2G-DVFlb8V13HGM5z0mma9l0PEmojpSY2-i3JuzsgMZuAtvxe6zOQMAAwJSXbm4j0WiBC-BLWi-TaoBCp4Pe5bKB3gxo6GiyDE37ZJcrtiipvreCUiBdFf1nSNDNwNZItSlCgYC-NXIIW4juLw8C5rpNIzf1URiarz_O_I89crygHJGNQWSUe5HAvS5MduLyNl4OcNb7nyW-Mh12XcxKMBH-BLOx9eyyr0wVqdWkri0XptAW5GMFNrm-yUTI2_qfstbqdDG5LbvmLvcTPls7O4Ly-4XUXOlvdo=",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "jZsUat_OJL7oz7IP9I3GkA8",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 18:57:20 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=3003",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 42,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 11491,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 11491
+            }
+          ],
+          "thoughts_token_count": 78,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 11611,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "symbol_id": "src/bytes/mod.rs#function:take_while:292",
+                      "workspace_id": "rs_001_ctx32k"
+                    },
+                    "id": null,
+                    "name": "get_symbol",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CpsKAQw51sefOQz-_83P6N5jxETZrVg4IAMLZxVh82fy31EOvRdFCm63gQMOz9g6nE87aOJl6-gPWd5m1FC2VBgAouBrQq_AG2Gsl7CJkKhhg3BVSuqmrlUcxw5fde9Wxc7tIGU7vPsJ52Vy_56rrC61tBjd99zoNanJ8tmop7C1n-6uJeqXk-2Q2ehf53VFwQjG2AWn1Ri5ju5s9ppePbFg76L-h6oLJVDnT9NWNS9YkE4cceaYmBZuHQSeoGda0-goerLU0hf_HHbcy4idegQdt29u9-4QjK1Rlg1FChDf3TJUZ0pQTChK54jPOj11V_J2Wrqv3tnOQcRemSitD8QDYtz9YuZZr4rOLCwZaeJussAx9dNWbVoIPWMcBN0gblRuyBMl0ww4hwrmq-oHyETEpXMVJdZAZygKUpXew6BFn-eNSTydy9N5qfV-1ivb1TnnYGp2IrLKJIPQjInmtwrEHyzBMQmprZE3vZq8HANWen38eEr6cJY1WD-0RpVazLgt-AQ7qc8bVtdtQwO6ZzIEsjGuLK3JpiE6a_BBWa5TnPtwu2w5FDu65x7s2BTDqOC1iNQTj5deD7d65sx3FsnL8lmaWWMB-2JaIndhEZXtmCuYPSLsQGGHwAd19RD-kCWQlmPeak45lYqs40T35DD0zZf2DpfTFvPcxQ5pNgJ4pN0lhicIUsEQagtbbzq84r1oDza87NnnZ8Tu5MJ52u1HE3cinLOD5MtTV2OTJ1hXrec4vM9B1k4AD69GH20PYttQNa1FCmti6T913BkHWyXU4bH8y3rA8r9nxCUXGDa9YuWluQuYwv6KuRHbtUgPB9wZhzBSNoROt2svp8rFC91eXHAV1HNsY2tBg4ElVJJvZg35qTBFobbIYWuOOHVL92RwBh-l6-_fkodQo2SYetPF25hxaJ842JczpOk92E_AYCVk5nm82Tqxzkabo6AlqvP2aiNeq0_MoPGCaD7bJaN7K9gDV5SxdlAdhUvjzvSue0rcXyoGJmaBtUuwCmSg6-u5Hd6JhAbpuGjMm_eBOVnX-ZyFPae94yud6PmlLsSl75NLFvcABun6jjM8fR9QRF9pv8EFwMg0sC5ES6CBR020Vd0_SaNZvWDSagv5Ln2x4HQBfmCbw_sCZW9J_yyBpR5Z9w63daej-0Shwe_2Uhca6AHOLQ3UDD6TC5Ik0gRiHILLQUKZFz_kA2Afi8aAgwKCatzKbWsPQ1psuG6TsFUYpne2pyC0G7dWVpsEVgTsOof1Edu7WpmA9H3Lo2mOzmtTwj6dnM1N3uvVRxaVjjpCxnGtO--00HgrEgPjQjbP36AOOaoKFL_1n5m0HaMDREarqZAzMFYcZog5fiHW0oo835e4uRS8ScaKLA_nP6Koz6fsVGZ32ENL1XULPtd3k-MsjUwcPsg08Yz3bFnxoR6_fEP223T0fmm8RtTa2o1Sz4FLLltcEtM_D9qXs-RU9zoPs7_40NTT_uV2VE5JsE_b9C16RvRGir69ZXYX22fGQvpPgSklnVNDY5YowLKxviJGyG5oK88FC0wjLUcwclgCSwIOtq-BB_wFIpfEFVJaH8mXRslWP3b8hV-HPJKx8eiUqfYiBHfiSQ6w_2__F7GMVgrM_lbUjSUkTOdhVuY1rgI2yU_tnB8EtFH6-Z1-JVLe4bZEONBUKgSx7jwMuNrNwcvGV3j2VTgO_gFDPYSKxdGmihHr8icZfLVFl-THoDy0dXt0uUhpGRP8UZA=",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "kJsUatSWNaynqtsP8djygA4",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 18:57:23 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=3346",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 49,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 12100,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 12100
+            }
+          ],
+          "thoughts_token_count": 297,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 12446,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": null,
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": "```rust\npub fn take_while<F, I, Error: ParseError<I>>(cond: F) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,\n{\n  SplitPosition {\n    predicate: move |c| !cond(c),\n    error: PhantomData,\n  }\n}\n```",
+                  "thought": null,
+                  "thought_signature": null,
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "lJsUau2pEKKGz7IPqKj2qAw",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 18:57:25 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1018",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 95,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 1202,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 1202
+            }
+          ],
+          "thoughts_token_count": null,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 1297,
+          "traffic_type": null
+        }
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "workspace_id": "rs_001_ctx32k"
+        },
+        "durationMs": 7,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "list_files",
+        "transport": "in_memory"
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/number/mod.rs",
+          "workspace_id": "rs_001_ctx32k"
+        },
+        "durationMs": 4,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "list_symbols",
+        "transport": "in_memory"
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/bytes/mod.rs",
+          "workspace_id": "rs_001_ctx32k"
+        },
+        "durationMs": 4,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "list_symbols",
+        "transport": "in_memory"
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/bytes/mod.rs#function:take_while:292",
+          "workspace_id": "rs_001_ctx32k"
+        },
+        "durationMs": 3,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "get_symbol",
+        "transport": "in_memory"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "workspace_id": "rs_001_ctx32k"
+        },
+        "id": "step-1-tool-1",
+        "isError": false,
+        "name": "list_files",
+        "result": [
+          {
+            "language": "rust",
+            "parse_status": "ok_filtered",
+            "path": "src/bytes/tests.rs",
+            "repository": "rust-bakery/nom",
+            "symbol_count": 52
+          },
+          {
+            "language": "rust",
+            "parse_status": "ok_filtered",
+            "path": "src/bytes/mod.rs",
+            "repository": "rust-bakery/nom",
+            "symbol_count": 44
+          },
+          {
+            "language": "rust",
+            "parse_status": "ok_filtered",
+            "path": "src/bytes/streaming.rs",
+            "repository": "rust-bakery/nom",
+            "symbol_count": 14
+          },
+          {
+            "language": "rust",
+            "parse_status": "ok_filtered",
+            "path": "src/number/mod.rs",
+            "repository": "rust-bakery/nom",
+            "symbol_count": 35
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/number/mod.rs",
+          "workspace_id": "rs_001_ctx32k"
+        },
+        "id": "step-2-tool-1",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "creates a big endian unsigned integer parser\n\n* `bound`: the number of bytes that will be read\n* `Uint`: the output type\n[inline]",
+            "end_line": 47,
+            "kind": "function",
+            "name": "be_uint",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/mod.rs",
+            "qualified_name": "be_uint",
+            "signature": "fn be_uint<I, Uint, E: ParseError<I>>(bound: usize) -> impl Parser<I, Output = Uint, Error = E>\nwhere\n  I: Input<Item = u8>,\n  Uint: Default + Shl<u8, Output = Uint> + Add<Uint, Output = Uint> + From<u8>,\n{\n  BeUint {\n    bound,\n    e: PhantomData,\n    u: PhantomData,\n  }\n}",
+            "start_line": 37,
+            "symbol_id": "src/number/mod.rs#function:be_uint:37"
+          },
+          {
+            "children": [],
+            "documentation": "[inline(always)]",
+            "end_line": 97,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: crate::OutputMode>(\n    &mut self,\n    input: I,\n  ) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    if input.input_len() < self.bound {\n      if OM::Incomplete::is_streaming() {\n        Err(Err::Incomplete(Needed::new(self.bound - input.input_len())))\n      } else {\n        Err(Err::Error(OM::Error::bind(|| {\n          make_error(input, ErrorKind::Eof)\n        })))\n      }\n    } else {\n      let res = OM::Output::bind(|| {\n        let mut res = Uint::default();\n\n        // special case to avoid shift a byte with overflow\n        if self.bound > 1 {\n          for byte in input.iter_elements().take(self.bound) {\n            res = (res << 8) + byte.into();\n          }\n        } else {\n          for byte in input.iter_elements().take(self.bound) {\n            res = byte.into();\n          }\n        }\n\n        res\n      });\n\n      Ok((input.take_from(self.bound), res))\n    }\n  }",
+            "start_line": 65,
+            "symbol_id": "src/number/mod.rs#function:process:65"
+          },
+          {
+            "children": [],
+            "documentation": "Recognizes an unsigned 1 byte integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::be_u8;\n\nlet parser = |s| {\nbe_u8::<_, (_, ErrorKind)>().parse(s)\n};\n\nassert_eq!(parser(&b\"\\x00\\x01abcd\"[..]), Ok((&b\"\\x01abcd\"[..], 0x00)));\nassert_eq!(parser(&b\"\"[..]), Err(Err::Incomplete(Needed::new(1))));\n```\n[inline]",
+            "end_line": 119,
+            "kind": "function",
+            "name": "be_u8",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/mod.rs",
+            "qualified_name": "be_u8",
+            "signature": "pub fn be_u8<I, E: ParseError<I>>() -> impl Parser<I, Output = u8, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  be_uint(1)\n}",
+            "start_line": 114,
+            "symbol_id": "src/number/mod.rs#function:be_u8:114"
+          },
+          {
+            "children": [],
+            "documentation": "Recognizes a big endian unsigned 2 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::be_u16;\n\nlet parser = |s| {\nbe_u16::<_, (_, ErrorKind)>().parse(s)\n};\n\nassert_eq!(parser(&b\"\\x00\\x01abcd\"[..]), Ok((&b\"abcd\"[..], 0x0001)));\nassert_eq!(parser(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(1))));\n```\n[inline]",
+            "end_line": 140,
+            "kind": "function",
+            "name": "be_u16",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/mod.rs",
+            "qualified_name": "be_u16",
+            "signature": "pub fn be_u16<I, E: ParseError<I>>() -> impl Parser<I, Output = u16, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  be_uint(2)\n}",
+            "start_line": 135,
+            "symbol_id": "src/number/mod.rs#function:be_u16:135"
+          },
+          {
+            "children": [],
+            "documentation": "Recognizes a big endian unsigned 3 byte integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::be_u24;\n\nlet parser = |s| {\nbe_u24::<_, (_, ErrorKind)>().parse(s)\n};\n\nassert_eq!(parser(&b\"\\x00\\x01\\x02abcd\"[..]), Ok((&b\"abcd\"[..], 0x000102)));\nassert_eq!(parser(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(2))));\n```\n[inline]",
+            "end_line": 161,
+            "kind": "function",
+            "name": "be_u24",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/mod.rs",
+            "qualified_name": "be_u24",
+            "signature": "pub fn be_u24<I, E: ParseError<I>>() -> impl Parser<I, Output = u32, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  be_uint(3)\n}",
+            "start_line": 156,
+            "symbol_id": "src/number/mod.rs#function:be_u24:156"
+          },
+          {
+            "children": [],
+            "documentation": "Recognizes a big endian unsigned 4 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::be_u32;\n\nlet parser = |s| {\nbe_u32::<_, (_, ErrorKind)>().parse(s)\n};\n\nassert_eq!(parser(&b\"\\x00\\x01\\x02\\x03abcd\"[..]), Ok((&b\"abcd\"[..], 0x00010203)));\nassert_eq!(parser(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(3))));\n```\n[inline]",
+            "end_line": 182,
+            "kind": "function",
+            "name": "be_u32",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/mod.rs",
+            "qualified_name": "be_u32",
+            "signature": "pub fn be_u32<I, E: ParseError<I>>() -> impl Parser<I, Output = u32, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  be_uint(4)\n}",
+            "start_line": 177,
+            "symbol_id": "src/number/mod.rs#function:be_u32:177"
+          },
+          {
+            "children": [],
+            "documentation": "Recognizes a big endian unsigned 8 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::be_u64;\n\nlet parser = |s| {\nbe_u64::<_, (_, ErrorKind)>().parse(s)\n};\n\nassert_eq!(parser(&b\"\\x00\\x01\\x02\\x03\\x04\\x05\\x06\\x07abcd\"[..]), Ok((&b\"abcd\"[..], 0x0001020304050607)));\nassert_eq!(parser(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(7))));\n```\n[inline]",
+            "end_line": 203,
+            "kind": "function",
+            "name": "be_u64",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/mod.rs",
+            "qualified_name": "be_u64",
+            "signature": "pub fn be_u64<I, E: ParseError<I>>() -> impl Parser<I, Output = u64, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  be_uint(8)\n}",
+            "start_line": 198,
+            "symbol_id": "src/number/mod.rs#function:be_u64:198"
+          },
+          {
+            "children": [],
+            "documentation": "Recognizes a big endian unsigned 16 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::be_u128;\n\nlet parser = |s| {\nbe_u128::<_, (_, ErrorKind)>().parse(s)\n};\n\nassert_eq!(parser(&b\"\\x00\\x01\\x02\\x03\\x04\\x05\\x06\\x07\\x08\\x09\\x10\\x11\\x12\\x13\\x14\\x15abcd\"[..]), Ok((&b\"abcd\"[..], 0x00010203040506070809101112131415)));\nassert_eq!(parser(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(15))));\n```\n[inline]",
+            "end_line": 224,
+            "kind": "function",
+            "name": "be_u128",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/mod.rs",
+            "qualified_name": "be_u128",
+            "signature": "pub fn be_u128<I, E: ParseError<I>>() -> impl Parser<I, Output = u128, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  be_uint(16)\n}",
+            "start_line": 219,
+            "symbol_id": "src/number/mod.rs#function:be_u128:219"
+          },
+          {
+            "children": [],
+            "documentation": "Recognizes a signed 1 byte integer.\n\n*Streaming version*: Will return `Err(nom::Err::Incomplete(_))` if there is not enough data.\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::be_i8;\n\nlet mut parser = be_i8::<_, (_, ErrorKind)>();\n\nassert_eq!(parser.parse(&b\"\\x00\\x01abcd\"[..]), Ok((&b\"\\x01abcd\"[..], 0x00)));\nassert_eq!(parser.parse(&b\"\"[..]), Err(Err::Incomplete(Needed::new(1))));\n```\n[inline]",
+            "end_line": 244,
+            "kind": "function",
+            "name": "be_i8",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/mod.rs",
+            "qualified_name": "be_i8",
+            "signature": "pub fn be_i8<I, E: ParseError<I>>() -> impl Parser<I, Output = i8, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  be_u8().map(|x| x as i8)\n}",
+            "start_line": 239,
+            "symbol_id": "src/number/mod.rs#function:be_i8:239"
+          },
+          {
+            "children": [],
+            "documentation": "Recognizes a big endian signed 2 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::be_i16;\n\nlet mut parser = be_i16::<_, (_, ErrorKind)>();\n\nassert_eq!(parser.parse(&b\"\\x00\\x01abcd\"[..]), Ok((&b\"abcd\"[..], 0x0001)));\nassert_eq!(parser.parse(&b\"\"[..]), Err(Err::Incomplete(Needed::new(2))));\n```\n[inline]",
+            "end_line": 263,
+            "kind": "function",
+            "name": "be_i16",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/mod.rs",
+            "qualified_name": "be_i16",
+            "signature": "pub fn be_i16<I, E: ParseError<I>>() -> impl Parser<I, Output = i16, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  be_u16().map(|x| x as i16)\n}",
+            "start_line": 258,
+            "symbol_id": "src/number/mod.rs#function:be_i16:258"
+          },
+          {
+            "children": [],
+            "documentation": "Recognizes a big endian signed 3 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::be_i24;\n\nlet mut parser = be_i24::<_, (_, ErrorKind)>();\n\nassert_eq!(parser.parse(&b\"\\x00\\x01\\x02abcd\"[..]), Ok((&b\"abcd\"[..], 0x000102)));\nassert_eq!(parser.parse(&b\"\"[..]), Err(Err::Incomplete(Needed::new(3))));\n```\n[inline]",
+            "end_line": 289,
+            "kind": "function",
+            "name": "be_i24",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/mod.rs",
+            "qualified_name": "be_i24",
+            "signature": "pub fn be_i24<I, E: ParseError<I>>() -> impl Parser<I, Output = i32, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  // Same as the unsigned version but we need to sign-extend manually here\n  be_u24().map(|x| {\n    if x & 0x80_00_00 != 0 {\n      (x | 0xff_00_00_00) as i32\n    } else {\n      x as i32\n    }\n  })\n}",
+            "start_line": 277,
+            "symbol_id": "src/number/mod.rs#function:be_i24:277"
+          },
+          {
+            "children": [],
+            "documentation": "Recognizes a big endian signed 4 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::be_i32;\n\nlet mut parser = be_i32::<_, (_, ErrorKind)>();\n\nassert_eq!(parser.parse(&b\"\\x00\\x01\\x02\\x03abcd\"[..]), Ok((&b\"abcd\"[..], 0x00010203)));\nassert_eq!(parser.parse(&b\"\"[..]), Err(Err::Incomplete(Needed::new(4))));\n```\n[inline]",
+            "end_line": 308,
+            "kind": "function",
+            "name": "be_i32",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/mod.rs",
+            "qualified_name": "be_i32",
+            "signature": "pub fn be_i32<I, E: ParseError<I>>() -> impl Parser<I, Output = i32, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  be_u32().map(|x| x as i32)\n}",
+            "start_line": 303,
+            "symbol_id": "src/number/mod.rs#function:be_i32:303"
+          },
+          {
+            "children": [],
+            "documentation": "Recognizes a big endian signed 8 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::be_i64;\n\nlet mut parser = be_i64::<_, (_, ErrorKind)>();\n\nassert_eq!(parser.parse(&b\"\\x00\\x01\\x02\\x03\\x04\\x05\\x06\\x07abcd\"[..]), Ok((&b\"abcd\"[..], 0x0001020304050607)));\nassert_eq!(parser.parse(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(7))));\n```\n[inline]",
+            "end_line": 327,
+            "kind": "function",
+            "name": "be_i64",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/mod.rs",
+            "qualified_name": "be_i64",
+            "signature": "pub fn be_i64<I, E: ParseError<I>>() -> impl Parser<I, Output = i64, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  be_u64().map(|x| x as i64)\n}",
+            "start_line": 322,
+            "symbol_id": "src/number/mod.rs#function:be_i64:322"
+          },
+          {
+            "children": [],
+            "documentation": "Recognizes a big endian signed 16 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::be_i128;\n\nlet mut parser = be_i128::<_, (_, ErrorKind)>();\n\nassert_eq!(parser.parse(&b\"\\x00\\x01\\x02\\x03\\x04\\x05\\x06\\x07\\x08\\x09\\x10\\x11\\x12\\x13\\x14\\x15abcd\"[..]), Ok((&b\"abcd\"[..], 0x00010203040506070809101112131415)));\nassert_eq!(parser.parse(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(15))));\n```\n[inline]",
+            "end_line": 346,
+            "kind": "function",
+            "name": "be_i128",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/mod.rs",
+            "qualified_name": "be_i128",
+            "signature": "pub fn be_i128<I, E: ParseError<I>>() -> impl Parser<I, Output = i128, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  be_u128().map(|x| x as i128)\n}",
+            "start_line": 341,
+            "symbol_id": "src/number/mod.rs#function:be_i128:341"
+          },
+          {
+            "children": [],
+            "documentation": "creates a little endian unsigned integer parser\n\n* `bound`: the number of bytes that will be read\n* `Uint`: the output type\n[inline]",
+            "end_line": 363,
+            "kind": "function",
+            "name": "le_uint",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/mod.rs",
+            "qualified_name": "le_uint",
+            "signature": "fn le_uint<I, Uint, E: ParseError<I>>(bound: usize) -> impl Parser<I, Output = Uint, Error = E>\nwhere\n  I: Input<Item = u8>,\n  Uint: Default + Shl<u8, Output = Uint> + Add<Uint, Output = Uint> + From<u8>,\n{\n  LeUint {\n    bound,\n    e: PhantomData,\n    u: PhantomData,\n  }\n}",
+            "start_line": 353,
+            "symbol_id": "src/number/mod.rs#function:le_uint:353"
+          },
+          {
+            "children": [],
+            "documentation": "[inline(always)]",
+            "end_line": 405,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: crate::OutputMode>(\n    &mut self,\n    input: I,\n  ) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    if input.input_len() < self.bound {\n      if OM::Incomplete::is_streaming() {\n        Err(Err::Incomplete(Needed::new(self.bound - input.input_len())))\n      } else {\n        Err(Err::Error(OM::Error::bind(|| {\n          make_error(input, ErrorKind::Eof)\n        })))\n      }\n    } else {\n      let res = OM::Output::bind(|| {\n        let mut res = Uint::default();\n        for (index, byte) in input.iter_elements().take(self.bound).enumerate() {\n          res = res + (Uint::from(byte) << (8 * index as u8));\n        }\n\n        res\n      });\n\n      Ok((input.take_from(self.bound), res))\n    }\n  }",
+            "start_line": 381,
+            "symbol_id": "src/number/mod.rs#function:process:381"
+          },
+          {
+            "children": [],
+            "documentation": "Recognizes an unsigned 1 byte integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::le_u8;\n\nlet mut parser = le_u8::<_, (_, ErrorKind)>();\n\nassert_eq!(parser.parse(&b\"\\x00\\x01abcd\"[..]), Ok((&b\"\\x01abcd\"[..], 0x00)));\nassert_eq!(parser.parse(&b\"\"[..]), Err(Err::Incomplete(Needed::new(1))));\n```\n[inline]",
+            "end_line": 425,
+            "kind": "function",
+            "name": "le_u8",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/mod.rs",
+            "qualified_name": "le_u8",
+            "signature": "pub fn le_u8<I, E: ParseError<I>>() -> impl Parser<I, Output = u8, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  le_uint(1)\n}",
+            "start_line": 420,
+            "symbol_id": "src/number/mod.rs#function:le_u8:420"
+          },
+          {
+            "children": [],
+            "documentation": "Recognizes a little endian unsigned 2 bytes integer.\n\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::le_u16;\n\nlet parser = |s| {\nle_u16::<_, (_, ErrorKind)>().parse(s)\n};\n\nassert_eq!(parser(&b\"\\x00\\x01abcd\"[..]), Ok((&b\"abcd\"[..], 0x0100)));\nassert_eq!(parser(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(1))));\n```\n[inline]",
+            "end_line": 447,
+            "kind": "function",
+            "name": "le_u16",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/mod.rs",
+            "qualified_name": "le_u16",
+            "signature": "pub fn le_u16<I, E: ParseError<I>>() -> impl Parser<I, Output = u16, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  le_uint(2)\n}",
+            "start_line": 442,
+            "symbol_id": "src/number/mod.rs#function:le_u16:442"
+          },
+          {
+            "children": [],
+            "documentation": "Recognizes a little endian unsigned 3 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::le_u24;\n\nlet parser = |s| {\nle_u24::<_, (_, ErrorKind)>().parse(s)\n};\n\nassert_eq!(parser(&b\"\\x00\\x01\\x02abcd\"[..]), Ok((&b\"abcd\"[..], 0x020100)));\nassert_eq!(parser(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(2))));\n```\n[inline]",
+            "end_line": 468,
+            "kind": "function",
+            "name": "le_u24",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/mod.rs",
+            "qualified_name": "le_u24",
+            "signature": "pub fn le_u24<I, E: ParseError<I>>() -> impl Parser<I, Output = u32, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  le_uint(3)\n}",
+            "start_line": 463,
+            "symbol_id": "src/number/mod.rs#function:le_u24:463"
+          },
+          {
+            "children": [],
+            "documentation": "Recognizes a little endian unsigned 4 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::le_u32;\n\nlet parser = |s| {\nle_u32::<_, (_, ErrorKind)>().parse(s)\n};\n\nassert_eq!(parser(&b\"\\x00\\x01\\x02\\x03abcd\"[..]), Ok((&b\"abcd\"[..], 0x03020100)));\nassert_eq!(parser(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(3))));\n```\n[inline]",
+            "end_line": 489,
+            "kind": "function",
+            "name": "le_u32",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/mod.rs",
+            "qualified_name": "le_u32",
+            "signature": "pub fn le_u32<I, E: ParseError<I>>() -> impl Parser<I, Output = u32, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  le_uint(4)\n}",
+            "start_line": 484,
+            "symbol_id": "src/number/mod.rs#function:le_u32:484"
+          },
+          {
+            "children": [],
+            "documentation": "Recognizes a little endian unsigned 8 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::le_u64;\n\nlet parser = |s| {\nle_u64::<_, (_, ErrorKind)>().parse(s)\n};\n\nassert_eq!(parser(&b\"\\x00\\x01\\x02\\x03\\x04\\x05\\x06\\x07abcd\"[..]), Ok((&b\"abcd\"[..], 0x0706050403020100)));\nassert_eq!(parser(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(7))));\n```\n[inline]",
+            "end_line": 510,
+            "kind": "function",
+            "name": "le_u64",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/mod.rs",
+            "qualified_name": "le_u64",
+            "signature": "pub fn le_u64<I, E: ParseError<I>>() -> impl Parser<I, Output = u64, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  le_uint(8)\n}",
+            "start_line": 505,
+            "symbol_id": "src/number/mod.rs#function:le_u64:505"
+          },
+          {
+            "children": [],
+            "documentation": "Recognizes a little endian unsigned 16 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::le_u128;\n\nlet mut parser = |s| {\nle_u128::<_, (_, ErrorKind)>().parse(s)\n};\n\nassert_eq!(parser(&b\"\\x00\\x01\\x02\\x03\\x04\\x05\\x06\\x07\\x08\\x09\\x10\\x11\\x12\\x13\\x14\\x15abcd\"[..]), Ok((&b\"abcd\"[..], 0x15141312111009080706050403020100)));\nassert_eq!(parser(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(15))));\n```\n[inline]",
+            "end_line": 531,
+            "kind": "function",
+            "name": "le_u128",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/mod.rs",
+            "qualified_name": "le_u128",
+            "signature": "pub fn le_u128<I, E: ParseError<I>>() -> impl Parser<I, Output = u128, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  le_uint(16)\n}",
+            "start_line": 526,
+            "symbol_id": "src/number/mod.rs#function:le_u128:526"
+          },
+          {
+            "children": [],
+            "documentation": "Recognizes a signed 1 byte integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::le_i8;\n\nlet mut parser = le_i8::<_, (_, ErrorKind)>();\n\nassert_eq!(parser.parse(&b\"\\x00\\x01abcd\"[..]), Ok((&b\"\\x01abcd\"[..], 0x00)));\nassert_eq!(parser.parse(&b\"\"[..]), Err(Err::Incomplete(Needed::new(1))));\n```\n[inline]",
+            "end_line": 550,
+            "kind": "function",
+            "name": "le_i8",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/mod.rs",
+            "qualified_name": "le_i8",
+            "signature": "pub fn le_i8<I, E: ParseError<I>>() -> impl Parser<I, Output = i8, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  le_u8().map(|x| x as i8)\n}",
+            "start_line": 545,
+            "symbol_id": "src/number/mod.rs#function:le_i8:545"
+          },
+          {
+            "children": [],
+            "documentation": "Recognizes a little endian signed 2 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::le_i16;\n\nlet parser = |s| {\nle_i16::<_, (_, ErrorKind)>().parse(s)\n};\n\nassert_eq!(parser(&b\"\\x00\\x01abcd\"[..]), Ok((&b\"abcd\"[..], 0x0100)));\nassert_eq!(parser(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(1))));\n```\n[inline]",
+            "end_line": 571,
+            "kind": "function",
+            "name": "le_i16",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/mod.rs",
+            "qualified_name": "le_i16",
+            "signature": "pub fn le_i16<I, E: ParseError<I>>() -> impl Parser<I, Output = i16, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  le_u16().map(|x| x as i16)\n}",
+            "start_line": 566,
+            "symbol_id": "src/number/mod.rs#function:le_i16:566"
+          },
+          {
+            "children": [],
+            "documentation": "Recognizes a little endian signed 3 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::le_i24;\n\nlet parser = |s| {\nle_i24::<_, (_, ErrorKind)>().parse(s)\n};\n\nassert_eq!(parser(&b\"\\x00\\x01\\x02abcd\"[..]), Ok((&b\"abcd\"[..], 0x020100)));\nassert_eq!(parser(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(2))));\n```\n[inline]",
+            "end_line": 599,
+            "kind": "function",
+            "name": "le_i24",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/mod.rs",
+            "qualified_name": "le_i24",
+            "signature": "pub fn le_i24<I, E: ParseError<I>>() -> impl Parser<I, Output = i32, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  // Same as the unsigned version but we need to sign-extend manually here\n  le_u24().map(|x| {\n    if x & 0x80_00_00 != 0 {\n      (x | 0xff_00_00_00) as i32\n    } else {\n      x as i32\n    }\n  })\n}",
+            "start_line": 587,
+            "symbol_id": "src/number/mod.rs#function:le_i24:587"
+          },
+          {
+            "children": [],
+            "documentation": "Recognizes a little endian signed 4 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::le_i32;\n\nlet parser = |s| {\nle_i32::<_, (_, ErrorKind)>().parse(s)\n};\n\nassert_eq!(parser(&b\"\\x00\\x01\\x02\\x03abcd\"[..]), Ok((&b\"abcd\"[..], 0x03020100)));\nassert_eq!(parser(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(3))));\n```\n[inline]",
+            "end_line": 620,
+            "kind": "function",
+            "name": "le_i32",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/mod.rs",
+            "qualified_name": "le_i32",
+            "signature": "pub fn le_i32<I, E: ParseError<I>>() -> impl Parser<I, Output = i32, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  le_u32().map(|x| x as i32)\n}",
+            "start_line": 615,
+            "symbol_id": "src/number/mod.rs#function:le_i32:615"
+          },
+          {
+            "children": [],
+            "documentation": "Recognizes a little endian signed 8 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::le_i64;\n\nlet parser = |s| {\nle_i64::<_, (_, ErrorKind)>().parse(s)\n};\n\nassert_eq!(parser(&b\"\\x00\\x01\\x02\\x03\\x04\\x05\\x06\\x07abcd\"[..]), Ok((&b\"abcd\"[..], 0x0706050403020100)));\nassert_eq!(parser(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(7))));\n```\n[inline]",
+            "end_line": 641,
+            "kind": "function",
+            "name": "le_i64",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/mod.rs",
+            "qualified_name": "le_i64",
+            "signature": "pub fn le_i64<I, E: ParseError<I>>() -> impl Parser<I, Output = i64, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  le_u64().map(|x| x as i64)\n}",
+            "start_line": 636,
+            "symbol_id": "src/number/mod.rs#function:le_i64:636"
+          },
+          {
+            "children": [],
+            "documentation": "Recognizes a little endian signed 16 bytes integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\nuse nom::number::le_i128;\n\nlet parser = |s| {\nle_i128::<_, (_, ErrorKind)>().parse(s)\n};\n\nassert_eq!(parser(&b\"\\x00\\x01\\x02\\x03\\x04\\x05\\x06\\x07\\x08\\x09\\x10\\x11\\x12\\x13\\x14\\x15abcd\"[..]), Ok((&b\"abcd\"[..], 0x15141312111009080706050403020100)));\nassert_eq!(parser(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(15))));\n```\n[inline]",
+            "end_line": 662,
+            "kind": "function",
+            "name": "le_i128",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/mod.rs",
+            "qualified_name": "le_i128",
+            "signature": "pub fn le_i128<I, E: ParseError<I>>() -> impl Parser<I, Output = i128, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  le_u128().map(|x| x as i128)\n}",
+            "start_line": 657,
+            "symbol_id": "src/number/mod.rs#function:le_i128:657"
+          },
+          {
+            "children": [],
+            "documentation": "Recognizes an unsigned 1 byte integer\n\nNote that endianness does not apply to 1 byte numbers.\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\n# use nom::Needed::Size;\nuse nom::number::u8;\n\nlet parser = |s| {\nu8::<_, (_, ErrorKind)>().parse(s)\n};\n\nassert_eq!(parser(&b\"\\x00\\x03abcefg\"[..]), Ok((&b\"\\x03abcefg\"[..], 0x00)));\nassert_eq!(parser(&b\"\"[..]), Err(Err::Incomplete(Needed::new(1))));\n```\n[inline]",
+            "end_line": 685,
+            "kind": "function",
+            "name": "u8",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/mod.rs",
+            "qualified_name": "u8",
+            "signature": "pub fn u8<I, E: ParseError<I>>() -> impl Parser<I, Output = u8, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  be_u8()\n}",
+            "start_line": 680,
+            "symbol_id": "src/number/mod.rs#function:u8:680"
+          },
+          {
+            "children": [],
+            "documentation": "Recognizes an unsigned 2 bytes integer\n\nIf the parameter is `nom::number::Endianness::Big`, parse a big endian u16 integer,\notherwise if `nom::number::Endianness::Little` parse a little endian u16 integer.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, Parser};\n# use nom::Needed::Size;\nuse nom::number::u16;\n\nlet be_u16 = |s| {\nu16::<_, (_, ErrorKind)>(nom::number::Endianness::Big).parse(s)\n};\n\nassert_eq!(be_u16(&b\"\\x00\\x03abcefg\"[..]), Ok((&b\"abcefg\"[..], 0x0003)));\nassert_eq!(be_u16(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(1))));\n\nlet le_u16 = |s| {\nu16::<_, (_, ErrorKind)>(nom::number::Endianness::Little).parse(s)\n};\n\nassert_eq!(le_u16(&b\"\\x00\\x03abcefg\"[..]), Ok((&b\"abcefg\"[..], 0x0300)));\nassert_eq!(le_u16(&b\"\\x01\"[..]), Err(Err::Incomplete(Needed::new(1))));\n```\n[inline]",
+            "end_line": 726,
+            "kind": "function",
+            "name": "u16",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/mod.rs",
+            "qualified_name": "u16",
+            "signature": "pub fn u16<I, E: ParseError<I>>(\n  endian: crate::number::Endianness,\n) -> impl Parser<I, Output = u16, Error = E>\nwhere\n  I: Input<Item = u8>,\n{\n  match endian {\n    crate::number::Endianness::Big => Either::Left(be_u16()),\n    crate::number::Endianness::Little => Either::Right(le_u16()),\n    #[cfg(target_endian = \"big\")]\n    crate::number::Endianness::Native => Either::Left(be_u16()),\n    #[cfg(target_endian = \"little\")]\n    crate::number::Endianness::Native => Either::Right(le_u16()),\n  }\n}",
+            "start_line": 712,
+            "symbol_id": "src/number/mod.rs#function:u16:712"
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/bytes/mod.rs",
+          "workspace_id": "rs_001_ctx32k"
+        },
+        "id": "step-3-tool-1",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "Recognizes a pattern.\n\nThe input data will be compared to the tag combinator's argument and will return the part of\nthe input that matches the argument.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::streaming::tag;\n\nfn parser(s: &str) -> IResult<&str, &str> {\ntag(\"Hello\")(s)\n}\n\nassert_eq!(parser(\"Hello, World!\"), Ok((\", World!\", \"Hello\")));\nassert_eq!(parser(\"Something\"), Err(Err::Error(Error::new(\"Something\", ErrorKind::Tag))));\nassert_eq!(parser(\"S\"), Err(Err::Error(Error::new(\"S\", ErrorKind::Tag))));\nassert_eq!(parser(\"H\"), Err(Err::Incomplete(Needed::new(4))));\n```",
+            "end_line": 54,
+            "kind": "function",
+            "name": "tag",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "tag",
+            "signature": "pub fn tag<T, I, Error: ParseError<I>>(tag: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,\n{\n  Tag {\n    tag,\n    e: PhantomData,\n  }\n}",
+            "start_line": 45,
+            "symbol_id": "src/bytes/mod.rs#function:tag:45"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 92,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let tag_len = self.tag.input_len();\n    let t = self.tag.clone();\n\n    match i.compare(t) {\n      CompareResult::Ok => Ok((i.take_from(tag_len), OM::Output::bind(|| i.take(tag_len)))),\n      CompareResult::Incomplete => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(Needed::new(tag_len - i.input_len())))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::Tag;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      CompareResult::Error => Err(Err::Error(OM::Error::bind(|| {\n        let e: ErrorKind = ErrorKind::Tag;\n        Error::from_error_kind(i, e)\n      }))),\n    }\n  }",
+            "start_line": 71,
+            "symbol_id": "src/bytes/mod.rs#function:process:71"
+          },
+          {
+            "children": [],
+            "documentation": "Recognizes a case insensitive pattern.\n\nThe input data will be compared to the tag combinator's argument and will return the part of\nthe input that matches the argument with no regard to case.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::streaming::tag_no_case;\n\nfn parser(s: &str) -> IResult<&str, &str> {\ntag_no_case(\"hello\")(s)\n}\n\nassert_eq!(parser(\"Hello, World!\"), Ok((\", World!\", \"Hello\")));\nassert_eq!(parser(\"hello, World!\"), Ok((\", World!\", \"hello\")));\nassert_eq!(parser(\"HeLlO, World!\"), Ok((\", World!\", \"HeLlO\")));\nassert_eq!(parser(\"Something\"), Err(Err::Error(Error::new(\"Something\", ErrorKind::Tag))));\nassert_eq!(parser(\"\"), Err(Err::Incomplete(Needed::new(5))));\n```",
+            "end_line": 123,
+            "kind": "function",
+            "name": "tag_no_case",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "tag_no_case",
+            "signature": "pub fn tag_no_case<T, I, Error: ParseError<I>>(tag: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,\n{\n  TagNoCase {\n    tag,\n    e: PhantomData,\n  }\n}",
+            "start_line": 114,
+            "symbol_id": "src/bytes/mod.rs#function:tag_no_case:114"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 161,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let tag_len = self.tag.input_len();\n    let t = self.tag.clone();\n\n    match i.compare_no_case(t) {\n      CompareResult::Ok => Ok((i.take_from(tag_len), OM::Output::bind(|| i.take(tag_len)))),\n      CompareResult::Incomplete => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(Needed::new(tag_len - i.input_len())))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::Tag;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      CompareResult::Error => Err(Err::Error(OM::Error::bind(|| {\n        let e: ErrorKind = ErrorKind::Tag;\n        Error::from_error_kind(i, e)\n      }))),\n    }\n  }",
+            "start_line": 140,
+            "symbol_id": "src/bytes/mod.rs#function:process:140"
+          },
+          {
+            "children": [],
+            "documentation": "[inline(always)]",
+            "end_line": 182,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    i.split_at_position_mode::<OM, _, _>(|c| (self.predicate)(c))\n  }",
+            "start_line": 180,
+            "symbol_id": "src/bytes/mod.rs#function:process:180"
+          },
+          {
+            "children": [],
+            "documentation": "[inline(always)]",
+            "end_line": 204,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    i.split_at_position_mode1::<OM, _, _>(|c| (self.predicate)(c), self.e)\n  }",
+            "start_line": 202,
+            "symbol_id": "src/bytes/mod.rs#function:process:202"
+          },
+          {
+            "children": [],
+            "documentation": "Parse till certain characters are met.\n\nThe parser will return the longest slice till one of the characters of the combinator's argument are met.\n\nIt doesn't consume the matched character.\n\nIt will return a `Err::Error((\"\", ErrorKind::IsNot))` if the pattern wasn't met.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::complete::is_not;\n\nfn not_space(s: &str) -> IResult<&str, &str> {\nis_not(\" \\t\\r\\n\")(s)\n}\n\nassert_eq!(not_space(\"Hello, World!\"), Ok((\" World!\", \"Hello,\")));\nassert_eq!(not_space(\"Sometimes\\t\"), Ok((\"\\t\", \"Sometimes\")));\nassert_eq!(not_space(\"Nospace\"), Ok((\"\", \"Nospace\")));\nassert_eq!(not_space(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::IsNot))));\n```",
+            "end_line": 238,
+            "kind": "function",
+            "name": "is_not",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "is_not",
+            "signature": "pub fn is_not<T, I, Error: ParseError<I>>(arr: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  T: FindToken<<I as Input>::Item>,\n{\n  SplitPosition1 {\n    e: ErrorKind::IsNot,\n    predicate: move |c| arr.find_token(c),\n    error: PhantomData,\n  }\n}",
+            "start_line": 228,
+            "symbol_id": "src/bytes/mod.rs#function:is_not:228"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the longest slice of the matches the pattern.\n\nThe parser will return the longest slice consisting of the characters in provided in the\ncombinator's argument.\n\nIt will return a `Err(Err::Error((_, ErrorKind::IsA)))` if the pattern wasn't met.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::complete::is_a;\n\nfn hex(s: &str) -> IResult<&str, &str> {\nis_a(\"1234567890ABCDEF\")(s)\n}\n\nassert_eq!(hex(\"123 and voila\"), Ok((\" and voila\", \"123\")));\nassert_eq!(hex(\"DEADBEEF and others\"), Ok((\" and others\", \"DEADBEEF\")));\nassert_eq!(hex(\"BADBABEsomething\"), Ok((\"something\", \"BADBABE\")));\nassert_eq!(hex(\"D15EA5E\"), Ok((\"\", \"D15EA5E\")));\nassert_eq!(hex(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::IsA))));\n```",
+            "end_line": 271,
+            "kind": "function",
+            "name": "is_a",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "is_a",
+            "signature": "pub fn is_a<T, I, Error: ParseError<I>>(arr: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  T: FindToken<<I as Input>::Item>,\n{\n  SplitPosition1 {\n    e: ErrorKind::IsA,\n    predicate: move |c| !arr.find_token(c),\n    error: PhantomData,\n  }\n}",
+            "start_line": 261,
+            "symbol_id": "src/bytes/mod.rs#function:is_a:261"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the longest input slice (if any) that matches the predicate.\n\nThe parser will return the longest slice that matches the given predicate *(a function that\ntakes the input and returns a bool)*.\n# Example\n```rust\n# use nom::{Err, error::ErrorKind, Needed, IResult};\nuse nom::bytes::complete::take_while;\nuse nom::character::is_alphabetic;\n\nfn alpha(s: &[u8]) -> IResult<&[u8], &[u8]> {\ntake_while(is_alphabetic)(s)\n}\n\nassert_eq!(alpha(b\"latin123\"), Ok((&b\"123\"[..], &b\"latin\"[..])));\nassert_eq!(alpha(b\"12345\"), Ok((&b\"12345\"[..], &b\"\"[..])));\nassert_eq!(alpha(b\"latin\"), Ok((&b\"\"[..], &b\"latin\"[..])));\nassert_eq!(alpha(b\"\"), Ok((&b\"\"[..], &b\"\"[..])));\n```",
+            "end_line": 301,
+            "kind": "function",
+            "name": "take_while",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "take_while",
+            "signature": "pub fn take_while<F, I, Error: ParseError<I>>(cond: F) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,\n{\n  SplitPosition {\n    predicate: move |c| !cond(c),\n    error: PhantomData,\n  }\n}",
+            "start_line": 292,
+            "symbol_id": "src/bytes/mod.rs#function:take_while:292"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the longest (at least 1) input slice that matches the predicate.\n\nThe parser will return the longest slice that matches the given predicate *(a function that\ntakes the input and returns a bool)*.\n\nIt will return an `Err(Err::Error((_, ErrorKind::TakeWhile1)))` if the pattern wasn't met.\n\n# Streaming Specific\n*Streaming version* will return a `Err::Incomplete(Needed::new(1))` or if the pattern reaches the end of the input.\n\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::streaming::take_while1;\nuse nom::character::is_alphabetic;\n\nfn alpha(s: &[u8]) -> IResult<&[u8], &[u8]> {\ntake_while1(is_alphabetic)(s)\n}\n\nassert_eq!(alpha(b\"latin123\"), Ok((&b\"123\"[..], &b\"latin\"[..])));\nassert_eq!(alpha(b\"latin\"), Err(Err::Incomplete(Needed::new(1))));\nassert_eq!(alpha(b\"12345\"), Err(Err::Error(Error::new(&b\"12345\"[..], ErrorKind::TakeWhile1))));\n```",
+            "end_line": 337,
+            "kind": "function",
+            "name": "take_while1",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "take_while1",
+            "signature": "pub fn take_while1<F, I, Error: ParseError<I>>(cond: F) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,\n{\n  SplitPosition1 {\n    e: ErrorKind::TakeWhile1,\n    predicate: move |c| !cond(c),\n    error: PhantomData,\n  }\n}",
+            "start_line": 327,
+            "symbol_id": "src/bytes/mod.rs#function:take_while1:327"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the longest (m <= len <= n) input slice  that matches the predicate.\n\nThe parser will return the longest slice that matches the given predicate *(a function that\ntakes the input and returns a bool)*.\n\nIt will return an `Err::Error((_, ErrorKind::TakeWhileMN))` if the pattern wasn't met.\n# Streaming Specific\n*Streaming version* will return a `Err::Incomplete(Needed::new(1))`  if the pattern reaches the end of the input or is too short.\n\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::streaming::take_while_m_n;\nuse nom::character::is_alphabetic;\n\nfn short_alpha(s: &[u8]) -> IResult<&[u8], &[u8]> {\ntake_while_m_n(3, 6, is_alphabetic)(s)\n}\n\nassert_eq!(short_alpha(b\"latin123\"), Ok((&b\"123\"[..], &b\"latin\"[..])));\nassert_eq!(short_alpha(b\"lengthy\"), Ok((&b\"y\"[..], &b\"length\"[..])));\nassert_eq!(short_alpha(b\"latin\"), Err(Err::Incomplete(Needed::new(1))));\nassert_eq!(short_alpha(b\"ed\"), Err(Err::Incomplete(Needed::new(1))));\nassert_eq!(short_alpha(b\"12345\"), Err(Err::Error(Error::new(&b\"12345\"[..], ErrorKind::TakeWhileMN))));\n```",
+            "end_line": 379,
+            "kind": "function",
+            "name": "take_while_m_n",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "take_while_m_n",
+            "signature": "pub fn take_while_m_n<F, I, Error: ParseError<I>>(\n  m: usize,\n  n: usize,\n  predicate: F,\n) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,\n{\n  TakeWhileMN {\n    m,\n    n,\n    predicate,\n    e: PhantomData,\n  }\n}",
+            "start_line": 364,
+            "symbol_id": "src/bytes/mod.rs#function:take_while_m_n:364"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 443,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(\n    &mut self,\n    input: I,\n  ) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let mut count = 0;\n    for (i, (index, item)) in input.iter_indices().enumerate() {\n      if i == self.n {\n        return Ok((\n          input.take_from(index),\n          OM::Output::bind(|| input.take(index)),\n        ));\n      }\n\n      if !(self.predicate)(item) {\n        if i >= self.m {\n          return Ok((\n            input.take_from(index),\n            OM::Output::bind(|| input.take(index)),\n          ));\n        } else {\n          return Err(Err::Error(OM::Error::bind(|| {\n            Error::from_error_kind(input, ErrorKind::TakeWhileMN)\n          })));\n        }\n      }\n      count += 1;\n    }\n\n    let input_len = input.input_len();\n    if OM::Incomplete::is_streaming() {\n      let needed = if self.m > input_len {\n        self.m - input_len\n      } else {\n        1\n      };\n      Err(Err::Incomplete(Needed::new(needed)))\n    } else if count >= self.m {\n      Ok((\n        input.take_from(input_len),\n        OM::Output::bind(|| input.take(input_len)),\n      ))\n    } else {\n      Err(Err::Error(OM::Error::bind(|| {\n        Error::from_error_kind(input, ErrorKind::TakeWhileMN)\n      })))\n    }\n  }",
+            "start_line": 397,
+            "symbol_id": "src/bytes/mod.rs#function:process:397"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the longest input slice (if any) till a predicate is met.\n\nThe parser will return the longest slice till the given predicate *(a function that\ntakes the input and returns a bool)*.\n# Example\n```rust\n# use nom::{Err, error::ErrorKind, Needed, IResult};\nuse nom::bytes::complete::take_till;\n\nfn till_colon(s: &str) -> IResult<&str, &str> {\ntake_till(|c| c == ':')(s)\n}\n\nassert_eq!(till_colon(\"latin:123\"), Ok((\":123\", \"latin\")));\nassert_eq!(till_colon(\":empty matched\"), Ok((\":empty matched\", \"\"))); //allowed\nassert_eq!(till_colon(\"12345\"), Ok((\"\", \"12345\")));\nassert_eq!(till_colon(\"\"), Ok((\"\", \"\")));\n```\n[allow(clippy::redundant_closure)]",
+            "end_line": 474,
+            "kind": "function",
+            "name": "take_till",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "take_till",
+            "signature": "pub fn take_till<F, I, Error: ParseError<I>>(cond: F) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,\n{\n  SplitPosition {\n    predicate: cond,\n    error: PhantomData,\n  }\n}",
+            "start_line": 465,
+            "symbol_id": "src/bytes/mod.rs#function:take_till:465"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the longest (at least 1) input slice till a predicate is met.\n\nThe parser will return the longest slice till the given predicate *(a function that\ntakes the input and returns a bool)*.\n\n# Streaming Specific\n*Streaming version* will return a `Err::Incomplete(Needed::new(1))` if the match reaches the\nend of input or if there was not match.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::streaming::take_till1;\n\nfn till_colon(s: &str) -> IResult<&str, &str> {\ntake_till1(|c| c == ':')(s)\n}\n\nassert_eq!(till_colon(\"latin:123\"), Ok((\":123\", \"latin\")));\nassert_eq!(till_colon(\":empty matched\"), Err(Err::Error(Error::new(\":empty matched\", ErrorKind::TakeTill1))));\nassert_eq!(till_colon(\"12345\"), Err(Err::Incomplete(Needed::new(1))));\nassert_eq!(till_colon(\"\"), Err(Err::Incomplete(Needed::new(1))));\n```\n[allow(clippy::redundant_closure)]",
+            "end_line": 509,
+            "kind": "function",
+            "name": "take_till1",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "take_till1",
+            "signature": "pub fn take_till1<F, I, Error: ParseError<I>>(cond: F) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,\n{\n  SplitPosition1 {\n    e: ErrorKind::TakeTill1,\n    predicate: cond,\n    error: PhantomData,\n  }\n}",
+            "start_line": 499,
+            "symbol_id": "src/bytes/mod.rs#function:take_till1:499"
+          },
+          {
+            "children": [],
+            "documentation": "Returns an input slice containing the first N input elements (Input[..N]).\n\n# Streaming Specific\n*Streaming version* if the input has less than N elements, `take` will\nreturn a `Err::Incomplete(Needed::new(M))` where M is the number of\nadditional bytes the parser would need to succeed.\nIt is well defined for `&[u8]` as the number of elements is the byte size,\nbut for types like `&str`, we cannot know how many bytes correspond for\nthe next few chars, so the result will be `Err::Incomplete(Needed::Unknown)`\n\n# Example\n```rust\n# use nom::{Err, error::ErrorKind, Needed, IResult};\nuse nom::bytes::streaming::take;\n\nfn take6(s: &str) -> IResult<&str, &str> {\ntake(6usize)(s)\n}\n\nassert_eq!(take6(\"1234567\"), Ok((\"7\", \"123456\")));\nassert_eq!(take6(\"things\"), Ok((\"\", \"things\")));\nassert_eq!(take6(\"short\"), Err(Err::Incomplete(Needed::Unknown)));\n```",
+            "end_line": 543,
+            "kind": "function",
+            "name": "take",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "take",
+            "signature": "pub fn take<C, I, Error: ParseError<I>>(count: C) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  C: ToUsize,\n{\n  Take {\n    length: count.to_usize(),\n    e: PhantomData,\n  }\n}",
+            "start_line": 534,
+            "symbol_id": "src/bytes/mod.rs#function:take:534"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 572,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    match i.slice_index(self.length) {\n      Err(needed) => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(needed))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::Eof;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      Ok(index) => Ok((i.take_from(index), OM::Output::bind(|| i.take(index)))),\n    }\n  }",
+            "start_line": 558,
+            "symbol_id": "src/bytes/mod.rs#function:process:558"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the input slice up to the first occurrence of the pattern.\n\nIt doesn't consume the pattern.\n\n# Streaming Specific\n*Streaming version* will return a `Err::Incomplete(Needed::new(N))` if the input doesn't\ncontain the pattern or if the input is smaller than the pattern.\n# Example\n```rust\n# use nom::{Err, error::ErrorKind, Needed, IResult};\nuse nom::bytes::streaming::take_until;\n\nfn until_eof(s: &str) -> IResult<&str, &str> {\ntake_until(\"eof\")(s)\n}\n\nassert_eq!(until_eof(\"hello, worldeof\"), Ok((\"eof\", \"hello, world\")));\nassert_eq!(until_eof(\"hello, world\"), Err(Err::Incomplete(Needed::Unknown)));\nassert_eq!(until_eof(\"hello, worldeo\"), Err(Err::Incomplete(Needed::Unknown)));\nassert_eq!(until_eof(\"1eof2eof\"), Ok((\"eof2eof\", \"1\")));\n```",
+            "end_line": 605,
+            "kind": "function",
+            "name": "take_until",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "take_until",
+            "signature": "pub fn take_until<T, I, Error: ParseError<I>>(tag: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + FindSubstring<T>,\n  T: Clone,\n{\n  TakeUntil {\n    tag,\n    e: PhantomData,\n  }\n}",
+            "start_line": 596,
+            "symbol_id": "src/bytes/mod.rs#function:take_until:596"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 635,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    match i.find_substring(self.tag.clone()) {\n      None => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(Needed::Unknown))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::TakeUntil;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      Some(index) => Ok((i.take_from(index), OM::Output::bind(|| i.take(index)))),\n    }\n  }",
+            "start_line": 621,
+            "symbol_id": "src/bytes/mod.rs#function:process:621"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the non empty input slice up to the first occurrence of the pattern.\n\nIt doesn't consume the pattern.\n\n# Streaming Specific\n*Streaming version* will return a `Err::Incomplete(Needed::new(N))` if the input doesn't\ncontain the pattern or if the input is smaller than the pattern.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::streaming::take_until1;\n\nfn until_eof(s: &str) -> IResult<&str, &str> {\ntake_until1(\"eof\")(s)\n}\n\nassert_eq!(until_eof(\"hello, worldeof\"), Ok((\"eof\", \"hello, world\")));\nassert_eq!(until_eof(\"hello, world\"), Err(Err::Incomplete(Needed::Unknown)));\nassert_eq!(until_eof(\"hello, worldeo\"), Err(Err::Incomplete(Needed::Unknown)));\nassert_eq!(until_eof(\"1eof2eof\"), Ok((\"eof2eof\", \"1\")));\nassert_eq!(until_eof(\"eof\"),  Err(Err::Error(Error::new(\"eof\", ErrorKind::TakeUntil))));\n```",
+            "end_line": 669,
+            "kind": "function",
+            "name": "take_until1",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "take_until1",
+            "signature": "pub fn take_until1<T, I, Error: ParseError<I>>(tag: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + FindSubstring<T>,\n  T: Clone,\n{\n  TakeUntil1 {\n    tag,\n    e: PhantomData,\n  }\n}",
+            "start_line": 660,
+            "symbol_id": "src/bytes/mod.rs#function:take_until1:660"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 703,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    match i.find_substring(self.tag.clone()) {\n      None => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(Needed::Unknown))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::TakeUntil;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      Some(0) => Err(Err::Error(OM::Error::bind(|| {\n        Error::from_error_kind(i, ErrorKind::TakeUntil)\n      }))),\n\n      Some(index) => Ok((i.take_from(index), OM::Output::bind(|| i.take(index)))),\n    }\n  }",
+            "start_line": 685,
+            "symbol_id": "src/bytes/mod.rs#function:process:685"
+          },
+          {
+            "children": [],
+            "documentation": "Matches a byte string with escaped characters.\n\n* The first argument matches the normal characters (it must not accept the control character)\n* The second argument is the control character (like `\\` in most languages)\n* The third argument matches the escaped characters\n# Example\n```\n# use nom::{Err, error::ErrorKind, Needed, IResult};\n# use nom::character::complete::digit1;\nuse nom::bytes::streaming::escaped;\nuse nom::character::streaming::one_of;\n\nfn esc(s: &str) -> IResult<&str, &str> {\nescaped(digit1, '\\\\', one_of(\"\\\"n\\\\\"))(s)\n}\n\nassert_eq!(esc(\"123;\"), Ok((\";\", \"123\")));\nassert_eq!(esc(\"12\\\\\\\"34;\"), Ok((\";\", \"12\\\\\\\"34\")));\n```",
+            "end_line": 744,
+            "kind": "function",
+            "name": "escaped",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "escaped",
+            "signature": "pub fn escaped<I, Error, F, G>(\n  normal: F,\n  control_char: char,\n  escapable: G,\n) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + Clone + crate::traits::Offset,\n  <I as Input>::Item: crate::traits::AsChar,\n  F: Parser<I, Error = Error>,\n  G: Parser<I, Error = Error>,\n  Error: ParseError<I>,\n{\n  Escaped {\n    normal,\n    escapable,\n    control_char,\n    e: PhantomData,\n  }\n}",
+            "start_line": 726,
+            "symbol_id": "src/bytes/mod.rs#function:escaped:726"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 866,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(\n    &mut self,\n    input: I,\n  ) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let mut i = input.clone();\n\n    while i.input_len() > 0 {\n      let current_len = i.input_len();\n\n      match self\n        .normal\n        .process::<OutputM<Check, Check, OM::Incomplete>>(i.clone())\n      {\n        Ok((i2, _)) => {\n          if i2.input_len() == 0 {\n            if OM::Incomplete::is_streaming() {\n              return Err(Err::Incomplete(Needed::Unknown));\n            } else {\n              let index = input.input_len();\n              return Ok((\n                input.take_from(index),\n                OM::Output::bind(|| input.take(index)),\n              ));\n            }\n          } else if i2.input_len() == current_len {\n            let index = input.offset(&i2);\n            return Ok((\n              input.take_from(index),\n              OM::Output::bind(|| input.take(index)),\n            ));\n          } else {\n            i = i2;\n          }\n        }\n        Err(Err::Error(_)) => {\n          // unwrap() should be safe here since index < $i.input_len()\n          if i.iter_elements().next().unwrap().as_char() == self.control_char {\n            let next = self.control_char.len_utf8();\n            if next >= i.input_len() {\n              if OM::Incomplete::is_streaming() {\n                return Err(Err::Incomplete(Needed::new(1)));\n              } else {\n                return Err(Err::Error(OM::Error::bind(|| {\n                  Error::from_error_kind(input, ErrorKind::Escaped)\n                })));\n              }\n            } else {\n              match self\n                .escapable\n                .process::<OutputM<Check, OM::Error, OM::Incomplete>>(i.take_from(next))\n              {\n                Ok((i2, _)) => {\n                  if i2.input_len() == 0 {\n                    if OM::Incomplete::is_streaming() {\n                      return Err(Err::Incomplete(Needed::Unknown));\n                    } else {\n                      let index = input.input_len();\n                      return Ok((\n                        input.take_from(index),\n                        OM::Output::bind(|| input.take(index)),\n                      ));\n                    }\n                  } else {\n                    i = i2;\n                  }\n                }\n                Err(e) => return Err(e),\n              }\n            }\n          } else {\n            let index = input.offset(&i);\n            if index == 0 {\n              return Err(Err::Error(OM::Error::bind(|| {\n                Error::from_error_kind(input, ErrorKind::Escaped)\n              })));\n            } else {\n              return Ok((\n                input.take_from(index),\n                OM::Output::bind(|| input.take(index)),\n              ));\n            }\n          }\n        }\n        Err(Err::Failure(e)) => {\n          return Err(Err::Failure(e));\n        }\n        Err(Err::Incomplete(i)) => {\n          return Err(Err::Incomplete(i));\n        }\n      }\n    }\n\n    if OM::Incomplete::is_streaming() {\n      Err(Err::Incomplete(Needed::Unknown))\n    } else {\n      let index = input.input_len();\n      Ok((\n        input.take_from(index),\n        OM::Output::bind(|| input.take(index)),\n      ))\n    }\n  }",
+            "start_line": 765,
+            "symbol_id": "src/bytes/mod.rs#function:process:765"
+          },
+          {
+            "children": [],
+            "documentation": "Matches a byte string with escaped characters.\n\n* The first argument matches the normal characters (it must not match the control character)\n* The second argument is the control character (like `\\` in most languages)\n* The third argument matches the escaped characters and transforms them\n\nAs an example, the chain `abc\\tdef` could be `abc    def` (it also consumes the control character)\n\n```\n# use nom::{Err, error::ErrorKind, Needed, IResult};\n# use std::str::from_utf8;\nuse nom::bytes::streaming::{escaped_transform, tag};\nuse nom::character::streaming::alpha1;\nuse nom::branch::alt;\nuse nom::combinator::value;\n\nfn parser(input: &str) -> IResult<&str, String> {\nescaped_transform(\nalpha1,\n'\\\\',\nalt((\nvalue(\"\\\\\", tag(\"\\\\\")),\nvalue(\"\\\"\", tag(\"\\\"\")),\nvalue(\"\\n\", tag(\"n\")),\n))\n)(input)\n}\n\nassert_eq!(parser(\"ab\\\\\\\"cd\\\"\"), Ok((\"\\\"\", String::from(\"ab\\\"cd\"))));\n```\n[cfg(feature = \"alloc\")]\n[cfg_attr(feature = \"docsrs\", doc(cfg(feature = \"alloc\")))]",
+            "end_line": 924,
+            "kind": "function",
+            "name": "escaped_transform",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "escaped_transform",
+            "signature": "pub fn escaped_transform<I, Error, F, G, ExtendItem, Output>(\n  normal: F,\n  control_char: char,\n  transform: G,\n) -> impl Parser<I, Output = Output, Error = Error>\nwhere\n  I: Clone + crate::traits::Offset + Input,\n  I: crate::traits::ExtendInto<Item = ExtendItem, Extender = Output>,\n  <F as Parser<I>>::Output: crate::traits::ExtendInto<Item = ExtendItem, Extender = Output>,\n  <G as Parser<I>>::Output: crate::traits::ExtendInto<Item = ExtendItem, Extender = Output>,\n  <I as Input>::Item: crate::traits::AsChar,\n  F: Parser<I, Error = Error>,\n  G: Parser<I, Error = Error>,\n  Error: ParseError<I>,\n{\n  EscapedTransform {\n    normal,\n    control_char,\n    transform,\n    e: PhantomData,\n    extend: PhantomData,\n    o: PhantomData,\n  }\n}",
+            "start_line": 901,
+            "symbol_id": "src/bytes/mod.rs#function:escaped_transform:901"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 1043,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(\n    &mut self,\n    input: I,\n  ) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let mut index = 0;\n    let mut res = OM::Output::bind(|| input.new_builder());\n\n    while index < input.input_len() {\n      let current_len = input.input_len();\n      let remainder = input.take_from(index);\n      match self.normal.process::<OM>(remainder.clone()) {\n        Ok((i2, o)) => {\n          res = OM::Output::combine(o, res, |o, mut res| {\n            o.extend_into(&mut res);\n            res\n          });\n          if i2.input_len() == 0 {\n            if OM::Incomplete::is_streaming() {\n              return Err(Err::Incomplete(Needed::Unknown));\n            } else {\n              let index = input.input_len();\n              return Ok((input.take_from(index), res));\n            }\n          } else if i2.input_len() == current_len {\n            return Ok((remainder, res));\n          } else {\n            index = input.offset(&i2);\n          }\n        }\n        Err(Err::Error(_)) => {\n          // unwrap() should be safe here since index < $i.input_len()\n          if remainder.iter_elements().next().unwrap().as_char() == self.control_char {\n            let next = index + self.control_char.len_utf8();\n            let input_len = input.input_len();\n\n            if next >= input_len {\n              if OM::Incomplete::is_streaming() {\n                return Err(Err::Incomplete(Needed::Unknown));\n              } else {\n                return Err(Err::Error(OM::Error::bind(|| {\n                  Error::from_error_kind(remainder, ErrorKind::EscapedTransform)\n                })));\n              }\n            } else {\n              match self.transform.process::<OM>(input.take_from(next)) {\n                Ok((i2, o)) => {\n                  res = OM::Output::combine(o, res, |o, mut res| {\n                    o.extend_into(&mut res);\n                    res\n                  });\n                  if i2.input_len() == 0 {\n                    if OM::Incomplete::is_streaming() {\n                      return Err(Err::Incomplete(Needed::Unknown));\n                    } else {\n                      return Ok((input.take_from(input.input_len()), res));\n                    }\n                  } else {\n                    index = input.offset(&i2);\n                  }\n                }\n                Err(Err::Error(e)) => return Err(Err::Error(e)),\n                Err(Err::Failure(e)) => {\n                  return Err(Err::Failure(e));\n                }\n                Err(Err::Incomplete(i)) => {\n                  return Err(Err::Incomplete(i));\n                }\n              }\n            }\n          } else {\n            if index == 0 {\n              return Err(Err::Error(OM::Error::bind(|| {\n                Error::from_error_kind(remainder, ErrorKind::EscapedTransform)\n              })));\n            }\n            return Ok((remainder, res));\n          }\n        }\n        Err(Err::Failure(e)) => {\n          return Err(Err::Failure(e));\n        }\n        Err(Err::Incomplete(i)) => {\n          return Err(Err::Incomplete(i));\n        }\n      }\n    }\n\n    if OM::Incomplete::is_streaming() {\n      Err(Err::Incomplete(Needed::Unknown))\n    } else {\n      Ok((input.take_from(index), res))\n    }\n  }",
+            "start_line": 951,
+            "symbol_id": "src/bytes/mod.rs#function:process:951"
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/bytes/mod.rs#function:take_while:292",
+          "workspace_id": "rs_001_ctx32k"
+        },
+        "id": "step-4-tool-1",
+        "isError": false,
+        "name": "get_symbol",
+        "result": {
+          "children": [],
+          "code": "pub fn take_while<F, I, Error: ParseError<I>>(cond: F) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,\n{\n  SplitPosition {\n    predicate: move |c| !cond(c),\n    error: PhantomData,\n  }\n}",
+          "documentation": "Returns the longest input slice (if any) that matches the predicate.\n\nThe parser will return the longest slice that matches the given predicate *(a function that\ntakes the input and returns a bool)*.\n# Example\n```rust\n# use nom::{Err, error::ErrorKind, Needed, IResult};\nuse nom::bytes::complete::take_while;\nuse nom::character::is_alphabetic;\n\nfn alpha(s: &[u8]) -> IResult<&[u8], &[u8]> {\ntake_while(is_alphabetic)(s)\n}\n\nassert_eq!(alpha(b\"latin123\"), Ok((&b\"123\"[..], &b\"latin\"[..])));\nassert_eq!(alpha(b\"12345\"), Ok((&b\"12345\"[..], &b\"\"[..])));\nassert_eq!(alpha(b\"latin\"), Ok((&b\"\"[..], &b\"latin\"[..])));\nassert_eq!(alpha(b\"\"), Ok((&b\"\"[..], &b\"\"[..])));\n```",
+          "end_line": 301,
+          "kind": "function",
+          "name": "take_while",
+          "parent_id": null,
+          "parent_name": null,
+          "path": "src/bytes/mod.rs",
+          "qualified_name": "take_while",
+          "signature": "pub fn take_while<F, I, Error: ParseError<I>>(cond: F) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,\n{\n  SplitPosition {\n    predicate: move |c| !cond(c),\n    error: PhantomData,\n  }\n}",
+          "start_line": 292,
+          "symbol_id": "src/bytes/mod.rs#function:take_while:292"
+        }
+      }
+    ]
+  },
+  "trialId": "272ae33dc4"
+}

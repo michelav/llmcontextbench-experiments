@@ -1,0 +1,159 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 5123,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 5135,
+          "metadata": {},
+          "name": "strategy.inline.execute",
+          "type": "strategy.inline.execute"
+        },
+        {
+          "duration_ms": 5135,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 12,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": null,
+        "cachedInputTokens": null,
+        "contextBytes": 25049,
+        "contextChars": 25049,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 0,
+        "inputTokens": 7675,
+        "loopControlDurationMsEstimated": 12,
+        "mcpToolCalls": 0,
+        "modelCalls": 1,
+        "modelDurationMs": 5123,
+        "outputTokens": 213,
+        "promptChars": 26127,
+        "questionTokensEstimated": 160,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 695,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 1,
+        "strategyDurationMs": 5135,
+        "taskStatementChars": 1056,
+        "toolCalls": 0,
+        "toolDurationMs": null,
+        "totalDurationMs": 5135,
+        "totalTokens": 8583,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": {
+      "automatic_function_calling_history": [],
+      "candidates": [
+        {
+          "avg_logprobs": null,
+          "citation_metadata": {
+            "citations": [
+              {
+                "end_index": 754,
+                "license": "",
+                "publication_date": null,
+                "start_index": 14,
+                "title": null,
+                "uri": "https://github.com/andmev/transformers.js"
+              }
+            ]
+          },
+          "content": {
+            "parts": [
+              {
+                "code_execution_result": null,
+                "executable_code": null,
+                "file_data": null,
+                "function_call": null,
+                "function_response": null,
+                "inline_data": null,
+                "media_resolution": null,
+                "part_metadata": null,
+                "text": "```javascript\nfunction reshape(data, dimensions) {\n\n    const totalElements = data.length;\n    const dimensionSize = dimensions.reduce((a, b) => a * b);\n\n    if (totalElements !== dimensionSize) {\n        throw Error(`cannot reshape array of size ${totalElements} into shape (${dimensions})`);\n    }\n\n    /** @type {any} */\n    let reshapedArray = data;\n\n    for (let i = dimensions.length - 1; i >= 0; i--) {\n        reshapedArray = reshapedArray.reduce((acc, val) => {\n            let lastArray = acc[acc.length - 1];\n\n            if (lastArray.length < dimensions[i]) {\n                lastArray.push(val);\n            } else {\n                acc.push([val]);\n            }\n\n            return acc;\n        }, [[]]);\n    }\n\n    return reshapedArray[0];\n}\n```",
+                "thought": null,
+                "thought_signature": null,
+                "tool_call": null,
+                "tool_response": null,
+                "video_metadata": null
+              }
+            ],
+            "role": "model"
+          },
+          "finish_message": null,
+          "finish_reason": "STOP",
+          "grounding_metadata": null,
+          "index": 0,
+          "logprobs_result": null,
+          "safety_ratings": null,
+          "token_count": null,
+          "url_context_metadata": null
+        }
+      ],
+      "create_time": null,
+      "model_status": null,
+      "model_version": "gemini-2.5-flash",
+      "parsed": null,
+      "prompt_feedback": null,
+      "response_id": "A4gUatCUMo_rz7IPttyh4A0",
+      "sdk_http_response": {
+        "body": null,
+        "headers": {
+          "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+          "content-encoding": "gzip",
+          "content-type": "application/json; charset=UTF-8",
+          "date": "Mon, 25 May 2026 17:34:00 GMT",
+          "server": "scaffolding on HTTPServer2",
+          "server-timing": "gfet4t7; dur=4906",
+          "transfer-encoding": "chunked",
+          "vary": "Origin, X-Origin, Referer",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "x-gemini-service-tier": "standard",
+          "x-xss-protection": "0"
+        }
+      },
+      "usage_metadata": {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 213,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 7675,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 7675
+          }
+        ],
+        "thoughts_token_count": 695,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 8583,
+        "traffic_type": null
+      }
+    },
+    "serverMcp": [],
+    "toolCalls": []
+  },
+  "trialId": "4a5bb3cf74"
+}

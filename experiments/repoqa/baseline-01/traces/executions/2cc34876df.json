@@ -1,0 +1,1323 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 721,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-mini",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "ts_005_ctx8k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 1,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "language": "typescript",
+                "parse_status": "ok_filtered",
+                "path": "src/utils/audio.js",
+                "repository": "xenova/transformers.js",
+                "symbol_count": 74
+              },
+              {
+                "language": "typescript",
+                "parse_status": "ok_filtered",
+                "path": "src/utils/image.js",
+                "repository": "xenova/transformers.js",
+                "symbol_count": 33
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "ts_005_ctx8k"
+              },
+              "durationMs": 1,
+              "toolName": "list_files",
+              "workspace_id": "ts_005_ctx8k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1220,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-mini",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "src/utils/audio.js",
+              "workspace_id": "ts_005_ctx8k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "Helper function to read audio from a path/URL.\n@param {string|URL} url The path/URL to load the audio from.\n@param {number} sampling_rate The sampling rate to use when decoding the audio.\n@returns {Promise<Float32Array>} The decoded audio as a `Float32Array`.",
+                "end_line": 78,
+                "kind": "function",
+                "name": "read_audio",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "read_audio",
+                "signature": "async function read_audio(url, sampling_rate) {\n    if (typeof AudioContext === 'undefined') {\n        // Running in node or an environment without AudioContext\n        throw Error(\n            \"Unable to load audio from path/URL since `AudioContext` is not available in your environment. \" +\n            \"Instead, audio data should be passed directly to the pipeline/processor. \" +\n            \"For more information and some example code, see https://huggingface.co/docs/transformers.js/guides/node-audio-processing.\"\n        )\n    }\n\n    const response = await (await getFile(url)).arrayBuffer();\n    const audioCTX = new AudioContext({ sampleRate: sampling_rate });\n    if (typeof sampling_rate === 'undefined') {\n        console.warn(`No sampling rate provided, using default of ${audioCTX.sampleRate}Hz.`)\n    }\n    const decoded = await audioCTX.decodeAudioData(response);\n\n    /** @type {Float32Array} */\n    let audio;\n\n    // We now replicate HuggingFace's `ffmpeg_read` method:\n    if (decoded.numberOfChannels === 2) {\n        // When downmixing a stereo audio file to mono using the -ac 1 option in FFmpeg,\n        // the audio signal is summed across both channels to create a single mono channel.\n        // However, if the audio is at full scale (i.e. the highest possible volume level),\n        // the summing of the two channels can cause the audio signal to clip or distort.\n\n        // To prevent this clipping, FFmpeg applies a scaling factor of 1/sqrt(2) (~ 0.707)\n        // to the audio signal before summing the two channels. This scaling factor ensures\n        // that the combined audio signal will not exceed the maximum possible level, even\n        // if both channels are at full scale.\n\n        // After applying this scaling factor, the audio signal from both channels is summed\n        // to create a single mono channel. It's worth noting that this scaling factor is\n        // only applied when downmixing stereo audio to mono using the -ac 1 option in FFmpeg.\n        // If you're using a different downmixing method, or if you're not downmixing the\n        // audio at all, this scaling factor may not be needed.\n        const SCALING_FACTOR = Math.sqrt(2);\n\n        const left = decoded.getChannelData(0);\n        const right = decoded.getChannelData(1);\n\n        audio = new Float32Array(left.length);\n        for (let i = 0; i < decoded.length; ++i) {\n            audio[i] = SCALING_FACTOR * (left[i] + right[i]) / 2;\n        }\n\n    } else {\n        // If the audio is not stereo, we can just use the first channel:\n        audio = decoded.getChannelData(0);\n    }\n\n    return audio;\n}",
+                "start_line": 25,
+                "symbol_id": "src/utils/audio.js#function:read_audio:25"
+              },
+              {
+                "children": [],
+                "documentation": "Generates a Hanning window of length M.\n\n@param {number} M The length of the Hanning window to generate.\n@returns {Float64Array} The generated Hanning window.",
+                "end_line": 101,
+                "kind": "function",
+                "name": "hanning",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "hanning",
+                "signature": "function hanning(M) {\n    if (M < 1) {\n        return new Float64Array();\n    }\n    if (M === 1) {\n        return new Float64Array([1]);\n    }\n    const denom = M - 1;\n    const factor = Math.PI / denom;\n    const cos_vals = new Float64Array(M);\n    for (let i = 0; i < M; ++i) {\n        const n = 2 * i - denom;\n        cos_vals[i] = 0.5 + 0.5 * Math.cos(factor * n);\n    }\n    return cos_vals;\n}",
+                "start_line": 86,
+                "symbol_id": "src/utils/audio.js#function:hanning:86"
+              },
+              {
+                "children": [],
+                "documentation": "@template {Float32Array|Float64Array|number} T\n@param {T} freq\n@param {string} [mel_scale]\n@returns {T}",
+                "end_line": 125,
+                "kind": "function",
+                "name": "hertz_to_mel",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "hertz_to_mel",
+                "signature": "function hertz_to_mel(freq, mel_scale = \"htk\") {\n    const fn = HERTZ_TO_MEL_MAPPING[mel_scale];\n    if (!fn) {\n        throw new Error('mel_scale should be one of \"htk\", \"slaney\" or \"kaldi\".');\n    }\n\n    return typeof freq === 'number' ? fn(freq) : freq.map(x => fn(x));\n}",
+                "start_line": 118,
+                "symbol_id": "src/utils/audio.js#function:hertz_to_mel:118"
+              },
+              {
+                "children": [],
+                "documentation": "@template {Float32Array|Float64Array|number} T\n@param {T} mels\n@param {string} [mel_scale]\n@returns {T}",
+                "end_line": 148,
+                "kind": "function",
+                "name": "mel_to_hertz",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "mel_to_hertz",
+                "signature": "function mel_to_hertz(mels, mel_scale = \"htk\") {\n    const fn = MEL_TO_HERTZ_MAPPING[mel_scale];\n    if (!fn) {\n        throw new Error('mel_scale should be one of \"htk\", \"slaney\" or \"kaldi\".');\n    }\n\n    return typeof mels === 'number' ? fn(mels) : mels.map(x => fn(x));\n}",
+                "start_line": 141,
+                "symbol_id": "src/utils/audio.js#function:mel_to_hertz:141"
+              },
+              {
+                "children": [],
+                "documentation": "Creates a triangular filter bank.\n\nAdapted from torchaudio and librosa.\n\n@param {Float64Array} fft_freqs Discrete frequencies of the FFT bins in Hz, of shape `(num_frequency_bins,)`.\n@param {Float64Array} filter_freqs Center frequencies of the triangular filters to create, in Hz, of shape `(num_mel_filters,)`.\n@returns {number[][]} of shape `(num_frequency_bins, num_mel_filters)`.",
+                "end_line": 188,
+                "kind": "function",
+                "name": "_create_triangular_filter_bank",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "_create_triangular_filter_bank",
+                "signature": "function _create_triangular_filter_bank(fft_freqs, filter_freqs) {\n    const filter_diff = Float64Array.from(\n        { length: filter_freqs.length - 1 },\n        (_, i) => filter_freqs[i + 1] - filter_freqs[i]\n    );\n\n    const slopes = Array.from({\n        length: fft_freqs.length\n    }, () => new Array(filter_freqs.length));\n\n    for (let j = 0; j < fft_freqs.length; ++j) {\n        const slope = slopes[j];\n        for (let i = 0; i < filter_freqs.length; ++i) {\n            slope[i] = filter_freqs[i] - fft_freqs[j];\n        }\n    }\n\n    const numFreqs = filter_freqs.length - 2;\n    const ret = Array.from({ length: numFreqs }, () => new Array(fft_freqs.length));\n\n    for (let j = 0; j < fft_freqs.length; ++j) { // 201\n        const slope = slopes[j];\n        for (let i = 0; i < numFreqs; ++i) { // 80\n            const down = -slope[i] / filter_diff[i];\n            const up = slope[i + 2] / filter_diff[i + 1];\n            ret[i][j] = Math.max(0, Math.min(down, up));\n        }\n    }\n    return ret;\n}",
+                "start_line": 159,
+                "symbol_id": "src/utils/audio.js#function:_create_triangular_filter_bank:159"
+              },
+              {
+                "children": [],
+                "documentation": "Return evenly spaced numbers over a specified interval.\n@param {number} start The starting value of the sequence.\n@param {number} end The end value of the sequence.\n@param {number} num Number of samples to generate.\n@returns `num` evenly spaced samples, calculated over the interval `[start, stop]`.",
+                "end_line": 200,
+                "kind": "function",
+                "name": "linspace",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "linspace",
+                "signature": "function linspace(start, end, num) {\n    const step = (end - start) / (num - 1);\n    return Float64Array.from({ length: num }, (_, i) => start + step * i);\n}",
+                "start_line": 197,
+                "symbol_id": "src/utils/audio.js#function:linspace:197"
+              },
+              {
+                "children": [],
+                "documentation": "Creates a frequency bin conversion matrix used to obtain a mel spectrogram. This is called a *mel filter bank*, and\nvarious implementation exist, which differ in the number of filters, the shape of the filters, the way the filters\nare spaced, the bandwidth of the filters, and the manner in which the spectrum is warped. The goal of these\nfeatures is to approximate the non-linear human perception of the variation in pitch with respect to the frequency.\n@param {number} num_frequency_bins Number of frequencies used to compute the spectrogram (should be the same as in `stft`).\n@param {number} num_mel_filters Number of mel filters to generate.\n@param {number} min_frequency Lowest frequency of interest in Hz.\n@param {number} max_frequency Highest frequency of interest in Hz. This should not exceed `sampling_rate / 2`.\n@param {number} sampling_rate Sample rate of the audio waveform.\n@param {string} [norm] If `\"slaney\"`, divide the triangular mel weights by the width of the mel band (area normalization).\n@param {string} [mel_scale] The mel frequency scale to use, `\"htk\"` or `\"slaney\"`.\n@param {boolean} [triangularize_in_mel_space] If this option is enabled, the triangular filter is applied in mel space rather than frequency space.\nThis should be set to `true` in order to get the same results as `torchaudio` when computing mel filters.\n@returns {number[][]} Triangular filter bank matrix, which is a 2D array of shape (`num_frequency_bins`, `num_mel_filters`).\nThis is a projection matrix to go from a spectrogram to a mel spectrogram.",
+                "end_line": 266,
+                "kind": "function",
+                "name": "mel_filter_bank",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "mel_filter_bank",
+                "signature": "function mel_filter_bank(\n    num_frequency_bins,\n    num_mel_filters,\n    min_frequency,\n    max_frequency,\n    sampling_rate,\n    norm = null,\n    mel_scale = \"htk\",\n    triangularize_in_mel_space = false,\n) {\n    if (norm !== null && norm !== \"slaney\") {\n        throw new Error('norm must be one of null or \"slaney\"');\n    }\n\n    const mel_min = hertz_to_mel(min_frequency, mel_scale);\n    const mel_max = hertz_to_mel(max_frequency, mel_scale);\n    const mel_freqs = linspace(mel_min, mel_max, num_mel_filters + 2);\n\n    let filter_freqs = mel_to_hertz(mel_freqs, mel_scale);\n    let fft_freqs; // frequencies of FFT bins in Hz\n\n    if (triangularize_in_mel_space) {\n        const fft_bin_width = sampling_rate / (num_frequency_bins * 2);\n        fft_freqs = hertz_to_mel(Float64Array.from({ length: num_frequency_bins }, (_, i) => i * fft_bin_width), mel_scale);\n        filter_freqs = mel_freqs;\n    } else {\n        fft_freqs = linspace(0, Math.floor(sampling_rate / 2), num_frequency_bins);\n    }\n\n    const mel_filters = _create_triangular_filter_bank(fft_freqs, filter_freqs);\n\n    if (norm !== null && norm === \"slaney\") {\n        // Slaney-style mel is scaled to be approx constant energy per channel\n        for (let i = 0; i < num_mel_filters; ++i) {\n            const filter = mel_filters[i];\n            const enorm = 2.0 / (filter_freqs[i + 2] - filter_freqs[i]);\n            for (let j = 0; j < num_frequency_bins; ++j) {\n                // Apply this enorm to all frequency bins\n                filter[j] *= enorm;\n            }\n        }\n    }\n\n    // TODO warn if there is a zero row\n\n    return mel_filters;\n\n}",
+                "start_line": 219,
+                "symbol_id": "src/utils/audio.js#function:mel_filter_bank:219"
+              },
+              {
+                "children": [],
+                "documentation": "@template {Float32Array|Float64Array} T\nPads an array with a reflected version of itself on both ends.\n@param {T} array The array to pad.\n@param {number} left The amount of padding to add to the left.\n@param {number} right The amount of padding to add to the right.\n@returns {T} The padded array.",
+                "end_line": 294,
+                "kind": "function",
+                "name": "padReflect",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "padReflect",
+                "signature": "function padReflect(array, left, right) {\n    // @ts-ignore\n    const padded = new array.constructor(array.length + left + right);\n    const w = array.length - 1;\n\n    for (let i = 0; i < array.length; ++i) {\n        padded[left + i] = array[i];\n    }\n\n    for (let i = 1; i <= left; ++i) {\n        padded[left - i] = array[calculateReflectOffset(i, w)];\n    }\n\n    for (let i = 1; i <= right; ++i) {\n        padded[w + left + i] = array[calculateReflectOffset(w - i, w)];\n    }\n\n    return padded;\n}",
+                "start_line": 276,
+                "symbol_id": "src/utils/audio.js#function:padReflect:276"
+              },
+              {
+                "children": [],
+                "documentation": "Helper function to compute `amplitude_to_db` and `power_to_db`.\n@template {Float32Array|Float64Array} T\n@param {T} spectrogram\n@param {number} factor\n@param {number} reference\n@param {number} min_value\n@param {number} db_range\n@returns {T}",
+                "end_line": 333,
+                "kind": "function",
+                "name": "_db_conversion_helper",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "_db_conversion_helper",
+                "signature": "function _db_conversion_helper(spectrogram, factor, reference, min_value, db_range) {\n    if (reference <= 0) {\n        throw new Error('reference must be greater than zero');\n    }\n\n    if (min_value <= 0) {\n        throw new Error('min_value must be greater than zero');\n    }\n\n    reference = Math.max(min_value, reference);\n\n    const logReference = Math.log10(reference);\n    for (let i = 0; i < spectrogram.length; ++i) {\n        spectrogram[i] = factor * Math.log10(Math.max(min_value, spectrogram[i]) - logReference)\n    }\n\n    if (db_range !== null) {\n        if (db_range <= 0) {\n            throw new Error('db_range must be greater than zero');\n        }\n        const maxValue = max(spectrogram)[0] - db_range;\n        for (let i = 0; i < spectrogram.length; ++i) {\n            spectrogram[i] = Math.max(spectrogram[i], maxValue);\n        }\n    }\n\n    return spectrogram;\n}",
+                "start_line": 306,
+                "symbol_id": "src/utils/audio.js#function:_db_conversion_helper:306"
+              },
+              {
+                "children": [],
+                "documentation": "Converts an amplitude spectrogram to the decibel scale. This computes `20 * log10(spectrogram / reference)`,\nusing basic logarithm properties for numerical stability. NOTE: Operates in-place.\n\nThe motivation behind applying the log function on the (mel) spectrogram is that humans do not hear loudness on a\nlinear scale. Generally to double the perceived volume of a sound we need to put 8 times as much energy into it.\nThis means that large variations in energy may not sound all that different if the sound is loud to begin with.\nThis compression operation makes the (mel) spectrogram features match more closely what humans actually hear.\n\n@template {Float32Array|Float64Array} T\n@param {T} spectrogram The input amplitude (mel) spectrogram.\n@param {number} [reference=1.0] Sets the input spectrogram value that corresponds to 0 dB.\nFor example, use `np.max(spectrogram)` to set the loudest part to 0 dB. Must be greater than zero.\n@param {number} [min_value=1e-5] The spectrogram will be clipped to this minimum value before conversion to decibels,\nto avoid taking `log(0)`. The default of `1e-5` corresponds to a minimum of -100 dB. Must be greater than zero.\n@param {number} [db_range=null] Sets the maximum dynamic range in decibels. For example, if `db_range = 80`, the\ndifference between the peak value and the smallest value will never be more than 80 dB. Must be greater than zero.\n@returns {T} The modified spectrogram in decibels.",
+                "end_line": 356,
+                "kind": "function",
+                "name": "amplitude_to_db",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "amplitude_to_db",
+                "signature": "function amplitude_to_db(spectrogram, reference = 1.0, min_value = 1e-5, db_range = null) {\n    return _db_conversion_helper(spectrogram, 20.0, reference, min_value, db_range);\n}",
+                "start_line": 354,
+                "symbol_id": "src/utils/audio.js#function:amplitude_to_db:354"
+              },
+              {
+                "children": [],
+                "documentation": "Converts a power spectrogram to the decibel scale. This computes `10 * log10(spectrogram / reference)`,\nusing basic logarithm properties for numerical stability. NOTE: Operates in-place.\n\nThe motivation behind applying the log function on the (mel) spectrogram is that humans do not hear loudness on a\nlinear scale. Generally to double the perceived volume of a sound we need to put 8 times as much energy into it.\nThis means that large variations in energy may not sound all that different if the sound is loud to begin with.\nThis compression operation makes the (mel) spectrogram features match more closely what humans actually hear.\n\nBased on the implementation of `librosa.power_to_db`.\n\n@template {Float32Array|Float64Array} T\n@param {T} spectrogram The input power (mel) spectrogram. Note that a power spectrogram has the amplitudes squared!\n@param {number} [reference=1.0] Sets the input spectrogram value that corresponds to 0 dB.\nFor example, use `np.max(spectrogram)` to set the loudest part to 0 dB. Must be greater than zero.\n@param {number} [min_value=1e-10] The spectrogram will be clipped to this minimum value before conversion to decibels,\nto avoid taking `log(0)`. The default of `1e-10` corresponds to a minimum of -100 dB. Must be greater than zero.\n@param {number} [db_range=null] Sets the maximum dynamic range in decibels. For example, if `db_range = 80`, the\ndifference between the peak value and the smallest value will never be more than 80 dB. Must be greater than zero.\n@returns {T} The modified spectrogram in decibels.",
+                "end_line": 381,
+                "kind": "function",
+                "name": "power_to_db",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "power_to_db",
+                "signature": "function power_to_db(spectrogram, reference = 1.0, min_value = 1e-10, db_range = null) {\n    return _db_conversion_helper(spectrogram, 10.0, reference, min_value, db_range);\n}",
+                "start_line": 379,
+                "symbol_id": "src/utils/audio.js#function:power_to_db:379"
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "src/utils/audio.js",
+                "workspace_id": "ts_005_ctx8k"
+              },
+              "durationMs": 0,
+              "toolName": "list_symbols",
+              "workspace_id": "ts_005_ctx8k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 2181,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-mini",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "symbol_id": "src/utils/audio.js#function:hanning:86",
+              "workspace_id": "ts_005_ctx8k"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": {
+              "children": [],
+              "code": "function hanning(M) {\n    if (M < 1) {\n        return new Float64Array();\n    }\n    if (M === 1) {\n        return new Float64Array([1]);\n    }\n    const denom = M - 1;\n    const factor = Math.PI / denom;\n    const cos_vals = new Float64Array(M);\n    for (let i = 0; i < M; ++i) {\n        const n = 2 * i - denom;\n        cos_vals[i] = 0.5 + 0.5 * Math.cos(factor * n);\n    }\n    return cos_vals;\n}",
+              "documentation": "Generates a Hanning window of length M.\n\n@param {number} M The length of the Hanning window to generate.\n@returns {Float64Array} The generated Hanning window.",
+              "end_line": 101,
+              "kind": "function",
+              "name": "hanning",
+              "parent_id": null,
+              "parent_name": null,
+              "path": "src/utils/audio.js",
+              "qualified_name": "hanning",
+              "signature": "function hanning(M) {\n    if (M < 1) {\n        return new Float64Array();\n    }\n    if (M === 1) {\n        return new Float64Array([1]);\n    }\n    const denom = M - 1;\n    const factor = Math.PI / denom;\n    const cos_vals = new Float64Array(M);\n    for (let i = 0; i < M; ++i) {\n        const n = 2 * i - denom;\n        cos_vals[i] = 0.5 + 0.5 * Math.cos(factor * n);\n    }\n    return cos_vals;\n}",
+              "start_line": 86,
+              "symbol_id": "src/utils/audio.js#function:hanning:86"
+            },
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "symbol_id": "src/utils/audio.js#function:hanning:86",
+                "workspace_id": "ts_005_ctx8k"
+              },
+              "durationMs": 0,
+              "toolName": "get_symbol",
+              "workspace_id": "ts_005_ctx8k"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 3529,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-mini",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 7678,
+          "metadata": {},
+          "name": "strategy.local_function.execute",
+          "type": "strategy.local_function.execute"
+        },
+        {
+          "duration_ms": 7678,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 27,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": 0,
+        "cachedInputTokens": 0,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 3,
+        "inputTokens": 7669,
+        "loopControlDurationMsEstimated": 26,
+        "mcpToolCalls": 3,
+        "modelCalls": 4,
+        "modelDurationMs": 7651,
+        "outputTokens": 237,
+        "promptChars": 1154,
+        "questionTokensEstimated": 159,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 0,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 4,
+        "strategyDurationMs": 7678,
+        "taskStatementChars": 984,
+        "toolCalls": 3,
+        "toolDurationMs": 1,
+        "totalDurationMs": 7678,
+        "totalTokens": 7906,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779731451.0,
+        "conversation": null,
+        "created_at": 1779731451.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_0dda4518a5d1d6e2006a148bfb138c8191a092eff595f85273",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "2cc34876df"
+        },
+        "model": "gpt-5.4-mini-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "arguments": "{\"workspace_id\":\"ts_005_ctx8k\"}",
+            "call_id": "call_6IRzPsDKAcn6OZY2OgLTX9Zl",
+            "id": "fc_0dda4518a5d1d6e2006a148bfb5dbc81919630fc9b2cf878d4",
+            "name": "list_files",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including its generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 507,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 24,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 531
+        },
+        "user": null
+      },
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779731452.0,
+        "conversation": null,
+        "created_at": 1779731451.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_0dda4518a5d1d6e2006a148bfbd43481918769192f872c86bc",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "2cc34876df"
+        },
+        "model": "gpt-5.4-mini-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "arguments": "{\"workspace_id\":\"ts_005_ctx8k\",\"path\":\"src/utils/audio.js\",\"kind\":\"function\"}",
+            "call_id": "call_4rUQn1Cq1ywSsvSmcedez19f",
+            "id": "fc_0dda4518a5d1d6e2006a148bfc3d8c81919d19b863acc4b025",
+            "name": "list_symbols",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including its generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 628,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 35,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 663
+        },
+        "user": null
+      },
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779731454.0,
+        "conversation": null,
+        "created_at": 1779731453.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_0dda4518a5d1d6e2006a148bfd0d7c819180b6eebe4d03fced",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "2cc34876df"
+        },
+        "model": "gpt-5.4-mini-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "arguments": "{\"workspace_id\":\"ts_005_ctx8k\",\"symbol_id\":\"src/utils/audio.js#function:hanning:86\"}",
+            "call_id": "call_AK57dBQ8pK4jbTdosUBEBHzp",
+            "id": "fc_0dda4518a5d1d6e2006a148bfe47608191b46ee2180184321b",
+            "name": "get_symbol",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including its generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 5551,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 38,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 5589
+        },
+        "user": null
+      },
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779731458.0,
+        "conversation": null,
+        "created_at": 1779731455.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_0dda4518a5d1d6e2006a148bff39f88191b099c2bc1d51d002",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "2cc34876df"
+        },
+        "model": "gpt-5.4-mini-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "logprobs": [],
+                "text": "```javascript\nfunction hanning(M) {\n    if (M < 1) {\n        return new Float64Array();\n    }\n    if (M === 1) {\n        return new Float64Array([1]);\n    }\n    const denom = M - 1;\n    const factor = Math.PI / denom;\n    const cos_vals = new Float64Array(M);\n    for (let i = 0; i < M; ++i) {\n        const n = 2 * i - denom;\n        cos_vals[i] = 0.5 + 0.5 * Math.cos(factor * n);\n    }\n    return cos_vals;\n}\n```",
+                "type": "output_text"
+              }
+            ],
+            "id": "msg_0dda4518a5d1d6e2006a148bff9fd88191817f1e9ce8bf364a",
+            "phase": "final_answer",
+            "role": "assistant",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including its generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 983,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 140,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 1123
+        },
+        "user": null
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "workspace_id": "ts_005_ctx8k"
+        },
+        "durationMs": 1,
+        "toolName": "list_files",
+        "workspace_id": "ts_005_ctx8k"
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/utils/audio.js",
+          "workspace_id": "ts_005_ctx8k"
+        },
+        "durationMs": 0,
+        "toolName": "list_symbols",
+        "workspace_id": "ts_005_ctx8k"
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/utils/audio.js#function:hanning:86",
+          "workspace_id": "ts_005_ctx8k"
+        },
+        "durationMs": 0,
+        "toolName": "get_symbol",
+        "workspace_id": "ts_005_ctx8k"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "workspace_id": "ts_005_ctx8k"
+        },
+        "id": "call_6IRzPsDKAcn6OZY2OgLTX9Zl",
+        "isError": false,
+        "name": "list_files",
+        "result": [
+          {
+            "language": "typescript",
+            "parse_status": "ok_filtered",
+            "path": "src/utils/audio.js",
+            "repository": "xenova/transformers.js",
+            "symbol_count": 74
+          },
+          {
+            "language": "typescript",
+            "parse_status": "ok_filtered",
+            "path": "src/utils/image.js",
+            "repository": "xenova/transformers.js",
+            "symbol_count": 33
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/utils/audio.js",
+          "workspace_id": "ts_005_ctx8k"
+        },
+        "id": "call_4rUQn1Cq1ywSsvSmcedez19f",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "Helper function to read audio from a path/URL.\n@param {string|URL} url The path/URL to load the audio from.\n@param {number} sampling_rate The sampling rate to use when decoding the audio.\n@returns {Promise<Float32Array>} The decoded audio as a `Float32Array`.",
+            "end_line": 78,
+            "kind": "function",
+            "name": "read_audio",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "read_audio",
+            "signature": "async function read_audio(url, sampling_rate) {\n    if (typeof AudioContext === 'undefined') {\n        // Running in node or an environment without AudioContext\n        throw Error(\n            \"Unable to load audio from path/URL since `AudioContext` is not available in your environment. \" +\n            \"Instead, audio data should be passed directly to the pipeline/processor. \" +\n            \"For more information and some example code, see https://huggingface.co/docs/transformers.js/guides/node-audio-processing.\"\n        )\n    }\n\n    const response = await (await getFile(url)).arrayBuffer();\n    const audioCTX = new AudioContext({ sampleRate: sampling_rate });\n    if (typeof sampling_rate === 'undefined') {\n        console.warn(`No sampling rate provided, using default of ${audioCTX.sampleRate}Hz.`)\n    }\n    const decoded = await audioCTX.decodeAudioData(response);\n\n    /** @type {Float32Array} */\n    let audio;\n\n    // We now replicate HuggingFace's `ffmpeg_read` method:\n    if (decoded.numberOfChannels === 2) {\n        // When downmixing a stereo audio file to mono using the -ac 1 option in FFmpeg,\n        // the audio signal is summed across both channels to create a single mono channel.\n        // However, if the audio is at full scale (i.e. the highest possible volume level),\n        // the summing of the two channels can cause the audio signal to clip or distort.\n\n        // To prevent this clipping, FFmpeg applies a scaling factor of 1/sqrt(2) (~ 0.707)\n        // to the audio signal before summing the two channels. This scaling factor ensures\n        // that the combined audio signal will not exceed the maximum possible level, even\n        // if both channels are at full scale.\n\n        // After applying this scaling factor, the audio signal from both channels is summed\n        // to create a single mono channel. It's worth noting that this scaling factor is\n        // only applied when downmixing stereo audio to mono using the -ac 1 option in FFmpeg.\n        // If you're using a different downmixing method, or if you're not downmixing the\n        // audio at all, this scaling factor may not be needed.\n        const SCALING_FACTOR = Math.sqrt(2);\n\n        const left = decoded.getChannelData(0);\n        const right = decoded.getChannelData(1);\n\n        audio = new Float32Array(left.length);\n        for (let i = 0; i < decoded.length; ++i) {\n            audio[i] = SCALING_FACTOR * (left[i] + right[i]) / 2;\n        }\n\n    } else {\n        // If the audio is not stereo, we can just use the first channel:\n        audio = decoded.getChannelData(0);\n    }\n\n    return audio;\n}",
+            "start_line": 25,
+            "symbol_id": "src/utils/audio.js#function:read_audio:25"
+          },
+          {
+            "children": [],
+            "documentation": "Generates a Hanning window of length M.\n\n@param {number} M The length of the Hanning window to generate.\n@returns {Float64Array} The generated Hanning window.",
+            "end_line": 101,
+            "kind": "function",
+            "name": "hanning",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "hanning",
+            "signature": "function hanning(M) {\n    if (M < 1) {\n        return new Float64Array();\n    }\n    if (M === 1) {\n        return new Float64Array([1]);\n    }\n    const denom = M - 1;\n    const factor = Math.PI / denom;\n    const cos_vals = new Float64Array(M);\n    for (let i = 0; i < M; ++i) {\n        const n = 2 * i - denom;\n        cos_vals[i] = 0.5 + 0.5 * Math.cos(factor * n);\n    }\n    return cos_vals;\n}",
+            "start_line": 86,
+            "symbol_id": "src/utils/audio.js#function:hanning:86"
+          },
+          {
+            "children": [],
+            "documentation": "@template {Float32Array|Float64Array|number} T\n@param {T} freq\n@param {string} [mel_scale]\n@returns {T}",
+            "end_line": 125,
+            "kind": "function",
+            "name": "hertz_to_mel",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "hertz_to_mel",
+            "signature": "function hertz_to_mel(freq, mel_scale = \"htk\") {\n    const fn = HERTZ_TO_MEL_MAPPING[mel_scale];\n    if (!fn) {\n        throw new Error('mel_scale should be one of \"htk\", \"slaney\" or \"kaldi\".');\n    }\n\n    return typeof freq === 'number' ? fn(freq) : freq.map(x => fn(x));\n}",
+            "start_line": 118,
+            "symbol_id": "src/utils/audio.js#function:hertz_to_mel:118"
+          },
+          {
+            "children": [],
+            "documentation": "@template {Float32Array|Float64Array|number} T\n@param {T} mels\n@param {string} [mel_scale]\n@returns {T}",
+            "end_line": 148,
+            "kind": "function",
+            "name": "mel_to_hertz",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "mel_to_hertz",
+            "signature": "function mel_to_hertz(mels, mel_scale = \"htk\") {\n    const fn = MEL_TO_HERTZ_MAPPING[mel_scale];\n    if (!fn) {\n        throw new Error('mel_scale should be one of \"htk\", \"slaney\" or \"kaldi\".');\n    }\n\n    return typeof mels === 'number' ? fn(mels) : mels.map(x => fn(x));\n}",
+            "start_line": 141,
+            "symbol_id": "src/utils/audio.js#function:mel_to_hertz:141"
+          },
+          {
+            "children": [],
+            "documentation": "Creates a triangular filter bank.\n\nAdapted from torchaudio and librosa.\n\n@param {Float64Array} fft_freqs Discrete frequencies of the FFT bins in Hz, of shape `(num_frequency_bins,)`.\n@param {Float64Array} filter_freqs Center frequencies of the triangular filters to create, in Hz, of shape `(num_mel_filters,)`.\n@returns {number[][]} of shape `(num_frequency_bins, num_mel_filters)`.",
+            "end_line": 188,
+            "kind": "function",
+            "name": "_create_triangular_filter_bank",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "_create_triangular_filter_bank",
+            "signature": "function _create_triangular_filter_bank(fft_freqs, filter_freqs) {\n    const filter_diff = Float64Array.from(\n        { length: filter_freqs.length - 1 },\n        (_, i) => filter_freqs[i + 1] - filter_freqs[i]\n    );\n\n    const slopes = Array.from({\n        length: fft_freqs.length\n    }, () => new Array(filter_freqs.length));\n\n    for (let j = 0; j < fft_freqs.length; ++j) {\n        const slope = slopes[j];\n        for (let i = 0; i < filter_freqs.length; ++i) {\n            slope[i] = filter_freqs[i] - fft_freqs[j];\n        }\n    }\n\n    const numFreqs = filter_freqs.length - 2;\n    const ret = Array.from({ length: numFreqs }, () => new Array(fft_freqs.length));\n\n    for (let j = 0; j < fft_freqs.length; ++j) { // 201\n        const slope = slopes[j];\n        for (let i = 0; i < numFreqs; ++i) { // 80\n            const down = -slope[i] / filter_diff[i];\n            const up = slope[i + 2] / filter_diff[i + 1];\n            ret[i][j] = Math.max(0, Math.min(down, up));\n        }\n    }\n    return ret;\n}",
+            "start_line": 159,
+            "symbol_id": "src/utils/audio.js#function:_create_triangular_filter_bank:159"
+          },
+          {
+            "children": [],
+            "documentation": "Return evenly spaced numbers over a specified interval.\n@param {number} start The starting value of the sequence.\n@param {number} end The end value of the sequence.\n@param {number} num Number of samples to generate.\n@returns `num` evenly spaced samples, calculated over the interval `[start, stop]`.",
+            "end_line": 200,
+            "kind": "function",
+            "name": "linspace",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "linspace",
+            "signature": "function linspace(start, end, num) {\n    const step = (end - start) / (num - 1);\n    return Float64Array.from({ length: num }, (_, i) => start + step * i);\n}",
+            "start_line": 197,
+            "symbol_id": "src/utils/audio.js#function:linspace:197"
+          },
+          {
+            "children": [],
+            "documentation": "Creates a frequency bin conversion matrix used to obtain a mel spectrogram. This is called a *mel filter bank*, and\nvarious implementation exist, which differ in the number of filters, the shape of the filters, the way the filters\nare spaced, the bandwidth of the filters, and the manner in which the spectrum is warped. The goal of these\nfeatures is to approximate the non-linear human perception of the variation in pitch with respect to the frequency.\n@param {number} num_frequency_bins Number of frequencies used to compute the spectrogram (should be the same as in `stft`).\n@param {number} num_mel_filters Number of mel filters to generate.\n@param {number} min_frequency Lowest frequency of interest in Hz.\n@param {number} max_frequency Highest frequency of interest in Hz. This should not exceed `sampling_rate / 2`.\n@param {number} sampling_rate Sample rate of the audio waveform.\n@param {string} [norm] If `\"slaney\"`, divide the triangular mel weights by the width of the mel band (area normalization).\n@param {string} [mel_scale] The mel frequency scale to use, `\"htk\"` or `\"slaney\"`.\n@param {boolean} [triangularize_in_mel_space] If this option is enabled, the triangular filter is applied in mel space rather than frequency space.\nThis should be set to `true` in order to get the same results as `torchaudio` when computing mel filters.\n@returns {number[][]} Triangular filter bank matrix, which is a 2D array of shape (`num_frequency_bins`, `num_mel_filters`).\nThis is a projection matrix to go from a spectrogram to a mel spectrogram.",
+            "end_line": 266,
+            "kind": "function",
+            "name": "mel_filter_bank",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "mel_filter_bank",
+            "signature": "function mel_filter_bank(\n    num_frequency_bins,\n    num_mel_filters,\n    min_frequency,\n    max_frequency,\n    sampling_rate,\n    norm = null,\n    mel_scale = \"htk\",\n    triangularize_in_mel_space = false,\n) {\n    if (norm !== null && norm !== \"slaney\") {\n        throw new Error('norm must be one of null or \"slaney\"');\n    }\n\n    const mel_min = hertz_to_mel(min_frequency, mel_scale);\n    const mel_max = hertz_to_mel(max_frequency, mel_scale);\n    const mel_freqs = linspace(mel_min, mel_max, num_mel_filters + 2);\n\n    let filter_freqs = mel_to_hertz(mel_freqs, mel_scale);\n    let fft_freqs; // frequencies of FFT bins in Hz\n\n    if (triangularize_in_mel_space) {\n        const fft_bin_width = sampling_rate / (num_frequency_bins * 2);\n        fft_freqs = hertz_to_mel(Float64Array.from({ length: num_frequency_bins }, (_, i) => i * fft_bin_width), mel_scale);\n        filter_freqs = mel_freqs;\n    } else {\n        fft_freqs = linspace(0, Math.floor(sampling_rate / 2), num_frequency_bins);\n    }\n\n    const mel_filters = _create_triangular_filter_bank(fft_freqs, filter_freqs);\n\n    if (norm !== null && norm === \"slaney\") {\n        // Slaney-style mel is scaled to be approx constant energy per channel\n        for (let i = 0; i < num_mel_filters; ++i) {\n            const filter = mel_filters[i];\n            const enorm = 2.0 / (filter_freqs[i + 2] - filter_freqs[i]);\n            for (let j = 0; j < num_frequency_bins; ++j) {\n                // Apply this enorm to all frequency bins\n                filter[j] *= enorm;\n            }\n        }\n    }\n\n    // TODO warn if there is a zero row\n\n    return mel_filters;\n\n}",
+            "start_line": 219,
+            "symbol_id": "src/utils/audio.js#function:mel_filter_bank:219"
+          },
+          {
+            "children": [],
+            "documentation": "@template {Float32Array|Float64Array} T\nPads an array with a reflected version of itself on both ends.\n@param {T} array The array to pad.\n@param {number} left The amount of padding to add to the left.\n@param {number} right The amount of padding to add to the right.\n@returns {T} The padded array.",
+            "end_line": 294,
+            "kind": "function",
+            "name": "padReflect",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "padReflect",
+            "signature": "function padReflect(array, left, right) {\n    // @ts-ignore\n    const padded = new array.constructor(array.length + left + right);\n    const w = array.length - 1;\n\n    for (let i = 0; i < array.length; ++i) {\n        padded[left + i] = array[i];\n    }\n\n    for (let i = 1; i <= left; ++i) {\n        padded[left - i] = array[calculateReflectOffset(i, w)];\n    }\n\n    for (let i = 1; i <= right; ++i) {\n        padded[w + left + i] = array[calculateReflectOffset(w - i, w)];\n    }\n\n    return padded;\n}",
+            "start_line": 276,
+            "symbol_id": "src/utils/audio.js#function:padReflect:276"
+          },
+          {
+            "children": [],
+            "documentation": "Helper function to compute `amplitude_to_db` and `power_to_db`.\n@template {Float32Array|Float64Array} T\n@param {T} spectrogram\n@param {number} factor\n@param {number} reference\n@param {number} min_value\n@param {number} db_range\n@returns {T}",
+            "end_line": 333,
+            "kind": "function",
+            "name": "_db_conversion_helper",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "_db_conversion_helper",
+            "signature": "function _db_conversion_helper(spectrogram, factor, reference, min_value, db_range) {\n    if (reference <= 0) {\n        throw new Error('reference must be greater than zero');\n    }\n\n    if (min_value <= 0) {\n        throw new Error('min_value must be greater than zero');\n    }\n\n    reference = Math.max(min_value, reference);\n\n    const logReference = Math.log10(reference);\n    for (let i = 0; i < spectrogram.length; ++i) {\n        spectrogram[i] = factor * Math.log10(Math.max(min_value, spectrogram[i]) - logReference)\n    }\n\n    if (db_range !== null) {\n        if (db_range <= 0) {\n            throw new Error('db_range must be greater than zero');\n        }\n        const maxValue = max(spectrogram)[0] - db_range;\n        for (let i = 0; i < spectrogram.length; ++i) {\n            spectrogram[i] = Math.max(spectrogram[i], maxValue);\n        }\n    }\n\n    return spectrogram;\n}",
+            "start_line": 306,
+            "symbol_id": "src/utils/audio.js#function:_db_conversion_helper:306"
+          },
+          {
+            "children": [],
+            "documentation": "Converts an amplitude spectrogram to the decibel scale. This computes `20 * log10(spectrogram / reference)`,\nusing basic logarithm properties for numerical stability. NOTE: Operates in-place.\n\nThe motivation behind applying the log function on the (mel) spectrogram is that humans do not hear loudness on a\nlinear scale. Generally to double the perceived volume of a sound we need to put 8 times as much energy into it.\nThis means that large variations in energy may not sound all that different if the sound is loud to begin with.\nThis compression operation makes the (mel) spectrogram features match more closely what humans actually hear.\n\n@template {Float32Array|Float64Array} T\n@param {T} spectrogram The input amplitude (mel) spectrogram.\n@param {number} [reference=1.0] Sets the input spectrogram value that corresponds to 0 dB.\nFor example, use `np.max(spectrogram)` to set the loudest part to 0 dB. Must be greater than zero.\n@param {number} [min_value=1e-5] The spectrogram will be clipped to this minimum value before conversion to decibels,\nto avoid taking `log(0)`. The default of `1e-5` corresponds to a minimum of -100 dB. Must be greater than zero.\n@param {number} [db_range=null] Sets the maximum dynamic range in decibels. For example, if `db_range = 80`, the\ndifference between the peak value and the smallest value will never be more than 80 dB. Must be greater than zero.\n@returns {T} The modified spectrogram in decibels.",
+            "end_line": 356,
+            "kind": "function",
+            "name": "amplitude_to_db",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "amplitude_to_db",
+            "signature": "function amplitude_to_db(spectrogram, reference = 1.0, min_value = 1e-5, db_range = null) {\n    return _db_conversion_helper(spectrogram, 20.0, reference, min_value, db_range);\n}",
+            "start_line": 354,
+            "symbol_id": "src/utils/audio.js#function:amplitude_to_db:354"
+          },
+          {
+            "children": [],
+            "documentation": "Converts a power spectrogram to the decibel scale. This computes `10 * log10(spectrogram / reference)`,\nusing basic logarithm properties for numerical stability. NOTE: Operates in-place.\n\nThe motivation behind applying the log function on the (mel) spectrogram is that humans do not hear loudness on a\nlinear scale. Generally to double the perceived volume of a sound we need to put 8 times as much energy into it.\nThis means that large variations in energy may not sound all that different if the sound is loud to begin with.\nThis compression operation makes the (mel) spectrogram features match more closely what humans actually hear.\n\nBased on the implementation of `librosa.power_to_db`.\n\n@template {Float32Array|Float64Array} T\n@param {T} spectrogram The input power (mel) spectrogram. Note that a power spectrogram has the amplitudes squared!\n@param {number} [reference=1.0] Sets the input spectrogram value that corresponds to 0 dB.\nFor example, use `np.max(spectrogram)` to set the loudest part to 0 dB. Must be greater than zero.\n@param {number} [min_value=1e-10] The spectrogram will be clipped to this minimum value before conversion to decibels,\nto avoid taking `log(0)`. The default of `1e-10` corresponds to a minimum of -100 dB. Must be greater than zero.\n@param {number} [db_range=null] Sets the maximum dynamic range in decibels. For example, if `db_range = 80`, the\ndifference between the peak value and the smallest value will never be more than 80 dB. Must be greater than zero.\n@returns {T} The modified spectrogram in decibels.",
+            "end_line": 381,
+            "kind": "function",
+            "name": "power_to_db",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "power_to_db",
+            "signature": "function power_to_db(spectrogram, reference = 1.0, min_value = 1e-10, db_range = null) {\n    return _db_conversion_helper(spectrogram, 10.0, reference, min_value, db_range);\n}",
+            "start_line": 379,
+            "symbol_id": "src/utils/audio.js#function:power_to_db:379"
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/utils/audio.js#function:hanning:86",
+          "workspace_id": "ts_005_ctx8k"
+        },
+        "id": "call_AK57dBQ8pK4jbTdosUBEBHzp",
+        "isError": false,
+        "name": "get_symbol",
+        "result": {
+          "children": [],
+          "code": "function hanning(M) {\n    if (M < 1) {\n        return new Float64Array();\n    }\n    if (M === 1) {\n        return new Float64Array([1]);\n    }\n    const denom = M - 1;\n    const factor = Math.PI / denom;\n    const cos_vals = new Float64Array(M);\n    for (let i = 0; i < M; ++i) {\n        const n = 2 * i - denom;\n        cos_vals[i] = 0.5 + 0.5 * Math.cos(factor * n);\n    }\n    return cos_vals;\n}",
+          "documentation": "Generates a Hanning window of length M.\n\n@param {number} M The length of the Hanning window to generate.\n@returns {Float64Array} The generated Hanning window.",
+          "end_line": 101,
+          "kind": "function",
+          "name": "hanning",
+          "parent_id": null,
+          "parent_name": null,
+          "path": "src/utils/audio.js",
+          "qualified_name": "hanning",
+          "signature": "function hanning(M) {\n    if (M < 1) {\n        return new Float64Array();\n    }\n    if (M === 1) {\n        return new Float64Array([1]);\n    }\n    const denom = M - 1;\n    const factor = Math.PI / denom;\n    const cos_vals = new Float64Array(M);\n    for (let i = 0; i < M; ++i) {\n        const n = 2 * i - denom;\n        cos_vals[i] = 0.5 + 0.5 * Math.cos(factor * n);\n    }\n    return cos_vals;\n}",
+          "start_line": 86,
+          "symbol_id": "src/utils/audio.js#function:hanning:86"
+        }
+      }
+    ]
+  },
+  "trialId": "2cc34876df"
+}

@@ -1,0 +1,2175 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 1130,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-mini",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": null,
+              "workspace_id": "java_001_ctx16k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 7,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "Adds a reflection access filter. A reflection access filter prevents Gson from using reflection\nfor the serialization and deserialization of certain classes. The logic in the filter specifies\nwhich classes those are.\n\n<p>Filters will be invoked in reverse registration order, that is, the most recently added\nfilter will be invoked first.\n\n<p>By default Gson has no filters configured and will try to use reflection for all classes for\nwhich no {@link TypeAdapter} has been registered, and for which no built-in Gson {@code\nTypeAdapter} exists.\n\n<p>The created Gson instance might only use an access filter once for a class or its members\nand cache the result. It is not guaranteed that the filter will be used again every time a\nclass or its members are accessed during serialization or deserialization.\n\n@param filter filter to add\n@return a reference to this {@code GsonBuilder} object to fulfill the \"Builder\" pattern\n@since 2.9.1",
+                "end_line": 868,
+                "kind": "method",
+                "name": "addReflectionAccessFilter",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+                "qualified_name": "addReflectionAccessFilter",
+                "signature": "@CanIgnoreReturnValue\n  public GsonBuilder addReflectionAccessFilter(ReflectionAccessFilter filter) {\n    Objects.requireNonNull(filter);\n    reflectionFilters.addFirst(filter);\n    return this;\n  }",
+                "start_line": 863,
+                "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:addReflectionAccessFilter:863"
+              },
+              {
+                "children": [],
+                "documentation": "Creates a {@link Gson} instance based on the current configuration. This method is free of\nside-effects to this {@code GsonBuilder} instance and hence can be called multiple times.\n\n@return an instance of Gson configured with the options currently set in this builder",
+                "end_line": 910,
+                "kind": "method",
+                "name": "create",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+                "qualified_name": "create",
+                "signature": "public Gson create() {\n    List<TypeAdapterFactory> factories =\n        new ArrayList<>(this.factories.size() + this.hierarchyFactories.size() + 3);\n    factories.addAll(this.factories);\n    Collections.reverse(factories);\n\n    List<TypeAdapterFactory> hierarchyFactories = new ArrayList<>(this.hierarchyFactories);\n    Collections.reverse(hierarchyFactories);\n    factories.addAll(hierarchyFactories);\n\n    addTypeAdaptersForDate(datePattern, dateStyle, timeStyle, factories);\n\n    return new Gson(\n        excluder,\n        fieldNamingPolicy,\n        new HashMap<>(instanceCreators),\n        serializeNulls,\n        complexMapKeySerialization,\n        generateNonExecutableJson,\n        escapeHtmlChars,\n        formattingStyle,\n        strictness,\n        serializeSpecialFloatingPointValues,\n        useJdkUnsafe,\n        longSerializationPolicy,\n        datePattern,\n        dateStyle,\n        timeStyle,\n        new ArrayList<>(this.factories),\n        new ArrayList<>(this.hierarchyFactories),\n        factories,\n        objectToNumberStrategy,\n        numberToNumberStrategy,\n        new ArrayList<>(reflectionFilters));\n  }",
+                "start_line": 876,
+                "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:create:876"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 946,
+                "kind": "method",
+                "name": "addTypeAdaptersForDate",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+                "qualified_name": "addTypeAdaptersForDate",
+                "signature": "private static void addTypeAdaptersForDate(\n      String datePattern, int dateStyle, int timeStyle, List<TypeAdapterFactory> factories) {\n    TypeAdapterFactory dateAdapterFactory;\n    boolean sqlTypesSupported = SqlTypesSupport.SUPPORTS_SQL_TYPES;\n    TypeAdapterFactory sqlTimestampAdapterFactory = null;\n    TypeAdapterFactory sqlDateAdapterFactory = null;\n\n    if (datePattern != null && !datePattern.trim().isEmpty()) {\n      dateAdapterFactory = DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(datePattern);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(datePattern);\n        sqlDateAdapterFactory = SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(datePattern);\n      }\n    } else if (dateStyle != DateFormat.DEFAULT || timeStyle != DateFormat.DEFAULT) {\n      dateAdapterFactory =\n          DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(dateStyle, timeStyle);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n        sqlDateAdapterFactory =\n            SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n      }\n    } else {\n      return;\n    }\n\n    factories.add(dateAdapterFactory);\n    if (sqlTypesSupported) {\n      factories.add(sqlTimestampAdapterFactory);\n      factories.add(sqlDateAdapterFactory);\n    }\n  }",
+                "start_line": 912,
+                "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:addTypeAdaptersForDate:912"
+              },
+              {
+                "children": [],
+                "documentation": "Sets the indentation string to be repeated for each level of indentation in the encoded\ndocument. If {@code indent.isEmpty()} the encoded document will be compact. Otherwise the\nencoded document will be more human-readable.\n\n<p>This is a convenience method which overwrites any previously {@linkplain\n#setFormattingStyle(FormattingStyle) set formatting style} with either {@link\nFormattingStyle#COMPACT} if the given indent string is empty, or {@link FormattingStyle#PRETTY}\nwith the given indent if not empty.\n\n@param indent a string containing only whitespace.",
+                "end_line": 255,
+                "kind": "method",
+                "name": "setIndent",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "setIndent",
+                "signature": "public final void setIndent(String indent) {\n    if (indent.isEmpty()) {\n      setFormattingStyle(FormattingStyle.COMPACT);\n    } else {\n      setFormattingStyle(FormattingStyle.PRETTY.withIndent(indent));\n    }\n  }",
+                "start_line": 249,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:setIndent:249"
+              },
+              {
+                "children": [],
+                "documentation": "Sets the formatting style to be used in the encoded document.\n\n<p>The formatting style specifies for example the indentation string to be repeated for each\nlevel of indentation, or the newline style, to accommodate various OS styles.\n\n@param formattingStyle the formatting style to use, must not be {@code null}.\n@since $next-version$",
+                "end_line": 283,
+                "kind": "method",
+                "name": "setFormattingStyle",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "setFormattingStyle",
+                "signature": "public final void setFormattingStyle(FormattingStyle formattingStyle) {\n    this.formattingStyle = Objects.requireNonNull(formattingStyle);\n\n    this.formattedComma = \",\";\n    if (this.formattingStyle.usesSpaceAfterSeparators()) {\n      this.formattedColon = \": \";\n\n      // Only add space if no newline is written\n      if (this.formattingStyle.getNewline().isEmpty()) {\n        this.formattedComma = \", \";\n      }\n    } else {\n      this.formattedColon = \":\";\n    }\n\n    this.usesEmptyNewlineAndIndent =\n        this.formattingStyle.getNewline().isEmpty() && this.formattingStyle.getIndent().isEmpty();\n  }",
+                "start_line": 266,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:setFormattingStyle:266"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the pretty printing style used by this writer.\n\n@return the {@code FormattingStyle} that will be used.\n@since $next-version$",
+                "end_line": 293,
+                "kind": "method",
+                "name": "getFormattingStyle",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "getFormattingStyle",
+                "signature": "public final FormattingStyle getFormattingStyle() {\n    return formattingStyle;\n  }",
+                "start_line": 291,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:getFormattingStyle:291"
+              },
+              {
+                "children": [],
+                "documentation": "Sets the strictness of this writer.\n\n@deprecated Please use {@link #setStrictness(Strictness)} instead. {@code\nJsonWriter.setLenient(true)} should be replaced by {@code\nJsonWriter.setStrictness(Strictness.LENIENT)} and {@code JsonWriter.setLenient(false)}\nshould be replaced by {@code JsonWriter.setStrictness(Strictness.LEGACY_STRICT)}.<br>\nHowever, if you used {@code setLenient(false)} before, you might prefer {@link\nStrictness#STRICT} now instead.\n@param lenient whether this writer should be lenient. If true, the strictness is set to {@link\nStrictness#LENIENT}. If false, the strictness is set to {@link Strictness#LEGACY_STRICT}.\n@see #setStrictness(Strictness)",
+                "end_line": 314,
+                "kind": "method",
+                "name": "setLenient",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "setLenient",
+                "signature": "@Deprecated\n  // Don't specify @InlineMe, so caller with `setLenient(false)` becomes aware of new\n  // Strictness.STRICT\n  @SuppressWarnings(\"InlineMeSuggester\")\n  public final void setLenient(boolean lenient) {\n    setStrictness(lenient ? Strictness.LENIENT : Strictness.LEGACY_STRICT);\n  }",
+                "start_line": 308,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:setLenient:308"
+              },
+              {
+                "children": [],
+                "documentation": "Returns true if the {@link Strictness} of this writer is equal to {@link Strictness#LENIENT}.\n\n@see JsonWriter#setStrictness(Strictness)",
+                "end_line": 323,
+                "kind": "method",
+                "name": "isLenient",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "isLenient",
+                "signature": "public boolean isLenient() {\n    return strictness == Strictness.LENIENT;\n  }",
+                "start_line": 321,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:isLenient:321"
+              },
+              {
+                "children": [],
+                "documentation": "Configures how strict this writer is with regard to the syntax rules specified in <a\nhref=\"https://www.ietf.org/rfc/rfc8259.txt\">RFC 8259</a>. By default, {@link\nStrictness#LEGACY_STRICT} is used.\n\n<dl>\n<dt>{@link Strictness#STRICT} &amp; {@link Strictness#LEGACY_STRICT}\n<dd>The behavior of these is currently identical. In these strictness modes, the writer only\nwrites JSON in accordance with RFC 8259.\n<dt>{@link Strictness#LENIENT}\n<dd>This mode relaxes the behavior of the writer to allow the writing of {@link\nDouble#isNaN() NaNs} and {@link Double#isInfinite() infinities}. It also allows writing\nmultiple top level values.\n</dl>\n\n@param strictness the new strictness of this writer. May not be {@code null}.\n@since $next-version$",
+                "end_line": 345,
+                "kind": "method",
+                "name": "setStrictness",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "setStrictness",
+                "signature": "public final void setStrictness(Strictness strictness) {\n    this.strictness = Objects.requireNonNull(strictness);\n  }",
+                "start_line": 343,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:setStrictness:343"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the {@linkplain Strictness strictness} of this writer.\n\n@see #setStrictness(Strictness)\n@since $next-version$",
+                "end_line": 355,
+                "kind": "method",
+                "name": "getStrictness",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "getStrictness",
+                "signature": "public final Strictness getStrictness() {\n    return strictness;\n  }",
+                "start_line": 353,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:getStrictness:353"
+              },
+              {
+                "children": [],
+                "documentation": "Configures this writer to emit JSON that's safe for direct inclusion in HTML and XML documents.\nThis escapes the HTML characters {@code <}, {@code >}, {@code &}, {@code =} and {@code '}\nbefore writing them to the stream. Without this setting, your XML/HTML encoder should replace\nthese characters with the corresponding escape sequences.",
+                "end_line": 365,
+                "kind": "method",
+                "name": "setHtmlSafe",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "setHtmlSafe",
+                "signature": "public final void setHtmlSafe(boolean htmlSafe) {\n    this.htmlSafe = htmlSafe;\n  }",
+                "start_line": 363,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:setHtmlSafe:363"
+              },
+              {
+                "children": [],
+                "documentation": "Returns true if this writer writes JSON that's safe for inclusion in HTML and XML documents.",
+                "end_line": 372,
+                "kind": "method",
+                "name": "isHtmlSafe",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "isHtmlSafe",
+                "signature": "public final boolean isHtmlSafe() {\n    return htmlSafe;\n  }",
+                "start_line": 370,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:isHtmlSafe:370"
+              },
+              {
+                "children": [],
+                "documentation": "Sets whether object members are serialized when their value is null. This has no impact on\narray elements. The default is true.",
+                "end_line": 380,
+                "kind": "method",
+                "name": "setSerializeNulls",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "setSerializeNulls",
+                "signature": "public final void setSerializeNulls(boolean serializeNulls) {\n    this.serializeNulls = serializeNulls;\n  }",
+                "start_line": 378,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:setSerializeNulls:378"
+              },
+              {
+                "children": [],
+                "documentation": "Returns true if object members are serialized when their value is null. This has no impact on\narray elements. The default is true.",
+                "end_line": 388,
+                "kind": "method",
+                "name": "getSerializeNulls",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "getSerializeNulls",
+                "signature": "public final boolean getSerializeNulls() {\n    return serializeNulls;\n  }",
+                "start_line": 386,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:getSerializeNulls:386"
+              },
+              {
+                "children": [],
+                "documentation": "Begins encoding a new array. Each call to this method must be paired with a call to {@link\n#endArray}.\n\n@return this writer.",
+                "end_line": 400,
+                "kind": "method",
+                "name": "beginArray",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "beginArray",
+                "signature": "@CanIgnoreReturnValue\n  public JsonWriter beginArray() throws IOException {\n    writeDeferredName();\n    return openScope(EMPTY_ARRAY, '[');\n  }",
+                "start_line": 396,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:beginArray:396"
+              },
+              {
+                "children": [],
+                "documentation": "Ends encoding the current array.\n\n@return this writer.",
+                "end_line": 410,
+                "kind": "method",
+                "name": "endArray",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "endArray",
+                "signature": "@CanIgnoreReturnValue\n  public JsonWriter endArray() throws IOException {\n    return closeScope(EMPTY_ARRAY, NONEMPTY_ARRAY, ']');",
+                "start_line": 407,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:endArray:407"
+              },
+              {
+                "children": [],
+                "documentation": "Begins encoding a new object. Each call to this method must be paired with a call to {@link\n#endObject}.\n\n@return this writer.",
+                "end_line": 422,
+                "kind": "method",
+                "name": "beginObject",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "beginObject",
+                "signature": "@CanIgnoreReturnValue\n  public JsonWriter beginObject() throws IOException {\n    writeDeferredName();\n    return openScope(EMPTY_OBJECT, '{');\n  }",
+                "start_line": 418,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:beginObject:418"
+              },
+              {
+                "children": [],
+                "documentation": "Ends encoding the current object.\n\n@return this writer.",
+                "end_line": 432,
+                "kind": "method",
+                "name": "endObject",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "endObject",
+                "signature": "@CanIgnoreReturnValue\n  public JsonWriter endObject() throws IOException {\n    return closeScope(EMPTY_OBJECT, NONEMPTY_OBJECT, '}');",
+                "start_line": 429,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:endObject:429"
+              },
+              {
+                "children": [],
+                "documentation": "Enters a new scope by appending any necessary whitespace and the given bracket.",
+                "end_line": 441,
+                "kind": "method",
+                "name": "openScope",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "openScope",
+                "signature": "@CanIgnoreReturnValue\n  private JsonWriter openScope(int empty, char openBracket) throws IOException {\n    beforeValue();\n    push(empty);\n    out.write(openBracket);\n    return this;\n  }",
+                "start_line": 435,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:openScope:435"
+              },
+              {
+                "children": [],
+                "documentation": "Closes the current scope by appending any necessary whitespace and the given bracket.",
+                "end_line": 460,
+                "kind": "method",
+                "name": "closeScope",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "closeScope",
+                "signature": "@CanIgnoreReturnValue\n  private JsonWriter closeScope(int empty, int nonempty, char closeBracket) throws IOException {\n    int context = peek();\n    if (context != nonempty && context != empty) {\n      throw new IllegalStateException(\"Nesting problem.\");\n    }\n    if (deferredName != null) {\n      throw new IllegalStateException(\"Dangling name: \" + deferredName);\n    }\n\n    stackSize--;\n    if (context == nonempty) {\n      newline();\n    }\n    out.write(closeBracket);\n    return this;\n  }",
+                "start_line": 444,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:closeScope:444"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 467,
+                "kind": "method",
+                "name": "push",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "push",
+                "signature": "private void push(int newTop) {\n    if (stackSize == stack.length) {\n      stack = Arrays.copyOf(stack, stackSize * 2);\n    }\n    stack[stackSize++] = newTop;\n  }",
+                "start_line": 462,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:push:462"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the value on the top of the stack.",
+                "end_line": 475,
+                "kind": "method",
+                "name": "peek",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "peek",
+                "signature": "private int peek() {\n    if (stackSize == 0) {\n      throw new IllegalStateException(\"JsonWriter is closed.\");\n    }\n    return stack[stackSize - 1];\n  }",
+                "start_line": 470,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:peek:470"
+              },
+              {
+                "children": [],
+                "documentation": "Replace the value on the top of the stack with the given value.",
+                "end_line": 480,
+                "kind": "method",
+                "name": "replaceTop",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "replaceTop",
+                "signature": "private void replaceTop(int topOfStack) {\n    stack[stackSize - 1] = topOfStack;\n  }",
+                "start_line": 478,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:replaceTop:478"
+              },
+              {
+                "children": [],
+                "documentation": "Encodes the property name.\n\n@param name the name of the forthcoming value. May not be {@code null}.\n@return this writer.",
+                "end_line": 500,
+                "kind": "method",
+                "name": "name",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "name",
+                "signature": "@CanIgnoreReturnValue\n  public JsonWriter name(String name) throws IOException {\n    Objects.requireNonNull(name, \"name == null\");\n    if (deferredName != null) {\n      throw new IllegalStateException(\"Already wrote a name, expecting a value.\");\n    }\n    int context = peek();\n    if (context != EMPTY_OBJECT && context != NONEMPTY_OBJECT) {\n      throw new IllegalStateException(\"Please begin an object before writing a name.\");\n    }\n    deferredName = name;\n    return this;\n  }",
+                "start_line": 488,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:name:488"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 508,
+                "kind": "method",
+                "name": "writeDeferredName",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "writeDeferredName",
+                "signature": "private void writeDeferredName() throws IOException {\n    if (deferredName != null) {\n      beforeName();\n      string(deferredName);\n      deferredName = null;\n    }\n  }",
+                "start_line": 502,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:writeDeferredName:502"
+              },
+              {
+                "children": [],
+                "documentation": "Encodes {@code value}.\n\n@param value the literal string value, or null to encode a null literal.\n@return this writer.",
+                "end_line": 525,
+                "kind": "method",
+                "name": "value",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "value",
+                "signature": "@CanIgnoreReturnValue\n  public JsonWriter value(String value) throws IOException {\n    if (value == null) {\n      return nullValue();\n    }\n    writeDeferredName();\n    beforeValue();\n    string(value);\n    return this;\n  }",
+                "start_line": 516,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:value:516"
+              },
+              {
+                "children": [],
+                "documentation": "Encodes {@code value}.\n\n@return this writer.",
+                "end_line": 538,
+                "kind": "method",
+                "name": "value",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "value",
+                "signature": "@CanIgnoreReturnValue\n  public JsonWriter value(boolean value) throws IOException {\n    writeDeferredName();\n    beforeValue();\n    out.write(value ? \"true\" : \"false\");\n    return this;\n  }",
+                "start_line": 532,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:value:532"
+              },
+              {
+                "children": [],
+                "documentation": "Encodes {@code value}.\n\n@return this writer.\n@since 2.7",
+                "end_line": 555,
+                "kind": "method",
+                "name": "value",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "value",
+                "signature": "@CanIgnoreReturnValue\n  public JsonWriter value(Boolean value) throws IOException {\n    if (value == null) {\n      return nullValue();\n    }\n    writeDeferredName();\n    beforeValue();\n    out.write(value ? \"true\" : \"false\");\n    return this;\n  }",
+                "start_line": 546,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:value:546"
+              },
+              {
+                "children": [],
+                "documentation": "Encodes {@code value}.\n\n@param value a finite value, or if {@link #setStrictness(Strictness) lenient}, also {@link\nFloat#isNaN() NaN} or {@link Float#isInfinite() infinity}.\n@return this writer.\n@throws IllegalArgumentException if the value is NaN or Infinity and this writer is not {@link\n#setStrictness(Strictness) lenient}.\n@since 2.9.1",
+                "end_line": 576,
+                "kind": "method",
+                "name": "value",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "value",
+                "signature": "@CanIgnoreReturnValue\n  public JsonWriter value(float value) throws IOException {\n    writeDeferredName();\n    if (strictness != Strictness.LENIENT && (Float.isNaN(value) || Float.isInfinite(value))) {\n      throw new IllegalArgumentException(\"Numeric values must be finite, but was \" + value);\n    }\n    beforeValue();\n    out.append(Float.toString(value));\n    return this;\n  }",
+                "start_line": 567,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:value:567"
+              },
+              {
+                "children": [],
+                "documentation": "Encodes {@code value}.\n\n@param value a finite value, or if {@link #setStrictness(Strictness) lenient}, also {@link\nDouble#isNaN() NaN} or {@link Double#isInfinite() infinity}.\n@return this writer.\n@throws IllegalArgumentException if the value is NaN or Infinity and this writer is not {@link\n#setStrictness(Strictness) lenient}.",
+                "end_line": 596,
+                "kind": "method",
+                "name": "value",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "value",
+                "signature": "@CanIgnoreReturnValue\n  public JsonWriter value(double value) throws IOException {\n    writeDeferredName();\n    if (strictness != Strictness.LENIENT && (Double.isNaN(value) || Double.isInfinite(value))) {\n      throw new IllegalArgumentException(\"Numeric values must be finite, but was \" + value);\n    }\n    beforeValue();\n    out.append(Double.toString(value));\n    return this;\n  }",
+                "start_line": 587,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:value:587"
+              },
+              {
+                "children": [],
+                "documentation": "Encodes {@code value}.\n\n@return this writer.",
+                "end_line": 609,
+                "kind": "method",
+                "name": "value",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "value",
+                "signature": "@CanIgnoreReturnValue\n  public JsonWriter value(long value) throws IOException {\n    writeDeferredName();\n    beforeValue();\n    out.write(Long.toString(value));\n    return this;\n  }",
+                "start_line": 603,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:value:603"
+              },
+              {
+                "children": [],
+                "documentation": "Encodes {@code value}. The value is written by directly writing the {@link Number#toString()}\nresult to JSON. Implementations must make sure that the result represents a valid JSON number.\n\n@param value a finite value, or if {@link #setStrictness(Strictness) lenient}, also {@link\nDouble#isNaN() NaN} or {@link Double#isInfinite() infinity}.\n@return this writer.\n@throws IllegalArgumentException if the value is NaN or Infinity and this writer is not {@link\n#setStrictness(Strictness) lenient}; or if the {@code toString()} result is not a valid\nJSON number.",
+                "end_line": 647,
+                "kind": "method",
+                "name": "value",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "value",
+                "signature": "@CanIgnoreReturnValue\n  public JsonWriter value(Number value) throws IOException {\n    if (value == null) {\n      return nullValue();\n    }\n\n    writeDeferredName();\n    String string = value.toString();\n    if (string.equals(\"-Infinity\") || string.equals(\"Infinity\") || string.equals(\"NaN\")) {\n      if (strictness != Strictness.LENIENT) {\n        throw new IllegalArgumentException(\"Numeric values must be finite, but was \" + string);\n      }\n    } else {\n      Class<? extends Number> numberClass = value.getClass();\n      // Validate that string is valid before writing it directly to JSON output\n      if (!isTrustedNumberType(numberClass)\n          && !VALID_JSON_NUMBER_PATTERN.matcher(string).matches()) {\n        throw new IllegalArgumentException(\n            \"String created by \" + numberClass + \" is not a valid JSON number: \" + string);\n      }\n    }\n\n    beforeValue();\n    out.append(string);\n    return this;\n  }",
+                "start_line": 622,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:value:622"
+              },
+              {
+                "children": [],
+                "documentation": "Encodes {@code null}.\n\n@return this writer.",
+                "end_line": 667,
+                "kind": "method",
+                "name": "nullValue",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "nullValue",
+                "signature": "@CanIgnoreReturnValue\n  public JsonWriter nullValue() throws IOException {\n    if (deferredName != null) {\n      if (serializeNulls) {\n        writeDeferredName();\n      } else {\n        deferredName = null;\n        return this; // skip the name and the value\n      }\n    }\n    beforeValue();\n    out.write(\"null\");\n    return this;\n  }",
+                "start_line": 654,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:nullValue:654"
+              },
+              {
+                "children": [],
+                "documentation": "Writes {@code value} directly to the writer without quoting or escaping. This might not be\nsupported by all implementations, if not supported an {@code UnsupportedOperationException} is\nthrown.\n\n@param value the literal string value, or null to encode a null literal.\n@return this writer.\n@throws UnsupportedOperationException if this writer does not support writing raw JSON values.\n@since 2.4",
+                "end_line": 688,
+                "kind": "method",
+                "name": "jsonValue",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "jsonValue",
+                "signature": "@CanIgnoreReturnValue\n  public JsonWriter jsonValue(String value) throws IOException {\n    if (value == null) {\n      return nullValue();\n    }\n    writeDeferredName();\n    beforeValue();\n    out.append(value);\n    return this;\n  }",
+                "start_line": 679,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:jsonValue:679"
+              },
+              {
+                "children": [],
+                "documentation": "Ensures all buffered data is written to the underlying {@link Writer} and flushes that writer.",
+                "end_line": 699,
+                "kind": "method",
+                "name": "flush",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "flush",
+                "signature": "@Override\n  public void flush() throws IOException {\n    if (stackSize == 0) {\n      throw new IllegalStateException(\"JsonWriter is closed.\");\n    }\n    out.flush();\n  }",
+                "start_line": 693,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:flush:693"
+              },
+              {
+                "children": [],
+                "documentation": "Flushes and closes this writer and the underlying {@link Writer}.\n\n@throws IOException if the JSON document is incomplete.",
+                "end_line": 715,
+                "kind": "method",
+                "name": "close",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "close",
+                "signature": "@Override\n  public void close() throws IOException {\n    out.close();\n\n    int size = stackSize;\n    if (size > 1 || (size == 1 && stack[size - 1] != NONEMPTY_DOCUMENT)) {\n      throw new IOException(\"Incomplete document\");\n    }\n    stackSize = 0;\n  }",
+                "start_line": 706,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:close:706"
+              },
+              {
+                "children": [],
+                "documentation": "Returns whether the {@code toString()} of {@code c} can be trusted to return a valid JSON\nnumber.",
+                "end_line": 734,
+                "kind": "method",
+                "name": "isTrustedNumberType",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "isTrustedNumberType",
+                "signature": "private static boolean isTrustedNumberType(Class<? extends Number> c) {\n    // Note: Don't consider LazilyParsedNumber trusted because it could contain\n    // an arbitrary malformed string\n    return c == Integer.class\n        || c == Long.class\n        || c == Double.class\n        || c == Float.class\n        || c == Byte.class\n        || c == Short.class\n        || c == BigDecimal.class\n        || c == BigInteger.class\n        || c == AtomicInteger.class\n        || c == AtomicLong.class;\n  }",
+                "start_line": 721,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:isTrustedNumberType:721"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 766,
+                "kind": "method",
+                "name": "string",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "string",
+                "signature": "private void string(String value) throws IOException {\n    String[] replacements = htmlSafe ? HTML_SAFE_REPLACEMENT_CHARS : REPLACEMENT_CHARS;\n    out.write('\\\"');\n    int last = 0;\n    int length = value.length();\n    for (int i = 0; i < length; i++) {\n      char c = value.charAt(i);\n      String replacement;\n      if (c < 128) {\n        replacement = replacements[c];\n        if (replacement == null) {\n          continue;\n        }\n      } else if (c == '\\u2028') {\n        replacement = \"\\\\u2028\";\n      } else if (c == '\\u2029') {\n        replacement = \"\\\\u2029\";\n      } else {\n        continue;\n      }\n      if (last < i) {\n        out.write(value, last, i - last);\n      }\n      out.write(replacement);\n      last = i + 1;\n    }\n    if (last < length) {\n      out.write(value, last, length - last);\n    }\n    out.write('\\\"');\n  }",
+                "start_line": 736,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:string:736"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 777,
+                "kind": "method",
+                "name": "newline",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "newline",
+                "signature": "private void newline() throws IOException {\n    if (usesEmptyNewlineAndIndent) {\n      return;\n    }\n\n    out.write(formattingStyle.getNewline());\n    for (int i = 1, size = stackSize; i < size; i++) {\n      out.write(formattingStyle.getIndent());\n    }\n  }",
+                "start_line": 768,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:newline:768"
+              },
+              {
+                "children": [],
+                "documentation": "Inserts any necessary separators and whitespace before a name. Also adjusts the stack to expect\nthe name's value.",
+                "end_line": 792,
+                "kind": "method",
+                "name": "beforeName",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "beforeName",
+                "signature": "private void beforeName() throws IOException {\n    int context = peek();\n    if (context == NONEMPTY_OBJECT) { // first in object\n      out.write(formattedComma);\n    } else if (context != EMPTY_OBJECT) { // not in an object!\n      throw new IllegalStateException(\"Nesting problem.\");\n    }\n    newline();\n    replaceTop(DANGLING_NAME);\n  }",
+                "start_line": 783,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:beforeName:783"
+              },
+              {
+                "children": [],
+                "documentation": "Inserts any necessary separators and whitespace before a literal value, inline array, or inline\nobject. Also adjusts the stack to expect either a closing bracket or another element.",
+                "end_line": 828,
+                "kind": "method",
+                "name": "beforeValue",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "qualified_name": "beforeValue",
+                "signature": "@SuppressWarnings(\"fallthrough\")\n  private void beforeValue() throws IOException {\n    switch (peek()) {\n      case NONEMPTY_DOCUMENT:\n        if (strictness != Strictness.LENIENT) {\n          throw new IllegalStateException(\"JSON must have only one top-level value.\");\n        }\n        // fall-through\n      case EMPTY_DOCUMENT: // first in document\n        replaceTop(NONEMPTY_DOCUMENT);\n        break;\n\n      case EMPTY_ARRAY: // first in array\n        replaceTop(NONEMPTY_ARRAY);\n        newline();\n        break;\n\n      case NONEMPTY_ARRAY: // another in array\n        out.append(formattedComma);\n        newline();\n        break;\n\n      case DANGLING_NAME: // value for name\n        out.append(formattedColon);\n        replaceTop(NONEMPTY_OBJECT);\n        break;\n\n      default:\n        throw new IllegalStateException(\"Nesting problem.\");\n    }\n  }",
+                "start_line": 798,
+                "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:beforeValue:798"
+              },
+              {
+                "children": [],
+                "documentation": "Creates a {@link FormattingStyle} with the specified newline setting.\n\n<p>It can be used to accommodate certain OS convention, for example hardcode {@code \"\\n\"} for\nLinux and macOS, {@code \"\\r\\n\"} for Windows, or call {@link java.lang.System#lineSeparator()}\nto match the current OS.\n\n<p>Only combinations of {@code \\n} and {@code \\r} are allowed.\n\n@param newline the string value that will be used as newline.\n@return a newly created {@link FormattingStyle}",
+                "end_line": 96,
+                "kind": "method",
+                "name": "withNewline",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/FormattingStyle.java",
+                "qualified_name": "withNewline",
+                "signature": "public FormattingStyle withNewline(String newline) {\n    return new FormattingStyle(newline, this.indent, this.spaceAfterSeparators);\n  }",
+                "start_line": 94,
+                "symbol_id": "gson/src/main/java/com/google/gson/FormattingStyle.java#method:withNewline:94"
+              },
+              {
+                "children": [],
+                "documentation": "Creates a {@link FormattingStyle} with the specified indent string.\n\n<p>Only combinations of spaces and tabs allowed in indent.\n\n@param indent the string value that will be used as indent.\n@return a newly created {@link FormattingStyle}",
+                "end_line": 108,
+                "kind": "method",
+                "name": "withIndent",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/FormattingStyle.java",
+                "qualified_name": "withIndent",
+                "signature": "public FormattingStyle withIndent(String indent) {\n    return new FormattingStyle(this.newline, indent, this.spaceAfterSeparators);\n  }",
+                "start_line": 106,
+                "symbol_id": "gson/src/main/java/com/google/gson/FormattingStyle.java#method:withIndent:106"
+              },
+              {
+                "children": [],
+                "documentation": "Creates a {@link FormattingStyle} which either uses a space after the separators {@code ','}\nand {@code ':'} in the JSON output, or not.\n\n<p>This setting has no effect on the {@linkplain #withNewline(String) configured newline}. If a\nnon-empty newline is configured, it will always be added after {@code ','} and no space is\nadded after the {@code ','} in that case.\n\n@param spaceAfterSeparators whether to output a space after {@code ','} and {@code ':'}.\n@return a newly created {@link FormattingStyle}",
+                "end_line": 123,
+                "kind": "method",
+                "name": "withSpaceAfterSeparators",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/FormattingStyle.java",
+                "qualified_name": "withSpaceAfterSeparators",
+                "signature": "public FormattingStyle withSpaceAfterSeparators(boolean spaceAfterSeparators) {\n    return new FormattingStyle(this.newline, this.indent, spaceAfterSeparators);\n  }",
+                "start_line": 121,
+                "symbol_id": "gson/src/main/java/com/google/gson/FormattingStyle.java#method:withSpaceAfterSeparators:121"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the string value that will be used as a newline.\n\n@return the newline value.",
+                "end_line": 132,
+                "kind": "method",
+                "name": "getNewline",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/FormattingStyle.java",
+                "qualified_name": "getNewline",
+                "signature": "public String getNewline() {\n    return this.newline;\n  }",
+                "start_line": 130,
+                "symbol_id": "gson/src/main/java/com/google/gson/FormattingStyle.java#method:getNewline:130"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the string value that will be used as indent.\n\n@return the indent value.",
+                "end_line": 141,
+                "kind": "method",
+                "name": "getIndent",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/FormattingStyle.java",
+                "qualified_name": "getIndent",
+                "signature": "public String getIndent() {\n    return this.indent;\n  }",
+                "start_line": 139,
+                "symbol_id": "gson/src/main/java/com/google/gson/FormattingStyle.java#method:getIndent:139"
+              },
+              {
+                "children": [],
+                "documentation": "Returns whether a space will be used after {@code ','} and {@code ':'}.",
+                "end_line": 146,
+                "kind": "method",
+                "name": "usesSpaceAfterSeparators",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/FormattingStyle.java",
+                "qualified_name": "usesSpaceAfterSeparators",
+                "signature": "public boolean usesSpaceAfterSeparators() {\n    return this.spaceAfterSeparators;\n  }",
+                "start_line": 144,
+                "symbol_id": "gson/src/main/java/com/google/gson/FormattingStyle.java#method:usesSpaceAfterSeparators:144"
+              },
+              {
+                "children": [],
+                "documentation": "Platform type detection is based on Moshi's Util.isPlatformType(Class)\nSee\nhttps://github.com/square/moshi/blob/3c108919ee1cce88a433ffda04eeeddc0341eae7/moshi/src/main/java/com/squareup/moshi/internal/Util.java#L141",
+                "end_line": 35,
+                "kind": "method",
+                "name": "isJavaType",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java",
+                "qualified_name": "isJavaType",
+                "signature": "public static boolean isJavaType(Class<?> c) {\n    return isJavaType(c.getName());\n  }",
+                "start_line": 33,
+                "symbol_id": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java#method:isJavaType:33"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 39,
+                "kind": "method",
+                "name": "isJavaType",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java",
+                "qualified_name": "isJavaType",
+                "signature": "private static boolean isJavaType(String className) {\n    return className.startsWith(\"java.\") || className.startsWith(\"javax.\");\n  }",
+                "start_line": 37,
+                "symbol_id": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java#method:isJavaType:37"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 43,
+                "kind": "method",
+                "name": "isAndroidType",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java",
+                "qualified_name": "isAndroidType",
+                "signature": "public static boolean isAndroidType(Class<?> c) {\n    return isAndroidType(c.getName());\n  }",
+                "start_line": 41,
+                "symbol_id": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java#method:isAndroidType:41"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 49,
+                "kind": "method",
+                "name": "isAndroidType",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java",
+                "qualified_name": "isAndroidType",
+                "signature": "private static boolean isAndroidType(String className) {\n    return className.startsWith(\"android.\")\n        || className.startsWith(\"androidx.\")\n        || isJavaType(className);\n  }",
+                "start_line": 45,
+                "symbol_id": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java#method:isAndroidType:45"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 57,
+                "kind": "method",
+                "name": "isAnyPlatformType",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java",
+                "qualified_name": "isAnyPlatformType",
+                "signature": "public static boolean isAnyPlatformType(Class<?> c) {\n    String className = c.getName();\n    return isAndroidType(className) // Covers Android and Java\n        || className.startsWith(\"kotlin.\")\n        || className.startsWith(\"kotlinx.\")\n        || className.startsWith(\"scala.\");\n  }",
+                "start_line": 51,
+                "symbol_id": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java#method:isAnyPlatformType:51"
+              },
+              {
+                "children": [],
+                "documentation": "Gets the result of applying all filters until the first one returns a result other than {@link\nFilterResult#INDECISIVE}, or {@link FilterResult#ALLOW} if the list of filters is empty or all\nreturned {@code INDECISIVE}.",
+                "end_line": 73,
+                "kind": "method",
+                "name": "getFilterResult",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java",
+                "qualified_name": "getFilterResult",
+                "signature": "public static FilterResult getFilterResult(\n      List<ReflectionAccessFilter> reflectionFilters, Class<?> c) {\n    for (ReflectionAccessFilter filter : reflectionFilters) {\n      FilterResult result = filter.check(c);\n      if (result != FilterResult.INDECISIVE) {\n        return result;\n      }\n    }\n    return FilterResult.ALLOW;\n  }",
+                "start_line": 64,
+                "symbol_id": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java#method:getFilterResult:64"
+              },
+              {
+                "children": [],
+                "documentation": "See {@link AccessibleObject#canAccess(Object)} (Java >= 9)",
+                "end_line": 78,
+                "kind": "method",
+                "name": "canAccess",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java",
+                "qualified_name": "canAccess",
+                "signature": "public static boolean canAccess(AccessibleObject accessibleObject, Object object) {\n    return AccessChecker.INSTANCE.canAccess(accessibleObject, object);\n  }",
+                "start_line": 76,
+                "symbol_id": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java#method:canAccess:76"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 99,
+                "kind": "method",
+                "name": "canAccess",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java",
+                "qualified_name": "canAccess",
+                "signature": "@Override\n                public boolean canAccess(AccessibleObject accessibleObject, Object object) {\n                  try {\n                    return (Boolean) canAccessMethod.invoke(accessibleObject, object);\n                  } catch (Exception e) {\n                    throw new RuntimeException(\"Failed invoking canAccess\", e);\n                  }\n                }",
+                "start_line": 92,
+                "symbol_id": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java#method:canAccess:92"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 113,
+                "kind": "method",
+                "name": "canAccess",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java",
+                "qualified_name": "canAccess",
+                "signature": "@Override\n              public boolean canAccess(AccessibleObject accessibleObject, Object object) {\n                // Cannot determine whether object can be accessed, so assume it can be accessed\n                return true;\n              }",
+                "start_line": 109,
+                "symbol_id": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java#method:canAccess:109"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 119,
+                "kind": "method",
+                "name": "canAccess",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java",
+                "qualified_name": "canAccess",
+                "signature": "public abstract boolean canAccess(AccessibleObject accessibleObject, Object object);",
+                "start_line": 119,
+                "symbol_id": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java#method:canAccess:119"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 119,
+                "kind": "method",
+                "name": "check",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/ReflectionAccessFilter.java",
+                "qualified_name": "check",
+                "signature": "@Override\n        public FilterResult check(Class<?> rawClass) {\n          return ReflectionAccessFilterHelper.isJavaType(rawClass)\n              ? FilterResult.BLOCK_INACCESSIBLE\n              : FilterResult.INDECISIVE;\n        }",
+                "start_line": 114,
+                "symbol_id": "gson/src/main/java/com/google/gson/ReflectionAccessFilter.java#method:check:114"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 124,
+                "kind": "method",
+                "name": "toString",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/ReflectionAccessFilter.java",
+                "qualified_name": "toString",
+                "signature": "@Override\n        public String toString() {\n          return \"ReflectionAccessFilter#BLOCK_INACCESSIBLE_JAVA\";\n        }",
+                "start_line": 121,
+                "symbol_id": "gson/src/main/java/com/google/gson/ReflectionAccessFilter.java#method:toString:121"
+              }
+            ],
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": null,
+                "workspace_id": "java_001_ctx16k"
+              },
+              "durationMs": 7,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "list_symbols",
+              "transport": "in_memory"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 3534,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-mini",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 4685,
+          "metadata": {},
+          "name": "strategy.local_mcp.execute",
+          "type": "strategy.local_mcp.execute"
+        },
+        {
+          "duration_ms": 4685,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 21,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": 0,
+        "cachedInputTokens": 0,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 1,
+        "inputTokens": 13940,
+        "loopControlDurationMsEstimated": 14,
+        "mcpToolCalls": 1,
+        "modelCalls": 2,
+        "modelDurationMs": 4664,
+        "outputTokens": 339,
+        "promptChars": 1110,
+        "questionTokensEstimated": 148,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 0,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 2,
+        "strategyDurationMs": 4685,
+        "taskStatementChars": 937,
+        "toolCalls": 1,
+        "toolDurationMs": 7,
+        "totalDurationMs": 4685,
+        "totalTokens": 14279,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779729418.0,
+        "conversation": null,
+        "created_at": 1779729418.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_0571127ba9e10c5e006a14840a42f08190a79fb6ed16d15cef",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "3955785203"
+        },
+        "model": "gpt-5.4-mini-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "arguments": "{\"workspace_id\":\"java_001_ctx16k\",\"path\":null,\"kind\":\"function\"}",
+            "call_id": "call_zjXfsKBgUMfZHQmWby87SadJ",
+            "id": "fc_0571127ba9e10c5e006a14840aa9108190a41325597c465b89",
+            "name": "list_symbols",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 503,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 32,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 535
+        },
+        "user": null
+      },
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779729422.0,
+        "conversation": null,
+        "created_at": 1779729419.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_0571127ba9e10c5e006a14840b71d48190abf29c57984309da",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "3955785203"
+        },
+        "model": "gpt-5.4-mini-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "logprobs": [],
+                "text": "```java\nprivate static void addTypeAdaptersForDate(\n      String datePattern, int dateStyle, int timeStyle, List<TypeAdapterFactory> factories) {\n    TypeAdapterFactory dateAdapterFactory;\n    boolean sqlTypesSupported = SqlTypesSupport.SUPPORTS_SQL_TYPES;\n    TypeAdapterFactory sqlTimestampAdapterFactory = null;\n    TypeAdapterFactory sqlDateAdapterFactory = null;\n\n    if (datePattern != null && !datePattern.trim().isEmpty()) {\n      dateAdapterFactory = DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(datePattern);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(datePattern);\n        sqlDateAdapterFactory = SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(datePattern);\n      }\n    } else if (dateStyle != DateFormat.DEFAULT || timeStyle != DateFormat.DEFAULT) {\n      dateAdapterFactory =\n          DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(dateStyle, timeStyle);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n        sqlDateAdapterFactory =\n            SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n      }\n    } else {\n      return;\n    }\n\n    factories.add(dateAdapterFactory);\n    if (sqlTypesSupported) {\n      factories.add(sqlTimestampAdapterFactory);\n      factories.add(sqlDateAdapterFactory);\n    }\n  }\n```",
+                "type": "output_text"
+              }
+            ],
+            "id": "msg_0571127ba9e10c5e006a14840c77d08190856cc3b5ca3a5702",
+            "phase": "final_answer",
+            "role": "assistant",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 13437,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 307,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 13744
+        },
+        "user": null
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "kind": "function",
+          "path": null,
+          "workspace_id": "java_001_ctx16k"
+        },
+        "durationMs": 7,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "list_symbols",
+        "transport": "in_memory"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "kind": "function",
+          "path": null,
+          "workspace_id": "java_001_ctx16k"
+        },
+        "id": "call_zjXfsKBgUMfZHQmWby87SadJ",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "Adds a reflection access filter. A reflection access filter prevents Gson from using reflection\nfor the serialization and deserialization of certain classes. The logic in the filter specifies\nwhich classes those are.\n\n<p>Filters will be invoked in reverse registration order, that is, the most recently added\nfilter will be invoked first.\n\n<p>By default Gson has no filters configured and will try to use reflection for all classes for\nwhich no {@link TypeAdapter} has been registered, and for which no built-in Gson {@code\nTypeAdapter} exists.\n\n<p>The created Gson instance might only use an access filter once for a class or its members\nand cache the result. It is not guaranteed that the filter will be used again every time a\nclass or its members are accessed during serialization or deserialization.\n\n@param filter filter to add\n@return a reference to this {@code GsonBuilder} object to fulfill the \"Builder\" pattern\n@since 2.9.1",
+            "end_line": 868,
+            "kind": "method",
+            "name": "addReflectionAccessFilter",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+            "qualified_name": "addReflectionAccessFilter",
+            "signature": "@CanIgnoreReturnValue\n  public GsonBuilder addReflectionAccessFilter(ReflectionAccessFilter filter) {\n    Objects.requireNonNull(filter);\n    reflectionFilters.addFirst(filter);\n    return this;\n  }",
+            "start_line": 863,
+            "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:addReflectionAccessFilter:863"
+          },
+          {
+            "children": [],
+            "documentation": "Creates a {@link Gson} instance based on the current configuration. This method is free of\nside-effects to this {@code GsonBuilder} instance and hence can be called multiple times.\n\n@return an instance of Gson configured with the options currently set in this builder",
+            "end_line": 910,
+            "kind": "method",
+            "name": "create",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+            "qualified_name": "create",
+            "signature": "public Gson create() {\n    List<TypeAdapterFactory> factories =\n        new ArrayList<>(this.factories.size() + this.hierarchyFactories.size() + 3);\n    factories.addAll(this.factories);\n    Collections.reverse(factories);\n\n    List<TypeAdapterFactory> hierarchyFactories = new ArrayList<>(this.hierarchyFactories);\n    Collections.reverse(hierarchyFactories);\n    factories.addAll(hierarchyFactories);\n\n    addTypeAdaptersForDate(datePattern, dateStyle, timeStyle, factories);\n\n    return new Gson(\n        excluder,\n        fieldNamingPolicy,\n        new HashMap<>(instanceCreators),\n        serializeNulls,\n        complexMapKeySerialization,\n        generateNonExecutableJson,\n        escapeHtmlChars,\n        formattingStyle,\n        strictness,\n        serializeSpecialFloatingPointValues,\n        useJdkUnsafe,\n        longSerializationPolicy,\n        datePattern,\n        dateStyle,\n        timeStyle,\n        new ArrayList<>(this.factories),\n        new ArrayList<>(this.hierarchyFactories),\n        factories,\n        objectToNumberStrategy,\n        numberToNumberStrategy,\n        new ArrayList<>(reflectionFilters));\n  }",
+            "start_line": 876,
+            "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:create:876"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 946,
+            "kind": "method",
+            "name": "addTypeAdaptersForDate",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+            "qualified_name": "addTypeAdaptersForDate",
+            "signature": "private static void addTypeAdaptersForDate(\n      String datePattern, int dateStyle, int timeStyle, List<TypeAdapterFactory> factories) {\n    TypeAdapterFactory dateAdapterFactory;\n    boolean sqlTypesSupported = SqlTypesSupport.SUPPORTS_SQL_TYPES;\n    TypeAdapterFactory sqlTimestampAdapterFactory = null;\n    TypeAdapterFactory sqlDateAdapterFactory = null;\n\n    if (datePattern != null && !datePattern.trim().isEmpty()) {\n      dateAdapterFactory = DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(datePattern);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(datePattern);\n        sqlDateAdapterFactory = SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(datePattern);\n      }\n    } else if (dateStyle != DateFormat.DEFAULT || timeStyle != DateFormat.DEFAULT) {\n      dateAdapterFactory =\n          DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(dateStyle, timeStyle);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n        sqlDateAdapterFactory =\n            SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n      }\n    } else {\n      return;\n    }\n\n    factories.add(dateAdapterFactory);\n    if (sqlTypesSupported) {\n      factories.add(sqlTimestampAdapterFactory);\n      factories.add(sqlDateAdapterFactory);\n    }\n  }",
+            "start_line": 912,
+            "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:addTypeAdaptersForDate:912"
+          },
+          {
+            "children": [],
+            "documentation": "Sets the indentation string to be repeated for each level of indentation in the encoded\ndocument. If {@code indent.isEmpty()} the encoded document will be compact. Otherwise the\nencoded document will be more human-readable.\n\n<p>This is a convenience method which overwrites any previously {@linkplain\n#setFormattingStyle(FormattingStyle) set formatting style} with either {@link\nFormattingStyle#COMPACT} if the given indent string is empty, or {@link FormattingStyle#PRETTY}\nwith the given indent if not empty.\n\n@param indent a string containing only whitespace.",
+            "end_line": 255,
+            "kind": "method",
+            "name": "setIndent",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "setIndent",
+            "signature": "public final void setIndent(String indent) {\n    if (indent.isEmpty()) {\n      setFormattingStyle(FormattingStyle.COMPACT);\n    } else {\n      setFormattingStyle(FormattingStyle.PRETTY.withIndent(indent));\n    }\n  }",
+            "start_line": 249,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:setIndent:249"
+          },
+          {
+            "children": [],
+            "documentation": "Sets the formatting style to be used in the encoded document.\n\n<p>The formatting style specifies for example the indentation string to be repeated for each\nlevel of indentation, or the newline style, to accommodate various OS styles.\n\n@param formattingStyle the formatting style to use, must not be {@code null}.\n@since $next-version$",
+            "end_line": 283,
+            "kind": "method",
+            "name": "setFormattingStyle",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "setFormattingStyle",
+            "signature": "public final void setFormattingStyle(FormattingStyle formattingStyle) {\n    this.formattingStyle = Objects.requireNonNull(formattingStyle);\n\n    this.formattedComma = \",\";\n    if (this.formattingStyle.usesSpaceAfterSeparators()) {\n      this.formattedColon = \": \";\n\n      // Only add space if no newline is written\n      if (this.formattingStyle.getNewline().isEmpty()) {\n        this.formattedComma = \", \";\n      }\n    } else {\n      this.formattedColon = \":\";\n    }\n\n    this.usesEmptyNewlineAndIndent =\n        this.formattingStyle.getNewline().isEmpty() && this.formattingStyle.getIndent().isEmpty();\n  }",
+            "start_line": 266,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:setFormattingStyle:266"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the pretty printing style used by this writer.\n\n@return the {@code FormattingStyle} that will be used.\n@since $next-version$",
+            "end_line": 293,
+            "kind": "method",
+            "name": "getFormattingStyle",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "getFormattingStyle",
+            "signature": "public final FormattingStyle getFormattingStyle() {\n    return formattingStyle;\n  }",
+            "start_line": 291,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:getFormattingStyle:291"
+          },
+          {
+            "children": [],
+            "documentation": "Sets the strictness of this writer.\n\n@deprecated Please use {@link #setStrictness(Strictness)} instead. {@code\nJsonWriter.setLenient(true)} should be replaced by {@code\nJsonWriter.setStrictness(Strictness.LENIENT)} and {@code JsonWriter.setLenient(false)}\nshould be replaced by {@code JsonWriter.setStrictness(Strictness.LEGACY_STRICT)}.<br>\nHowever, if you used {@code setLenient(false)} before, you might prefer {@link\nStrictness#STRICT} now instead.\n@param lenient whether this writer should be lenient. If true, the strictness is set to {@link\nStrictness#LENIENT}. If false, the strictness is set to {@link Strictness#LEGACY_STRICT}.\n@see #setStrictness(Strictness)",
+            "end_line": 314,
+            "kind": "method",
+            "name": "setLenient",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "setLenient",
+            "signature": "@Deprecated\n  // Don't specify @InlineMe, so caller with `setLenient(false)` becomes aware of new\n  // Strictness.STRICT\n  @SuppressWarnings(\"InlineMeSuggester\")\n  public final void setLenient(boolean lenient) {\n    setStrictness(lenient ? Strictness.LENIENT : Strictness.LEGACY_STRICT);\n  }",
+            "start_line": 308,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:setLenient:308"
+          },
+          {
+            "children": [],
+            "documentation": "Returns true if the {@link Strictness} of this writer is equal to {@link Strictness#LENIENT}.\n\n@see JsonWriter#setStrictness(Strictness)",
+            "end_line": 323,
+            "kind": "method",
+            "name": "isLenient",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "isLenient",
+            "signature": "public boolean isLenient() {\n    return strictness == Strictness.LENIENT;\n  }",
+            "start_line": 321,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:isLenient:321"
+          },
+          {
+            "children": [],
+            "documentation": "Configures how strict this writer is with regard to the syntax rules specified in <a\nhref=\"https://www.ietf.org/rfc/rfc8259.txt\">RFC 8259</a>. By default, {@link\nStrictness#LEGACY_STRICT} is used.\n\n<dl>\n<dt>{@link Strictness#STRICT} &amp; {@link Strictness#LEGACY_STRICT}\n<dd>The behavior of these is currently identical. In these strictness modes, the writer only\nwrites JSON in accordance with RFC 8259.\n<dt>{@link Strictness#LENIENT}\n<dd>This mode relaxes the behavior of the writer to allow the writing of {@link\nDouble#isNaN() NaNs} and {@link Double#isInfinite() infinities}. It also allows writing\nmultiple top level values.\n</dl>\n\n@param strictness the new strictness of this writer. May not be {@code null}.\n@since $next-version$",
+            "end_line": 345,
+            "kind": "method",
+            "name": "setStrictness",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "setStrictness",
+            "signature": "public final void setStrictness(Strictness strictness) {\n    this.strictness = Objects.requireNonNull(strictness);\n  }",
+            "start_line": 343,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:setStrictness:343"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the {@linkplain Strictness strictness} of this writer.\n\n@see #setStrictness(Strictness)\n@since $next-version$",
+            "end_line": 355,
+            "kind": "method",
+            "name": "getStrictness",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "getStrictness",
+            "signature": "public final Strictness getStrictness() {\n    return strictness;\n  }",
+            "start_line": 353,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:getStrictness:353"
+          },
+          {
+            "children": [],
+            "documentation": "Configures this writer to emit JSON that's safe for direct inclusion in HTML and XML documents.\nThis escapes the HTML characters {@code <}, {@code >}, {@code &}, {@code =} and {@code '}\nbefore writing them to the stream. Without this setting, your XML/HTML encoder should replace\nthese characters with the corresponding escape sequences.",
+            "end_line": 365,
+            "kind": "method",
+            "name": "setHtmlSafe",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "setHtmlSafe",
+            "signature": "public final void setHtmlSafe(boolean htmlSafe) {\n    this.htmlSafe = htmlSafe;\n  }",
+            "start_line": 363,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:setHtmlSafe:363"
+          },
+          {
+            "children": [],
+            "documentation": "Returns true if this writer writes JSON that's safe for inclusion in HTML and XML documents.",
+            "end_line": 372,
+            "kind": "method",
+            "name": "isHtmlSafe",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "isHtmlSafe",
+            "signature": "public final boolean isHtmlSafe() {\n    return htmlSafe;\n  }",
+            "start_line": 370,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:isHtmlSafe:370"
+          },
+          {
+            "children": [],
+            "documentation": "Sets whether object members are serialized when their value is null. This has no impact on\narray elements. The default is true.",
+            "end_line": 380,
+            "kind": "method",
+            "name": "setSerializeNulls",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "setSerializeNulls",
+            "signature": "public final void setSerializeNulls(boolean serializeNulls) {\n    this.serializeNulls = serializeNulls;\n  }",
+            "start_line": 378,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:setSerializeNulls:378"
+          },
+          {
+            "children": [],
+            "documentation": "Returns true if object members are serialized when their value is null. This has no impact on\narray elements. The default is true.",
+            "end_line": 388,
+            "kind": "method",
+            "name": "getSerializeNulls",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "getSerializeNulls",
+            "signature": "public final boolean getSerializeNulls() {\n    return serializeNulls;\n  }",
+            "start_line": 386,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:getSerializeNulls:386"
+          },
+          {
+            "children": [],
+            "documentation": "Begins encoding a new array. Each call to this method must be paired with a call to {@link\n#endArray}.\n\n@return this writer.",
+            "end_line": 400,
+            "kind": "method",
+            "name": "beginArray",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "beginArray",
+            "signature": "@CanIgnoreReturnValue\n  public JsonWriter beginArray() throws IOException {\n    writeDeferredName();\n    return openScope(EMPTY_ARRAY, '[');\n  }",
+            "start_line": 396,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:beginArray:396"
+          },
+          {
+            "children": [],
+            "documentation": "Ends encoding the current array.\n\n@return this writer.",
+            "end_line": 410,
+            "kind": "method",
+            "name": "endArray",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "endArray",
+            "signature": "@CanIgnoreReturnValue\n  public JsonWriter endArray() throws IOException {\n    return closeScope(EMPTY_ARRAY, NONEMPTY_ARRAY, ']');",
+            "start_line": 407,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:endArray:407"
+          },
+          {
+            "children": [],
+            "documentation": "Begins encoding a new object. Each call to this method must be paired with a call to {@link\n#endObject}.\n\n@return this writer.",
+            "end_line": 422,
+            "kind": "method",
+            "name": "beginObject",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "beginObject",
+            "signature": "@CanIgnoreReturnValue\n  public JsonWriter beginObject() throws IOException {\n    writeDeferredName();\n    return openScope(EMPTY_OBJECT, '{');\n  }",
+            "start_line": 418,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:beginObject:418"
+          },
+          {
+            "children": [],
+            "documentation": "Ends encoding the current object.\n\n@return this writer.",
+            "end_line": 432,
+            "kind": "method",
+            "name": "endObject",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "endObject",
+            "signature": "@CanIgnoreReturnValue\n  public JsonWriter endObject() throws IOException {\n    return closeScope(EMPTY_OBJECT, NONEMPTY_OBJECT, '}');",
+            "start_line": 429,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:endObject:429"
+          },
+          {
+            "children": [],
+            "documentation": "Enters a new scope by appending any necessary whitespace and the given bracket.",
+            "end_line": 441,
+            "kind": "method",
+            "name": "openScope",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "openScope",
+            "signature": "@CanIgnoreReturnValue\n  private JsonWriter openScope(int empty, char openBracket) throws IOException {\n    beforeValue();\n    push(empty);\n    out.write(openBracket);\n    return this;\n  }",
+            "start_line": 435,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:openScope:435"
+          },
+          {
+            "children": [],
+            "documentation": "Closes the current scope by appending any necessary whitespace and the given bracket.",
+            "end_line": 460,
+            "kind": "method",
+            "name": "closeScope",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "closeScope",
+            "signature": "@CanIgnoreReturnValue\n  private JsonWriter closeScope(int empty, int nonempty, char closeBracket) throws IOException {\n    int context = peek();\n    if (context != nonempty && context != empty) {\n      throw new IllegalStateException(\"Nesting problem.\");\n    }\n    if (deferredName != null) {\n      throw new IllegalStateException(\"Dangling name: \" + deferredName);\n    }\n\n    stackSize--;\n    if (context == nonempty) {\n      newline();\n    }\n    out.write(closeBracket);\n    return this;\n  }",
+            "start_line": 444,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:closeScope:444"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 467,
+            "kind": "method",
+            "name": "push",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "push",
+            "signature": "private void push(int newTop) {\n    if (stackSize == stack.length) {\n      stack = Arrays.copyOf(stack, stackSize * 2);\n    }\n    stack[stackSize++] = newTop;\n  }",
+            "start_line": 462,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:push:462"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the value on the top of the stack.",
+            "end_line": 475,
+            "kind": "method",
+            "name": "peek",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "peek",
+            "signature": "private int peek() {\n    if (stackSize == 0) {\n      throw new IllegalStateException(\"JsonWriter is closed.\");\n    }\n    return stack[stackSize - 1];\n  }",
+            "start_line": 470,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:peek:470"
+          },
+          {
+            "children": [],
+            "documentation": "Replace the value on the top of the stack with the given value.",
+            "end_line": 480,
+            "kind": "method",
+            "name": "replaceTop",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "replaceTop",
+            "signature": "private void replaceTop(int topOfStack) {\n    stack[stackSize - 1] = topOfStack;\n  }",
+            "start_line": 478,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:replaceTop:478"
+          },
+          {
+            "children": [],
+            "documentation": "Encodes the property name.\n\n@param name the name of the forthcoming value. May not be {@code null}.\n@return this writer.",
+            "end_line": 500,
+            "kind": "method",
+            "name": "name",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "name",
+            "signature": "@CanIgnoreReturnValue\n  public JsonWriter name(String name) throws IOException {\n    Objects.requireNonNull(name, \"name == null\");\n    if (deferredName != null) {\n      throw new IllegalStateException(\"Already wrote a name, expecting a value.\");\n    }\n    int context = peek();\n    if (context != EMPTY_OBJECT && context != NONEMPTY_OBJECT) {\n      throw new IllegalStateException(\"Please begin an object before writing a name.\");\n    }\n    deferredName = name;\n    return this;\n  }",
+            "start_line": 488,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:name:488"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 508,
+            "kind": "method",
+            "name": "writeDeferredName",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "writeDeferredName",
+            "signature": "private void writeDeferredName() throws IOException {\n    if (deferredName != null) {\n      beforeName();\n      string(deferredName);\n      deferredName = null;\n    }\n  }",
+            "start_line": 502,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:writeDeferredName:502"
+          },
+          {
+            "children": [],
+            "documentation": "Encodes {@code value}.\n\n@param value the literal string value, or null to encode a null literal.\n@return this writer.",
+            "end_line": 525,
+            "kind": "method",
+            "name": "value",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "value",
+            "signature": "@CanIgnoreReturnValue\n  public JsonWriter value(String value) throws IOException {\n    if (value == null) {\n      return nullValue();\n    }\n    writeDeferredName();\n    beforeValue();\n    string(value);\n    return this;\n  }",
+            "start_line": 516,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:value:516"
+          },
+          {
+            "children": [],
+            "documentation": "Encodes {@code value}.\n\n@return this writer.",
+            "end_line": 538,
+            "kind": "method",
+            "name": "value",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "value",
+            "signature": "@CanIgnoreReturnValue\n  public JsonWriter value(boolean value) throws IOException {\n    writeDeferredName();\n    beforeValue();\n    out.write(value ? \"true\" : \"false\");\n    return this;\n  }",
+            "start_line": 532,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:value:532"
+          },
+          {
+            "children": [],
+            "documentation": "Encodes {@code value}.\n\n@return this writer.\n@since 2.7",
+            "end_line": 555,
+            "kind": "method",
+            "name": "value",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "value",
+            "signature": "@CanIgnoreReturnValue\n  public JsonWriter value(Boolean value) throws IOException {\n    if (value == null) {\n      return nullValue();\n    }\n    writeDeferredName();\n    beforeValue();\n    out.write(value ? \"true\" : \"false\");\n    return this;\n  }",
+            "start_line": 546,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:value:546"
+          },
+          {
+            "children": [],
+            "documentation": "Encodes {@code value}.\n\n@param value a finite value, or if {@link #setStrictness(Strictness) lenient}, also {@link\nFloat#isNaN() NaN} or {@link Float#isInfinite() infinity}.\n@return this writer.\n@throws IllegalArgumentException if the value is NaN or Infinity and this writer is not {@link\n#setStrictness(Strictness) lenient}.\n@since 2.9.1",
+            "end_line": 576,
+            "kind": "method",
+            "name": "value",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "value",
+            "signature": "@CanIgnoreReturnValue\n  public JsonWriter value(float value) throws IOException {\n    writeDeferredName();\n    if (strictness != Strictness.LENIENT && (Float.isNaN(value) || Float.isInfinite(value))) {\n      throw new IllegalArgumentException(\"Numeric values must be finite, but was \" + value);\n    }\n    beforeValue();\n    out.append(Float.toString(value));\n    return this;\n  }",
+            "start_line": 567,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:value:567"
+          },
+          {
+            "children": [],
+            "documentation": "Encodes {@code value}.\n\n@param value a finite value, or if {@link #setStrictness(Strictness) lenient}, also {@link\nDouble#isNaN() NaN} or {@link Double#isInfinite() infinity}.\n@return this writer.\n@throws IllegalArgumentException if the value is NaN or Infinity and this writer is not {@link\n#setStrictness(Strictness) lenient}.",
+            "end_line": 596,
+            "kind": "method",
+            "name": "value",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "value",
+            "signature": "@CanIgnoreReturnValue\n  public JsonWriter value(double value) throws IOException {\n    writeDeferredName();\n    if (strictness != Strictness.LENIENT && (Double.isNaN(value) || Double.isInfinite(value))) {\n      throw new IllegalArgumentException(\"Numeric values must be finite, but was \" + value);\n    }\n    beforeValue();\n    out.append(Double.toString(value));\n    return this;\n  }",
+            "start_line": 587,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:value:587"
+          },
+          {
+            "children": [],
+            "documentation": "Encodes {@code value}.\n\n@return this writer.",
+            "end_line": 609,
+            "kind": "method",
+            "name": "value",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "value",
+            "signature": "@CanIgnoreReturnValue\n  public JsonWriter value(long value) throws IOException {\n    writeDeferredName();\n    beforeValue();\n    out.write(Long.toString(value));\n    return this;\n  }",
+            "start_line": 603,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:value:603"
+          },
+          {
+            "children": [],
+            "documentation": "Encodes {@code value}. The value is written by directly writing the {@link Number#toString()}\nresult to JSON. Implementations must make sure that the result represents a valid JSON number.\n\n@param value a finite value, or if {@link #setStrictness(Strictness) lenient}, also {@link\nDouble#isNaN() NaN} or {@link Double#isInfinite() infinity}.\n@return this writer.\n@throws IllegalArgumentException if the value is NaN or Infinity and this writer is not {@link\n#setStrictness(Strictness) lenient}; or if the {@code toString()} result is not a valid\nJSON number.",
+            "end_line": 647,
+            "kind": "method",
+            "name": "value",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "value",
+            "signature": "@CanIgnoreReturnValue\n  public JsonWriter value(Number value) throws IOException {\n    if (value == null) {\n      return nullValue();\n    }\n\n    writeDeferredName();\n    String string = value.toString();\n    if (string.equals(\"-Infinity\") || string.equals(\"Infinity\") || string.equals(\"NaN\")) {\n      if (strictness != Strictness.LENIENT) {\n        throw new IllegalArgumentException(\"Numeric values must be finite, but was \" + string);\n      }\n    } else {\n      Class<? extends Number> numberClass = value.getClass();\n      // Validate that string is valid before writing it directly to JSON output\n      if (!isTrustedNumberType(numberClass)\n          && !VALID_JSON_NUMBER_PATTERN.matcher(string).matches()) {\n        throw new IllegalArgumentException(\n            \"String created by \" + numberClass + \" is not a valid JSON number: \" + string);\n      }\n    }\n\n    beforeValue();\n    out.append(string);\n    return this;\n  }",
+            "start_line": 622,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:value:622"
+          },
+          {
+            "children": [],
+            "documentation": "Encodes {@code null}.\n\n@return this writer.",
+            "end_line": 667,
+            "kind": "method",
+            "name": "nullValue",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "nullValue",
+            "signature": "@CanIgnoreReturnValue\n  public JsonWriter nullValue() throws IOException {\n    if (deferredName != null) {\n      if (serializeNulls) {\n        writeDeferredName();\n      } else {\n        deferredName = null;\n        return this; // skip the name and the value\n      }\n    }\n    beforeValue();\n    out.write(\"null\");\n    return this;\n  }",
+            "start_line": 654,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:nullValue:654"
+          },
+          {
+            "children": [],
+            "documentation": "Writes {@code value} directly to the writer without quoting or escaping. This might not be\nsupported by all implementations, if not supported an {@code UnsupportedOperationException} is\nthrown.\n\n@param value the literal string value, or null to encode a null literal.\n@return this writer.\n@throws UnsupportedOperationException if this writer does not support writing raw JSON values.\n@since 2.4",
+            "end_line": 688,
+            "kind": "method",
+            "name": "jsonValue",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "jsonValue",
+            "signature": "@CanIgnoreReturnValue\n  public JsonWriter jsonValue(String value) throws IOException {\n    if (value == null) {\n      return nullValue();\n    }\n    writeDeferredName();\n    beforeValue();\n    out.append(value);\n    return this;\n  }",
+            "start_line": 679,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:jsonValue:679"
+          },
+          {
+            "children": [],
+            "documentation": "Ensures all buffered data is written to the underlying {@link Writer} and flushes that writer.",
+            "end_line": 699,
+            "kind": "method",
+            "name": "flush",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "flush",
+            "signature": "@Override\n  public void flush() throws IOException {\n    if (stackSize == 0) {\n      throw new IllegalStateException(\"JsonWriter is closed.\");\n    }\n    out.flush();\n  }",
+            "start_line": 693,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:flush:693"
+          },
+          {
+            "children": [],
+            "documentation": "Flushes and closes this writer and the underlying {@link Writer}.\n\n@throws IOException if the JSON document is incomplete.",
+            "end_line": 715,
+            "kind": "method",
+            "name": "close",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "close",
+            "signature": "@Override\n  public void close() throws IOException {\n    out.close();\n\n    int size = stackSize;\n    if (size > 1 || (size == 1 && stack[size - 1] != NONEMPTY_DOCUMENT)) {\n      throw new IOException(\"Incomplete document\");\n    }\n    stackSize = 0;\n  }",
+            "start_line": 706,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:close:706"
+          },
+          {
+            "children": [],
+            "documentation": "Returns whether the {@code toString()} of {@code c} can be trusted to return a valid JSON\nnumber.",
+            "end_line": 734,
+            "kind": "method",
+            "name": "isTrustedNumberType",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "isTrustedNumberType",
+            "signature": "private static boolean isTrustedNumberType(Class<? extends Number> c) {\n    // Note: Don't consider LazilyParsedNumber trusted because it could contain\n    // an arbitrary malformed string\n    return c == Integer.class\n        || c == Long.class\n        || c == Double.class\n        || c == Float.class\n        || c == Byte.class\n        || c == Short.class\n        || c == BigDecimal.class\n        || c == BigInteger.class\n        || c == AtomicInteger.class\n        || c == AtomicLong.class;\n  }",
+            "start_line": 721,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:isTrustedNumberType:721"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 766,
+            "kind": "method",
+            "name": "string",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "string",
+            "signature": "private void string(String value) throws IOException {\n    String[] replacements = htmlSafe ? HTML_SAFE_REPLACEMENT_CHARS : REPLACEMENT_CHARS;\n    out.write('\\\"');\n    int last = 0;\n    int length = value.length();\n    for (int i = 0; i < length; i++) {\n      char c = value.charAt(i);\n      String replacement;\n      if (c < 128) {\n        replacement = replacements[c];\n        if (replacement == null) {\n          continue;\n        }\n      } else if (c == '\\u2028') {\n        replacement = \"\\\\u2028\";\n      } else if (c == '\\u2029') {\n        replacement = \"\\\\u2029\";\n      } else {\n        continue;\n      }\n      if (last < i) {\n        out.write(value, last, i - last);\n      }\n      out.write(replacement);\n      last = i + 1;\n    }\n    if (last < length) {\n      out.write(value, last, length - last);\n    }\n    out.write('\\\"');\n  }",
+            "start_line": 736,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:string:736"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 777,
+            "kind": "method",
+            "name": "newline",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "newline",
+            "signature": "private void newline() throws IOException {\n    if (usesEmptyNewlineAndIndent) {\n      return;\n    }\n\n    out.write(formattingStyle.getNewline());\n    for (int i = 1, size = stackSize; i < size; i++) {\n      out.write(formattingStyle.getIndent());\n    }\n  }",
+            "start_line": 768,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:newline:768"
+          },
+          {
+            "children": [],
+            "documentation": "Inserts any necessary separators and whitespace before a name. Also adjusts the stack to expect\nthe name's value.",
+            "end_line": 792,
+            "kind": "method",
+            "name": "beforeName",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "beforeName",
+            "signature": "private void beforeName() throws IOException {\n    int context = peek();\n    if (context == NONEMPTY_OBJECT) { // first in object\n      out.write(formattedComma);\n    } else if (context != EMPTY_OBJECT) { // not in an object!\n      throw new IllegalStateException(\"Nesting problem.\");\n    }\n    newline();\n    replaceTop(DANGLING_NAME);\n  }",
+            "start_line": 783,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:beforeName:783"
+          },
+          {
+            "children": [],
+            "documentation": "Inserts any necessary separators and whitespace before a literal value, inline array, or inline\nobject. Also adjusts the stack to expect either a closing bracket or another element.",
+            "end_line": 828,
+            "kind": "method",
+            "name": "beforeValue",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "qualified_name": "beforeValue",
+            "signature": "@SuppressWarnings(\"fallthrough\")\n  private void beforeValue() throws IOException {\n    switch (peek()) {\n      case NONEMPTY_DOCUMENT:\n        if (strictness != Strictness.LENIENT) {\n          throw new IllegalStateException(\"JSON must have only one top-level value.\");\n        }\n        // fall-through\n      case EMPTY_DOCUMENT: // first in document\n        replaceTop(NONEMPTY_DOCUMENT);\n        break;\n\n      case EMPTY_ARRAY: // first in array\n        replaceTop(NONEMPTY_ARRAY);\n        newline();\n        break;\n\n      case NONEMPTY_ARRAY: // another in array\n        out.append(formattedComma);\n        newline();\n        break;\n\n      case DANGLING_NAME: // value for name\n        out.append(formattedColon);\n        replaceTop(NONEMPTY_OBJECT);\n        break;\n\n      default:\n        throw new IllegalStateException(\"Nesting problem.\");\n    }\n  }",
+            "start_line": 798,
+            "symbol_id": "gson/src/main/java/com/google/gson/stream/JsonWriter.java#method:beforeValue:798"
+          },
+          {
+            "children": [],
+            "documentation": "Creates a {@link FormattingStyle} with the specified newline setting.\n\n<p>It can be used to accommodate certain OS convention, for example hardcode {@code \"\\n\"} for\nLinux and macOS, {@code \"\\r\\n\"} for Windows, or call {@link java.lang.System#lineSeparator()}\nto match the current OS.\n\n<p>Only combinations of {@code \\n} and {@code \\r} are allowed.\n\n@param newline the string value that will be used as newline.\n@return a newly created {@link FormattingStyle}",
+            "end_line": 96,
+            "kind": "method",
+            "name": "withNewline",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/FormattingStyle.java",
+            "qualified_name": "withNewline",
+            "signature": "public FormattingStyle withNewline(String newline) {\n    return new FormattingStyle(newline, this.indent, this.spaceAfterSeparators);\n  }",
+            "start_line": 94,
+            "symbol_id": "gson/src/main/java/com/google/gson/FormattingStyle.java#method:withNewline:94"
+          },
+          {
+            "children": [],
+            "documentation": "Creates a {@link FormattingStyle} with the specified indent string.\n\n<p>Only combinations of spaces and tabs allowed in indent.\n\n@param indent the string value that will be used as indent.\n@return a newly created {@link FormattingStyle}",
+            "end_line": 108,
+            "kind": "method",
+            "name": "withIndent",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/FormattingStyle.java",
+            "qualified_name": "withIndent",
+            "signature": "public FormattingStyle withIndent(String indent) {\n    return new FormattingStyle(this.newline, indent, this.spaceAfterSeparators);\n  }",
+            "start_line": 106,
+            "symbol_id": "gson/src/main/java/com/google/gson/FormattingStyle.java#method:withIndent:106"
+          },
+          {
+            "children": [],
+            "documentation": "Creates a {@link FormattingStyle} which either uses a space after the separators {@code ','}\nand {@code ':'} in the JSON output, or not.\n\n<p>This setting has no effect on the {@linkplain #withNewline(String) configured newline}. If a\nnon-empty newline is configured, it will always be added after {@code ','} and no space is\nadded after the {@code ','} in that case.\n\n@param spaceAfterSeparators whether to output a space after {@code ','} and {@code ':'}.\n@return a newly created {@link FormattingStyle}",
+            "end_line": 123,
+            "kind": "method",
+            "name": "withSpaceAfterSeparators",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/FormattingStyle.java",
+            "qualified_name": "withSpaceAfterSeparators",
+            "signature": "public FormattingStyle withSpaceAfterSeparators(boolean spaceAfterSeparators) {\n    return new FormattingStyle(this.newline, this.indent, spaceAfterSeparators);\n  }",
+            "start_line": 121,
+            "symbol_id": "gson/src/main/java/com/google/gson/FormattingStyle.java#method:withSpaceAfterSeparators:121"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the string value that will be used as a newline.\n\n@return the newline value.",
+            "end_line": 132,
+            "kind": "method",
+            "name": "getNewline",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/FormattingStyle.java",
+            "qualified_name": "getNewline",
+            "signature": "public String getNewline() {\n    return this.newline;\n  }",
+            "start_line": 130,
+            "symbol_id": "gson/src/main/java/com/google/gson/FormattingStyle.java#method:getNewline:130"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the string value that will be used as indent.\n\n@return the indent value.",
+            "end_line": 141,
+            "kind": "method",
+            "name": "getIndent",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/FormattingStyle.java",
+            "qualified_name": "getIndent",
+            "signature": "public String getIndent() {\n    return this.indent;\n  }",
+            "start_line": 139,
+            "symbol_id": "gson/src/main/java/com/google/gson/FormattingStyle.java#method:getIndent:139"
+          },
+          {
+            "children": [],
+            "documentation": "Returns whether a space will be used after {@code ','} and {@code ':'}.",
+            "end_line": 146,
+            "kind": "method",
+            "name": "usesSpaceAfterSeparators",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/FormattingStyle.java",
+            "qualified_name": "usesSpaceAfterSeparators",
+            "signature": "public boolean usesSpaceAfterSeparators() {\n    return this.spaceAfterSeparators;\n  }",
+            "start_line": 144,
+            "symbol_id": "gson/src/main/java/com/google/gson/FormattingStyle.java#method:usesSpaceAfterSeparators:144"
+          },
+          {
+            "children": [],
+            "documentation": "Platform type detection is based on Moshi's Util.isPlatformType(Class)\nSee\nhttps://github.com/square/moshi/blob/3c108919ee1cce88a433ffda04eeeddc0341eae7/moshi/src/main/java/com/squareup/moshi/internal/Util.java#L141",
+            "end_line": 35,
+            "kind": "method",
+            "name": "isJavaType",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java",
+            "qualified_name": "isJavaType",
+            "signature": "public static boolean isJavaType(Class<?> c) {\n    return isJavaType(c.getName());\n  }",
+            "start_line": 33,
+            "symbol_id": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java#method:isJavaType:33"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 39,
+            "kind": "method",
+            "name": "isJavaType",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java",
+            "qualified_name": "isJavaType",
+            "signature": "private static boolean isJavaType(String className) {\n    return className.startsWith(\"java.\") || className.startsWith(\"javax.\");\n  }",
+            "start_line": 37,
+            "symbol_id": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java#method:isJavaType:37"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 43,
+            "kind": "method",
+            "name": "isAndroidType",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java",
+            "qualified_name": "isAndroidType",
+            "signature": "public static boolean isAndroidType(Class<?> c) {\n    return isAndroidType(c.getName());\n  }",
+            "start_line": 41,
+            "symbol_id": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java#method:isAndroidType:41"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 49,
+            "kind": "method",
+            "name": "isAndroidType",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java",
+            "qualified_name": "isAndroidType",
+            "signature": "private static boolean isAndroidType(String className) {\n    return className.startsWith(\"android.\")\n        || className.startsWith(\"androidx.\")\n        || isJavaType(className);\n  }",
+            "start_line": 45,
+            "symbol_id": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java#method:isAndroidType:45"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 57,
+            "kind": "method",
+            "name": "isAnyPlatformType",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java",
+            "qualified_name": "isAnyPlatformType",
+            "signature": "public static boolean isAnyPlatformType(Class<?> c) {\n    String className = c.getName();\n    return isAndroidType(className) // Covers Android and Java\n        || className.startsWith(\"kotlin.\")\n        || className.startsWith(\"kotlinx.\")\n        || className.startsWith(\"scala.\");\n  }",
+            "start_line": 51,
+            "symbol_id": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java#method:isAnyPlatformType:51"
+          },
+          {
+            "children": [],
+            "documentation": "Gets the result of applying all filters until the first one returns a result other than {@link\nFilterResult#INDECISIVE}, or {@link FilterResult#ALLOW} if the list of filters is empty or all\nreturned {@code INDECISIVE}.",
+            "end_line": 73,
+            "kind": "method",
+            "name": "getFilterResult",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java",
+            "qualified_name": "getFilterResult",
+            "signature": "public static FilterResult getFilterResult(\n      List<ReflectionAccessFilter> reflectionFilters, Class<?> c) {\n    for (ReflectionAccessFilter filter : reflectionFilters) {\n      FilterResult result = filter.check(c);\n      if (result != FilterResult.INDECISIVE) {\n        return result;\n      }\n    }\n    return FilterResult.ALLOW;\n  }",
+            "start_line": 64,
+            "symbol_id": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java#method:getFilterResult:64"
+          },
+          {
+            "children": [],
+            "documentation": "See {@link AccessibleObject#canAccess(Object)} (Java >= 9)",
+            "end_line": 78,
+            "kind": "method",
+            "name": "canAccess",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java",
+            "qualified_name": "canAccess",
+            "signature": "public static boolean canAccess(AccessibleObject accessibleObject, Object object) {\n    return AccessChecker.INSTANCE.canAccess(accessibleObject, object);\n  }",
+            "start_line": 76,
+            "symbol_id": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java#method:canAccess:76"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 99,
+            "kind": "method",
+            "name": "canAccess",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java",
+            "qualified_name": "canAccess",
+            "signature": "@Override\n                public boolean canAccess(AccessibleObject accessibleObject, Object object) {\n                  try {\n                    return (Boolean) canAccessMethod.invoke(accessibleObject, object);\n                  } catch (Exception e) {\n                    throw new RuntimeException(\"Failed invoking canAccess\", e);\n                  }\n                }",
+            "start_line": 92,
+            "symbol_id": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java#method:canAccess:92"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 113,
+            "kind": "method",
+            "name": "canAccess",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java",
+            "qualified_name": "canAccess",
+            "signature": "@Override\n              public boolean canAccess(AccessibleObject accessibleObject, Object object) {\n                // Cannot determine whether object can be accessed, so assume it can be accessed\n                return true;\n              }",
+            "start_line": 109,
+            "symbol_id": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java#method:canAccess:109"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 119,
+            "kind": "method",
+            "name": "canAccess",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java",
+            "qualified_name": "canAccess",
+            "signature": "public abstract boolean canAccess(AccessibleObject accessibleObject, Object object);",
+            "start_line": 119,
+            "symbol_id": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java#method:canAccess:119"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 119,
+            "kind": "method",
+            "name": "check",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/ReflectionAccessFilter.java",
+            "qualified_name": "check",
+            "signature": "@Override\n        public FilterResult check(Class<?> rawClass) {\n          return ReflectionAccessFilterHelper.isJavaType(rawClass)\n              ? FilterResult.BLOCK_INACCESSIBLE\n              : FilterResult.INDECISIVE;\n        }",
+            "start_line": 114,
+            "symbol_id": "gson/src/main/java/com/google/gson/ReflectionAccessFilter.java#method:check:114"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 124,
+            "kind": "method",
+            "name": "toString",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/ReflectionAccessFilter.java",
+            "qualified_name": "toString",
+            "signature": "@Override\n        public String toString() {\n          return \"ReflectionAccessFilter#BLOCK_INACCESSIBLE_JAVA\";\n        }",
+            "start_line": 121,
+            "symbol_id": "gson/src/main/java/com/google/gson/ReflectionAccessFilter.java#method:toString:121"
+          }
+        ]
+      }
+    ]
+  },
+  "trialId": "3955785203"
+}

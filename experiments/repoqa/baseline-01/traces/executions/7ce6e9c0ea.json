@@ -1,0 +1,156 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 3840,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-nano",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 3847,
+          "metadata": {},
+          "name": "strategy.inline.execute",
+          "type": "strategy.inline.execute"
+        },
+        {
+          "duration_ms": 3847,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 7,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": 0,
+        "cachedInputTokens": 0,
+        "contextBytes": 111877,
+        "contextChars": 111877,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 0,
+        "inputTokens": 25492,
+        "loopControlDurationMsEstimated": 7,
+        "mcpToolCalls": 0,
+        "modelCalls": 1,
+        "modelDurationMs": 3840,
+        "outputTokens": 307,
+        "promptChars": 112836,
+        "questionTokensEstimated": 148,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 0,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 1,
+        "strategyDurationMs": 3847,
+        "taskStatementChars": 937,
+        "toolCalls": 0,
+        "toolDurationMs": null,
+        "totalDurationMs": 3847,
+        "totalTokens": 25799,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": {
+      "background": false,
+      "billing": {
+        "payer": "openai"
+      },
+      "completed_at": 1779729464.0,
+      "conversation": null,
+      "created_at": 1779729461.0,
+      "error": null,
+      "frequency_penalty": 0.0,
+      "id": "resp_0f8cc22d2d08cae0006a14843537f0819eb953ebf0cf17caa0",
+      "incomplete_details": null,
+      "instructions": "You are an assistant that solves benchmark tasks using only the provided context.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nYour goal is to produce accurate, concise, and context-grounded responses.\nGuidelines:\n- Base your response strictly on the provided context.\n- If the provided context is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+      "max_output_tokens": null,
+      "max_tool_calls": null,
+      "metadata": {
+        "experimentId": "datasets/repoqa",
+        "phase": "execution",
+        "taskId": "snf_retrieve_function",
+        "trialId": "7ce6e9c0ea"
+      },
+      "model": "gpt-5.4-nano-2026-03-17",
+      "moderation": null,
+      "object": "response",
+      "output": [
+        {
+          "content": [
+            {
+              "annotations": [],
+              "logprobs": [],
+              "text": "```java\nprivate static void addTypeAdaptersForDate(\n      String datePattern, int dateStyle, int timeStyle, List<TypeAdapterFactory> factories) {\n    TypeAdapterFactory dateAdapterFactory;\n    boolean sqlTypesSupported = SqlTypesSupport.SUPPORTS_SQL_TYPES;\n    TypeAdapterFactory sqlTimestampAdapterFactory = null;\n    TypeAdapterFactory sqlDateAdapterFactory = null;\n\n    if (datePattern != null && !datePattern.trim().isEmpty()) {\n      dateAdapterFactory = DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(datePattern);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(datePattern);\n        sqlDateAdapterFactory = SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(datePattern);\n      }\n    } else if (dateStyle != DateFormat.DEFAULT || timeStyle != DateFormat.DEFAULT) {\n      dateAdapterFactory =\n          DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(dateStyle, timeStyle);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n        sqlDateAdapterFactory =\n            SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n      }\n    } else {\n      return;\n    }\n\n    factories.add(dateAdapterFactory);\n    if (sqlTypesSupported) {\n      factories.add(sqlTimestampAdapterFactory);\n      factories.add(sqlDateAdapterFactory);\n    }\n  }\n```",
+              "type": "output_text"
+            }
+          ],
+          "id": "msg_0f8cc22d2d08cae0006a148435c2d4819e8fd4db0db76eb386",
+          "phase": "final_answer",
+          "role": "assistant",
+          "status": "completed",
+          "type": "message"
+        }
+      ],
+      "parallel_tool_calls": true,
+      "presence_penalty": 0.0,
+      "previous_response_id": null,
+      "prompt": null,
+      "prompt_cache_key": "inl:code:57112c9af2a2964299322d0b34e625ff",
+      "prompt_cache_retention": "in_memory",
+      "reasoning": {
+        "context": "current_turn",
+        "effort": "none",
+        "generate_summary": null,
+        "summary": null
+      },
+      "safety_identifier": null,
+      "service_tier": "default",
+      "status": "completed",
+      "store": true,
+      "temperature": 1.0,
+      "text": {
+        "format": {
+          "type": "text"
+        },
+        "verbosity": "medium"
+      },
+      "tool_choice": "auto",
+      "tools": [],
+      "top_logprobs": 0,
+      "top_p": 0.98,
+      "truncation": "disabled",
+      "usage": {
+        "input_tokens": 25492,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 307,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 25799
+      },
+      "user": null
+    },
+    "serverMcp": [],
+    "toolCalls": []
+  },
+  "trialId": "7ce6e9c0ea"
+}

@@ -1,0 +1,998 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 1703,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "ts_001_ctx8k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 2,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "language": "typescript",
+                "parse_status": "ok_filtered",
+                "path": "src/utils/tensor.js",
+                "repository": "xenova/transformers.js",
+                "symbol_count": 129
+              },
+              {
+                "language": "typescript",
+                "parse_status": "ok_filtered",
+                "path": "src/utils/image.js",
+                "repository": "xenova/transformers.js",
+                "symbol_count": 21
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "ts_001_ctx8k"
+              },
+              "durationMs": 2,
+              "toolName": "list_files",
+              "workspace_id": "ts_001_ctx8k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 2227,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "src/utils/tensor.js",
+              "workspace_id": "ts_001_ctx8k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "Reshapes a 1-dimensional array into an n-dimensional array, according to the provided dimensions.\n\n@example\nreshape([10                    ], [1      ]); // Type: number[]      Value: [10]\nreshape([1, 2, 3, 4            ], [2, 2   ]); // Type: number[][]    Value: [[1, 2], [3, 4]]\nreshape([1, 2, 3, 4, 5, 6, 7, 8], [2, 2, 2]); // Type: number[][][]  Value: [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]\nreshape([1, 2, 3, 4, 5, 6, 7, 8], [4, 2   ]); // Type: number[][]    Value: [[1, 2], [3, 4], [5, 6], [7, 8]]\n@param {T[]|DataArray} data The input array to reshape.\n@param {DIM} dimensions The target shape/dimensions.\n@template T\n@template {[number]|number[]} DIM\n@returns {NestArray<T, DIM[\"length\"]>} The reshaped array.",
+                "end_line": 682,
+                "kind": "function",
+                "name": "reshape",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/tensor.js",
+                "qualified_name": "reshape",
+                "signature": "function reshape(data, dimensions) {\n\n    const totalElements = data.length;\n    const dimensionSize = dimensions.reduce((a, b) => a * b);\n\n    if (totalElements !== dimensionSize) {\n        throw Error(`cannot reshape array of size ${totalElements} into shape (${dimensions})`);\n    }\n\n    /** @type {any} */\n    let reshapedArray = data;\n\n    for (let i = dimensions.length - 1; i >= 0; i--) {\n        reshapedArray = reshapedArray.reduce((acc, val) => {\n            let lastArray = acc[acc.length - 1];\n\n            if (lastArray.length < dimensions[i]) {\n                lastArray.push(val);\n            } else {\n                acc.push([val]);\n            }\n\n            return acc;\n        }, [[]]);\n    }\n\n    return reshapedArray[0];\n}",
+                "start_line": 655,
+                "symbol_id": "src/utils/tensor.js#function:reshape:655"
+              },
+              {
+                "children": [],
+                "documentation": "Permutes a tensor according to the provided axes.\n@param {any} tensor The input tensor to permute.\n@param {Array} axes The axes to permute the tensor along.\n@returns {Tensor} The permuted tensor.",
+                "end_line": 693,
+                "kind": "function",
+                "name": "permute",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/tensor.js",
+                "qualified_name": "permute",
+                "signature": "function permute(tensor, axes) {\n    const [permutedData, shape] = permute_data(tensor.data, tensor.dims, axes);\n    return new Tensor(tensor.type, permutedData, shape);\n}",
+                "start_line": 690,
+                "symbol_id": "src/utils/tensor.js#function:permute:690"
+              },
+              {
+                "children": [],
+                "documentation": "Interpolates an Tensor to the given size.\n@param {Tensor} input The input tensor to interpolate. Data must be channel-first (i.e., [c, h, w])\n@param {number[]} size The output size of the image\n@param {string} mode The interpolation mode\n@param {boolean} align_corners Whether to align corners.\n@returns {Tensor} The interpolated tensor.",
+                "end_line": 719,
+                "kind": "function",
+                "name": "interpolate",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/tensor.js",
+                "qualified_name": "interpolate",
+                "signature": "function interpolate(input, [out_height, out_width], mode = 'bilinear', align_corners = false) {\n\n    // Input image dimensions\n    const in_channels = input.dims.at(-3) ?? 1;\n    const in_height = input.dims.at(-2);\n    const in_width = input.dims.at(-1);\n\n    let output = interpolate_data(\n        /** @type {import('./maths.js').TypedArray}*/(input.data),\n        [in_channels, in_height, in_width],\n        [out_height, out_width],\n        mode,\n        align_corners\n    );\n    return new Tensor(input.type, output, [in_channels, out_height, out_width]);\n}",
+                "start_line": 704,
+                "symbol_id": "src/utils/tensor.js#function:interpolate:704"
+              },
+              {
+                "children": [],
+                "documentation": "Perform mean pooling of the last hidden state followed by a normalization step.\n@param {Tensor} last_hidden_state Tensor of shape [batchSize, seqLength, embedDim]\n@param {Tensor} attention_mask Tensor of shape [batchSize, seqLength]\n@returns {Tensor} Returns a new Tensor of shape [batchSize, embedDim].",
+                "end_line": 765,
+                "kind": "function",
+                "name": "mean_pooling",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/tensor.js",
+                "qualified_name": "mean_pooling",
+                "signature": "function mean_pooling(last_hidden_state, attention_mask) {\n    // last_hidden_state: [batchSize, seqLength, embedDim]\n    // attention_mask:    [batchSize, seqLength]\n\n    let shape = [last_hidden_state.dims[0], last_hidden_state.dims[2]];\n    // @ts-ignore\n    let returnedData = new last_hidden_state.data.constructor(shape[0] * shape[1]);\n    let [batchSize, seqLength, embedDim] = last_hidden_state.dims;\n\n    let outIndex = 0;\n    for (let i = 0; i < batchSize; ++i) {\n        let offset = i * embedDim * seqLength;\n\n        for (let k = 0; k < embedDim; ++k) {\n            let sum = 0;\n            let count = 0;\n\n            let attnMaskOffset = i * seqLength;\n            let offset2 = offset + k;\n            // Pool over all words in sequence\n            for (let j = 0; j < seqLength; ++j) {\n                // index into attention mask\n                let attn = Number(attention_mask.data[attnMaskOffset + j]);\n\n                count += attn;\n                sum += last_hidden_state.data[offset2 + j * embedDim] * attn;\n            }\n\n            let avg = sum / count;\n            returnedData[outIndex++] = avg;\n        }\n    }\n\n    return new Tensor(\n        last_hidden_state.type,\n        returnedData,\n        shape\n    )\n}",
+                "start_line": 727,
+                "symbol_id": "src/utils/tensor.js#function:mean_pooling:727"
+              },
+              {
+                "children": [],
+                "documentation": "Apply Layer Normalization for last certain number of dimensions.\n@param {Tensor} input The input tensor\n@param {number[]} normalized_shape input shape from an expected input of size\n@param {Object} options The options for the layer normalization\n@param {number} [options.eps=1e-5] A value added to the denominator for numerical stability.\n@returns {Tensor} The normalized tensor.",
+                "end_line": 801,
+                "kind": "function",
+                "name": "layer_norm",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/tensor.js",
+                "qualified_name": "layer_norm",
+                "signature": "function layer_norm(input, normalized_shape, {\n    eps = 1e-5,\n} = {}) {\n    if (input.dims.length !== 2) {\n        throw new Error('`layer_norm` currently only supports 2D input.');\n    }\n\n    const [batchSize, featureDim] = input.dims;\n\n    if (normalized_shape.length !== 1 && normalized_shape[0] !== featureDim) {\n        throw new Error('`normalized_shape` must be a 1D array with shape `[input.dims[1]]`.');\n    }\n\n    const [std, mean] = std_mean(input, 1, 0, true);\n\n    // @ts-ignore\n    const returnedData = new input.data.constructor(input.data.length);\n\n    for (let i = 0; i < batchSize; ++i) {\n        const offset = i * featureDim;\n        for (let j = 0; j < featureDim; ++j) {\n            const offset2 = offset + j;\n            returnedData[offset2] = (input.data[offset2] - mean.data[i]) / (std.data[i] + eps);\n        }\n    }\n    return new Tensor(input.type, returnedData, input.dims);\n}",
+                "start_line": 775,
+                "symbol_id": "src/utils/tensor.js#function:layer_norm:775"
+              },
+              {
+                "children": [],
+                "documentation": "Helper function to calculate new dimensions when performing a squeeze operation.\n@param {number[]} dims The dimensions of the tensor.\n@param {number|number[]|null} dim The dimension(s) to squeeze.\n@returns The new dimensions.\n@private",
+                "end_line": 824,
+                "kind": "function",
+                "name": "calc_squeeze_dims",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/tensor.js",
+                "qualified_name": "calc_squeeze_dims",
+                "signature": "function calc_squeeze_dims(dims, dim) {\n    dims = dims.slice();\n    if (dim === null) {\n        dims = dims.filter((d) => d !== 1);\n    } else if (typeof dim === 'number') {\n        if (dims[dim] === 1) {\n            dims.splice(dim, 1);\n        }\n    } else if (Array.isArray(dim)) {\n        dims = dims.filter((x, i) => {\n            return x !== 1 || !dim.includes(i);\n        });\n    }\n    return dims;\n}",
+                "start_line": 810,
+                "symbol_id": "src/utils/tensor.js#function:calc_squeeze_dims:810"
+              },
+              {
+                "children": [],
+                "documentation": "Helper function to calculate new dimensions when performing an unsqueeze operation.\n@param {number[]} dims The dimensions of the tensor.\n@param {number} dim The dimension to unsqueeze.\n@returns The new dimensions.\n@private",
+                "end_line": 841,
+                "kind": "function",
+                "name": "calc_unsqueeze_dims",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/tensor.js",
+                "qualified_name": "calc_unsqueeze_dims",
+                "signature": "function calc_unsqueeze_dims(dims, dim) {\n    // Dimension out of range (e.g., \"expected to be in range of [-4, 3], but got 4\")\n    // + 1 since we allow inserting at the end (i.e. dim = -1)\n    dim = safeIndex(dim, dims.length + 1);\n    dims = dims.slice();\n    // Insert 1 into specified dimension\n    dims.splice(dim, 0, 1);\n    return dims;\n}",
+                "start_line": 833,
+                "symbol_id": "src/utils/tensor.js#function:calc_unsqueeze_dims:833"
+              },
+              {
+                "children": [],
+                "documentation": "Safely calculate the index for an array of a given size, allowing negative indexing.\n@param {number} index The index that will be used.\n@param {number} size The size of the array.\n@param {number} [dimension=null] The dimension that the index is for (optional).\n@returns {number} The index, guaranteed to be non-negative and less than `arrayLength`.\n\n@throws {Error} If the index is out of range.\n@private",
+                "end_line": 863,
+                "kind": "function",
+                "name": "safeIndex",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/tensor.js",
+                "qualified_name": "safeIndex",
+                "signature": "function safeIndex(index, size, dimension = null) {\n    if (index < -size || index >= size) {\n        throw new Error(`IndexError: index ${index} is out of bounds for dimension${dimension === null ? '' : ' ' + dimension} with size ${size}`);\n    }\n\n    if (index < 0) {\n        // Negative indexing, ensuring positive index\n        index = ((index % size) + size) % size;\n    }\n    return index;\n}",
+                "start_line": 853,
+                "symbol_id": "src/utils/tensor.js#function:safeIndex:853"
+              },
+              {
+                "children": [],
+                "documentation": "Concatenates an array of tensors along a specified dimension.\n@param {Tensor[]} tensors The array of tensors to concatenate.\n@param {number} dim The dimension to concatenate along.\n@returns {Tensor} The concatenated tensor.",
+                "end_line": 926,
+                "kind": "function",
+                "name": "cat",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/tensor.js",
+                "qualified_name": "cat",
+                "signature": "function cat(tensors, dim = 0) {\n    dim = safeIndex(dim, tensors[0].dims.length);\n\n    // TODO do validation of shapes\n\n    const resultDims = tensors[0].dims.slice();\n    resultDims[dim] = tensors.reduce((a, b) => a + b.dims[dim], 0);\n\n    // Create a new array to store the accumulated values\n    const resultSize = resultDims.reduce((a, b) => a * b, 1);\n    // @ts-ignore\n    const result = new tensors[0].data.constructor(resultSize);\n\n    // Create output tensor of same type as first\n    const resultType = tensors[0].type;\n\n    if (dim === 0) {\n        // Handle special case for performance reasons\n\n        let offset = 0;\n        for (let t of tensors) {\n            result.set(t.data, offset);\n            offset += t.data.length;\n        }\n\n    } else {\n\n        let currentDim = 0;\n\n        for (let t = 0; t < tensors.length; ++t) {\n            let tensor = tensors[t];\n\n            // Iterate over the data array\n            for (let i = 0; i < tensor.data.length; ++i) {\n                // Calculate the index in the resulting array\n                let resultIndex = 0;\n\n                for (let j = tensor.dims.length - 1, num = i, resultMultiplier = 1; j >= 0; --j) {\n                    const size = tensor.dims[j];\n                    let index = num % size;\n                    if (j === dim) {\n                        index += currentDim;\n                    }\n                    resultIndex += index * resultMultiplier;\n                    resultMultiplier *= resultDims[j];\n                    num = Math.floor(num / size);\n                }\n                // Accumulate the value at the current index\n                result[resultIndex] = tensor.data[i];\n            }\n\n            currentDim += tensor.dims[dim];\n        }\n    }\n    return new Tensor(resultType, result, resultDims);\n}",
+                "start_line": 871,
+                "symbol_id": "src/utils/tensor.js#function:cat:871"
+              },
+              {
+                "children": [],
+                "documentation": "Stack an array of tensors along a specified dimension.\n@param {Tensor[]} tensors The array of tensors to stack.\n@param {number} dim The dimension to stack along.\n@returns {Tensor} The stacked tensor.",
+                "end_line": 938,
+                "kind": "function",
+                "name": "stack",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/tensor.js",
+                "qualified_name": "stack",
+                "signature": "function stack(tensors, dim = 0) {\n    // TODO do validation of shapes\n    // NOTE: stack expects each tensor to be equal size\n    return cat(tensors.map(t => t.unsqueeze(dim)), dim);\n}",
+                "start_line": 934,
+                "symbol_id": "src/utils/tensor.js#function:stack:934"
+              },
+              {
+                "children": [],
+                "documentation": "Calculates the standard deviation and mean over the dimensions specified by dim. dim can be a single dimension or `null` to reduce over all dimensions.\n@param {Tensor} input the input tenso\n@param {number|null} dim the dimension to reduce. If None, all dimensions are reduced.\n@param {number} correction difference between the sample size and sample degrees of freedom. Defaults to Bessel's correction, correction=1.\n@param {boolean} keepdim whether the output tensor has dim retained or not.\n@returns {Tensor[]} A tuple of (std, mean) tensors.",
+                "end_line": 1009,
+                "kind": "function",
+                "name": "std_mean",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/tensor.js",
+                "qualified_name": "std_mean",
+                "signature": "function std_mean(input, dim = null, correction = 1, keepdim = false) {\n\n    if (dim === null) {\n        // None to reduce over all dimensions.\n        // @ts-ignore\n        const sum = input.data.reduce((a, b) => a + b, 0);\n        const mean = sum / input.data.length;\n        // @ts-ignore\n        const std = Math.sqrt(input.data.reduce((a, b) => a + (b - mean) ** 2, 0) / (input.data.length - correction));\n\n        const meanTensor = new Tensor(input.type, [mean], [/* scalar */]);\n        const stdTensor = new Tensor(input.type, [std], [/* scalar */]);\n\n        return [stdTensor, meanTensor];\n    }\n\n    // Negative indexing\n    dim = safeIndex(dim, input.dims.length);\n\n    const meanTensor = mean(input, dim, keepdim);\n\n    // Calculate the shape of the resulting array after summation\n    const resultDims = input.dims.slice(); // Copy the original dimensions\n    resultDims[dim] = 1; // Remove the specified axis\n\n    // Create a new array to store the accumulated values\n    // @ts-ignore\n    const result = new input.data.constructor(input.data.length / input.dims[dim]);\n\n    // Iterate over the data array\n    for (let i = 0; i < input.data.length; ++i) {\n\n        // Calculate the index in the resulting array\n        let resultIndex = 0;\n\n        for (let j = input.dims.length - 1, num = i, resultMultiplier = 1; j >= 0; --j) {\n            const size = input.dims[j];\n            if (j !== dim) {\n                const index = num % size;\n                resultIndex += index * resultMultiplier;\n                resultMultiplier *= resultDims[j];\n            }\n            num = Math.floor(num / size);\n        }\n\n        // Accumulate the value at the current index\n        result[resultIndex] += (input.data[i] - meanTensor.data[resultIndex]) ** 2;\n    }\n\n    for (let i = 0; i < result.length; ++i) {\n        result[i] = Math.sqrt(result[i] / (input.dims[dim] - correction));\n    }\n\n    if (!keepdim) {\n        resultDims.splice(dim, 1);\n    }\n\n    const stdTensor = new Tensor(input.type, result, resultDims);\n\n    return [stdTensor, meanTensor];\n}",
+                "start_line": 949,
+                "symbol_id": "src/utils/tensor.js#function:std_mean:949"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the mean value of each row of the input tensor in the given dimension dim.\n@param {Tensor} input the input tensor.\n@param {number|null} dim the dimension to reduce.\n@param {boolean} keepdim whether the output tensor has dim retained or not.\n@returns A new tensor with means taken along the specified dimension.",
+                "end_line": 1070,
+                "kind": "function",
+                "name": "mean",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/tensor.js",
+                "qualified_name": "mean",
+                "signature": "function mean(input, dim = null, keepdim = false) {\n\n    if (dim === null) {\n        // None to reduce over all dimensions.\n        // @ts-ignore\n        let val = input.data.reduce((a, b) => a + b, 0);\n        return new Tensor(input.type, [val / input.data.length], [/* scalar */]);\n    }\n\n    // Negative indexing\n    dim = safeIndex(dim, input.dims.length);\n\n    // Calculate the shape of the resulting array after summation\n    const resultDims = input.dims.slice(); // Copy the original dimensions\n    resultDims[dim] = 1; // Remove the specified axis\n\n    // Create a new array to store the accumulated values\n    // @ts-ignore\n    const result = new input.data.constructor(input.data.length / input.dims[dim]);\n\n    // Iterate over the data array\n    for (let i = 0; i < input.data.length; ++i) {\n\n        // Calculate the index in the resulting array\n        let resultIndex = 0;\n\n        for (let j = input.dims.length - 1, num = i, resultMultiplier = 1; j >= 0; --j) {\n            const size = input.dims[j];\n            if (j !== dim) {\n                const index = num % size;\n                resultIndex += index * resultMultiplier;\n                resultMultiplier *= resultDims[j];\n            }\n            num = Math.floor(num / size);\n        }\n\n        // Accumulate the value at the current index\n        result[resultIndex] += input.data[i];\n    }\n\n    if (input.dims[dim] !== 1) {\n        for (let i = 0; i < result.length; ++i) {\n            result[i] = result[i] / input.dims[dim];\n        }\n    }\n\n    if (!keepdim) {\n        resultDims.splice(dim, 1);\n    }\n\n    return new Tensor(input.type, result, resultDims);\n}",
+                "start_line": 1019,
+                "symbol_id": "src/utils/tensor.js#function:mean:1019"
+              },
+              {
+                "children": [],
+                "documentation": "Measures similarity between two temporal sequences (e.g., input audio and output tokens\nto generate token-level timestamps).\n@param {Tensor} matrix\n@returns {number[][]}",
+                "end_line": 1164,
+                "kind": "function",
+                "name": "dynamicTimeWarping",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/tensor.js",
+                "qualified_name": "dynamicTimeWarping",
+                "signature": "function dynamicTimeWarping(matrix) {\n    const [output_length, input_length] = matrix.dims;\n\n    const outputShape = [output_length + 1, input_length + 1];\n\n    const cost = new Tensor(\n        'float32',\n        new Float32Array(outputShape[0] * outputShape[1]).fill(Infinity),\n        outputShape\n    );\n\n    const trace = new Tensor(\n        'float32',\n        new Float32Array(outputShape[0] * outputShape[1]).fill(-1),\n        outputShape\n    )\n\n    // same as `cost[0][0] = 0`;\n    cost[0].data[0] = 0;\n\n    for (let j = 1; j < input_length + 1; ++j) {\n        for (let i = 1; i < output_length + 1; ++i) {\n\n            const c0 = cost[i - 1][j - 1].item();\n            const c1 = cost[i - 1][j].item();\n            const c2 = cost[i][j - 1].item();\n\n            let c, t;\n            if (c0 < c1 && c0 < c2) {\n                c = c0;\n                t = 0;\n            } else if (c1 < c0 && c1 < c2) {\n                c = c1;\n                t = 1;\n            } else {\n                c = c2;\n                t = 2;\n            }\n\n            cost[i].data[j] = matrix[i - 1][j - 1].item() + c;\n            trace[i].data[j] = t;\n        }\n    }\n\n    // backtrace\n    let i = output_length;\n    let j = input_length;\n\n    // @ts-ignore\n    trace.data.fill(2, 0, outputShape[1]) // trace[0, :] = 2\n    for (let i = 0; i < outputShape[0]; ++i) { // trace[:, 0] = 1\n        trace[i].data[0] = 1;\n    }\n\n    let text_indices = [];\n    let time_indices = [];\n\n    while (i > 0 || j > 0) {\n        text_indices.push(i - 1);\n        time_indices.push(j - 1);\n\n        const t = trace[i][j].item();\n        switch (t) {\n            case 0:\n                --i; --j;\n                break;\n            case 1:\n                --i;\n                break;\n            case 2:\n                --j;\n                break;\n            default:\n                throw new Error(\n                    `Internal error in dynamic time warping. Unexpected trace[${i}, ${j}]. Please file a bug report.`\n                )\n        }\n    }\n\n    text_indices.reverse();\n    time_indices.reverse();\n\n    return [text_indices, time_indices];\n\n}",
+                "start_line": 1080,
+                "symbol_id": "src/utils/tensor.js#function:dynamicTimeWarping:1080"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1173,
+                "kind": "function",
+                "name": "dimsToStride",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/tensor.js",
+                "qualified_name": "dimsToStride",
+                "signature": "function dimsToStride(dims) {\n    const stride = new Array(dims.length);\n    for (let i = dims.length - 1, s2 = 1; i >= 0; --i) {\n        stride[i] = s2;\n        s2 *= dims[i];\n    }\n    return stride;\n}",
+                "start_line": 1166,
+                "symbol_id": "src/utils/tensor.js#function:dimsToStride:1166"
+              },
+              {
+                "children": [],
+                "documentation": "Returns a tensor filled with the scalar value 1, with the shape defined by the variable argument size.\n@param {number[]} size A sequence of integers defining the shape of the output tensor.",
+                "end_line": 1186,
+                "kind": "function",
+                "name": "ones",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/tensor.js",
+                "qualified_name": "ones",
+                "signature": "function ones(size) {\n    const numElements = size.reduce((a, b) => a * b, 1);\n    return new Tensor(\n        'int64',\n        new BigInt64Array(numElements).fill(1n),\n        size\n    )\n}",
+                "start_line": 1179,
+                "symbol_id": "src/utils/tensor.js#function:ones:1179"
+              },
+              {
+                "children": [],
+                "documentation": "Returns a tensor filled with the scalar value 1, with the same size as input.\n@param {Tensor} tensor The size of input will determine size of the output tensor.\n@returns The ones tensor.",
+                "end_line": 1195,
+                "kind": "function",
+                "name": "ones_like",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/tensor.js",
+                "qualified_name": "ones_like",
+                "signature": "function ones_like(tensor) {\n    return ones(tensor.dims);\n}",
+                "start_line": 1193,
+                "symbol_id": "src/utils/tensor.js#function:ones_like:1193"
+              },
+              {
+                "children": [],
+                "documentation": "Quantizes the embeddings tensor to binary or unsigned binary precision.\n@param {Tensor} tensor The tensor to quantize.\n@param {'binary'|'ubinary'} precision The precision to use for quantization.\n@returns {Tensor} The quantized tensor.",
+                "end_line": 1239,
+                "kind": "function",
+                "name": "quantize_embeddings",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/tensor.js",
+                "qualified_name": "quantize_embeddings",
+                "signature": "function quantize_embeddings(tensor, precision) {\n    if (tensor.dims.length !== 2) {\n        throw new Error(\"The tensor must have 2 dimensions\");\n    }\n    if (tensor.dims.at(-1) % 8 !== 0) {\n        throw new Error(\"The last dimension of the tensor must be a multiple of 8\");\n    }\n    if (!['binary', 'ubinary'].includes(precision)) {\n        throw new Error(\"The precision must be either 'binary' or 'ubinary'\");\n    }\n\n    const signed = precision === 'binary';\n    const dtype = signed ? 'int8' : 'uint8';\n\n    // Create a typed array to store the packed bits\n    const cls = signed ? Int8Array : Uint8Array;\n    const inputData = tensor.data;\n    const outputData = new cls(inputData.length / 8);\n\n    // Iterate over each number in the array\n    for (let i = 0; i < inputData.length; ++i) {\n        // Determine if the number is greater than 0\n        const bit = inputData[i] > 0 ? 1 : 0;\n\n        // Calculate the index in the typed array and the position within the byte\n        const arrayIndex = Math.floor(i / 8);\n        const bitPosition = i % 8;\n\n        // Pack the bit into the typed array\n        outputData[arrayIndex] |= bit << (7 - bitPosition);\n        if (signed && bitPosition === 0) {\n            outputData[arrayIndex] -= 128;\n        }\n    };\n\n    return new Tensor(dtype, outputData, [tensor.dims[0], tensor.dims[1] / 8]);\n}",
+                "start_line": 1203,
+                "symbol_id": "src/utils/tensor.js#function:quantize_embeddings:1203"
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "src/utils/tensor.js",
+                "workspace_id": "ts_001_ctx8k"
+              },
+              "durationMs": 0,
+              "toolName": "list_symbols",
+              "workspace_id": "ts_001_ctx8k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 4137,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 8106,
+          "metadata": {},
+          "name": "strategy.local_function.execute",
+          "type": "strategy.local_function.execute"
+        },
+        {
+          "duration_ms": 8106,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 39,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": null,
+        "cachedInputTokens": 2168,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 2,
+        "inputTokens": 9854,
+        "loopControlDurationMsEstimated": 37,
+        "mcpToolCalls": 2,
+        "modelCalls": 3,
+        "modelDurationMs": 8067,
+        "outputTokens": 279,
+        "promptChars": 1226,
+        "questionTokensEstimated": 160,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 699,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 3,
+        "strategyDurationMs": 8106,
+        "taskStatementChars": 1056,
+        "toolCalls": 2,
+        "toolDurationMs": 2,
+        "totalDurationMs": 8106,
+        "totalTokens": 10832,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "workspace_id": "ts_001_ctx8k"
+                    },
+                    "id": null,
+                    "name": "list_files",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "Co4FAQw51sf1Emp2ADFclBUMP-zkWtn8AI8DqFLlv9lNNhT5wA07LiQZbF9Pu2kniYkOJmtoZ4ZyFJRXdjIekDY0ePxfcC46Gp-uYQRHkHMJ3vN-uGhS5eypDu4LoaeZmg5uJWV8fH18QGfVdzEXPAC3gq-xmisCkHaK9ePSUWQzj-eZpC66cIT0nRSVbCMKhymK42dcJWykVRqFOAReLy3QcJV_dxhzI_oxKDgZJxXqlvCsf2ngRIxwgHk6QKO6nFFF_Btqkk2t1WjL1gVESEDub3NNpCQpp3bOqLAC0NcZ8geX7ZYpBiBzOX6ppLNOaVJiIDDpZ2JLhguaGsRVa0legGuGYK9XB58f4vhUNzww2tWn3yGwydnh25HmRoR1bLlUZbhXMRRnj5SLhJJr-TRtGk0PNRo2f7Hf24OEs3-3Qthe7Gz5WgsEdVRxH4o-saKOwnSRcKv1RiRvC6mfrSIgDEHv-NeKDuR8GRTlz89c9qjutygo1uIzeRJAFQv0X2xYPN06zOUZV03m7tI1TZwojrRF7X--dnOjBtC6jDAhzQDW6Wc0FSxckbbMuVEoCiQUT_ztuHFFseJwsY7wP607DsIhhka5TsS1aGmqMql4q1BLCXqt7ZEjYIMbVlPOlzNErNaOQxqbcgLzRKkCjvL0Jd-WSH6FkVaCzXE2a-Dxml7JztZ3paO6-6t1ah4tU8nBfYwSwXLluDLjFCZ8Q6tX8GQzBasjDf6EdEYqEssBKYmEHpb2SmLJzGhO2Fa7jRl7OjxNOrM6KzacjOpKz9k_bNxZDRZVulP9c5a1sUBNVAGguAIfF58lO8uVVh8dJ7_XRpnbfagtZgkq50lthpJTqIAEkuR1YGUe2Ssemd6x",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "CIgUap3jNaaHz7IPq5e8oQ0",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:34:02 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1488",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 618
+            }
+          ],
+          "cached_content_token_count": 618,
+          "candidates_token_count": 25,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 632,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 632
+            }
+          ],
+          "thoughts_token_count": 141,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 798,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "kind": "function",
+                      "path": "src/utils/tensor.js",
+                      "workspace_id": "ts_001_ctx8k"
+                    },
+                    "id": null,
+                    "name": "list_symbols",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CoIDAQw51scO29NzyO90dR9gKrNBCftzmzjRWFEKmjNxQWqu_guaKxLTq8f69-RRtOBi5lVHiB4asISaxtp7LOYX57nHdfy8bpOBrBxZTQXQ42GEdf7A6hS5m-SxZYT61n_VoiYGHjjW8tQ1l59tQy0CncoR4eZUy7PoVEsmHNj0PR16JxjvlswGXzcd1RoG8LjchPbvuim3mpF933PHhac85UhUtDPWBjXBX0sMG4KmJJeTUc_Iplx6TKiGtLojQljud-NBcJePFuOYie4nPDdjVNJdZqqrLV7n8xJbq1B-B7mnHLgLkM-eXDMXY1zo6BZiEeZZQyzd-7Pza5BIDFDAozxreOmGcwPdVUsZZMUkT9TSmN1xwTlxb5807TBbwTwCHMAgIssa7O5ttt1WMED7gne6AFzSAZKo5sWgqBtYaiENahS-WUU1-wsdjfl_ySRR0EI2-AgwjGhCqMAUWAsWspAtlWTv5B7wu3pwNupRhIjjCKdR-63j0U79ceFPRcGgrMs=",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "CogUasSRJMGHz7IPsvzjoQ4",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:34:04 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=2019",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 586
+            }
+          ],
+          "cached_content_token_count": 586,
+          "candidates_token_count": 41,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 767,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 767
+            }
+          ],
+          "thoughts_token_count": 95,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 903,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": {
+              "citations": [
+                {
+                  "end_index": 754,
+                  "license": "",
+                  "publication_date": null,
+                  "start_index": 14,
+                  "title": null,
+                  "uri": "https://github.com/andmev/transformers.js"
+                }
+              ]
+            },
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": null,
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": "```javascript\nfunction reshape(data, dimensions) {\n\n    const totalElements = data.length;\n    const dimensionSize = dimensions.reduce((a, b) => a * b);\n\n    if (totalElements !== dimensionSize) {\n        throw Error(`cannot reshape array of size ${totalElements} into shape (${dimensions})`);\n    }\n\n    /** @type {any} */\n    let reshapedArray = data;\n\n    for (let i = dimensions.length - 1; i >= 0; i--) {\n        reshapedArray = reshapedArray.reduce((acc, val) => {\n            let lastArray = acc[acc.length - 1];\n\n            if (lastArray.length < dimensions[i]) {\n                lastArray.push(val);\n            } else {\n                acc.push([val]);\n            }\n\n            return acc;\n        }, [[]]);\n    }\n\n    return reshapedArray[0];\n}\n```",
+                  "thought": null,
+                  "thought_signature": "CrAQAQw51sc5rOk5kufuqE9V1uULfhWiV-RYLtl71JEvtmnAlxqiluZOzo78Tj6QER8QXpSJZixoGgt843U23nbTt7un4lSBuL_ZoUnz3jpQjtfFcIrmSdQRkO5VXrjI-qEkJrCHEC-FGxJiRDAgrZlsXPkZrOvt7OihneOiROBPB0f4dW9fcurhep28C35Q3bLCJZz1mLMm_kRDgtjhapa1C02yLAiwCUa4yU5VGJgEuM5RMnThKfvJspvZcO1XVhxzXVi_NXmMMnnI8OpzlOyTHoQkVC7dbISlZtO3hTwm0--bXhU4KvOwtplDGeyvzpxctvc_zSnjMhPjirjlFO4wjQz1NKT2kVqwZlyYXMhcjnxmiLyj1OE1N18aL1AYAnnxwtVxlyx09wUwhBbqP6Y9hznfJixfOWKRGa0U8MEgEa_eNqn7gfOAwnTTXr74V4fEnY1SMRNM1Pax1W6IPlVPTIAIM3CD800waYGfVAq1fGO60gz6MYVhg6MV6vYXzLWcAE0ZUB_QeVx-RYyRH2ifNDV0RZ7wLHLVyVyqH9ONNX1THeB2qotLKfBRFv98oIZclg1sDV70yDaOG5LHXxYtFyG3JECejPj0idFQPK5FUtF0IjMqV__yoR7d-1S0t7c0OIYMNWk-vZFnEJGibGyzyeTF91JVvh1F27_fUyjiq4iSTnChpF4gYekYk6adih6obIpLJ1kk9v1R-CidtCWOo3mx71bZOdBtGSgtUjVfU8sOVFsWoLd69ydJYI2Xpt1sHTfdJoJ0L0dRS6HdqJgL-Le3-T-Jyx95DLD7OI4wYiwf-7VeTOTCKBT6WiE_nJ7a4X4416FyDyrgUWZh-_xhITh3ngyArt1G4detuXZpLZChBOJj9IACYwt0RDaxJF7_kZvICsQIRP32RY4icQPf8clGevroBl4wYQaUhDrpXOr7bLeouzyNDJHKM0wxtLJ02lbSzEvKRdtypfqYBGfItKkMRRI6CJ-OnQ-Y8VhqbmKRi31jGyHL42Bp-F9Dydt60MF8_62fEH8RYBraUu7PaqOSqus0mjwYnhv0UH22vAenyQ92895mUjhmTp9TxnHYOrS8AV1H0G1fmSdn5QA0vTlWS5Qn8gv2LKYVddtFIA93sselh8Ghxxv3E9Asf-1KC6lSWZrZIGesF16c0j5ioP3pJOv2ZNOaIGDd9TXyrSzfadoHXbsQvuQ-hDZeiaLJkf6Q3r83iIEcmLeB0ussZZK7fM2GAPx_rMiHakLfjJr1jLHDnhkxroxEvvNKzyYZcOHVTLV1SvtHkz6r-Ht8otKWcupImx4rqRY6C7YhEWso0TF4AOlLWKvBKRAgfhFemcs_8xzmsXuIuadRVkKqvQrS-Ns65VJPuukifWP5-e8px-EPMGr_A-86owcN4oEtvtxAi8daml3bYJ2pp2yaY8G02cZE7_8HsfvrB9pba2teXzShD6Mt1p8WFSBLzunprFstl3RwtvQpZVWaUkWhyKbZ_YwvxYJdfkfY5kd5SgOQ36ANR2Hq2wcXqhQMhOUULFdjCZYLsz9pNpUQpVVpzsYs7anF5wLZNnVS0-nkL4uv_ibwXZi4x6vtoDhALHRT_OivY3DrhR_y1kJU17MVTAmCcZ3GL6xgCUhINau4D1S04GIdVWtyYlMBgQbpizT_6IYc3Y_MpfqNEBKOICB3Dh8iA1C4OwH90Ig_61HG1opCgD9fnesyihryTLs-n6NKgCmty3MaPDdsIOyySpltPWNSeozqZxRiE6-xgYL9HJJ7zizB3xu0VFdJ3QY8cEdkX8rVioC5V0W_c3tyfcIcwcgJamt2gJ4ni5b8XnMXxDufm33ZZojiJAQNJtRFLiS2qmnL7DvNY-puit0_HJTYkBDPd4eECHgbCN3LhLBg4KSzmRo8whAfPkGguo3qYZsCK8jXKMYt-kEmZG7tPaA6g_Qsc01HPYDa6mkIG08NUad-OGEUpWVHS0z4KVCidJFKSdKhQf81BNag7iQ2-zNr2ZIwpqwKI_89GXCJDKpnYpjz0XeInSWGaKgwxTOSHlfErANZts-X1jdz7vgJc3_1BrJ2LMOW3P20PM7adzzErvvF-A1txr3yXGitDBIgKB-97TQT2diqYwntysKt4ISs42VrJGky6weEA8hDj6uP2xvzPxKUtH7wt-U9tux9JiakBvQaeIvzvOjaIIfjL9XzlHoiKCJHgASBxx_1SRcZrMGMQzb1JRvsifBOorWWTOTKLrzra_3e4PXLYegNP30qptm9ncS3N1OELrfwBKfketMmbaqbi8gLrcvd3vIie4Q011SjyLWPn59qeGVR6Gv5SskrGXcjvsCsFl12KFQHuHoujv_V-7VIqjQBVJ7Cxp4yrk76sgB_oPjyVJoPo0XcS_3wpjUqPuJczgWYvkWUiph0nJMHbcejdEB-BhK2mkc8-u7jIum12HKNAl69gjbQ9NsL_g7TXWXearHrEZRrDU63M76cE4KC2mW3DVgpe4jJA0wf7xpNgUROtdcY_KcbXS1A8SbOa70lz9wpbNcaxxA79QHRWJXXdwN7UXmrjARmI0fo73Li-RrrkutSFY80tTJexzV9YK8-qe2H5bKW9DSatZCITw8r6YikaMjEeiLw7osj7_oOmY8Fzl3m0NuA6sdEBnatgF6DZ-OQfMNvwWKmJ3N_CkmWr0jI5BH_4Y1eQpGtOSIeXNj0EWmRLrE-EfTBop_jnK7tHrZz1s6L4P9oc5x7nfvHeyF4ojeDpYPsUc16AbkqaXo9RfSOOnQU6pU0WWjxd_wTtVqTgsx8m5Y=",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                },
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": null,
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": "\n",
+                  "thought": null,
+                  "thought_signature": null,
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "DYgUavcakYjPsg-SvM2wBQ",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:34:08 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=3864",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 964
+            }
+          ],
+          "cached_content_token_count": 964,
+          "candidates_token_count": 213,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 8455,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 8455
+            }
+          ],
+          "thoughts_token_count": 463,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 9131,
+          "traffic_type": null
+        }
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "workspace_id": "ts_001_ctx8k"
+        },
+        "durationMs": 2,
+        "toolName": "list_files",
+        "workspace_id": "ts_001_ctx8k"
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/utils/tensor.js",
+          "workspace_id": "ts_001_ctx8k"
+        },
+        "durationMs": 0,
+        "toolName": "list_symbols",
+        "workspace_id": "ts_001_ctx8k"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "workspace_id": "ts_001_ctx8k"
+        },
+        "id": "step-1-tool-1",
+        "isError": false,
+        "name": "list_files",
+        "result": [
+          {
+            "language": "typescript",
+            "parse_status": "ok_filtered",
+            "path": "src/utils/tensor.js",
+            "repository": "xenova/transformers.js",
+            "symbol_count": 129
+          },
+          {
+            "language": "typescript",
+            "parse_status": "ok_filtered",
+            "path": "src/utils/image.js",
+            "repository": "xenova/transformers.js",
+            "symbol_count": 21
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/utils/tensor.js",
+          "workspace_id": "ts_001_ctx8k"
+        },
+        "id": "step-2-tool-1",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "Reshapes a 1-dimensional array into an n-dimensional array, according to the provided dimensions.\n\n@example\nreshape([10                    ], [1      ]); // Type: number[]      Value: [10]\nreshape([1, 2, 3, 4            ], [2, 2   ]); // Type: number[][]    Value: [[1, 2], [3, 4]]\nreshape([1, 2, 3, 4, 5, 6, 7, 8], [2, 2, 2]); // Type: number[][][]  Value: [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]\nreshape([1, 2, 3, 4, 5, 6, 7, 8], [4, 2   ]); // Type: number[][]    Value: [[1, 2], [3, 4], [5, 6], [7, 8]]\n@param {T[]|DataArray} data The input array to reshape.\n@param {DIM} dimensions The target shape/dimensions.\n@template T\n@template {[number]|number[]} DIM\n@returns {NestArray<T, DIM[\"length\"]>} The reshaped array.",
+            "end_line": 682,
+            "kind": "function",
+            "name": "reshape",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/tensor.js",
+            "qualified_name": "reshape",
+            "signature": "function reshape(data, dimensions) {\n\n    const totalElements = data.length;\n    const dimensionSize = dimensions.reduce((a, b) => a * b);\n\n    if (totalElements !== dimensionSize) {\n        throw Error(`cannot reshape array of size ${totalElements} into shape (${dimensions})`);\n    }\n\n    /** @type {any} */\n    let reshapedArray = data;\n\n    for (let i = dimensions.length - 1; i >= 0; i--) {\n        reshapedArray = reshapedArray.reduce((acc, val) => {\n            let lastArray = acc[acc.length - 1];\n\n            if (lastArray.length < dimensions[i]) {\n                lastArray.push(val);\n            } else {\n                acc.push([val]);\n            }\n\n            return acc;\n        }, [[]]);\n    }\n\n    return reshapedArray[0];\n}",
+            "start_line": 655,
+            "symbol_id": "src/utils/tensor.js#function:reshape:655"
+          },
+          {
+            "children": [],
+            "documentation": "Permutes a tensor according to the provided axes.\n@param {any} tensor The input tensor to permute.\n@param {Array} axes The axes to permute the tensor along.\n@returns {Tensor} The permuted tensor.",
+            "end_line": 693,
+            "kind": "function",
+            "name": "permute",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/tensor.js",
+            "qualified_name": "permute",
+            "signature": "function permute(tensor, axes) {\n    const [permutedData, shape] = permute_data(tensor.data, tensor.dims, axes);\n    return new Tensor(tensor.type, permutedData, shape);\n}",
+            "start_line": 690,
+            "symbol_id": "src/utils/tensor.js#function:permute:690"
+          },
+          {
+            "children": [],
+            "documentation": "Interpolates an Tensor to the given size.\n@param {Tensor} input The input tensor to interpolate. Data must be channel-first (i.e., [c, h, w])\n@param {number[]} size The output size of the image\n@param {string} mode The interpolation mode\n@param {boolean} align_corners Whether to align corners.\n@returns {Tensor} The interpolated tensor.",
+            "end_line": 719,
+            "kind": "function",
+            "name": "interpolate",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/tensor.js",
+            "qualified_name": "interpolate",
+            "signature": "function interpolate(input, [out_height, out_width], mode = 'bilinear', align_corners = false) {\n\n    // Input image dimensions\n    const in_channels = input.dims.at(-3) ?? 1;\n    const in_height = input.dims.at(-2);\n    const in_width = input.dims.at(-1);\n\n    let output = interpolate_data(\n        /** @type {import('./maths.js').TypedArray}*/(input.data),\n        [in_channels, in_height, in_width],\n        [out_height, out_width],\n        mode,\n        align_corners\n    );\n    return new Tensor(input.type, output, [in_channels, out_height, out_width]);\n}",
+            "start_line": 704,
+            "symbol_id": "src/utils/tensor.js#function:interpolate:704"
+          },
+          {
+            "children": [],
+            "documentation": "Perform mean pooling of the last hidden state followed by a normalization step.\n@param {Tensor} last_hidden_state Tensor of shape [batchSize, seqLength, embedDim]\n@param {Tensor} attention_mask Tensor of shape [batchSize, seqLength]\n@returns {Tensor} Returns a new Tensor of shape [batchSize, embedDim].",
+            "end_line": 765,
+            "kind": "function",
+            "name": "mean_pooling",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/tensor.js",
+            "qualified_name": "mean_pooling",
+            "signature": "function mean_pooling(last_hidden_state, attention_mask) {\n    // last_hidden_state: [batchSize, seqLength, embedDim]\n    // attention_mask:    [batchSize, seqLength]\n\n    let shape = [last_hidden_state.dims[0], last_hidden_state.dims[2]];\n    // @ts-ignore\n    let returnedData = new last_hidden_state.data.constructor(shape[0] * shape[1]);\n    let [batchSize, seqLength, embedDim] = last_hidden_state.dims;\n\n    let outIndex = 0;\n    for (let i = 0; i < batchSize; ++i) {\n        let offset = i * embedDim * seqLength;\n\n        for (let k = 0; k < embedDim; ++k) {\n            let sum = 0;\n            let count = 0;\n\n            let attnMaskOffset = i * seqLength;\n            let offset2 = offset + k;\n            // Pool over all words in sequence\n            for (let j = 0; j < seqLength; ++j) {\n                // index into attention mask\n                let attn = Number(attention_mask.data[attnMaskOffset + j]);\n\n                count += attn;\n                sum += last_hidden_state.data[offset2 + j * embedDim] * attn;\n            }\n\n            let avg = sum / count;\n            returnedData[outIndex++] = avg;\n        }\n    }\n\n    return new Tensor(\n        last_hidden_state.type,\n        returnedData,\n        shape\n    )\n}",
+            "start_line": 727,
+            "symbol_id": "src/utils/tensor.js#function:mean_pooling:727"
+          },
+          {
+            "children": [],
+            "documentation": "Apply Layer Normalization for last certain number of dimensions.\n@param {Tensor} input The input tensor\n@param {number[]} normalized_shape input shape from an expected input of size\n@param {Object} options The options for the layer normalization\n@param {number} [options.eps=1e-5] A value added to the denominator for numerical stability.\n@returns {Tensor} The normalized tensor.",
+            "end_line": 801,
+            "kind": "function",
+            "name": "layer_norm",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/tensor.js",
+            "qualified_name": "layer_norm",
+            "signature": "function layer_norm(input, normalized_shape, {\n    eps = 1e-5,\n} = {}) {\n    if (input.dims.length !== 2) {\n        throw new Error('`layer_norm` currently only supports 2D input.');\n    }\n\n    const [batchSize, featureDim] = input.dims;\n\n    if (normalized_shape.length !== 1 && normalized_shape[0] !== featureDim) {\n        throw new Error('`normalized_shape` must be a 1D array with shape `[input.dims[1]]`.');\n    }\n\n    const [std, mean] = std_mean(input, 1, 0, true);\n\n    // @ts-ignore\n    const returnedData = new input.data.constructor(input.data.length);\n\n    for (let i = 0; i < batchSize; ++i) {\n        const offset = i * featureDim;\n        for (let j = 0; j < featureDim; ++j) {\n            const offset2 = offset + j;\n            returnedData[offset2] = (input.data[offset2] - mean.data[i]) / (std.data[i] + eps);\n        }\n    }\n    return new Tensor(input.type, returnedData, input.dims);\n}",
+            "start_line": 775,
+            "symbol_id": "src/utils/tensor.js#function:layer_norm:775"
+          },
+          {
+            "children": [],
+            "documentation": "Helper function to calculate new dimensions when performing a squeeze operation.\n@param {number[]} dims The dimensions of the tensor.\n@param {number|number[]|null} dim The dimension(s) to squeeze.\n@returns The new dimensions.\n@private",
+            "end_line": 824,
+            "kind": "function",
+            "name": "calc_squeeze_dims",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/tensor.js",
+            "qualified_name": "calc_squeeze_dims",
+            "signature": "function calc_squeeze_dims(dims, dim) {\n    dims = dims.slice();\n    if (dim === null) {\n        dims = dims.filter((d) => d !== 1);\n    } else if (typeof dim === 'number') {\n        if (dims[dim] === 1) {\n            dims.splice(dim, 1);\n        }\n    } else if (Array.isArray(dim)) {\n        dims = dims.filter((x, i) => {\n            return x !== 1 || !dim.includes(i);\n        });\n    }\n    return dims;\n}",
+            "start_line": 810,
+            "symbol_id": "src/utils/tensor.js#function:calc_squeeze_dims:810"
+          },
+          {
+            "children": [],
+            "documentation": "Helper function to calculate new dimensions when performing an unsqueeze operation.\n@param {number[]} dims The dimensions of the tensor.\n@param {number} dim The dimension to unsqueeze.\n@returns The new dimensions.\n@private",
+            "end_line": 841,
+            "kind": "function",
+            "name": "calc_unsqueeze_dims",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/tensor.js",
+            "qualified_name": "calc_unsqueeze_dims",
+            "signature": "function calc_unsqueeze_dims(dims, dim) {\n    // Dimension out of range (e.g., \"expected to be in range of [-4, 3], but got 4\")\n    // + 1 since we allow inserting at the end (i.e. dim = -1)\n    dim = safeIndex(dim, dims.length + 1);\n    dims = dims.slice();\n    // Insert 1 into specified dimension\n    dims.splice(dim, 0, 1);\n    return dims;\n}",
+            "start_line": 833,
+            "symbol_id": "src/utils/tensor.js#function:calc_unsqueeze_dims:833"
+          },
+          {
+            "children": [],
+            "documentation": "Safely calculate the index for an array of a given size, allowing negative indexing.\n@param {number} index The index that will be used.\n@param {number} size The size of the array.\n@param {number} [dimension=null] The dimension that the index is for (optional).\n@returns {number} The index, guaranteed to be non-negative and less than `arrayLength`.\n\n@throws {Error} If the index is out of range.\n@private",
+            "end_line": 863,
+            "kind": "function",
+            "name": "safeIndex",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/tensor.js",
+            "qualified_name": "safeIndex",
+            "signature": "function safeIndex(index, size, dimension = null) {\n    if (index < -size || index >= size) {\n        throw new Error(`IndexError: index ${index} is out of bounds for dimension${dimension === null ? '' : ' ' + dimension} with size ${size}`);\n    }\n\n    if (index < 0) {\n        // Negative indexing, ensuring positive index\n        index = ((index % size) + size) % size;\n    }\n    return index;\n}",
+            "start_line": 853,
+            "symbol_id": "src/utils/tensor.js#function:safeIndex:853"
+          },
+          {
+            "children": [],
+            "documentation": "Concatenates an array of tensors along a specified dimension.\n@param {Tensor[]} tensors The array of tensors to concatenate.\n@param {number} dim The dimension to concatenate along.\n@returns {Tensor} The concatenated tensor.",
+            "end_line": 926,
+            "kind": "function",
+            "name": "cat",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/tensor.js",
+            "qualified_name": "cat",
+            "signature": "function cat(tensors, dim = 0) {\n    dim = safeIndex(dim, tensors[0].dims.length);\n\n    // TODO do validation of shapes\n\n    const resultDims = tensors[0].dims.slice();\n    resultDims[dim] = tensors.reduce((a, b) => a + b.dims[dim], 0);\n\n    // Create a new array to store the accumulated values\n    const resultSize = resultDims.reduce((a, b) => a * b, 1);\n    // @ts-ignore\n    const result = new tensors[0].data.constructor(resultSize);\n\n    // Create output tensor of same type as first\n    const resultType = tensors[0].type;\n\n    if (dim === 0) {\n        // Handle special case for performance reasons\n\n        let offset = 0;\n        for (let t of tensors) {\n            result.set(t.data, offset);\n            offset += t.data.length;\n        }\n\n    } else {\n\n        let currentDim = 0;\n\n        for (let t = 0; t < tensors.length; ++t) {\n            let tensor = tensors[t];\n\n            // Iterate over the data array\n            for (let i = 0; i < tensor.data.length; ++i) {\n                // Calculate the index in the resulting array\n                let resultIndex = 0;\n\n                for (let j = tensor.dims.length - 1, num = i, resultMultiplier = 1; j >= 0; --j) {\n                    const size = tensor.dims[j];\n                    let index = num % size;\n                    if (j === dim) {\n                        index += currentDim;\n                    }\n                    resultIndex += index * resultMultiplier;\n                    resultMultiplier *= resultDims[j];\n                    num = Math.floor(num / size);\n                }\n                // Accumulate the value at the current index\n                result[resultIndex] = tensor.data[i];\n            }\n\n            currentDim += tensor.dims[dim];\n        }\n    }\n    return new Tensor(resultType, result, resultDims);\n}",
+            "start_line": 871,
+            "symbol_id": "src/utils/tensor.js#function:cat:871"
+          },
+          {
+            "children": [],
+            "documentation": "Stack an array of tensors along a specified dimension.\n@param {Tensor[]} tensors The array of tensors to stack.\n@param {number} dim The dimension to stack along.\n@returns {Tensor} The stacked tensor.",
+            "end_line": 938,
+            "kind": "function",
+            "name": "stack",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/tensor.js",
+            "qualified_name": "stack",
+            "signature": "function stack(tensors, dim = 0) {\n    // TODO do validation of shapes\n    // NOTE: stack expects each tensor to be equal size\n    return cat(tensors.map(t => t.unsqueeze(dim)), dim);\n}",
+            "start_line": 934,
+            "symbol_id": "src/utils/tensor.js#function:stack:934"
+          },
+          {
+            "children": [],
+            "documentation": "Calculates the standard deviation and mean over the dimensions specified by dim. dim can be a single dimension or `null` to reduce over all dimensions.\n@param {Tensor} input the input tenso\n@param {number|null} dim the dimension to reduce. If None, all dimensions are reduced.\n@param {number} correction difference between the sample size and sample degrees of freedom. Defaults to Bessel's correction, correction=1.\n@param {boolean} keepdim whether the output tensor has dim retained or not.\n@returns {Tensor[]} A tuple of (std, mean) tensors.",
+            "end_line": 1009,
+            "kind": "function",
+            "name": "std_mean",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/tensor.js",
+            "qualified_name": "std_mean",
+            "signature": "function std_mean(input, dim = null, correction = 1, keepdim = false) {\n\n    if (dim === null) {\n        // None to reduce over all dimensions.\n        // @ts-ignore\n        const sum = input.data.reduce((a, b) => a + b, 0);\n        const mean = sum / input.data.length;\n        // @ts-ignore\n        const std = Math.sqrt(input.data.reduce((a, b) => a + (b - mean) ** 2, 0) / (input.data.length - correction));\n\n        const meanTensor = new Tensor(input.type, [mean], [/* scalar */]);\n        const stdTensor = new Tensor(input.type, [std], [/* scalar */]);\n\n        return [stdTensor, meanTensor];\n    }\n\n    // Negative indexing\n    dim = safeIndex(dim, input.dims.length);\n\n    const meanTensor = mean(input, dim, keepdim);\n\n    // Calculate the shape of the resulting array after summation\n    const resultDims = input.dims.slice(); // Copy the original dimensions\n    resultDims[dim] = 1; // Remove the specified axis\n\n    // Create a new array to store the accumulated values\n    // @ts-ignore\n    const result = new input.data.constructor(input.data.length / input.dims[dim]);\n\n    // Iterate over the data array\n    for (let i = 0; i < input.data.length; ++i) {\n\n        // Calculate the index in the resulting array\n        let resultIndex = 0;\n\n        for (let j = input.dims.length - 1, num = i, resultMultiplier = 1; j >= 0; --j) {\n            const size = input.dims[j];\n            if (j !== dim) {\n                const index = num % size;\n                resultIndex += index * resultMultiplier;\n                resultMultiplier *= resultDims[j];\n            }\n            num = Math.floor(num / size);\n        }\n\n        // Accumulate the value at the current index\n        result[resultIndex] += (input.data[i] - meanTensor.data[resultIndex]) ** 2;\n    }\n\n    for (let i = 0; i < result.length; ++i) {\n        result[i] = Math.sqrt(result[i] / (input.dims[dim] - correction));\n    }\n\n    if (!keepdim) {\n        resultDims.splice(dim, 1);\n    }\n\n    const stdTensor = new Tensor(input.type, result, resultDims);\n\n    return [stdTensor, meanTensor];\n}",
+            "start_line": 949,
+            "symbol_id": "src/utils/tensor.js#function:std_mean:949"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the mean value of each row of the input tensor in the given dimension dim.\n@param {Tensor} input the input tensor.\n@param {number|null} dim the dimension to reduce.\n@param {boolean} keepdim whether the output tensor has dim retained or not.\n@returns A new tensor with means taken along the specified dimension.",
+            "end_line": 1070,
+            "kind": "function",
+            "name": "mean",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/tensor.js",
+            "qualified_name": "mean",
+            "signature": "function mean(input, dim = null, keepdim = false) {\n\n    if (dim === null) {\n        // None to reduce over all dimensions.\n        // @ts-ignore\n        let val = input.data.reduce((a, b) => a + b, 0);\n        return new Tensor(input.type, [val / input.data.length], [/* scalar */]);\n    }\n\n    // Negative indexing\n    dim = safeIndex(dim, input.dims.length);\n\n    // Calculate the shape of the resulting array after summation\n    const resultDims = input.dims.slice(); // Copy the original dimensions\n    resultDims[dim] = 1; // Remove the specified axis\n\n    // Create a new array to store the accumulated values\n    // @ts-ignore\n    const result = new input.data.constructor(input.data.length / input.dims[dim]);\n\n    // Iterate over the data array\n    for (let i = 0; i < input.data.length; ++i) {\n\n        // Calculate the index in the resulting array\n        let resultIndex = 0;\n\n        for (let j = input.dims.length - 1, num = i, resultMultiplier = 1; j >= 0; --j) {\n            const size = input.dims[j];\n            if (j !== dim) {\n                const index = num % size;\n                resultIndex += index * resultMultiplier;\n                resultMultiplier *= resultDims[j];\n            }\n            num = Math.floor(num / size);\n        }\n\n        // Accumulate the value at the current index\n        result[resultIndex] += input.data[i];\n    }\n\n    if (input.dims[dim] !== 1) {\n        for (let i = 0; i < result.length; ++i) {\n            result[i] = result[i] / input.dims[dim];\n        }\n    }\n\n    if (!keepdim) {\n        resultDims.splice(dim, 1);\n    }\n\n    return new Tensor(input.type, result, resultDims);\n}",
+            "start_line": 1019,
+            "symbol_id": "src/utils/tensor.js#function:mean:1019"
+          },
+          {
+            "children": [],
+            "documentation": "Measures similarity between two temporal sequences (e.g., input audio and output tokens\nto generate token-level timestamps).\n@param {Tensor} matrix\n@returns {number[][]}",
+            "end_line": 1164,
+            "kind": "function",
+            "name": "dynamicTimeWarping",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/tensor.js",
+            "qualified_name": "dynamicTimeWarping",
+            "signature": "function dynamicTimeWarping(matrix) {\n    const [output_length, input_length] = matrix.dims;\n\n    const outputShape = [output_length + 1, input_length + 1];\n\n    const cost = new Tensor(\n        'float32',\n        new Float32Array(outputShape[0] * outputShape[1]).fill(Infinity),\n        outputShape\n    );\n\n    const trace = new Tensor(\n        'float32',\n        new Float32Array(outputShape[0] * outputShape[1]).fill(-1),\n        outputShape\n    )\n\n    // same as `cost[0][0] = 0`;\n    cost[0].data[0] = 0;\n\n    for (let j = 1; j < input_length + 1; ++j) {\n        for (let i = 1; i < output_length + 1; ++i) {\n\n            const c0 = cost[i - 1][j - 1].item();\n            const c1 = cost[i - 1][j].item();\n            const c2 = cost[i][j - 1].item();\n\n            let c, t;\n            if (c0 < c1 && c0 < c2) {\n                c = c0;\n                t = 0;\n            } else if (c1 < c0 && c1 < c2) {\n                c = c1;\n                t = 1;\n            } else {\n                c = c2;\n                t = 2;\n            }\n\n            cost[i].data[j] = matrix[i - 1][j - 1].item() + c;\n            trace[i].data[j] = t;\n        }\n    }\n\n    // backtrace\n    let i = output_length;\n    let j = input_length;\n\n    // @ts-ignore\n    trace.data.fill(2, 0, outputShape[1]) // trace[0, :] = 2\n    for (let i = 0; i < outputShape[0]; ++i) { // trace[:, 0] = 1\n        trace[i].data[0] = 1;\n    }\n\n    let text_indices = [];\n    let time_indices = [];\n\n    while (i > 0 || j > 0) {\n        text_indices.push(i - 1);\n        time_indices.push(j - 1);\n\n        const t = trace[i][j].item();\n        switch (t) {\n            case 0:\n                --i; --j;\n                break;\n            case 1:\n                --i;\n                break;\n            case 2:\n                --j;\n                break;\n            default:\n                throw new Error(\n                    `Internal error in dynamic time warping. Unexpected trace[${i}, ${j}]. Please file a bug report.`\n                )\n        }\n    }\n\n    text_indices.reverse();\n    time_indices.reverse();\n\n    return [text_indices, time_indices];\n\n}",
+            "start_line": 1080,
+            "symbol_id": "src/utils/tensor.js#function:dynamicTimeWarping:1080"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 1173,
+            "kind": "function",
+            "name": "dimsToStride",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/tensor.js",
+            "qualified_name": "dimsToStride",
+            "signature": "function dimsToStride(dims) {\n    const stride = new Array(dims.length);\n    for (let i = dims.length - 1, s2 = 1; i >= 0; --i) {\n        stride[i] = s2;\n        s2 *= dims[i];\n    }\n    return stride;\n}",
+            "start_line": 1166,
+            "symbol_id": "src/utils/tensor.js#function:dimsToStride:1166"
+          },
+          {
+            "children": [],
+            "documentation": "Returns a tensor filled with the scalar value 1, with the shape defined by the variable argument size.\n@param {number[]} size A sequence of integers defining the shape of the output tensor.",
+            "end_line": 1186,
+            "kind": "function",
+            "name": "ones",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/tensor.js",
+            "qualified_name": "ones",
+            "signature": "function ones(size) {\n    const numElements = size.reduce((a, b) => a * b, 1);\n    return new Tensor(\n        'int64',\n        new BigInt64Array(numElements).fill(1n),\n        size\n    )\n}",
+            "start_line": 1179,
+            "symbol_id": "src/utils/tensor.js#function:ones:1179"
+          },
+          {
+            "children": [],
+            "documentation": "Returns a tensor filled with the scalar value 1, with the same size as input.\n@param {Tensor} tensor The size of input will determine size of the output tensor.\n@returns The ones tensor.",
+            "end_line": 1195,
+            "kind": "function",
+            "name": "ones_like",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/tensor.js",
+            "qualified_name": "ones_like",
+            "signature": "function ones_like(tensor) {\n    return ones(tensor.dims);\n}",
+            "start_line": 1193,
+            "symbol_id": "src/utils/tensor.js#function:ones_like:1193"
+          },
+          {
+            "children": [],
+            "documentation": "Quantizes the embeddings tensor to binary or unsigned binary precision.\n@param {Tensor} tensor The tensor to quantize.\n@param {'binary'|'ubinary'} precision The precision to use for quantization.\n@returns {Tensor} The quantized tensor.",
+            "end_line": 1239,
+            "kind": "function",
+            "name": "quantize_embeddings",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/tensor.js",
+            "qualified_name": "quantize_embeddings",
+            "signature": "function quantize_embeddings(tensor, precision) {\n    if (tensor.dims.length !== 2) {\n        throw new Error(\"The tensor must have 2 dimensions\");\n    }\n    if (tensor.dims.at(-1) % 8 !== 0) {\n        throw new Error(\"The last dimension of the tensor must be a multiple of 8\");\n    }\n    if (!['binary', 'ubinary'].includes(precision)) {\n        throw new Error(\"The precision must be either 'binary' or 'ubinary'\");\n    }\n\n    const signed = precision === 'binary';\n    const dtype = signed ? 'int8' : 'uint8';\n\n    // Create a typed array to store the packed bits\n    const cls = signed ? Int8Array : Uint8Array;\n    const inputData = tensor.data;\n    const outputData = new cls(inputData.length / 8);\n\n    // Iterate over each number in the array\n    for (let i = 0; i < inputData.length; ++i) {\n        // Determine if the number is greater than 0\n        const bit = inputData[i] > 0 ? 1 : 0;\n\n        // Calculate the index in the typed array and the position within the byte\n        const arrayIndex = Math.floor(i / 8);\n        const bitPosition = i % 8;\n\n        // Pack the bit into the typed array\n        outputData[arrayIndex] |= bit << (7 - bitPosition);\n        if (signed && bitPosition === 0) {\n            outputData[arrayIndex] -= 128;\n        }\n    };\n\n    return new Tensor(dtype, outputData, [tensor.dims[0], tensor.dims[1] / 8]);\n}",
+            "start_line": 1203,
+            "symbol_id": "src/utils/tensor.js#function:quantize_embeddings:1203"
+          }
+        ]
+      }
+    ]
+  },
+  "trialId": "a8b7ee2902"
+}

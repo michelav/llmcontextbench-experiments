@@ -1,0 +1,909 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 2463,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "rs_003_ctx4k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "language": "rust",
+                "parse_status": "ok_filtered",
+                "path": "src/multi/mod.rs",
+                "repository": "rust-bakery/nom",
+                "symbol_count": 18
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "rs_003_ctx4k"
+              },
+              "durationMs": 0,
+              "toolName": "list_files",
+              "workspace_id": "rs_003_ctx4k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1238,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "src/multi/mod.rs",
+              "workspace_id": "rs_003_ctx4k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "Repeats the embedded parser, counting the results\n\nThis stops on [`Err::Error`]. To instead chain an error up, see\n[`cut`][crate::combinator::cut].\n\n# Arguments\n* `f` The parser to apply.\n\n*Note*: if the parser passed in accepts empty inputs (like `alpha0` or `digit0`), `many0` will\nreturn an error, to prevent going into an infinite loop\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, IResult, Parser};\nuse nom::multi::many0_count;\nuse nom::bytes::complete::tag;\n\nfn parser(s: &str) -> IResult<&str, usize> {\nmany0_count(tag(\"abc\")).parse(s)\n}\n\nassert_eq!(parser(\"abcabc\"), Ok((\"\", 2)));\nassert_eq!(parser(\"abc123\"), Ok((\"123\", 1)));\nassert_eq!(parser(\"123123\"), Ok((\"123123\", 0)));\nassert_eq!(parser(\"\"), Ok((\"\", 0)));\n```",
+                "end_line": 710,
+                "kind": "function",
+                "name": "many0_count",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "many0_count",
+                "signature": "pub fn many0_count<I, E, F>(parser: F) -> impl Parser<I, Output = usize, Error = E>\nwhere\n  I: Clone + InputLength,\n  F: Parser<I, Error = E>,\n  E: ParseError<I>,\n{\n  Many0Count { parser }\n}",
+                "start_line": 703,
+                "symbol_id": "src/multi/mod.rs#function:many0_count:703"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 755,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(\n    &mut self,\n    mut input: I,\n  ) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let mut count = 0;\n\n    loop {\n      let input_ = input.clone();\n      let len = input.input_len();\n      match self\n        .parser\n        .process::<OutputM<Check, Check, OM::Incomplete>>(input_)\n      {\n        Ok((i, _)) => {\n          // infinite loop check: the parser must always consume\n          if i.input_len() == len {\n            return Err(Err::Error(OM::Error::bind(|| {\n              <F as Parser<I>>::Error::from_error_kind(input, ErrorKind::Many0Count)\n            })));\n          }\n\n          input = i;\n          count += 1;\n        }\n\n        Err(Err::Error(_)) => return Ok((input, OM::Output::bind(|| count))),\n        Err(Err::Failure(e)) => return Err(Err::Failure(e)),\n        Err(Err::Incomplete(i)) => return Err(Err::Incomplete(i)),\n      }\n    }\n  }",
+                "start_line": 725,
+                "symbol_id": "src/multi/mod.rs#function:process:725"
+              },
+              {
+                "children": [],
+                "documentation": "Runs the embedded parser, counting the results.\n\nThis stops on [`Err::Error`] if there is at least one result. To instead chain an error up,\nsee [`cut`][crate::combinator::cut].\n\n# Arguments\n* `f` The parser to apply.\n\n*Note*: If the parser passed to `many1` accepts empty inputs\n(like `alpha0` or `digit0`), `many1` will return an error,\nto prevent going into an infinite loop.\n\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult, Parser};\nuse nom::multi::many1_count;\nuse nom::bytes::complete::tag;\n\nfn parser(s: &str) -> IResult<&str, usize> {\nmany1_count(tag(\"abc\")).parse(s)\n}\n\nassert_eq!(parser(\"abcabc\"), Ok((\"\", 2)));\nassert_eq!(parser(\"abc123\"), Ok((\"123\", 1)));\nassert_eq!(parser(\"123123\"), Err(Err::Error(Error::new(\"123123\", ErrorKind::Many1Count))));\nassert_eq!(parser(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::Many1Count))));\n```",
+                "end_line": 791,
+                "kind": "function",
+                "name": "many1_count",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "many1_count",
+                "signature": "pub fn many1_count<I, E, F>(parser: F) -> impl Parser<I, Output = usize, Error = E>\nwhere\n  I: Clone + InputLength,\n  F: Parser<I, Error = E>,\n  E: ParseError<I>,\n{\n  Many1Count { parser }\n}",
+                "start_line": 784,
+                "symbol_id": "src/multi/mod.rs#function:many1_count:784"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 850,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(\n    &mut self,\n    input: I,\n  ) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let mut count = 0;\n\n    match self\n      .parser\n      .process::<OutputM<Check, Check, OM::Incomplete>>(input.clone())\n    {\n      Err(Err::Error(_)) => Err(Err::Error(OM::Error::bind(move || {\n        <F as Parser<I>>::Error::from_error_kind(input, ErrorKind::Many1Count)\n      }))),\n      Err(Err::Failure(e)) => Err(Err::Failure(e)),\n      Err(Err::Incomplete(i)) => Err(Err::Incomplete(i)),\n      Ok((mut input, _)) => {\n        count += 1;\n\n        loop {\n          let input_ = input.clone();\n          let len = input.input_len();\n          match self\n            .parser\n            .process::<OutputM<Check, Check, OM::Incomplete>>(input_)\n          {\n            Ok((i, _)) => {\n              // infinite loop check: the parser must always consume\n              if i.input_len() == len {\n                return Err(Err::Error(OM::Error::bind(|| {\n                  <F as Parser<I>>::Error::from_error_kind(input, ErrorKind::Many1Count)\n                })));\n              }\n\n              input = i;\n              count += 1;\n            }\n\n            Err(Err::Error(_)) => return Ok((input, OM::Output::bind(|| count))),\n            Err(Err::Failure(e)) => return Err(Err::Failure(e)),\n            Err(Err::Incomplete(i)) => return Err(Err::Incomplete(i)),\n          }\n        }\n      }\n    }\n  }",
+                "start_line": 806,
+                "symbol_id": "src/multi/mod.rs#function:process:806"
+              },
+              {
+                "children": [],
+                "documentation": "Runs the embedded parser `count` times, gathering the results in a `Vec`\n\n# Arguments\n* `f` The parser to apply.\n* `count` How often to apply the parser.\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult, Parser};\nuse nom::multi::count;\nuse nom::bytes::complete::tag;\n\nfn parser(s: &str) -> IResult<&str, Vec<&str>> {\ncount(tag(\"abc\"), 2).parse(s)\n}\n\nassert_eq!(parser(\"abcabc\"), Ok((\"\", vec![\"abc\", \"abc\"])));\nassert_eq!(parser(\"abc123\"), Err(Err::Error(Error::new(\"123\", ErrorKind::Tag))));\nassert_eq!(parser(\"123123\"), Err(Err::Error(Error::new(\"123123\", ErrorKind::Tag))));\nassert_eq!(parser(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::Tag))));\nassert_eq!(parser(\"abcabcabc\"), Ok((\"abc\", vec![\"abc\", \"abc\"])));\n```\n[cfg(feature = \"alloc\")]\n[cfg_attr(feature = \"docsrs\", doc(cfg(feature = \"alloc\")))]",
+                "end_line": 884,
+                "kind": "function",
+                "name": "count",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "count",
+                "signature": "pub fn count<I, F>(\n  parser: F,\n  count: usize,\n) -> impl Parser<I, Output = Vec<<F as Parser<I>>::Output>, Error = <F as Parser<I>>::Error>\nwhere\n  I: Clone,\n  F: Parser<I>,\n{\n  Count { parser, count }\n}",
+                "start_line": 875,
+                "symbol_id": "src/multi/mod.rs#function:count:875"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 932,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let mut input = i.clone();\n    let max_initial_capacity = MAX_INITIAL_CAPACITY_BYTES\n      / crate::lib::std::mem::size_of::<<F as Parser<I>>::Output>().max(1);\n    let mut res = OM::Output::bind(|| {\n      crate::lib::std::vec::Vec::with_capacity(self.count.min(max_initial_capacity))\n    });\n\n    for _ in 0..self.count {\n      let input_ = input.clone();\n      match self.parser.process::<OM>(input_) {\n        Ok((i, o)) => {\n          res = OM::Output::combine(res, o, |mut res, o| {\n            res.push(o);\n            res\n          });\n          input = i;\n        }\n        Err(Err::Error(e)) => {\n          return Err(Err::Error(OM::Error::map(e, |e| {\n            <F as Parser<I>>::Error::append(i, ErrorKind::Count, e)\n          })));\n        }\n        Err(e) => {\n          return Err(e);\n        }\n      }\n    }\n\n    Ok((input, res))\n  }",
+                "start_line": 902,
+                "symbol_id": "src/multi/mod.rs#function:process:902"
+              },
+              {
+                "children": [],
+                "documentation": "Runs the embedded parser repeatedly, filling the given slice with results.\n\nThis parser fails if the input runs out before the given slice is full.\n\n# Arguments\n* `f` The parser to apply.\n* `buf` The slice to fill\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult, Parser};\nuse nom::multi::fill;\nuse nom::bytes::complete::tag;\n\nfn parser(s: &str) -> IResult<&str, [&str; 2]> {\nlet mut buf = [\"\", \"\"];\nlet (rest, ()) = fill(tag(\"abc\"), &mut buf).parse(s)?;\nOk((rest, buf))\n}\n\nassert_eq!(parser(\"abcabc\"), Ok((\"\", [\"abc\", \"abc\"])));\nassert_eq!(parser(\"abc123\"), Err(Err::Error(Error::new(\"123\", ErrorKind::Tag))));\nassert_eq!(parser(\"123123\"), Err(Err::Error(Error::new(\"123123\", ErrorKind::Tag))));\nassert_eq!(parser(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::Tag))));\nassert_eq!(parser(\"abcabcabc\"), Ok((\"abc\", [\"abc\", \"abc\"])));\n```",
+                "end_line": 969,
+                "kind": "function",
+                "name": "fill",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "fill",
+                "signature": "pub fn fill<'a, I, E, F>(\n  parser: F,\n  buf: &'a mut [<F as Parser<I>>::Output],\n) -> impl Parser<I, Output = (), Error = E> + 'a\nwhere\n  I: Clone,\n  F: Parser<I, Error = E> + 'a,\n  E: ParseError<I>,\n{\n  Fill { parser, buf }\n}",
+                "start_line": 959,
+                "symbol_id": "src/multi/mod.rs#function:fill:959"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1007,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let mut input = i.clone();\n\n    for elem in self.buf.iter_mut() {\n      let input_ = input.clone();\n      match self.parser.process::<OM>(input_) {\n        Ok((i, o)) => {\n          OM::Output::map(o, |o| *elem = o);\n          input = i;\n        }\n        Err(Err::Error(e)) => {\n          return Err(Err::Error(OM::Error::map(e, |e| {\n            <F as Parser<I>>::Error::append(i, ErrorKind::Count, e)\n          })));\n        }\n        Err(e) => {\n          return Err(e);\n        }\n      }\n    }\n\n    Ok((input, OM::Output::bind(|| ())))\n  }",
+                "start_line": 985,
+                "symbol_id": "src/multi/mod.rs#function:process:985"
+              },
+              {
+                "children": [],
+                "documentation": "Repeats the embedded parser, calling `g` to gather the results.\n\nThis stops on [`Err::Error`]. To instead chain an error up, see\n[`cut`][crate::combinator::cut].\n\n# Arguments\n* `f` The parser to apply.\n* `init` A function returning the initial value.\n* `g` The function that combines a result of `f` with\nthe current accumulator.\n\n*Note*: if the parser passed in accepts empty inputs (like `alpha0` or `digit0`), `many0` will\nreturn an error, to prevent going into an infinite loop\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, IResult, Parser};\nuse nom::multi::fold_many0;\nuse nom::bytes::complete::tag;\n\nfn parser(s: &str) -> IResult<&str, Vec<&str>> {\nfold_many0(\ntag(\"abc\"),\nVec::new,\n|mut acc: Vec<_>, item| {\nacc.push(item);\nacc\n}\n).parse(s)\n}\n\nassert_eq!(parser(\"abcabc\"), Ok((\"\", vec![\"abc\", \"abc\"])));\nassert_eq!(parser(\"abc123\"), Ok((\"123\", vec![\"abc\"])));\nassert_eq!(parser(\"123123\"), Ok((\"123123\", vec![])));\nassert_eq!(parser(\"\"), Ok((\"\", vec![])));\n```",
+                "end_line": 1063,
+                "kind": "function",
+                "name": "fold_many0",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "fold_many0",
+                "signature": "pub fn fold_many0<I, E, F, G, H, R>(\n  parser: F,\n  init: H,\n  g: G,\n) -> impl Parser<I, Output = R, Error = E>\nwhere\n  I: Clone + InputLength,\n  F: Parser<I, Error = E>,\n  G: FnMut(R, <F as Parser<I>>::Output) -> R,\n  H: FnMut() -> R,\n  E: ParseError<I>,\n{\n  FoldMany0 {\n    parser,\n    g,\n    init,\n    r: PhantomData,\n  }\n}",
+                "start_line": 1045,
+                "symbol_id": "src/multi/mod.rs#function:fold_many0:1045"
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "src/multi/mod.rs",
+                "workspace_id": "rs_003_ctx4k"
+              },
+              "durationMs": 0,
+              "toolName": "list_symbols",
+              "workspace_id": "rs_003_ctx4k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 3259,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "symbol_id": "src/multi/mod.rs#function:many1_count:784",
+              "workspace_id": "rs_003_ctx4k"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": {
+              "children": [],
+              "code": "pub fn many1_count<I, E, F>(parser: F) -> impl Parser<I, Output = usize, Error = E>\nwhere\n  I: Clone + InputLength,\n  F: Parser<I, Error = E>,\n  E: ParseError<I>,\n{\n  Many1Count { parser }\n}",
+              "documentation": "Runs the embedded parser, counting the results.\n\nThis stops on [`Err::Error`] if there is at least one result. To instead chain an error up,\nsee [`cut`][crate::combinator::cut].\n\n# Arguments\n* `f` The parser to apply.\n\n*Note*: If the parser passed to `many1` accepts empty inputs\n(like `alpha0` or `digit0`), `many1` will return an error,\nto prevent going into an infinite loop.\n\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult, Parser};\nuse nom::multi::many1_count;\nuse nom::bytes::complete::tag;\n\nfn parser(s: &str) -> IResult<&str, usize> {\nmany1_count(tag(\"abc\")).parse(s)\n}\n\nassert_eq!(parser(\"abcabc\"), Ok((\"\", 2)));\nassert_eq!(parser(\"abc123\"), Ok((\"123\", 1)));\nassert_eq!(parser(\"123123\"), Err(Err::Error(Error::new(\"123123\", ErrorKind::Many1Count))));\nassert_eq!(parser(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::Many1Count))));\n```",
+              "end_line": 791,
+              "kind": "function",
+              "name": "many1_count",
+              "parent_id": null,
+              "parent_name": null,
+              "path": "src/multi/mod.rs",
+              "qualified_name": "many1_count",
+              "signature": "pub fn many1_count<I, E, F>(parser: F) -> impl Parser<I, Output = usize, Error = E>\nwhere\n  I: Clone + InputLength,\n  F: Parser<I, Error = E>,\n  E: ParseError<I>,\n{\n  Many1Count { parser }\n}",
+              "start_line": 784,
+              "symbol_id": "src/multi/mod.rs#function:many1_count:784"
+            },
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "symbol_id": "src/multi/mod.rs#function:many1_count:784",
+                "workspace_id": "rs_003_ctx4k"
+              },
+              "durationMs": 0,
+              "toolName": "get_symbol",
+              "workspace_id": "rs_003_ctx4k"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1279,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 8285,
+          "metadata": {},
+          "name": "strategy.local_function.execute",
+          "type": "strategy.local_function.execute"
+        },
+        {
+          "duration_ms": 8285,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 46,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": null,
+        "cachedInputTokens": 2127,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 3,
+        "inputTokens": 7748,
+        "loopControlDurationMsEstimated": 46,
+        "mcpToolCalls": 3,
+        "modelCalls": 4,
+        "modelDurationMs": 8239,
+        "outputTokens": 195,
+        "promptChars": 1258,
+        "questionTokensEstimated": 176,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 591,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 4,
+        "strategyDurationMs": 8285,
+        "taskStatementChars": 1088,
+        "toolCalls": 3,
+        "toolDurationMs": 0,
+        "totalDurationMs": 8285,
+        "totalTokens": 8534,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "workspace_id": "rs_003_ctx4k"
+                    },
+                    "id": null,
+                    "name": "list_files",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CoYHAQw51sd6ttzO7E8tUSXzHJBNWVjuxf2s0cQl4waF3BdH1TFkPU7BwGm9plSxijvs4frSmDxt0vHKaX5V5Cq6KxIyEQBgWFA2nG-OFwY-Eo5zgtbSe8mCo4Rj6p_hSm-kI4UOySjgtRi-ctE2QU-VilZ15PlaFQSiaAkiJZLSmv96MjBVbK_Lpuhvmj0gVEehj4qYL5G2NDBCRkilRKh_dvqDyarxM4LgZeAYfmA6Ad9sefMVkFGygcjze_j8CV4jceiazU3i47T05a_akM2mAM7N5ET2vSQBuL-zxGN1UxM4otsXQC0kcpCq1NrCp9Zf8qQzNxVrVYRFAiHrAwFQ0UbSTcTFgh-VpuvN-kPwC3HDhnKAjVhZE3SfkoYE2-sg5uDjSrt4CBYcKGvg0ZV66LLNODBK34WQDPcBOvJYleAiZAddjSVjYLfFX_6tgrvKEyuNzfrmLwPywcCe_fxBRas54_FEFHE33reGm7_OIIHxf-c682W0o5fyxdxWmtRHJyR3bKh9iDITXUIIbQpo25Qu-2f9Bh4BT0FOfHjMV39d_5vhu_vCVjhEu7fRGOH2dheb01NOYVe89imIYZbjxrYerySOR25GXzdWjeh7oTIArQ15z633PPZfxqLsa1g5B7gdDbK0BM9qq5HCuKn_UDT7joV82ASlLT_GvEZskQmztCrEjT-hKmMezv8gL2QNZaINDzuwUlVg7Q98YYInIP64xyZMdsfR2ndlvePLOUa2aObOt3h2QV2hjNmGFnw4DwTXJ0c7TIzmn9FzLUQNBFZ_JGcZOUJ-zicI0sFdoGPxN2H8i7P5vf0MgySlksH-mUih4qk_Czv8kZSjwQWwLvt8ydwIf6jiVn2E5b6BxxKbNSnrWZZcNPvDmRtHx7VLI1dV1ovS5Ingf7UxhXK2Tkx9uGIgcqbXowyDfkYiQYYhUoEKV3jZJjZLzWvuBfRyzllZLFXvWavd8JDTyEWLbnvoqWZEooznEmPFOn3EHFf8G14DwvAnd53jepmOAHh2SA1FXM_zv9utqrT3p74k7enqi5WUE_JdgeiK-QK9I5h4GNmNGhnjjtlt54AXKU8pTx8Nu-7ZxjzdehfGkWKuL8ZLSmoUJDmuoEWZ-PzvdpY687dXIaSQtEjSGC4RZTAUKGhzkF5dUXlHqsptunAwZRgO3lRewe3X7xBxxFKof9Yzpk1-sTE=",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "3I4UasTSCvutz7IP34aymA0",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 18:03:09 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=2238",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 25,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 647,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 647
+            }
+          ],
+          "thoughts_token_count": 179,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 851,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "kind": "function",
+                      "path": "src/multi/mod.rs",
+                      "workspace_id": "rs_003_ctx4k"
+                    },
+                    "id": null,
+                    "name": "list_symbols",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CtwBAQw51sfjvuzDQDDI2pdUkfVJstIKkyCl3Cfy-WohPP3G4oqd0nGOE_9oIPKYMnaL-AGCyCuO_jIZ8VTg-63-Gwlt1wp4P45lDw7vb5RXlaGdbyZVY32gB8aj-ECf4labD8REATyBrpMpFceu_ptoRIdU8yM1d0mitAqXyVs4Ovy8M05CiHoBmW-xnmfTtgBSG2TdrdxJ4JDP3u5fMUMFmD9uzoScU6WH1VISEQXUYoKtGgEvwfnPwug4K2V1xkmVLMdBWGhJtm6WoaLSPzsmR0glHEdjiX4T2IYejg==",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "3o4Uar2HAZyGqtsP_N3M0Ao",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 18:03:10 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1010",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 558
+            }
+          ],
+          "cached_content_token_count": 558,
+          "candidates_token_count": 41,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 733,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 733
+            }
+          ],
+          "thoughts_token_count": 38,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 812,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "symbol_id": "src/multi/mod.rs#function:many1_count:784",
+                      "workspace_id": "rs_003_ctx4k"
+                    },
+                    "id": null,
+                    "name": "get_symbol",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CvoKAQw51scq0_LgnRFvL20HzM8UfZaU-H59lmDtWIbwGQaeJJoUGOsR4uKfa2AItgilFyVoJMVUOQwrU_BEAjyGljrsD6jHgGRcrDN6mcZ-6i_UixYCqNjUTwMy64VziW50SRaNagOD3CbhOPpIwBqRtLTKUIPFQQtelFl86pPER6yRhfg7rZuOdPrhbSpUR1ohiyLDE-FU35z6eibHF39xrpNRLkW40NNnlYZRpvP_Puw6So8KKE4zL_4AvNLzTb4mm_oWuhzqNLu03OsbIw6gE7ozdD-7BV8Tt5reW7J4NXWJ5CcUQ6QqBjNpKXP1sWqntjtypfxd1V1KHueauJZjtDe11Jod6A8bvrxD3mGpyfui8wYWOQ6ZsEObpgJ0dlg6grXWFOPDiFiIJ5yoprt_j0NzRH2_nA8kwfdGkueLqHmXU3CQxUOCwvYq4ZUUCkbxcoVNNTMBJtCQEmnvVc7pT2zHCdK3LVpAUIPTQmmxXva6jbjBrynBEx_XdQSHwU5yIYID9tS5nHcVm3Tg9vHXeG1XxGOgIJB4b-lEw4uFU8OO_Mu_C0szQ0ki8CZ8VjFmPatnBDCMf-HN-jPrv-hFjuqHv53ghiVr5EApbJecxZ3BJ_NXkSk9qSXAfnELhv2lAhNF4cdywrlpGxtgJHaOPC1BAEoAyK_YabktyXqfgzwWBxBA5vj0Gsv6D2j1IIp_pt7-J181nUbQtkDsxGpE-BKau7Q2FVFnmuumacliD9JXlDa-fiXXe-Psdk5cdRndhDBcOVHht09-uibGzvIOuscU2ohfMaP9fWN_xgLq-dv9F9vLDW6EMKIKnMf7xE3ZJj8TjgaPTEeft6_c2HdXfrMHwYxHu7iMz8J0So20FXreDOFojn3Zs7MzaZ1irSO1lkEuVbe4-KObNMLidnMuR1NOgnTfdLkDLGeRemIPjqv2TwiCXiHWTCTsUVfjQjr-RHeHYPeQzj6lSLDlIweMnlMGr4ud8uTOO6ykseftlxRmry1x2VZrFbv89C0dZjJ1UzpiM8WGu7KNbpzMwaN9qJP6lwCtWPdG1z8kpA5zZzj6WcOH-4kTbZTuCYi6jlS3Y9xYqNcHxwb8twFTEx0aJ4t3oRTtyYQW9UuXi8Q1PE3E9EFRC9uNvQlxvgvSjOmyIPhwZ4EWibZLROANBVxI-slGOEy7fqzu4vIHT69Typz-UQeTP-VYZs5m-W-vfGHS6hS5cHzF2Q-3-HaEsbgXw1qWu6Cj0BuaZ_ouSY_biSZEY7M0zQZLvSNDDc5YE9az6mhpYjL3ahY9oyl0SHzisvAyTTayDj4PTIrfOOuq7dXfAi2D3y3Lo7HT45Zu10rnE_lPyJWmoXwQHKL4_T0nJoPmouqWVHq6ySSAEyNLOMPAam6Ylbsh4gEqunsA16RcG-lh1uvoZ-BKni__JlFa3sN196uO2pEE9pPJMktIg5GEihMnWPk85oWjNJ3U8iUNbhAyn_row-dvxhsoE1-QcOiPgW95610Ndh4JGck72lG_z2cuspz35o_QJ0oIHyS2syMYKrAgnBL8eUHeEIO97la5ny_CfFr0rvEQyiFLyFbsnr5Pgyvzf4bnu4l1hAYgBMFPwxMsebrpXrH3EB8fHoTcZONMBlTzjIkb-6CDAlIDCvD8BvpUK5nimMYVomuUshaM-Pufc8ZfL3elYovg1XIdfSn6051PfgV0FIo6BXfqdeMtD3zrb8ursRAZetcvuC3U8g5PfUmj6kAnGfyi6mYA2AyKIpjP84bTI-MJ2bm1aI5jUJ7uJyydHci_4SbyBZCGNXT-txkdxV2ny_-VtAVJNa5oL7uQy9bbUPbwdcQn74Y3ugqOEfO8wdcWjImWqZT9ijWwI8y0Fw==",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "344UaqDfFb6yqtsPkuaXoA0",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 18:03:14 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=3025",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 937
+            }
+          ],
+          "cached_content_token_count": 937,
+          "candidates_token_count": 49,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 5070,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 5070
+            }
+          ],
+          "thoughts_token_count": 374,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 5493,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": null,
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": "```rust\npub fn many1_count<I, E, F>(parser: F) -> impl Parser<I, Output = usize, Error = E>\nwhere\n  I: Clone + InputLength,\n  F: Parser<I, Error = E>,\n  E: ParseError<I>,\n{\n  Many1Count { parser }\n}\n```",
+                  "thought": null,
+                  "thought_signature": null,
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "4o4UarbfIOXrz7IPkvCWUA",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 18:03:15 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1047",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 632
+            }
+          ],
+          "cached_content_token_count": 632,
+          "candidates_token_count": 80,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 1298,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 1298
+            }
+          ],
+          "thoughts_token_count": null,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 1378,
+          "traffic_type": null
+        }
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "workspace_id": "rs_003_ctx4k"
+        },
+        "durationMs": 0,
+        "toolName": "list_files",
+        "workspace_id": "rs_003_ctx4k"
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/multi/mod.rs",
+          "workspace_id": "rs_003_ctx4k"
+        },
+        "durationMs": 0,
+        "toolName": "list_symbols",
+        "workspace_id": "rs_003_ctx4k"
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/multi/mod.rs#function:many1_count:784",
+          "workspace_id": "rs_003_ctx4k"
+        },
+        "durationMs": 0,
+        "toolName": "get_symbol",
+        "workspace_id": "rs_003_ctx4k"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "workspace_id": "rs_003_ctx4k"
+        },
+        "id": "step-1-tool-1",
+        "isError": false,
+        "name": "list_files",
+        "result": [
+          {
+            "language": "rust",
+            "parse_status": "ok_filtered",
+            "path": "src/multi/mod.rs",
+            "repository": "rust-bakery/nom",
+            "symbol_count": 18
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/multi/mod.rs",
+          "workspace_id": "rs_003_ctx4k"
+        },
+        "id": "step-2-tool-1",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "Repeats the embedded parser, counting the results\n\nThis stops on [`Err::Error`]. To instead chain an error up, see\n[`cut`][crate::combinator::cut].\n\n# Arguments\n* `f` The parser to apply.\n\n*Note*: if the parser passed in accepts empty inputs (like `alpha0` or `digit0`), `many0` will\nreturn an error, to prevent going into an infinite loop\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, IResult, Parser};\nuse nom::multi::many0_count;\nuse nom::bytes::complete::tag;\n\nfn parser(s: &str) -> IResult<&str, usize> {\nmany0_count(tag(\"abc\")).parse(s)\n}\n\nassert_eq!(parser(\"abcabc\"), Ok((\"\", 2)));\nassert_eq!(parser(\"abc123\"), Ok((\"123\", 1)));\nassert_eq!(parser(\"123123\"), Ok((\"123123\", 0)));\nassert_eq!(parser(\"\"), Ok((\"\", 0)));\n```",
+            "end_line": 710,
+            "kind": "function",
+            "name": "many0_count",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "many0_count",
+            "signature": "pub fn many0_count<I, E, F>(parser: F) -> impl Parser<I, Output = usize, Error = E>\nwhere\n  I: Clone + InputLength,\n  F: Parser<I, Error = E>,\n  E: ParseError<I>,\n{\n  Many0Count { parser }\n}",
+            "start_line": 703,
+            "symbol_id": "src/multi/mod.rs#function:many0_count:703"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 755,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(\n    &mut self,\n    mut input: I,\n  ) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let mut count = 0;\n\n    loop {\n      let input_ = input.clone();\n      let len = input.input_len();\n      match self\n        .parser\n        .process::<OutputM<Check, Check, OM::Incomplete>>(input_)\n      {\n        Ok((i, _)) => {\n          // infinite loop check: the parser must always consume\n          if i.input_len() == len {\n            return Err(Err::Error(OM::Error::bind(|| {\n              <F as Parser<I>>::Error::from_error_kind(input, ErrorKind::Many0Count)\n            })));\n          }\n\n          input = i;\n          count += 1;\n        }\n\n        Err(Err::Error(_)) => return Ok((input, OM::Output::bind(|| count))),\n        Err(Err::Failure(e)) => return Err(Err::Failure(e)),\n        Err(Err::Incomplete(i)) => return Err(Err::Incomplete(i)),\n      }\n    }\n  }",
+            "start_line": 725,
+            "symbol_id": "src/multi/mod.rs#function:process:725"
+          },
+          {
+            "children": [],
+            "documentation": "Runs the embedded parser, counting the results.\n\nThis stops on [`Err::Error`] if there is at least one result. To instead chain an error up,\nsee [`cut`][crate::combinator::cut].\n\n# Arguments\n* `f` The parser to apply.\n\n*Note*: If the parser passed to `many1` accepts empty inputs\n(like `alpha0` or `digit0`), `many1` will return an error,\nto prevent going into an infinite loop.\n\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult, Parser};\nuse nom::multi::many1_count;\nuse nom::bytes::complete::tag;\n\nfn parser(s: &str) -> IResult<&str, usize> {\nmany1_count(tag(\"abc\")).parse(s)\n}\n\nassert_eq!(parser(\"abcabc\"), Ok((\"\", 2)));\nassert_eq!(parser(\"abc123\"), Ok((\"123\", 1)));\nassert_eq!(parser(\"123123\"), Err(Err::Error(Error::new(\"123123\", ErrorKind::Many1Count))));\nassert_eq!(parser(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::Many1Count))));\n```",
+            "end_line": 791,
+            "kind": "function",
+            "name": "many1_count",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "many1_count",
+            "signature": "pub fn many1_count<I, E, F>(parser: F) -> impl Parser<I, Output = usize, Error = E>\nwhere\n  I: Clone + InputLength,\n  F: Parser<I, Error = E>,\n  E: ParseError<I>,\n{\n  Many1Count { parser }\n}",
+            "start_line": 784,
+            "symbol_id": "src/multi/mod.rs#function:many1_count:784"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 850,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(\n    &mut self,\n    input: I,\n  ) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let mut count = 0;\n\n    match self\n      .parser\n      .process::<OutputM<Check, Check, OM::Incomplete>>(input.clone())\n    {\n      Err(Err::Error(_)) => Err(Err::Error(OM::Error::bind(move || {\n        <F as Parser<I>>::Error::from_error_kind(input, ErrorKind::Many1Count)\n      }))),\n      Err(Err::Failure(e)) => Err(Err::Failure(e)),\n      Err(Err::Incomplete(i)) => Err(Err::Incomplete(i)),\n      Ok((mut input, _)) => {\n        count += 1;\n\n        loop {\n          let input_ = input.clone();\n          let len = input.input_len();\n          match self\n            .parser\n            .process::<OutputM<Check, Check, OM::Incomplete>>(input_)\n          {\n            Ok((i, _)) => {\n              // infinite loop check: the parser must always consume\n              if i.input_len() == len {\n                return Err(Err::Error(OM::Error::bind(|| {\n                  <F as Parser<I>>::Error::from_error_kind(input, ErrorKind::Many1Count)\n                })));\n              }\n\n              input = i;\n              count += 1;\n            }\n\n            Err(Err::Error(_)) => return Ok((input, OM::Output::bind(|| count))),\n            Err(Err::Failure(e)) => return Err(Err::Failure(e)),\n            Err(Err::Incomplete(i)) => return Err(Err::Incomplete(i)),\n          }\n        }\n      }\n    }\n  }",
+            "start_line": 806,
+            "symbol_id": "src/multi/mod.rs#function:process:806"
+          },
+          {
+            "children": [],
+            "documentation": "Runs the embedded parser `count` times, gathering the results in a `Vec`\n\n# Arguments\n* `f` The parser to apply.\n* `count` How often to apply the parser.\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult, Parser};\nuse nom::multi::count;\nuse nom::bytes::complete::tag;\n\nfn parser(s: &str) -> IResult<&str, Vec<&str>> {\ncount(tag(\"abc\"), 2).parse(s)\n}\n\nassert_eq!(parser(\"abcabc\"), Ok((\"\", vec![\"abc\", \"abc\"])));\nassert_eq!(parser(\"abc123\"), Err(Err::Error(Error::new(\"123\", ErrorKind::Tag))));\nassert_eq!(parser(\"123123\"), Err(Err::Error(Error::new(\"123123\", ErrorKind::Tag))));\nassert_eq!(parser(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::Tag))));\nassert_eq!(parser(\"abcabcabc\"), Ok((\"abc\", vec![\"abc\", \"abc\"])));\n```\n[cfg(feature = \"alloc\")]\n[cfg_attr(feature = \"docsrs\", doc(cfg(feature = \"alloc\")))]",
+            "end_line": 884,
+            "kind": "function",
+            "name": "count",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "count",
+            "signature": "pub fn count<I, F>(\n  parser: F,\n  count: usize,\n) -> impl Parser<I, Output = Vec<<F as Parser<I>>::Output>, Error = <F as Parser<I>>::Error>\nwhere\n  I: Clone,\n  F: Parser<I>,\n{\n  Count { parser, count }\n}",
+            "start_line": 875,
+            "symbol_id": "src/multi/mod.rs#function:count:875"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 932,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let mut input = i.clone();\n    let max_initial_capacity = MAX_INITIAL_CAPACITY_BYTES\n      / crate::lib::std::mem::size_of::<<F as Parser<I>>::Output>().max(1);\n    let mut res = OM::Output::bind(|| {\n      crate::lib::std::vec::Vec::with_capacity(self.count.min(max_initial_capacity))\n    });\n\n    for _ in 0..self.count {\n      let input_ = input.clone();\n      match self.parser.process::<OM>(input_) {\n        Ok((i, o)) => {\n          res = OM::Output::combine(res, o, |mut res, o| {\n            res.push(o);\n            res\n          });\n          input = i;\n        }\n        Err(Err::Error(e)) => {\n          return Err(Err::Error(OM::Error::map(e, |e| {\n            <F as Parser<I>>::Error::append(i, ErrorKind::Count, e)\n          })));\n        }\n        Err(e) => {\n          return Err(e);\n        }\n      }\n    }\n\n    Ok((input, res))\n  }",
+            "start_line": 902,
+            "symbol_id": "src/multi/mod.rs#function:process:902"
+          },
+          {
+            "children": [],
+            "documentation": "Runs the embedded parser repeatedly, filling the given slice with results.\n\nThis parser fails if the input runs out before the given slice is full.\n\n# Arguments\n* `f` The parser to apply.\n* `buf` The slice to fill\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult, Parser};\nuse nom::multi::fill;\nuse nom::bytes::complete::tag;\n\nfn parser(s: &str) -> IResult<&str, [&str; 2]> {\nlet mut buf = [\"\", \"\"];\nlet (rest, ()) = fill(tag(\"abc\"), &mut buf).parse(s)?;\nOk((rest, buf))\n}\n\nassert_eq!(parser(\"abcabc\"), Ok((\"\", [\"abc\", \"abc\"])));\nassert_eq!(parser(\"abc123\"), Err(Err::Error(Error::new(\"123\", ErrorKind::Tag))));\nassert_eq!(parser(\"123123\"), Err(Err::Error(Error::new(\"123123\", ErrorKind::Tag))));\nassert_eq!(parser(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::Tag))));\nassert_eq!(parser(\"abcabcabc\"), Ok((\"abc\", [\"abc\", \"abc\"])));\n```",
+            "end_line": 969,
+            "kind": "function",
+            "name": "fill",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "fill",
+            "signature": "pub fn fill<'a, I, E, F>(\n  parser: F,\n  buf: &'a mut [<F as Parser<I>>::Output],\n) -> impl Parser<I, Output = (), Error = E> + 'a\nwhere\n  I: Clone,\n  F: Parser<I, Error = E> + 'a,\n  E: ParseError<I>,\n{\n  Fill { parser, buf }\n}",
+            "start_line": 959,
+            "symbol_id": "src/multi/mod.rs#function:fill:959"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 1007,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let mut input = i.clone();\n\n    for elem in self.buf.iter_mut() {\n      let input_ = input.clone();\n      match self.parser.process::<OM>(input_) {\n        Ok((i, o)) => {\n          OM::Output::map(o, |o| *elem = o);\n          input = i;\n        }\n        Err(Err::Error(e)) => {\n          return Err(Err::Error(OM::Error::map(e, |e| {\n            <F as Parser<I>>::Error::append(i, ErrorKind::Count, e)\n          })));\n        }\n        Err(e) => {\n          return Err(e);\n        }\n      }\n    }\n\n    Ok((input, OM::Output::bind(|| ())))\n  }",
+            "start_line": 985,
+            "symbol_id": "src/multi/mod.rs#function:process:985"
+          },
+          {
+            "children": [],
+            "documentation": "Repeats the embedded parser, calling `g` to gather the results.\n\nThis stops on [`Err::Error`]. To instead chain an error up, see\n[`cut`][crate::combinator::cut].\n\n# Arguments\n* `f` The parser to apply.\n* `init` A function returning the initial value.\n* `g` The function that combines a result of `f` with\nthe current accumulator.\n\n*Note*: if the parser passed in accepts empty inputs (like `alpha0` or `digit0`), `many0` will\nreturn an error, to prevent going into an infinite loop\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, IResult, Parser};\nuse nom::multi::fold_many0;\nuse nom::bytes::complete::tag;\n\nfn parser(s: &str) -> IResult<&str, Vec<&str>> {\nfold_many0(\ntag(\"abc\"),\nVec::new,\n|mut acc: Vec<_>, item| {\nacc.push(item);\nacc\n}\n).parse(s)\n}\n\nassert_eq!(parser(\"abcabc\"), Ok((\"\", vec![\"abc\", \"abc\"])));\nassert_eq!(parser(\"abc123\"), Ok((\"123\", vec![\"abc\"])));\nassert_eq!(parser(\"123123\"), Ok((\"123123\", vec![])));\nassert_eq!(parser(\"\"), Ok((\"\", vec![])));\n```",
+            "end_line": 1063,
+            "kind": "function",
+            "name": "fold_many0",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "fold_many0",
+            "signature": "pub fn fold_many0<I, E, F, G, H, R>(\n  parser: F,\n  init: H,\n  g: G,\n) -> impl Parser<I, Output = R, Error = E>\nwhere\n  I: Clone + InputLength,\n  F: Parser<I, Error = E>,\n  G: FnMut(R, <F as Parser<I>>::Output) -> R,\n  H: FnMut() -> R,\n  E: ParseError<I>,\n{\n  FoldMany0 {\n    parser,\n    g,\n    init,\n    r: PhantomData,\n  }\n}",
+            "start_line": 1045,
+            "symbol_id": "src/multi/mod.rs#function:fold_many0:1045"
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/multi/mod.rs#function:many1_count:784",
+          "workspace_id": "rs_003_ctx4k"
+        },
+        "id": "step-3-tool-1",
+        "isError": false,
+        "name": "get_symbol",
+        "result": {
+          "children": [],
+          "code": "pub fn many1_count<I, E, F>(parser: F) -> impl Parser<I, Output = usize, Error = E>\nwhere\n  I: Clone + InputLength,\n  F: Parser<I, Error = E>,\n  E: ParseError<I>,\n{\n  Many1Count { parser }\n}",
+          "documentation": "Runs the embedded parser, counting the results.\n\nThis stops on [`Err::Error`] if there is at least one result. To instead chain an error up,\nsee [`cut`][crate::combinator::cut].\n\n# Arguments\n* `f` The parser to apply.\n\n*Note*: If the parser passed to `many1` accepts empty inputs\n(like `alpha0` or `digit0`), `many1` will return an error,\nto prevent going into an infinite loop.\n\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult, Parser};\nuse nom::multi::many1_count;\nuse nom::bytes::complete::tag;\n\nfn parser(s: &str) -> IResult<&str, usize> {\nmany1_count(tag(\"abc\")).parse(s)\n}\n\nassert_eq!(parser(\"abcabc\"), Ok((\"\", 2)));\nassert_eq!(parser(\"abc123\"), Ok((\"123\", 1)));\nassert_eq!(parser(\"123123\"), Err(Err::Error(Error::new(\"123123\", ErrorKind::Many1Count))));\nassert_eq!(parser(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::Many1Count))));\n```",
+          "end_line": 791,
+          "kind": "function",
+          "name": "many1_count",
+          "parent_id": null,
+          "parent_name": null,
+          "path": "src/multi/mod.rs",
+          "qualified_name": "many1_count",
+          "signature": "pub fn many1_count<I, E, F>(parser: F) -> impl Parser<I, Output = usize, Error = E>\nwhere\n  I: Clone + InputLength,\n  F: Parser<I, Error = E>,\n  E: ParseError<I>,\n{\n  Many1Count { parser }\n}",
+          "start_line": 784,
+          "symbol_id": "src/multi/mod.rs#function:many1_count:784"
+        }
+      }
+    ]
+  },
+  "trialId": "e6fd51df7e"
+}

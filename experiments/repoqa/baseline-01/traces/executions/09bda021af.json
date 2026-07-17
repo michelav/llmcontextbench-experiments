@@ -1,0 +1,1373 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 953,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-mini",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "py_002_ctx4k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 5,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "language": "python",
+                "parse_status": "ok_filtered",
+                "path": "src/black/ranges.py",
+                "repository": "psf/black",
+                "symbol_count": 12
+              }
+            ],
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "py_002_ctx4k"
+              },
+              "durationMs": 5,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "list_files",
+              "transport": "in_memory"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1319,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-mini",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "src/black/ranges.py",
+              "workspace_id": "py_002_ctx4k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 3,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "Converts unchanged lines to STANDALONE_COMMENT.\n\n    The idea is similar to how `# fmt: on/off` is implemented. It also converts the\n    nodes between those markers as a single `STANDALONE_COMMENT` leaf node with\n    the unformatted code as its value. `STANDALONE_COMMENT` is a \"fake\" token\n    that will be formatted as-is with its prefix normalized.\n\n    Here we perform two passes:\n\n    1. Visit the top-level statements, and convert them to a single\n       `STANDALONE_COMMENT` when unchanged. This speeds up formatting when some\n       of the top-level statements aren't changed.\n    2. Convert unchanged \"unwrapped lines\" to `STANDALONE_COMMENT` nodes line by\n       line. \"unwrapped lines\" are divided by the `NEWLINE` token. e.g. a\n       multi-line statement is *one* \"unwrapped line\" that ends with `NEWLINE`,\n       even though this statement itself can span multiple lines, and the\n       tokenizer only sees the last '\n' as the `NEWLINE` token.\n\n    NOTE: During pass (2), comment prefixes and indentations are ALWAYS\n    normalized even when the lines aren't changed. This is fixable by moving\n    more formatting to pass (1). However, it's hard to get it correct when\n    incorrect indentations are used. So we defer this to future optimizations.",
+                "end_line": 157,
+                "kind": "function",
+                "name": "convert_unchanged_lines",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "convert_unchanged_lines",
+                "signature": "def convert_unchanged_lines(src_node: Node, lines: Collection[Tuple[int, int]]) -> None",
+                "start_line": 128,
+                "symbol_id": "src/black/ranges.py#function:convert_unchanged_lines:128"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 167,
+                "kind": "function",
+                "name": "_contains_standalone_comment",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "_contains_standalone_comment",
+                "signature": "def _contains_standalone_comment(node: LN) -> bool",
+                "start_line": 160,
+                "symbol_id": "src/black/ranges.py#function:_contains_standalone_comment:160"
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "documentation": null,
+                    "end_line": 181,
+                    "kind": "method",
+                    "name": "__init__",
+                    "parent_id": "src/black/ranges.py#class:_TopLevelStatementsVisitor:170",
+                    "parent_name": "_TopLevelStatementsVisitor",
+                    "path": "src/black/ranges.py",
+                    "qualified_name": "_TopLevelStatementsVisitor.__init__",
+                    "signature": "def __init__(self, lines_set: Set[int])",
+                    "start_line": 180,
+                    "symbol_id": "src/black/ranges.py#method:_TopLevelStatementsVisitor.__init__:180"
+                  },
+                  {
+                    "children": [],
+                    "documentation": null,
+                    "end_line": 198,
+                    "kind": "method",
+                    "name": "visit_simple_stmt",
+                    "parent_id": "src/black/ranges.py#class:_TopLevelStatementsVisitor:170",
+                    "parent_name": "_TopLevelStatementsVisitor",
+                    "path": "src/black/ranges.py",
+                    "qualified_name": "_TopLevelStatementsVisitor.visit_simple_stmt",
+                    "signature": "def visit_simple_stmt(self, node: Node) -> Iterator[None]",
+                    "start_line": 183,
+                    "symbol_id": "src/black/ranges.py#method:_TopLevelStatementsVisitor.visit_simple_stmt:183"
+                  },
+                  {
+                    "children": [],
+                    "documentation": null,
+                    "end_line": 221,
+                    "kind": "method",
+                    "name": "visit_suite",
+                    "parent_id": "src/black/ranges.py#class:_TopLevelStatementsVisitor:170",
+                    "parent_name": "_TopLevelStatementsVisitor",
+                    "path": "src/black/ranges.py",
+                    "qualified_name": "_TopLevelStatementsVisitor.visit_suite",
+                    "signature": "def visit_suite(self, node: Node) -> Iterator[None]",
+                    "start_line": 200,
+                    "symbol_id": "src/black/ranges.py#method:_TopLevelStatementsVisitor.visit_suite:200"
+                  }
+                ],
+                "documentation": "A node visitor that converts unchanged top-level statements to\nSTANDALONE_COMMENT.\n\nThis is used in addition to _convert_unchanged_line_by_line, to\nspeed up formatting when there are unchanged top-level\nclasses/functions/statements.",
+                "end_line": 221,
+                "kind": "class",
+                "name": "_TopLevelStatementsVisitor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "_TopLevelStatementsVisitor",
+                "signature": "class _TopLevelStatementsVisitor(Visitor[None])",
+                "start_line": 170,
+                "symbol_id": "src/black/ranges.py#class:_TopLevelStatementsVisitor:170"
+              },
+              {
+                "children": [],
+                "documentation": "Converts unchanged to STANDALONE_COMMENT line by line.",
+                "end_line": 275,
+                "kind": "function",
+                "name": "_convert_unchanged_line_by_line",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "_convert_unchanged_line_by_line",
+                "signature": "def _convert_unchanged_line_by_line(node: Node, lines_set: Set[int]) -> None",
+                "start_line": 224,
+                "symbol_id": "src/black/ranges.py#function:_convert_unchanged_line_by_line:224"
+              },
+              {
+                "children": [],
+                "documentation": "Convert node to STANDALONE_COMMENT by modifying the tree inline.",
+                "end_line": 315,
+                "kind": "function",
+                "name": "_convert_node_to_standalone_comment",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "_convert_node_to_standalone_comment",
+                "signature": "def _convert_node_to_standalone_comment(node: LN) -> None",
+                "start_line": 278,
+                "symbol_id": "src/black/ranges.py#function:_convert_node_to_standalone_comment:278"
+              },
+              {
+                "children": [],
+                "documentation": "Convert nodes to STANDALONE_COMMENT by modifying the tree inline.",
+                "end_line": 345,
+                "kind": "function",
+                "name": "_convert_nodes_to_standalone_comment",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "_convert_nodes_to_standalone_comment",
+                "signature": "def _convert_nodes_to_standalone_comment(nodes: Sequence[LN], *, newline: Leaf) -> None",
+                "start_line": 318,
+                "symbol_id": "src/black/ranges.py#function:_convert_nodes_to_standalone_comment:318"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the line number of the leaf node's last line.",
+                "end_line": 354,
+                "kind": "function",
+                "name": "_leaf_line_end",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "_leaf_line_end",
+                "signature": "def _leaf_line_end(leaf: Leaf) -> int",
+                "start_line": 348,
+                "symbol_id": "src/black/ranges.py#function:_leaf_line_end:348"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the line range of this node or list of nodes.",
+                "end_line": 381,
+                "kind": "function",
+                "name": "_get_line_range",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "_get_line_range",
+                "signature": "def _get_line_range(node_or_nodes: Union[LN, List[LN]]) -> Set[int]",
+                "start_line": 357,
+                "symbol_id": "src/black/ranges.py#function:_get_line_range:357"
+              }
+            ],
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "src/black/ranges.py",
+                "workspace_id": "py_002_ctx4k"
+              },
+              "durationMs": 3,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "list_symbols",
+              "transport": "in_memory"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1106,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-mini",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "symbol_id": "src/black/ranges.py#function:convert_unchanged_lines:128",
+              "workspace_id": "py_002_ctx4k"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 6,
+          "metadata": {
+            "is_error": false,
+            "result": {
+              "children": [],
+              "code": "def convert_unchanged_lines(src_node: Node, lines: Collection[Tuple[int, int]]) -> None:\n    \"\"\"Converts unchanged lines to STANDALONE_COMMENT.\n\n    The idea is similar to how `# fmt: on/off` is implemented. It also converts the\n    nodes between those markers as a single `STANDALONE_COMMENT` leaf node with\n    the unformatted code as its value. `STANDALONE_COMMENT` is a \"fake\" token\n    that will be formatted as-is with its prefix normalized.\n\n    Here we perform two passes:\n\n    1. Visit the top-level statements, and convert them to a single\n       `STANDALONE_COMMENT` when unchanged. This speeds up formatting when some\n       of the top-level statements aren't changed.\n    2. Convert unchanged \"unwrapped lines\" to `STANDALONE_COMMENT` nodes line by\n       line. \"unwrapped lines\" are divided by the `NEWLINE` token. e.g. a\n       multi-line statement is *one* \"unwrapped line\" that ends with `NEWLINE`,\n       even though this statement itself can span multiple lines, and the\n       tokenizer only sees the last '\\n' as the `NEWLINE` token.\n\n    NOTE: During pass (2), comment prefixes and indentations are ALWAYS\n    normalized even when the lines aren't changed. This is fixable by moving\n    more formatting to pass (1). However, it's hard to get it correct when\n    incorrect indentations are used. So we defer this to future optimizations.\n    \"\"\"\n    lines_set: Set[int] = set()\n    for start, end in lines:\n        lines_set.update(range(start, end + 1))\n    visitor = _TopLevelStatementsVisitor(lines_set)\n    _ = list(visitor.visit(src_node))  # Consume all results.\n    _convert_unchanged_line_by_line(src_node, lines_set)",
+              "documentation": "Converts unchanged lines to STANDALONE_COMMENT.\n\n    The idea is similar to how `# fmt: on/off` is implemented. It also converts the\n    nodes between those markers as a single `STANDALONE_COMMENT` leaf node with\n    the unformatted code as its value. `STANDALONE_COMMENT` is a \"fake\" token\n    that will be formatted as-is with its prefix normalized.\n\n    Here we perform two passes:\n\n    1. Visit the top-level statements, and convert them to a single\n       `STANDALONE_COMMENT` when unchanged. This speeds up formatting when some\n       of the top-level statements aren't changed.\n    2. Convert unchanged \"unwrapped lines\" to `STANDALONE_COMMENT` nodes line by\n       line. \"unwrapped lines\" are divided by the `NEWLINE` token. e.g. a\n       multi-line statement is *one* \"unwrapped line\" that ends with `NEWLINE`,\n       even though this statement itself can span multiple lines, and the\n       tokenizer only sees the last '\n' as the `NEWLINE` token.\n\n    NOTE: During pass (2), comment prefixes and indentations are ALWAYS\n    normalized even when the lines aren't changed. This is fixable by moving\n    more formatting to pass (1). However, it's hard to get it correct when\n    incorrect indentations are used. So we defer this to future optimizations.",
+              "end_line": 157,
+              "kind": "function",
+              "name": "convert_unchanged_lines",
+              "parent_id": null,
+              "parent_name": null,
+              "path": "src/black/ranges.py",
+              "qualified_name": "convert_unchanged_lines",
+              "signature": "def convert_unchanged_lines(src_node: Node, lines: Collection[Tuple[int, int]]) -> None",
+              "start_line": 128,
+              "symbol_id": "src/black/ranges.py#function:convert_unchanged_lines:128"
+            },
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "symbol_id": "src/black/ranges.py#function:convert_unchanged_lines:128",
+                "workspace_id": "py_002_ctx4k"
+              },
+              "durationMs": 6,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "get_symbol",
+              "transport": "in_memory"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 2568,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-mini",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 5991,
+          "metadata": {},
+          "name": "strategy.local_mcp.execute",
+          "type": "strategy.local_mcp.execute"
+        },
+        {
+          "duration_ms": 5991,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 45,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": 0,
+        "cachedInputTokens": 0,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 3,
+        "inputTokens": 5098,
+        "loopControlDurationMsEstimated": 31,
+        "mcpToolCalls": 3,
+        "modelCalls": 4,
+        "modelDurationMs": 5946,
+        "outputTokens": 512,
+        "promptChars": 1593,
+        "questionTokensEstimated": 213,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 0,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 4,
+        "strategyDurationMs": 5991,
+        "taskStatementChars": 1423,
+        "toolCalls": 3,
+        "toolDurationMs": 14,
+        "totalDurationMs": 5991,
+        "totalTokens": 5610,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779728067.0,
+        "conversation": null,
+        "created_at": 1779728066.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_079837c1fafd6c60006a147ec27728819ca37cee8fb850fa68",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "09bda021af"
+        },
+        "model": "gpt-5.4-mini-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "arguments": "{\"workspace_id\":\"py_002_ctx4k\"}",
+            "call_id": "call_bgN0ZV7puQs0pwpOvI0jErv7",
+            "id": "fc_079837c1fafd6c60006a147ec2d770819c97433a1ad16edd64",
+            "name": "list_files",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 575,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 24,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 599
+        },
+        "user": null
+      },
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779728068.0,
+        "conversation": null,
+        "created_at": 1779728067.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_079837c1fafd6c60006a147ec36f04819ca8ea3062adb0cb29",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "09bda021af"
+        },
+        "model": "gpt-5.4-mini-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "arguments": "{\"workspace_id\":\"py_002_ctx4k\",\"path\":\"src/black/ranges.py\",\"kind\":\"function\"}",
+            "call_id": "call_o0X05qKfAzgdpGQFaiPgC3qx",
+            "id": "fc_079837c1fafd6c60006a147ec3e960819cacab036bbb328d5e",
+            "name": "list_symbols",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 653,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 37,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 690
+        },
+        "user": null
+      },
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779728069.0,
+        "conversation": null,
+        "created_at": 1779728068.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_079837c1fafd6c60006a147ec4c504819ca1c93c50a3fb4708",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "09bda021af"
+        },
+        "model": "gpt-5.4-mini-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "arguments": "{\"workspace_id\":\"py_002_ctx4k\",\"symbol_id\":\"src/black/ranges.py#function:convert_unchanged_lines:128\"}",
+            "call_id": "call_zT2vL5SyLotkwBQSVZLf0N8z",
+            "id": "fc_079837c1fafd6c60006a147ec52fec819ca3aaf8d06a52cc5e",
+            "name": "get_symbol",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 2380,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 44,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 2424
+        },
+        "user": null
+      },
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779728072.0,
+        "conversation": null,
+        "created_at": 1779728069.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_079837c1fafd6c60006a147ec5dd30819cb617245ffa88dd4b",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "09bda021af"
+        },
+        "model": "gpt-5.4-mini-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "logprobs": [],
+                "text": "```python\ndef convert_unchanged_lines(src_node: Node, lines: Collection[Tuple[int, int]]) -> None:\n    \"\"\"Converts unchanged lines to STANDALONE_COMMENT.\n\n    The idea is similar to how `# fmt: on/off` is implemented. It also converts the\n    nodes between those markers as a single `STANDALONE_COMMENT` leaf node with\n    the unformatted code as its value. `STANDALONE_COMMENT` is a \"fake\" token\n    that will be formatted as-is with its prefix normalized.\n\n    Here we perform two passes:\n\n    1. Visit the top-level statements, and convert them to a single\n       `STANDALONE_COMMENT` when unchanged. This speeds up formatting when some\n       of the top-level statements aren't changed.\n    2. Convert unchanged \"unwrapped lines\" to `STANDALONE_COMMENT` nodes line by\n       line. \"unwrapped lines\" are divided by the `NEWLINE` token. e.g. a\n       multi-line statement is *one* \"unwrapped line\" that ends with `NEWLINE`,\n       even though this statement itself can span multiple lines, and the\n       tokenizer only sees the last '\\n' as the `NEWLINE` token.\n\n    NOTE: During pass (2), comment prefixes and indentations are ALWAYS\n    normalized even when the lines aren't changed. This is fixable by moving\n    more formatting to pass (1). However, it's hard to get it correct when\n    incorrect indentations are used. So we defer this to future optimizations.\n    \"\"\"\n    lines_set: Set[int] = set()\n    for start, end in lines:\n        lines_set.update(range(start, end + 1))\n    visitor = _TopLevelStatementsVisitor(lines_set)\n    _ = list(visitor.visit(src_node))  # Consume all results.\n    _convert_unchanged_line_by_line(src_node, lines_set)\n```",
+                "type": "output_text"
+              }
+            ],
+            "id": "msg_079837c1fafd6c60006a147ec62828819c919ad4bd0429f231",
+            "phase": "final_answer",
+            "role": "assistant",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 1490,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 407,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 1897
+        },
+        "user": null
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "workspace_id": "py_002_ctx4k"
+        },
+        "durationMs": 5,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "list_files",
+        "transport": "in_memory"
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/black/ranges.py",
+          "workspace_id": "py_002_ctx4k"
+        },
+        "durationMs": 3,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "list_symbols",
+        "transport": "in_memory"
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/black/ranges.py#function:convert_unchanged_lines:128",
+          "workspace_id": "py_002_ctx4k"
+        },
+        "durationMs": 6,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "get_symbol",
+        "transport": "in_memory"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "workspace_id": "py_002_ctx4k"
+        },
+        "id": "call_bgN0ZV7puQs0pwpOvI0jErv7",
+        "isError": false,
+        "name": "list_files",
+        "result": [
+          {
+            "language": "python",
+            "parse_status": "ok_filtered",
+            "path": "src/black/ranges.py",
+            "repository": "psf/black",
+            "symbol_count": 12
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/black/ranges.py",
+          "workspace_id": "py_002_ctx4k"
+        },
+        "id": "call_o0X05qKfAzgdpGQFaiPgC3qx",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "Converts unchanged lines to STANDALONE_COMMENT.\n\n    The idea is similar to how `# fmt: on/off` is implemented. It also converts the\n    nodes between those markers as a single `STANDALONE_COMMENT` leaf node with\n    the unformatted code as its value. `STANDALONE_COMMENT` is a \"fake\" token\n    that will be formatted as-is with its prefix normalized.\n\n    Here we perform two passes:\n\n    1. Visit the top-level statements, and convert them to a single\n       `STANDALONE_COMMENT` when unchanged. This speeds up formatting when some\n       of the top-level statements aren't changed.\n    2. Convert unchanged \"unwrapped lines\" to `STANDALONE_COMMENT` nodes line by\n       line. \"unwrapped lines\" are divided by the `NEWLINE` token. e.g. a\n       multi-line statement is *one* \"unwrapped line\" that ends with `NEWLINE`,\n       even though this statement itself can span multiple lines, and the\n       tokenizer only sees the last '\n' as the `NEWLINE` token.\n\n    NOTE: During pass (2), comment prefixes and indentations are ALWAYS\n    normalized even when the lines aren't changed. This is fixable by moving\n    more formatting to pass (1). However, it's hard to get it correct when\n    incorrect indentations are used. So we defer this to future optimizations.",
+            "end_line": 157,
+            "kind": "function",
+            "name": "convert_unchanged_lines",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "convert_unchanged_lines",
+            "signature": "def convert_unchanged_lines(src_node: Node, lines: Collection[Tuple[int, int]]) -> None",
+            "start_line": 128,
+            "symbol_id": "src/black/ranges.py#function:convert_unchanged_lines:128"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 167,
+            "kind": "function",
+            "name": "_contains_standalone_comment",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "_contains_standalone_comment",
+            "signature": "def _contains_standalone_comment(node: LN) -> bool",
+            "start_line": 160,
+            "symbol_id": "src/black/ranges.py#function:_contains_standalone_comment:160"
+          },
+          {
+            "children": [
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 181,
+                "kind": "method",
+                "name": "__init__",
+                "parent_id": "src/black/ranges.py#class:_TopLevelStatementsVisitor:170",
+                "parent_name": "_TopLevelStatementsVisitor",
+                "path": "src/black/ranges.py",
+                "qualified_name": "_TopLevelStatementsVisitor.__init__",
+                "signature": "def __init__(self, lines_set: Set[int])",
+                "start_line": 180,
+                "symbol_id": "src/black/ranges.py#method:_TopLevelStatementsVisitor.__init__:180"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 198,
+                "kind": "method",
+                "name": "visit_simple_stmt",
+                "parent_id": "src/black/ranges.py#class:_TopLevelStatementsVisitor:170",
+                "parent_name": "_TopLevelStatementsVisitor",
+                "path": "src/black/ranges.py",
+                "qualified_name": "_TopLevelStatementsVisitor.visit_simple_stmt",
+                "signature": "def visit_simple_stmt(self, node: Node) -> Iterator[None]",
+                "start_line": 183,
+                "symbol_id": "src/black/ranges.py#method:_TopLevelStatementsVisitor.visit_simple_stmt:183"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 221,
+                "kind": "method",
+                "name": "visit_suite",
+                "parent_id": "src/black/ranges.py#class:_TopLevelStatementsVisitor:170",
+                "parent_name": "_TopLevelStatementsVisitor",
+                "path": "src/black/ranges.py",
+                "qualified_name": "_TopLevelStatementsVisitor.visit_suite",
+                "signature": "def visit_suite(self, node: Node) -> Iterator[None]",
+                "start_line": 200,
+                "symbol_id": "src/black/ranges.py#method:_TopLevelStatementsVisitor.visit_suite:200"
+              }
+            ],
+            "documentation": "A node visitor that converts unchanged top-level statements to\nSTANDALONE_COMMENT.\n\nThis is used in addition to _convert_unchanged_line_by_line, to\nspeed up formatting when there are unchanged top-level\nclasses/functions/statements.",
+            "end_line": 221,
+            "kind": "class",
+            "name": "_TopLevelStatementsVisitor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "_TopLevelStatementsVisitor",
+            "signature": "class _TopLevelStatementsVisitor(Visitor[None])",
+            "start_line": 170,
+            "symbol_id": "src/black/ranges.py#class:_TopLevelStatementsVisitor:170"
+          },
+          {
+            "children": [],
+            "documentation": "Converts unchanged to STANDALONE_COMMENT line by line.",
+            "end_line": 275,
+            "kind": "function",
+            "name": "_convert_unchanged_line_by_line",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "_convert_unchanged_line_by_line",
+            "signature": "def _convert_unchanged_line_by_line(node: Node, lines_set: Set[int]) -> None",
+            "start_line": 224,
+            "symbol_id": "src/black/ranges.py#function:_convert_unchanged_line_by_line:224"
+          },
+          {
+            "children": [],
+            "documentation": "Convert node to STANDALONE_COMMENT by modifying the tree inline.",
+            "end_line": 315,
+            "kind": "function",
+            "name": "_convert_node_to_standalone_comment",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "_convert_node_to_standalone_comment",
+            "signature": "def _convert_node_to_standalone_comment(node: LN) -> None",
+            "start_line": 278,
+            "symbol_id": "src/black/ranges.py#function:_convert_node_to_standalone_comment:278"
+          },
+          {
+            "children": [],
+            "documentation": "Convert nodes to STANDALONE_COMMENT by modifying the tree inline.",
+            "end_line": 345,
+            "kind": "function",
+            "name": "_convert_nodes_to_standalone_comment",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "_convert_nodes_to_standalone_comment",
+            "signature": "def _convert_nodes_to_standalone_comment(nodes: Sequence[LN], *, newline: Leaf) -> None",
+            "start_line": 318,
+            "symbol_id": "src/black/ranges.py#function:_convert_nodes_to_standalone_comment:318"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the line number of the leaf node's last line.",
+            "end_line": 354,
+            "kind": "function",
+            "name": "_leaf_line_end",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "_leaf_line_end",
+            "signature": "def _leaf_line_end(leaf: Leaf) -> int",
+            "start_line": 348,
+            "symbol_id": "src/black/ranges.py#function:_leaf_line_end:348"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the line range of this node or list of nodes.",
+            "end_line": 381,
+            "kind": "function",
+            "name": "_get_line_range",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "_get_line_range",
+            "signature": "def _get_line_range(node_or_nodes: Union[LN, List[LN]]) -> Set[int]",
+            "start_line": 357,
+            "symbol_id": "src/black/ranges.py#function:_get_line_range:357"
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/black/ranges.py#function:convert_unchanged_lines:128",
+          "workspace_id": "py_002_ctx4k"
+        },
+        "id": "call_zT2vL5SyLotkwBQSVZLf0N8z",
+        "isError": false,
+        "name": "get_symbol",
+        "result": {
+          "children": [],
+          "code": "def convert_unchanged_lines(src_node: Node, lines: Collection[Tuple[int, int]]) -> None:\n    \"\"\"Converts unchanged lines to STANDALONE_COMMENT.\n\n    The idea is similar to how `# fmt: on/off` is implemented. It also converts the\n    nodes between those markers as a single `STANDALONE_COMMENT` leaf node with\n    the unformatted code as its value. `STANDALONE_COMMENT` is a \"fake\" token\n    that will be formatted as-is with its prefix normalized.\n\n    Here we perform two passes:\n\n    1. Visit the top-level statements, and convert them to a single\n       `STANDALONE_COMMENT` when unchanged. This speeds up formatting when some\n       of the top-level statements aren't changed.\n    2. Convert unchanged \"unwrapped lines\" to `STANDALONE_COMMENT` nodes line by\n       line. \"unwrapped lines\" are divided by the `NEWLINE` token. e.g. a\n       multi-line statement is *one* \"unwrapped line\" that ends with `NEWLINE`,\n       even though this statement itself can span multiple lines, and the\n       tokenizer only sees the last '\\n' as the `NEWLINE` token.\n\n    NOTE: During pass (2), comment prefixes and indentations are ALWAYS\n    normalized even when the lines aren't changed. This is fixable by moving\n    more formatting to pass (1). However, it's hard to get it correct when\n    incorrect indentations are used. So we defer this to future optimizations.\n    \"\"\"\n    lines_set: Set[int] = set()\n    for start, end in lines:\n        lines_set.update(range(start, end + 1))\n    visitor = _TopLevelStatementsVisitor(lines_set)\n    _ = list(visitor.visit(src_node))  # Consume all results.\n    _convert_unchanged_line_by_line(src_node, lines_set)",
+          "documentation": "Converts unchanged lines to STANDALONE_COMMENT.\n\n    The idea is similar to how `# fmt: on/off` is implemented. It also converts the\n    nodes between those markers as a single `STANDALONE_COMMENT` leaf node with\n    the unformatted code as its value. `STANDALONE_COMMENT` is a \"fake\" token\n    that will be formatted as-is with its prefix normalized.\n\n    Here we perform two passes:\n\n    1. Visit the top-level statements, and convert them to a single\n       `STANDALONE_COMMENT` when unchanged. This speeds up formatting when some\n       of the top-level statements aren't changed.\n    2. Convert unchanged \"unwrapped lines\" to `STANDALONE_COMMENT` nodes line by\n       line. \"unwrapped lines\" are divided by the `NEWLINE` token. e.g. a\n       multi-line statement is *one* \"unwrapped line\" that ends with `NEWLINE`,\n       even though this statement itself can span multiple lines, and the\n       tokenizer only sees the last '\n' as the `NEWLINE` token.\n\n    NOTE: During pass (2), comment prefixes and indentations are ALWAYS\n    normalized even when the lines aren't changed. This is fixable by moving\n    more formatting to pass (1). However, it's hard to get it correct when\n    incorrect indentations are used. So we defer this to future optimizations.",
+          "end_line": 157,
+          "kind": "function",
+          "name": "convert_unchanged_lines",
+          "parent_id": null,
+          "parent_name": null,
+          "path": "src/black/ranges.py",
+          "qualified_name": "convert_unchanged_lines",
+          "signature": "def convert_unchanged_lines(src_node: Node, lines: Collection[Tuple[int, int]]) -> None",
+          "start_line": 128,
+          "symbol_id": "src/black/ranges.py#function:convert_unchanged_lines:128"
+        }
+      }
+    ]
+  },
+  "trialId": "09bda021af"
+}

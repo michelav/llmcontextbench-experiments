@@ -1,0 +1,156 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 3653,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-mini",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 3659,
+          "metadata": {},
+          "name": "strategy.inline.execute",
+          "type": "strategy.inline.execute"
+        },
+        {
+          "duration_ms": 3659,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 6,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": 0,
+        "cachedInputTokens": 0,
+        "contextBytes": 44393,
+        "contextChars": 44318,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 0,
+        "inputTokens": 13171,
+        "loopControlDurationMsEstimated": 6,
+        "mcpToolCalls": 0,
+        "modelCalls": 1,
+        "modelDurationMs": 3653,
+        "outputTokens": 600,
+        "promptChars": 45582,
+        "questionTokensEstimated": 199,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 0,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 1,
+        "strategyDurationMs": 3659,
+        "taskStatementChars": 1242,
+        "toolCalls": 0,
+        "toolDurationMs": null,
+        "totalDurationMs": 3659,
+        "totalTokens": 13771,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": {
+      "background": false,
+      "billing": {
+        "payer": "openai"
+      },
+      "completed_at": 1779732811.0,
+      "conversation": null,
+      "created_at": 1779732808.0,
+      "error": null,
+      "frequency_penalty": 0.0,
+      "id": "resp_0abd49ab157b3a6b006a14914873648191883e86451fa95fa6",
+      "incomplete_details": null,
+      "instructions": "You are an assistant that solves benchmark tasks using only the provided context.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nYour goal is to produce accurate, concise, and context-grounded responses.\nGuidelines:\n- Base your response strictly on the provided context.\n- If the provided context is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+      "max_output_tokens": null,
+      "max_tool_calls": null,
+      "metadata": {
+        "experimentId": "datasets/repoqa",
+        "phase": "execution",
+        "taskId": "snf_retrieve_function",
+        "trialId": "9b7252b75e"
+      },
+      "model": "gpt-5.4-mini-2026-03-17",
+      "moderation": null,
+      "object": "response",
+      "output": [
+        {
+          "content": [
+            {
+              "annotations": [],
+              "logprobs": [],
+              "text": "```rust\npub fn fold_many1<I, E, F, G, H, R>(\n  parser: F,\n  init: H,\n  g: G,\n) -> impl Parser<I, Output = R, Error = E>\nwhere\n  I: Clone + InputLength,\n  F: Parser<I, Error = E>,\n  G: FnMut(R, <F as Parser<I>>::Output) -> R,\n  H: FnMut() -> R,\n  E: ParseError<I>,\n{\n  FoldMany1 {\n    parser,\n    g,\n    init,\n    r: PhantomData,\n  }\n}\n\npub struct FoldMany1<F, G, Init, R> {\n  parser: F,\n  g: G,\n  init: Init,\n  r: PhantomData<R>,\n}\n\nimpl<I, F, G, Init, R> Parser<I> for FoldMany1<F, G, Init, R>\nwhere\n  I: Clone + InputLength,\n  F: Parser<I>,\n  G: FnMut(R, <F as Parser<I>>::Output) -> R,\n  Init: FnMut() -> R,\n{\n  type Output = R;\n  type Error = <F as Parser<I>>::Error;\n\n  fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let mut res = OM::Output::bind(|| (self.init)());\n    let input = i.clone();\n\n    match self.parser.process::<OM>(input) {\n      Err(Err::Error(_)) => Err(Err::Error(OM::Error::bind(|| {\n        <F as Parser<I>>::Error::from_error_kind(i, ErrorKind::Many1)\n      }))),\n      Err(e) => Err(e),\n      Ok((i1, o1)) => {\n        res = OM::Output::combine(res, o1, |res, o| (self.g)(res, o));\n\n        let mut input = i1;\n        loop {\n          let i_ = input.clone();\n          let len = input.input_len();\n          match self.parser.process::<OM>(i_) {\n            Ok((i, o)) => {\n              // infinite loop check: the parser must always consume\n              if i.input_len() == len {\n                return Err(Err::Error(OM::Error::bind(|| {\n                  <F as Parser<I>>::Error::from_error_kind(input, ErrorKind::Many1)\n                })));\n              }\n\n              res = OM::Output::combine(res, o, |res, o| (self.g)(res, o));\n              input = i;\n            }\n            Err(Err::Error(_)) => {\n              return Ok((input, res));\n            }\n            Err(e) => {\n              return Err(e);\n            }\n          }\n        }\n      }\n    }\n  }\n}\n```",
+              "type": "output_text"
+            }
+          ],
+          "id": "msg_0abd49ab157b3a6b006a149148e0e48191ad7e0bd67e23f6b9",
+          "phase": "final_answer",
+          "role": "assistant",
+          "status": "completed",
+          "type": "message"
+        }
+      ],
+      "parallel_tool_calls": true,
+      "presence_penalty": 0.0,
+      "previous_response_id": null,
+      "prompt": null,
+      "prompt_cache_key": "inl:code:e456deb841921054608fb5c3033ebe7c",
+      "prompt_cache_retention": "in_memory",
+      "reasoning": {
+        "context": "current_turn",
+        "effort": "none",
+        "generate_summary": null,
+        "summary": null
+      },
+      "safety_identifier": null,
+      "service_tier": "default",
+      "status": "completed",
+      "store": true,
+      "temperature": 1.0,
+      "text": {
+        "format": {
+          "type": "text"
+        },
+        "verbosity": "medium"
+      },
+      "tool_choice": "auto",
+      "tools": [],
+      "top_logprobs": 0,
+      "top_p": 0.98,
+      "truncation": "disabled",
+      "usage": {
+        "input_tokens": 13171,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 600,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 13771
+      },
+      "user": null
+    },
+    "serverMcp": [],
+    "toolCalls": []
+  },
+  "trialId": "9b7252b75e"
+}

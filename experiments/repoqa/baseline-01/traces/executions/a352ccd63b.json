@@ -1,0 +1,907 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 1241,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-mini",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "java_001_ctx16k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 1,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "language": "java",
+                "parse_status": "ok_filtered",
+                "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+                "repository": "google/gson",
+                "symbol_count": 3
+              },
+              {
+                "language": "java",
+                "parse_status": "ok_filtered",
+                "path": "gson/src/main/java/com/google/gson/stream/JsonScope.java",
+                "repository": "google/gson",
+                "symbol_count": 2
+              },
+              {
+                "language": "java",
+                "parse_status": "ok_filtered",
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "repository": "google/gson",
+                "symbol_count": 40
+              },
+              {
+                "language": "java",
+                "parse_status": "ok_filtered",
+                "path": "gson/src/main/java/com/google/gson/FormattingStyle.java",
+                "repository": "google/gson",
+                "symbol_count": 8
+              },
+              {
+                "language": "java",
+                "parse_status": "ok_filtered",
+                "path": "gson/src/main/java/com/google/gson/annotations/JsonAdapter.java",
+                "repository": "google/gson",
+                "symbol_count": 0
+              },
+              {
+                "language": "java",
+                "parse_status": "ok_filtered",
+                "path": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java",
+                "repository": "google/gson",
+                "symbol_count": 13
+              },
+              {
+                "language": "java",
+                "parse_status": "ok_filtered",
+                "path": "gson/src/main/java/com/google/gson/ReflectionAccessFilter.java",
+                "repository": "google/gson",
+                "symbol_count": 3
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "java_001_ctx16k"
+              },
+              "durationMs": 1,
+              "toolName": "list_files",
+              "workspace_id": "java_001_ctx16k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1457,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-mini",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+              "workspace_id": "java_001_ctx16k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "Adds a reflection access filter. A reflection access filter prevents Gson from using reflection\nfor the serialization and deserialization of certain classes. The logic in the filter specifies\nwhich classes those are.\n\n<p>Filters will be invoked in reverse registration order, that is, the most recently added\nfilter will be invoked first.\n\n<p>By default Gson has no filters configured and will try to use reflection for all classes for\nwhich no {@link TypeAdapter} has been registered, and for which no built-in Gson {@code\nTypeAdapter} exists.\n\n<p>The created Gson instance might only use an access filter once for a class or its members\nand cache the result. It is not guaranteed that the filter will be used again every time a\nclass or its members are accessed during serialization or deserialization.\n\n@param filter filter to add\n@return a reference to this {@code GsonBuilder} object to fulfill the \"Builder\" pattern\n@since 2.9.1",
+                "end_line": 868,
+                "kind": "method",
+                "name": "addReflectionAccessFilter",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+                "qualified_name": "addReflectionAccessFilter",
+                "signature": "@CanIgnoreReturnValue\n  public GsonBuilder addReflectionAccessFilter(ReflectionAccessFilter filter) {\n    Objects.requireNonNull(filter);\n    reflectionFilters.addFirst(filter);\n    return this;\n  }",
+                "start_line": 863,
+                "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:addReflectionAccessFilter:863"
+              },
+              {
+                "children": [],
+                "documentation": "Creates a {@link Gson} instance based on the current configuration. This method is free of\nside-effects to this {@code GsonBuilder} instance and hence can be called multiple times.\n\n@return an instance of Gson configured with the options currently set in this builder",
+                "end_line": 910,
+                "kind": "method",
+                "name": "create",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+                "qualified_name": "create",
+                "signature": "public Gson create() {\n    List<TypeAdapterFactory> factories =\n        new ArrayList<>(this.factories.size() + this.hierarchyFactories.size() + 3);\n    factories.addAll(this.factories);\n    Collections.reverse(factories);\n\n    List<TypeAdapterFactory> hierarchyFactories = new ArrayList<>(this.hierarchyFactories);\n    Collections.reverse(hierarchyFactories);\n    factories.addAll(hierarchyFactories);\n\n    addTypeAdaptersForDate(datePattern, dateStyle, timeStyle, factories);\n\n    return new Gson(\n        excluder,\n        fieldNamingPolicy,\n        new HashMap<>(instanceCreators),\n        serializeNulls,\n        complexMapKeySerialization,\n        generateNonExecutableJson,\n        escapeHtmlChars,\n        formattingStyle,\n        strictness,\n        serializeSpecialFloatingPointValues,\n        useJdkUnsafe,\n        longSerializationPolicy,\n        datePattern,\n        dateStyle,\n        timeStyle,\n        new ArrayList<>(this.factories),\n        new ArrayList<>(this.hierarchyFactories),\n        factories,\n        objectToNumberStrategy,\n        numberToNumberStrategy,\n        new ArrayList<>(reflectionFilters));\n  }",
+                "start_line": 876,
+                "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:create:876"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 946,
+                "kind": "method",
+                "name": "addTypeAdaptersForDate",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+                "qualified_name": "addTypeAdaptersForDate",
+                "signature": "private static void addTypeAdaptersForDate(\n      String datePattern, int dateStyle, int timeStyle, List<TypeAdapterFactory> factories) {\n    TypeAdapterFactory dateAdapterFactory;\n    boolean sqlTypesSupported = SqlTypesSupport.SUPPORTS_SQL_TYPES;\n    TypeAdapterFactory sqlTimestampAdapterFactory = null;\n    TypeAdapterFactory sqlDateAdapterFactory = null;\n\n    if (datePattern != null && !datePattern.trim().isEmpty()) {\n      dateAdapterFactory = DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(datePattern);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(datePattern);\n        sqlDateAdapterFactory = SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(datePattern);\n      }\n    } else if (dateStyle != DateFormat.DEFAULT || timeStyle != DateFormat.DEFAULT) {\n      dateAdapterFactory =\n          DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(dateStyle, timeStyle);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n        sqlDateAdapterFactory =\n            SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n      }\n    } else {\n      return;\n    }\n\n    factories.add(dateAdapterFactory);\n    if (sqlTypesSupported) {\n      factories.add(sqlTimestampAdapterFactory);\n      factories.add(sqlDateAdapterFactory);\n    }\n  }",
+                "start_line": 912,
+                "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:addTypeAdaptersForDate:912"
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+                "workspace_id": "java_001_ctx16k"
+              },
+              "durationMs": 0,
+              "toolName": "list_symbols",
+              "workspace_id": "java_001_ctx16k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 2340,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-mini",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 5060,
+          "metadata": {},
+          "name": "strategy.local_function.execute",
+          "type": "strategy.local_function.execute"
+        },
+        {
+          "duration_ms": 5060,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 22,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": 0,
+        "cachedInputTokens": 0,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 2,
+        "inputTokens": 3157,
+        "loopControlDurationMsEstimated": 21,
+        "mcpToolCalls": 2,
+        "modelCalls": 3,
+        "modelDurationMs": 5038,
+        "outputTokens": 374,
+        "promptChars": 1110,
+        "questionTokensEstimated": 148,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 0,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 3,
+        "strategyDurationMs": 5060,
+        "taskStatementChars": 937,
+        "toolCalls": 2,
+        "toolDurationMs": 1,
+        "totalDurationMs": 5060,
+        "totalTokens": 3531,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779729413.0,
+        "conversation": null,
+        "created_at": 1779729413.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_0777217fe33870ee006a14840531748190b1843311b151d649",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "a352ccd63b"
+        },
+        "model": "gpt-5.4-mini-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "arguments": "{\"workspace_id\":\"java_001_ctx16k\"}",
+            "call_id": "call_Dqe2hSUqj1Ho0JIh6bTzaTkh",
+            "id": "fc_0777217fe33870ee006a148405c6a08190b17fd59842254b41",
+            "name": "list_files",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including its generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 500,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 24,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 524
+        },
+        "user": null
+      },
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779729415.0,
+        "conversation": null,
+        "created_at": 1779729414.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_0777217fe33870ee006a14840667a081909d52ca24816eb2d9",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "a352ccd63b"
+        },
+        "model": "gpt-5.4-mini-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "arguments": "{\"workspace_id\":\"java_001_ctx16k\",\"path\":\"gson/src/main/java/com/google/gson/GsonBuilder.java\",\"kind\":\"function\"}",
+            "call_id": "call_ZkJmRnGJ03LmkOPT1K1zeScI",
+            "id": "fc_0777217fe33870ee006a148406d7848190b3ac0863c46361c7",
+            "name": "list_symbols",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including its generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 876,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 44,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 920
+        },
+        "user": null
+      },
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779729417.0,
+        "conversation": null,
+        "created_at": 1779729415.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_0777217fe33870ee006a148407deb88190bc69625b1dbec765",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "a352ccd63b"
+        },
+        "model": "gpt-5.4-mini-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "logprobs": [],
+                "text": "```java\nprivate static void addTypeAdaptersForDate(\n    String datePattern, int dateStyle, int timeStyle, List<TypeAdapterFactory> factories) {\n  TypeAdapterFactory dateAdapterFactory;\n  boolean sqlTypesSupported = SqlTypesSupport.SUPPORTS_SQL_TYPES;\n  TypeAdapterFactory sqlTimestampAdapterFactory = null;\n  TypeAdapterFactory sqlDateAdapterFactory = null;\n\n  if (datePattern != null && !datePattern.trim().isEmpty()) {\n    dateAdapterFactory = DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(datePattern);\n\n    if (sqlTypesSupported) {\n      sqlTimestampAdapterFactory =\n          SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(datePattern);\n      sqlDateAdapterFactory = SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(datePattern);\n    }\n  } else if (dateStyle != DateFormat.DEFAULT || timeStyle != DateFormat.DEFAULT) {\n    dateAdapterFactory =\n        DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(dateStyle, timeStyle);\n\n    if (sqlTypesSupported) {\n      sqlTimestampAdapterFactory =\n          SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n      sqlDateAdapterFactory =\n          SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n    }\n  } else {\n    return;\n  }\n\n  factories.add(dateAdapterFactory);\n  if (sqlTypesSupported) {\n    factories.add(sqlTimestampAdapterFactory);\n    factories.add(sqlDateAdapterFactory);\n  }\n}\n```",
+                "type": "output_text"
+              }
+            ],
+            "id": "msg_0777217fe33870ee006a14840835948190ad2f679cab231fae",
+            "phase": "final_answer",
+            "role": "assistant",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including its generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 1781,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 306,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 2087
+        },
+        "user": null
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "workspace_id": "java_001_ctx16k"
+        },
+        "durationMs": 1,
+        "toolName": "list_files",
+        "workspace_id": "java_001_ctx16k"
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+          "workspace_id": "java_001_ctx16k"
+        },
+        "durationMs": 0,
+        "toolName": "list_symbols",
+        "workspace_id": "java_001_ctx16k"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "workspace_id": "java_001_ctx16k"
+        },
+        "id": "call_Dqe2hSUqj1Ho0JIh6bTzaTkh",
+        "isError": false,
+        "name": "list_files",
+        "result": [
+          {
+            "language": "java",
+            "parse_status": "ok_filtered",
+            "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+            "repository": "google/gson",
+            "symbol_count": 3
+          },
+          {
+            "language": "java",
+            "parse_status": "ok_filtered",
+            "path": "gson/src/main/java/com/google/gson/stream/JsonScope.java",
+            "repository": "google/gson",
+            "symbol_count": 2
+          },
+          {
+            "language": "java",
+            "parse_status": "ok_filtered",
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "repository": "google/gson",
+            "symbol_count": 40
+          },
+          {
+            "language": "java",
+            "parse_status": "ok_filtered",
+            "path": "gson/src/main/java/com/google/gson/FormattingStyle.java",
+            "repository": "google/gson",
+            "symbol_count": 8
+          },
+          {
+            "language": "java",
+            "parse_status": "ok_filtered",
+            "path": "gson/src/main/java/com/google/gson/annotations/JsonAdapter.java",
+            "repository": "google/gson",
+            "symbol_count": 0
+          },
+          {
+            "language": "java",
+            "parse_status": "ok_filtered",
+            "path": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java",
+            "repository": "google/gson",
+            "symbol_count": 13
+          },
+          {
+            "language": "java",
+            "parse_status": "ok_filtered",
+            "path": "gson/src/main/java/com/google/gson/ReflectionAccessFilter.java",
+            "repository": "google/gson",
+            "symbol_count": 3
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+          "workspace_id": "java_001_ctx16k"
+        },
+        "id": "call_ZkJmRnGJ03LmkOPT1K1zeScI",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "Adds a reflection access filter. A reflection access filter prevents Gson from using reflection\nfor the serialization and deserialization of certain classes. The logic in the filter specifies\nwhich classes those are.\n\n<p>Filters will be invoked in reverse registration order, that is, the most recently added\nfilter will be invoked first.\n\n<p>By default Gson has no filters configured and will try to use reflection for all classes for\nwhich no {@link TypeAdapter} has been registered, and for which no built-in Gson {@code\nTypeAdapter} exists.\n\n<p>The created Gson instance might only use an access filter once for a class or its members\nand cache the result. It is not guaranteed that the filter will be used again every time a\nclass or its members are accessed during serialization or deserialization.\n\n@param filter filter to add\n@return a reference to this {@code GsonBuilder} object to fulfill the \"Builder\" pattern\n@since 2.9.1",
+            "end_line": 868,
+            "kind": "method",
+            "name": "addReflectionAccessFilter",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+            "qualified_name": "addReflectionAccessFilter",
+            "signature": "@CanIgnoreReturnValue\n  public GsonBuilder addReflectionAccessFilter(ReflectionAccessFilter filter) {\n    Objects.requireNonNull(filter);\n    reflectionFilters.addFirst(filter);\n    return this;\n  }",
+            "start_line": 863,
+            "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:addReflectionAccessFilter:863"
+          },
+          {
+            "children": [],
+            "documentation": "Creates a {@link Gson} instance based on the current configuration. This method is free of\nside-effects to this {@code GsonBuilder} instance and hence can be called multiple times.\n\n@return an instance of Gson configured with the options currently set in this builder",
+            "end_line": 910,
+            "kind": "method",
+            "name": "create",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+            "qualified_name": "create",
+            "signature": "public Gson create() {\n    List<TypeAdapterFactory> factories =\n        new ArrayList<>(this.factories.size() + this.hierarchyFactories.size() + 3);\n    factories.addAll(this.factories);\n    Collections.reverse(factories);\n\n    List<TypeAdapterFactory> hierarchyFactories = new ArrayList<>(this.hierarchyFactories);\n    Collections.reverse(hierarchyFactories);\n    factories.addAll(hierarchyFactories);\n\n    addTypeAdaptersForDate(datePattern, dateStyle, timeStyle, factories);\n\n    return new Gson(\n        excluder,\n        fieldNamingPolicy,\n        new HashMap<>(instanceCreators),\n        serializeNulls,\n        complexMapKeySerialization,\n        generateNonExecutableJson,\n        escapeHtmlChars,\n        formattingStyle,\n        strictness,\n        serializeSpecialFloatingPointValues,\n        useJdkUnsafe,\n        longSerializationPolicy,\n        datePattern,\n        dateStyle,\n        timeStyle,\n        new ArrayList<>(this.factories),\n        new ArrayList<>(this.hierarchyFactories),\n        factories,\n        objectToNumberStrategy,\n        numberToNumberStrategy,\n        new ArrayList<>(reflectionFilters));\n  }",
+            "start_line": 876,
+            "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:create:876"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 946,
+            "kind": "method",
+            "name": "addTypeAdaptersForDate",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+            "qualified_name": "addTypeAdaptersForDate",
+            "signature": "private static void addTypeAdaptersForDate(\n      String datePattern, int dateStyle, int timeStyle, List<TypeAdapterFactory> factories) {\n    TypeAdapterFactory dateAdapterFactory;\n    boolean sqlTypesSupported = SqlTypesSupport.SUPPORTS_SQL_TYPES;\n    TypeAdapterFactory sqlTimestampAdapterFactory = null;\n    TypeAdapterFactory sqlDateAdapterFactory = null;\n\n    if (datePattern != null && !datePattern.trim().isEmpty()) {\n      dateAdapterFactory = DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(datePattern);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(datePattern);\n        sqlDateAdapterFactory = SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(datePattern);\n      }\n    } else if (dateStyle != DateFormat.DEFAULT || timeStyle != DateFormat.DEFAULT) {\n      dateAdapterFactory =\n          DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(dateStyle, timeStyle);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n        sqlDateAdapterFactory =\n            SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n      }\n    } else {\n      return;\n    }\n\n    factories.add(dateAdapterFactory);\n    if (sqlTypesSupported) {\n      factories.add(sqlTimestampAdapterFactory);\n      factories.add(sqlDateAdapterFactory);\n    }\n  }",
+            "start_line": 912,
+            "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:addTypeAdaptersForDate:912"
+          }
+        ]
+      }
+    ]
+  },
+  "trialId": "a352ccd63b"
+}

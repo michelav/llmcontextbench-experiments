@@ -1,0 +1,676 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 2069,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "ts_002_ctx4k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 6,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "language": "typescript",
+                "parse_status": "ok_filtered",
+                "path": "src/tokenizers.js",
+                "repository": "xenova/transformers.js",
+                "symbol_count": 30
+              }
+            ],
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "ts_002_ctx4k"
+              },
+              "durationMs": 5,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "list_files",
+              "transport": "in_memory"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1319,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "src/tokenizers.js",
+              "workspace_id": "ts_002_ctx4k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 4,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "Pre-tokenizes the input text by splitting it on whitespace characters.\n@param {string} text The text to be pre-tokenized.\n@param {Object} [options] Additional options for the pre-tokenization logic.\n@returns {string[]} An array of tokens produced by splitting the input text on whitespace.",
+                "end_line": 2352,
+                "kind": "method",
+                "name": "pre_tokenize_text",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "pre_tokenize_text",
+                "signature": "pre_tokenize_text(text, options) {\n        return whitespace_split(text);\n    }",
+                "start_line": 2350,
+                "symbol_id": "src/tokenizers.js#method:pre_tokenize_text:2350"
+              },
+              {
+                "children": [],
+                "documentation": "@param {Object} config The configuration options for the pre-tokenizer.\n@param {Object} config.pattern The pattern used to split the text. Can be a string or a regex object.\n@param {string} config.content What to replace the pattern with.",
+                "end_line": 2367,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(config) {\n        super();\n        this.config = config;\n        this.pattern = createPattern(this.config.pattern);\n        this.content = this.config.content;\n    }",
+                "start_line": 2362,
+                "symbol_id": "src/tokenizers.js#method:constructor:2362"
+              },
+              {
+                "children": [],
+                "documentation": "Pre-tokenizes the input text by replacing certain characters.\n@param {string} text The text to be pre-tokenized.\n@param {Object} [options] Additional options for the pre-tokenization logic.\n@returns {string[]} An array of tokens produced by replacing certain characters.",
+                "end_line": 2380,
+                "kind": "method",
+                "name": "pre_tokenize_text",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "pre_tokenize_text",
+                "signature": "pre_tokenize_text(text, options) {\n        if (this.pattern === null) {\n            return [text];\n        }\n        return [text.replaceAll(this.pattern, this.config.content)];\n    }",
+                "start_line": 2375,
+                "symbol_id": "src/tokenizers.js#method:pre_tokenize_text:2375"
+              },
+              {
+                "children": [],
+                "documentation": "Helper function for truncating values of an object, which are each arrays.\nNOTE: No additional checks are made here for validity of arguments.\n@param {Record<string, any[]>} item The input object.\n@param {number} length The length to truncate to.\n@private",
+                "end_line": 2429,
+                "kind": "function",
+                "name": "truncateHelper",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "truncateHelper",
+                "signature": "function truncateHelper(item, length) {\n    // Setting .length to a lower value truncates the array in-place:\n    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/length\n    for (const key of Object.keys(item)) {\n        item[key].length = length;\n    }\n}",
+                "start_line": 2423,
+                "symbol_id": "src/tokenizers.js#function:truncateHelper:2423"
+              },
+              {
+                "children": [],
+                "documentation": "Create a new PreTrainedTokenizer instance.\n@param {Object} tokenizerJSON The JSON of the tokenizer.\n@param {Object} tokenizerConfig The config of the tokenizer.",
+                "end_line": 2541,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(tokenizerJSON, tokenizerConfig) {\n        super();\n\n        this._tokenizer_config = tokenizerConfig;\n\n        // Construct parts of the tokenizer from the JSON\n        this.normalizer = Normalizer.fromConfig(tokenizerJSON.normalizer);\n        this.pre_tokenizer = PreTokenizer.fromConfig(tokenizerJSON.pre_tokenizer);\n        this.model = TokenizerModel.fromConfig(tokenizerJSON.model, tokenizerConfig);\n        this.post_processor = PostProcessor.fromConfig(tokenizerJSON.post_processor);\n        this.decoder = Decoder.fromConfig(tokenizerJSON.decoder);\n\n        // Add added_tokens to model\n        this.special_tokens = [];\n        this.all_special_ids = [];\n\n        /** @type {AddedToken[]} */\n        this.added_tokens = [];\n        for (const addedToken of tokenizerJSON.added_tokens) {\n            const token = new AddedToken(addedToken);\n            this.added_tokens.push(token);\n\n            this.model.tokens_to_ids.set(token.content, token.id);\n            this.model.vocab[token.id] = token.content;\n\n            if (token.special) {\n                this.special_tokens.push(token.content);\n                this.all_special_ids.push(token.id);\n            }\n        }\n\n        // Update additional_special_tokens\n        this.additional_special_tokens = tokenizerConfig.additional_special_tokens ?? [];\n        this.special_tokens.push(...this.additional_special_tokens);\n        this.special_tokens = [...new Set(this.special_tokens)]; // Remove duplicates\n\n        if (this.decoder) {\n            // Slight hack, but it prevents code duplication:\n            this.decoder.added_tokens = this.added_tokens;\n\n            // Another slight hack to add `end_of_word_suffix` (if present) to the decoder\n            // This is needed for cases where BPE model and ByteLevel decoder are used\n            // For more information, see https://github.com/xenova/transformers.js/issues/74\n            // TODO: save this to the decoder when exporting?\n            this.decoder.end_of_word_suffix = this.model.end_of_word_suffix;\n        }\n\n\n        this.added_tokens_regex = this.added_tokens.length > 0 ? new RegExp(\n            this.added_tokens.map(x => `${x.lstrip ? '\\\\s*' : ''}(${escapeRegExp(x.content)})${x.rstrip ? '\\\\s*' : ''}`).join('|')\n        ) : null;\n\n        // Set mask token if present (otherwise will be undefined, which is fine)\n        this.mask_token = this.getToken('mask_token');\n        this.mask_token_id = this.model.tokens_to_ids.get(this.mask_token);\n\n        this.pad_token = this.getToken('pad_token', 'eos_token');\n        this.pad_token_id = this.model.tokens_to_ids.get(this.pad_token);\n\n        this.sep_token = this.getToken('sep_token');\n        this.sep_token_id = this.model.tokens_to_ids.get(this.sep_token);\n\n        this.unk_token = this.getToken('unk_token');\n        this.unk_token_id = this.model.tokens_to_ids.get(this.unk_token);\n\n        this.model_max_length = tokenizerConfig.model_max_length;\n\n        /** @type {boolean} Whether or not to strip the text when tokenizing (removing excess spaces before and after the string). */\n        this.remove_space = tokenizerConfig.remove_space;\n\n        this.clean_up_tokenization_spaces = tokenizerConfig.clean_up_tokenization_spaces ?? true;\n        this.do_lowercase_and_remove_accent = tokenizerConfig.do_lowercase_and_remove_accent ?? false;\n\n        // TODO allow user to change this\n        /** @type {'right'|'left'} */\n        this.padding_side = 'right';\n\n        this.legacy = false;\n\n        this.chat_template = tokenizerConfig.chat_template ?? null;\n        if (Array.isArray(this.chat_template)) {\n            // Chat templates are stored as lists of dicts with fixed key names,\n            // we reconstruct that into a single dict while loading them.\n            const chat_template = Object.create(null);\n            for (const { name, template } of this.chat_template) {\n                if (typeof name !== 'string' || typeof template !== 'string') {\n                    throw new Error('Chat template must be a list of objects with \"name\" and \"template\" properties');\n                }\n                chat_template[name] = template;\n            }\n            this.chat_template = chat_template;\n        }\n        this._compiled_template_cache = new Map();\n    }",
+                "start_line": 2448,
+                "symbol_id": "src/tokenizers.js#method:constructor:2448"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the value of the first matching key in the tokenizer config object.\n@param {...string} keys One or more keys to search for in the tokenizer config object.\n@returns {string|null} The value associated with the first matching key, or null if no match is found.\n@throws {Error} If an object is found for a matching key and its __type property is not \"AddedToken\".",
+                "end_line": 2566,
+                "kind": "method",
+                "name": "getToken",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "getToken",
+                "signature": "getToken(...keys) {\n        for (const key of keys) {\n            const item = this._tokenizer_config[key];\n\n            if (!item) continue;\n\n            if (typeof item === 'object') {\n                if (item.__type === 'AddedToken') {\n                    return item.content;\n                } else {\n                    throw Error(`Unknown token: ${item}`);\n                }\n            } else {\n                return item;\n            }\n        }\n        return null;\n    }",
+                "start_line": 2549,
+                "symbol_id": "src/tokenizers.js#method:getToken:2549"
+              },
+              {
+                "children": [],
+                "documentation": "Loads a pre-trained tokenizer from the given `pretrained_model_name_or_path`.\n\n@param {string} pretrained_model_name_or_path The path to the pre-trained tokenizer.\n@param {PretrainedTokenizerOptions} options Additional options for loading the tokenizer.\n\n@throws {Error} Throws an error if the tokenizer.json or tokenizer_config.json files are not found in the `pretrained_model_name_or_path`.\n@returns {Promise<PreTrainedTokenizer>} A new instance of the `PreTrainedTokenizer` class.",
+                "end_line": 2597,
+                "kind": "method",
+                "name": "from_pretrained",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "from_pretrained",
+                "signature": "static async from_pretrained(pretrained_model_name_or_path, {\n        progress_callback = null,\n        config = null,\n        cache_dir = null,\n        local_files_only = false,\n        revision = 'main',\n        legacy = null,\n    } = {}) {\n\n        const info = await loadTokenizer(pretrained_model_name_or_path, {\n            progress_callback,\n            config,\n            cache_dir,\n            local_files_only,\n            revision,\n            legacy,\n        })\n\n        // @ts-ignore\n        return new this(...info);\n    }",
+                "start_line": 2577,
+                "symbol_id": "src/tokenizers.js#method:from_pretrained:2577"
+              }
+            ],
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "src/tokenizers.js",
+                "workspace_id": "ts_002_ctx4k"
+              },
+              "durationMs": 3,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "list_symbols",
+              "transport": "in_memory"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 3970,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 7411,
+          "metadata": {},
+          "name": "strategy.local_mcp.execute",
+          "type": "strategy.local_mcp.execute"
+        },
+        {
+          "duration_ms": 7411,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 53,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": null,
+        "cachedInputTokens": 1465,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 2,
+        "inputTokens": 5182,
+        "loopControlDurationMsEstimated": 43,
+        "mcpToolCalls": 2,
+        "modelCalls": 3,
+        "modelDurationMs": 7358,
+        "outputTokens": 77,
+        "promptChars": 1450,
+        "questionTokensEstimated": 216,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 894,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 3,
+        "strategyDurationMs": 7411,
+        "taskStatementChars": 1280,
+        "toolCalls": 2,
+        "toolDurationMs": 10,
+        "totalDurationMs": 7411,
+        "totalTokens": 6153,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "workspace_id": "ts_002_ctx4k"
+                    },
+                    "id": null,
+                    "name": "list_files",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "Cq0HAQw51scIdDm1kyy6-z6ANsFprND5yJPhCVvorlQtHC_WzQVDD9pocQR3hwHqbUIs74UKvp9xgx1uYBYY914lRnXREeYt8MioQxafJFalz_1h2OYfLjjLDIEjEFRN1w202xw-7jh2zqD8LHUJMyCHx3j_b70Xet6jONrze_A8X_Ib0oQZY0y1bp8SjnDmXgQs6NJtLYmm4GbOI4apXQiMOa58lqecYfqhpyE17PD4pb_KmeLxdkQ_nwxP1xoUq0yBfmV_IAIXjfLf1bz3bP-dhwyqmRYHRxfEHmQjqE0WjErONC1DivoQABBH7rQ8bBR4ypMF_8mKjqtb-cj-hc_i50almkjbKoGow6JlYwC5ouMKpvr5CS68O-8TaN2dPYPJHYOlqJo5VoVPvlLYU1r7OlnQfEeQWqVgh4kEV3pIjlgLe6c1ezF_VaspCR7z1ID0ZaX_GnmuvD9Km2B4tq3QCiD2DF8izhvUCJjW5wZJD-RUn9xO70b7eJP8Rig6qrXR5-1pTK-T_uUaEwpFU-3zlhTU6TS3lJujM7Pn-m85DcMeFdG69EfWYVjX5h-h5oXQV5A0b0ytRsvL98LXsTeNsYTKDN6E16WaW6pxL1Ki6x4x4LWf6cLmq84Me65Okrp34etc2ALhln2a3hfEZ50b9WzO7bUYVFajTwL1UrkCHLS7j3L1HBn_0MCRKP5OMmZq0RlX8IZHE5KVlvKxcH3ub880k-VfeZ9jMryyTal0IBHqjNlXo28ChKfdRAbjwZmWpBnpBD1NOehODvk4dNvrz6Zv9tgtjKlrdQ870C7ftfRyjpixEz69f7wUBdd-3HPZ5ifnW5pWHtHnhF3tCxo8fBMruwzNamMYkyp8YsMX0pRueevaX2zDKcsIdY3MSHDBhVrXFlXnyDnzXKoP1a_9XHtRFNck5HquJY7LyjxxsH81SiW_0Cl94vpbUUg_Wo_jg8TRc_el42o2-3Ru0A7mKYR39_laxXDU6cfMlbD5NQEQYF0vGrwWUlUda4UaRmewg870wxC1XaNzeRPG1gCahUC9GhoPw84bIgfP91B8Kq5izzqzRjsDJLNUhYYetjzLic7oS9uBBUECgLSvSqL6GMUG5bImBmSQdTphrgXZZ9AYIlq13kxz6z2sQuwXd8Um7q6QNYuqkjyj72a8qiwpBRl1fM1RWPkgpAIVWVER9iOlOCyWYsXWpqTAZEgfhT_ovaz5OoX-5FPiVJEbBtJ9r1oRAIMVixyv5-EsbBw=",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "u4gUav3nCoqJz7IPgIevwQo",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:37:00 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1860",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 25,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 699,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 699
+            }
+          ],
+          "thoughts_token_count": 231,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 955,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "kind": "function",
+                      "path": "src/tokenizers.js",
+                      "workspace_id": "ts_002_ctx4k"
+                    },
+                    "id": null,
+                    "name": "list_symbols",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CqMBAQw51sdXtq4UBi-SUGO5nsTWNw8fHC9TOIQOyw1OFh6S8fn-VMu_yQURRB8naqoXHfSPaV_fupyLjb74UBjZdjwaxwJFMC_8eTAp3rXnmkmovgYO6jXZKajqBsmB3yaSJLO-V1-IvExpsz-NRuI_iOvx4q4vY8Vsqwbx5HiqFQkVaolgUEIu2lmNSsQ9DkmrJsIn2JKLESGy-j0cNtQP6EBQnA==",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "vYgUatC_EOXoz7IPm53zuAw",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:37:02 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1109",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 555
+            }
+          ],
+          "cached_content_token_count": 555,
+          "candidates_token_count": 40,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 784,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 784
+            }
+          ],
+          "thoughts_token_count": 32,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 856,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": null,
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": "The described function is not present in the provided code context.",
+                  "thought": null,
+                  "thought_signature": "Cs8WAQw51scviwCVo8qbUiFWdOjjHSMJIz0lHW8r1lQcvtn5gyeArGfIVXWlqBPsfeZJTX99qTCyHWwR76UIPWXyIABiLsOGcKa00Eugi5GkLKF2LEnRjkeFOL9f_8N66eD7kA9WX6m0IFXeOHzJlOQfWiZNb3OQXPd3dvW-NyOyYb9-VeR1eaCeBUqoixqIbxJF5XIe_vf0vWKzCuCA0Az3EHfXoz0lEpGdQ1WgNAKHR2Wzm_J3hIpPrWmSQkpAHI-XxNkgedbFBaTy0eM637sS9oayw7QCYrRwLpUP0nJVF2sqfvUPzNO89VicVrzSxajtzSuhSdBoUsywx2ca36hiNtYhZXxuMupeIVO3jtquo577SUzaNTM62nx-yFSGQ8H6F4nzjIWu3smRTrg4tim2llQLk58nMOd_p8BUjkRNV8EIUd9FYVLypD1Flalo6VIFiJvAU3Vvkl3PrSFtqA41XbpMNiU2lEtl5hU0WSQrnM8ATPhkGnc3MAiO-fcUXDmaHwyOGIA3_VvgUOU_eXyrqj-RHlgaZWa0EOEHgwEw_vjguywCFtJLXy2fFsb1Pgssuy6mkyAiSLjXHxhkM9q6zfM7FWKuEJEmn313EdH5jmSdZiU9t11PUyiGF_064tKdMU-_rD3NHQ9DyyzHc0njo4X4ZOjuzMzaHUMdMOw6gpWm87x_Qas66mw0VqXjwrS8JYvo_rL6Z9f7UbeNPQ_lZ3CY2izFfo0zdsPLtyDtYttUQkK--KcKMvl430VUy1vSj2dLdkw2tASW6oevv1pJP3LzRAXOQ6r2fsu5_hu1yl-WoP46lZL9tgIA__rLL7QghZkPk7nd76jYENVlJdmXRYzbV-Nwtn6IBoPfnBlKJnVE-EYlDR67oWAztkP-lNXiDQj2n3PKf7x5nnQ9Hs0VzLX8j2Ei3bui1mroId4rKD9my8jzd81RHXnMT0C0QpZVxHxrTOmOjdplAy7brfpocF1lPITAL63oUCUT8ubrKGsoE4ayf-9lpaeqMCJ9ohhZKOOoQeJtyVuKbOfNb7Eis3CKKUPxsiABAItq2_Bd9aYiCt8neq6LzwXg4RXS-1q88tb0gZOApdLR094ODJznuFyT_-tJIPlyvxtgGjeHC3WjKZL2W9f55z_FJPpsUmWZEZAlNz0OkVuKvVNwnMR_Dg34IOh72x6JCk9lPY4TVvwnM8JJCPFgYFA8eSPU1uYMIJfh5RRRuWPVp8byXosoULW3aqcX68F9XDBbwYSI6TUXptRuy-ePWO8bZmDzJP4yYkEvl--jcIXyBXmeO80xFoPNN3wle15Cbh0VTjupZy7-XxMZMHvfFMBvmKPPsiRjNxZJ_P3dkbYMo3H80BQADqdVofo9GFsxJEpJ9gwIqdUUVGE8CckfeTTMeqN9j24cnWg6TYADSCyGHy9rHcYEc3g_Zr-4Bb2SelqqnztYGKLDnVCAWZLDheVTMm77yQOk7e7Ng4osHf3ugDu-hY-NfSQQCV0RrvWykmyoT0zga8HBXKcFuuNuQCbIACZQqZ7yXKsaZL295nPKj1MpCICf9wZI3hQAXQTx0S6R-3UNhFLQyeR7yRpSDzoOQdvXlb2yCIyGQKyZEOtBjorHTNHOV4h_9FVl1aggXSgfUt7XdsNPEkdz-mSfiPSuh_JW9q8fgBe8dvl1VHTLwFO6xikOOP7WIn1hPQXTgA3sKDS1fsEElbV1V2pVpeXeoWpOkdRwkocvYqWYubSt4DvYl0S5Srut5zssqkDYN4dGZU6q7Bx-u5VChdzJ7ZRnJK2dM-0UL1ulWlvjIKjlXC4kcjmez2u8gT8QEZgsDSsNToqOAYyn2gdo5SrOwqKrVpkPfjDZYGXJ5gWBqop2xwwRkyk6l3IslAoLC4E7jMpUp41yocEc-hSnfu4W91FAlxRx84zEqxPwv4P71X-oJreS1sD6r1UIQW4TmlPk4m0dNo6Y_Mb-iCqG5IMNFQmE6tajIbWWNrYTzS0zoxoeXkgKEOBJCzS2gWZDZeubPAVwe6X3jGopQ44L2RsXM4KVZYla39hVKbq6i9cxav_pYjRYGvbwlGdu_iHgGkFAQ-dQ90KDbdFRcvPLUiDi91cnMous1KiLa-_wZqGHyPDk_rFQl_mBdYfSWXcUxJm9BVs5tB_TFz43ak8gEtwsyKV9cBNwUQv4Ef0e6pKnjmDfEGgP74_qAwvLudPippnR-D2_kfNHHrS5_-8mNruKyy74BCLESqce_q9S_ifq5YlMN4AoyJgLi6tZzh5GLv4rv6_xZzKqED0bHuSC-T23dKpjpIGmXHVkEn89g_hbwtOz3_MdfU7vq0nWEmkDmo21MDA_Zd-LrV33Uot5DrBO8WweMO8nDpSUQz2ISxvZ5Vj17UDpgozg4_q7uZ2iaaWQ8txyffYstJNsMVhZvoJQ6nq2fPHu1dOX4pFi2BFxfi4yFSvQgFtjznTHuFh1jCw0y5q4DpDeWYDU5z4a49jjPFgLVY48B4L2U_khYCox4QkOHJpZHgJiFY1OKi_X7MDTboqZthP4OYYxIF_2qSKILOgY2sQiHVld8MoTxaDAXUkxu93afOgy9VhP9OLd1AMWUNk-LVB_et7-5Qo7EnLdgnS-Ael8u1c-7R0KCyEQwGqZcpVYt_32rVunjKNDILeyQfePNT7SbVma8wQHGhtcoqOtDsrGWzsPxisGGk_PN7ag2Aqf48-lB_Hb-gMkzqQ0KDbJyo0JgArQXpnKezReVUqxavRRN-nG4qYqFDSSgMnsH15rMg9x8GAAWFy7cBAy94brUbDcGzvwnTv0yMJngrUyJ3GI-CI9XIY4yKk9kTiuSkP9bK8K5WjcNToK2ujwtDfOJH7YwpMjqml7kTLkymQXtE_bAMO7Dr7nNAw2PYSHw8EK2aWOiMkmT0XL6NNfFmAxvHVuPUwc3zHS2xTYHh4lKp814KTmz-vtlu971roM7rAnxxVDKMY7F7Wk7UeBjbdGh22LGo0ejN1gP8z9Iav6RsHx8fb9QEEe3OhnsjK-2fSSXoVhyP0In8cKbqWs8zcfd9vfFCbM6H2S_OFJ6Ljyek10KURZP7TzRo9hlBqRuulM9eq5pivhL1-ZnTngt8Hv34IAMxvBAZyPfQjT7d0F_DnLRck_xOHCVInds1LWnOWcQKvS96CD97URpTypjcULnuCF5gSv9gh1vd1WKd5lHK4OZ0TagwZebDubBUO1BmD7tAkvUU6G63CmGHBJeefYg-Pn3cUe9q_HWixFIPZPSw-tHhQoq-I_utajhCgGfzgTgaf4Ji84fd5_vSN6Rko1ewgl0OjfmD1gtiMTNSdyaXseJvVpi1N8J_t-ZeN6M9Nm7OGnIYWmHwyQoA8tPwWBDijJ0kVA4Li6Oegg9U7ICAWyG4WpJ7BwtIIV6Q2W2hV7RJrd_vXsnm5jgXG_CjazO1_IoV5BDRnUsvP2mmfPPwMBv4R_dy4FyeCaP4JmYmrdHeb7M-dpzSDgDY6PAI9GmdhqV0JHdh9Bo0AosYxGMUvrFRt0QSpPyEqmTc3B_gQoDgwxf_BtKejIA6sEKcgqtIbB5w2C7Zsm55HYZzkyj-eGiIwL_6qJMycbLonqC0krYgvKB0AxgFNCkuqDfMPOtqaYMWxL920BMeOqxlz7gupopDlaVvAAaSFYULyZlzkjQGP2KjMZzwb7QMqibnTCvLbrkDlPVTC21-PpB466k-_2YSxGjuUb17r6IBwPRn4iCaYwJBCTEaqL582xOJW01WeAplYg4GXPzGqhL6sRujcZR6lbZHFZ2MnfjxesDoZ7UlTQx-2dGo9e1Jn5It7oLxFEvX8IPm-V1fdrzDwhZ7J2foiGRDV73k-TGiYYgf-ptcfD",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "vogUapK6KaaHz7IPq5e8oQ0",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:37:06 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=3761",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 910
+            }
+          ],
+          "cached_content_token_count": 910,
+          "candidates_token_count": 12,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 3699,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 3699
+            }
+          ],
+          "thoughts_token_count": 631,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 4342,
+          "traffic_type": null
+        }
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "workspace_id": "ts_002_ctx4k"
+        },
+        "durationMs": 5,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "list_files",
+        "transport": "in_memory"
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/tokenizers.js",
+          "workspace_id": "ts_002_ctx4k"
+        },
+        "durationMs": 3,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "list_symbols",
+        "transport": "in_memory"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "workspace_id": "ts_002_ctx4k"
+        },
+        "id": "step-1-tool-1",
+        "isError": false,
+        "name": "list_files",
+        "result": [
+          {
+            "language": "typescript",
+            "parse_status": "ok_filtered",
+            "path": "src/tokenizers.js",
+            "repository": "xenova/transformers.js",
+            "symbol_count": 30
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/tokenizers.js",
+          "workspace_id": "ts_002_ctx4k"
+        },
+        "id": "step-2-tool-1",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "Pre-tokenizes the input text by splitting it on whitespace characters.\n@param {string} text The text to be pre-tokenized.\n@param {Object} [options] Additional options for the pre-tokenization logic.\n@returns {string[]} An array of tokens produced by splitting the input text on whitespace.",
+            "end_line": 2352,
+            "kind": "method",
+            "name": "pre_tokenize_text",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "pre_tokenize_text",
+            "signature": "pre_tokenize_text(text, options) {\n        return whitespace_split(text);\n    }",
+            "start_line": 2350,
+            "symbol_id": "src/tokenizers.js#method:pre_tokenize_text:2350"
+          },
+          {
+            "children": [],
+            "documentation": "@param {Object} config The configuration options for the pre-tokenizer.\n@param {Object} config.pattern The pattern used to split the text. Can be a string or a regex object.\n@param {string} config.content What to replace the pattern with.",
+            "end_line": 2367,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(config) {\n        super();\n        this.config = config;\n        this.pattern = createPattern(this.config.pattern);\n        this.content = this.config.content;\n    }",
+            "start_line": 2362,
+            "symbol_id": "src/tokenizers.js#method:constructor:2362"
+          },
+          {
+            "children": [],
+            "documentation": "Pre-tokenizes the input text by replacing certain characters.\n@param {string} text The text to be pre-tokenized.\n@param {Object} [options] Additional options for the pre-tokenization logic.\n@returns {string[]} An array of tokens produced by replacing certain characters.",
+            "end_line": 2380,
+            "kind": "method",
+            "name": "pre_tokenize_text",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "pre_tokenize_text",
+            "signature": "pre_tokenize_text(text, options) {\n        if (this.pattern === null) {\n            return [text];\n        }\n        return [text.replaceAll(this.pattern, this.config.content)];\n    }",
+            "start_line": 2375,
+            "symbol_id": "src/tokenizers.js#method:pre_tokenize_text:2375"
+          },
+          {
+            "children": [],
+            "documentation": "Helper function for truncating values of an object, which are each arrays.\nNOTE: No additional checks are made here for validity of arguments.\n@param {Record<string, any[]>} item The input object.\n@param {number} length The length to truncate to.\n@private",
+            "end_line": 2429,
+            "kind": "function",
+            "name": "truncateHelper",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "truncateHelper",
+            "signature": "function truncateHelper(item, length) {\n    // Setting .length to a lower value truncates the array in-place:\n    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/length\n    for (const key of Object.keys(item)) {\n        item[key].length = length;\n    }\n}",
+            "start_line": 2423,
+            "symbol_id": "src/tokenizers.js#function:truncateHelper:2423"
+          },
+          {
+            "children": [],
+            "documentation": "Create a new PreTrainedTokenizer instance.\n@param {Object} tokenizerJSON The JSON of the tokenizer.\n@param {Object} tokenizerConfig The config of the tokenizer.",
+            "end_line": 2541,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(tokenizerJSON, tokenizerConfig) {\n        super();\n\n        this._tokenizer_config = tokenizerConfig;\n\n        // Construct parts of the tokenizer from the JSON\n        this.normalizer = Normalizer.fromConfig(tokenizerJSON.normalizer);\n        this.pre_tokenizer = PreTokenizer.fromConfig(tokenizerJSON.pre_tokenizer);\n        this.model = TokenizerModel.fromConfig(tokenizerJSON.model, tokenizerConfig);\n        this.post_processor = PostProcessor.fromConfig(tokenizerJSON.post_processor);\n        this.decoder = Decoder.fromConfig(tokenizerJSON.decoder);\n\n        // Add added_tokens to model\n        this.special_tokens = [];\n        this.all_special_ids = [];\n\n        /** @type {AddedToken[]} */\n        this.added_tokens = [];\n        for (const addedToken of tokenizerJSON.added_tokens) {\n            const token = new AddedToken(addedToken);\n            this.added_tokens.push(token);\n\n            this.model.tokens_to_ids.set(token.content, token.id);\n            this.model.vocab[token.id] = token.content;\n\n            if (token.special) {\n                this.special_tokens.push(token.content);\n                this.all_special_ids.push(token.id);\n            }\n        }\n\n        // Update additional_special_tokens\n        this.additional_special_tokens = tokenizerConfig.additional_special_tokens ?? [];\n        this.special_tokens.push(...this.additional_special_tokens);\n        this.special_tokens = [...new Set(this.special_tokens)]; // Remove duplicates\n\n        if (this.decoder) {\n            // Slight hack, but it prevents code duplication:\n            this.decoder.added_tokens = this.added_tokens;\n\n            // Another slight hack to add `end_of_word_suffix` (if present) to the decoder\n            // This is needed for cases where BPE model and ByteLevel decoder are used\n            // For more information, see https://github.com/xenova/transformers.js/issues/74\n            // TODO: save this to the decoder when exporting?\n            this.decoder.end_of_word_suffix = this.model.end_of_word_suffix;\n        }\n\n\n        this.added_tokens_regex = this.added_tokens.length > 0 ? new RegExp(\n            this.added_tokens.map(x => `${x.lstrip ? '\\\\s*' : ''}(${escapeRegExp(x.content)})${x.rstrip ? '\\\\s*' : ''}`).join('|')\n        ) : null;\n\n        // Set mask token if present (otherwise will be undefined, which is fine)\n        this.mask_token = this.getToken('mask_token');\n        this.mask_token_id = this.model.tokens_to_ids.get(this.mask_token);\n\n        this.pad_token = this.getToken('pad_token', 'eos_token');\n        this.pad_token_id = this.model.tokens_to_ids.get(this.pad_token);\n\n        this.sep_token = this.getToken('sep_token');\n        this.sep_token_id = this.model.tokens_to_ids.get(this.sep_token);\n\n        this.unk_token = this.getToken('unk_token');\n        this.unk_token_id = this.model.tokens_to_ids.get(this.unk_token);\n\n        this.model_max_length = tokenizerConfig.model_max_length;\n\n        /** @type {boolean} Whether or not to strip the text when tokenizing (removing excess spaces before and after the string). */\n        this.remove_space = tokenizerConfig.remove_space;\n\n        this.clean_up_tokenization_spaces = tokenizerConfig.clean_up_tokenization_spaces ?? true;\n        this.do_lowercase_and_remove_accent = tokenizerConfig.do_lowercase_and_remove_accent ?? false;\n\n        // TODO allow user to change this\n        /** @type {'right'|'left'} */\n        this.padding_side = 'right';\n\n        this.legacy = false;\n\n        this.chat_template = tokenizerConfig.chat_template ?? null;\n        if (Array.isArray(this.chat_template)) {\n            // Chat templates are stored as lists of dicts with fixed key names,\n            // we reconstruct that into a single dict while loading them.\n            const chat_template = Object.create(null);\n            for (const { name, template } of this.chat_template) {\n                if (typeof name !== 'string' || typeof template !== 'string') {\n                    throw new Error('Chat template must be a list of objects with \"name\" and \"template\" properties');\n                }\n                chat_template[name] = template;\n            }\n            this.chat_template = chat_template;\n        }\n        this._compiled_template_cache = new Map();\n    }",
+            "start_line": 2448,
+            "symbol_id": "src/tokenizers.js#method:constructor:2448"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the value of the first matching key in the tokenizer config object.\n@param {...string} keys One or more keys to search for in the tokenizer config object.\n@returns {string|null} The value associated with the first matching key, or null if no match is found.\n@throws {Error} If an object is found for a matching key and its __type property is not \"AddedToken\".",
+            "end_line": 2566,
+            "kind": "method",
+            "name": "getToken",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "getToken",
+            "signature": "getToken(...keys) {\n        for (const key of keys) {\n            const item = this._tokenizer_config[key];\n\n            if (!item) continue;\n\n            if (typeof item === 'object') {\n                if (item.__type === 'AddedToken') {\n                    return item.content;\n                } else {\n                    throw Error(`Unknown token: ${item}`);\n                }\n            } else {\n                return item;\n            }\n        }\n        return null;\n    }",
+            "start_line": 2549,
+            "symbol_id": "src/tokenizers.js#method:getToken:2549"
+          },
+          {
+            "children": [],
+            "documentation": "Loads a pre-trained tokenizer from the given `pretrained_model_name_or_path`.\n\n@param {string} pretrained_model_name_or_path The path to the pre-trained tokenizer.\n@param {PretrainedTokenizerOptions} options Additional options for loading the tokenizer.\n\n@throws {Error} Throws an error if the tokenizer.json or tokenizer_config.json files are not found in the `pretrained_model_name_or_path`.\n@returns {Promise<PreTrainedTokenizer>} A new instance of the `PreTrainedTokenizer` class.",
+            "end_line": 2597,
+            "kind": "method",
+            "name": "from_pretrained",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "from_pretrained",
+            "signature": "static async from_pretrained(pretrained_model_name_or_path, {\n        progress_callback = null,\n        config = null,\n        cache_dir = null,\n        local_files_only = false,\n        revision = 'main',\n        legacy = null,\n    } = {}) {\n\n        const info = await loadTokenizer(pretrained_model_name_or_path, {\n            progress_callback,\n            config,\n            cache_dir,\n            local_files_only,\n            revision,\n            legacy,\n        })\n\n        // @ts-ignore\n        return new this(...info);\n    }",
+            "start_line": 2577,
+            "symbol_id": "src/tokenizers.js#method:from_pretrained:2577"
+          }
+        ]
+      }
+    ]
+  },
+  "trialId": "b23b0582fb"
+}

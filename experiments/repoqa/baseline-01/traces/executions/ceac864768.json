@@ -1,0 +1,786 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 1172,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-nano",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "py_002_ctx4k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 5,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "language": "python",
+                "parse_status": "ok_filtered",
+                "path": "src/black/ranges.py",
+                "repository": "psf/black",
+                "symbol_count": 12
+              }
+            ],
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "py_002_ctx4k"
+              },
+              "durationMs": 5,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "list_files",
+              "transport": "in_memory"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1482,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-nano",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "path": "src/black/ranges.py",
+              "workspace_id": "py_002_ctx4k"
+            },
+            "tool_name": "read_file"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 4,
+          "metadata": {
+            "is_error": false,
+            "result": {
+              "content": "            start,\n            lines_mappings,\n            current_mapping_index,\n        )\n        end_mapping_index = _find_lines_mapping_index(\n            end,\n            lines_mappings,\n            start_mapping_index,\n        )\n        current_mapping_index = start_mapping_index\n        if start_mapping_index >= len(lines_mappings) or end_mapping_index >= len(\n            lines_mappings\n        ):\n            # Protect against invalid inputs.\n            continue\n        start_mapping = lines_mappings[start_mapping_index]\n        end_mapping = lines_mappings[end_mapping_index]\n        if start_mapping.is_changed_block:\n            # When the line falls into a changed block, expands to the whole block.\n            new_start = start_mapping.modified_start\n        else:\n            new_start = (\n                start - start_mapping.original_start + start_mapping.modified_start\n            )\n        if end_mapping.is_changed_block:\n            # When the line falls into a changed block, expands to the whole block.\n            new_end = end_mapping.modified_end\n        else:\n            new_end = end - end_mapping.original_start + end_mapping.modified_start\n        new_range = (new_start, new_end)\n        if is_valid_line_range(new_range):\n            new_lines.append(new_range)\n    return new_lines\n\n\n\ndef convert_unchanged_lines(src_node: Node, lines: Collection[Tuple[int, int]]) -> None:\n    \"\"\"Converts unchanged lines to STANDALONE_COMMENT.\n\n    The idea is similar to how `# fmt: on/off` is implemented. It also converts the\n    nodes between those markers as a single `STANDALONE_COMMENT` leaf node with\n    the unformatted code as its value. `STANDALONE_COMMENT` is a \"fake\" token\n    that will be formatted as-is with its prefix normalized.\n\n    Here we perform two passes:\n\n    1. Visit the top-level statements, and convert them to a single\n       `STANDALONE_COMMENT` when unchanged. This speeds up formatting when some\n       of the top-level statements aren't changed.\n    2. Convert unchanged \"unwrapped lines\" to `STANDALONE_COMMENT` nodes line by\n       line. \"unwrapped lines\" are divided by the `NEWLINE` token. e.g. a\n       multi-line statement is *one* \"unwrapped line\" that ends with `NEWLINE`,\n       even though this statement itself can span multiple lines, and the\n       tokenizer only sees the last '\\n' as the `NEWLINE` token.\n\n    NOTE: During pass (2), comment prefixes and indentations are ALWAYS\n    normalized even when the lines aren't changed. This is fixable by moving\n    more formatting to pass (1). However, it's hard to get it correct when\n    incorrect indentations are used. So we defer this to future optimizations.\n    \"\"\"\n    lines_set: Set[int] = set()\n    for start, end in lines:\n        lines_set.update(range(start, end + 1))\n    visitor = _TopLevelStatementsVisitor(lines_set)\n    _ = list(visitor.visit(src_node))  # Consume all results.\n    _convert_unchanged_line_by_line(src_node, lines_set)\n\n\ndef _contains_standalone_comment(node: LN) -> bool:\n    if isinstance(node, Leaf):\n        return node.type == STANDALONE_COMMENT\n    else:\n        for child in node.children:\n            if _contains_standalone_comment(child):\n                return True\n        return False\n\n\nclass _TopLevelStatementsVisitor(Visitor[None]):\n    \"\"\"\n    A node visitor that converts unchanged top-level statements to\n    STANDALONE_COMMENT.\n\n    This is used in addition to _convert_unchanged_line_by_line, to\n    speed up formatting when there are unchanged top-level\n    classes/functions/statements.\n    \"\"\"\n\n    def __init__(self, lines_set: Set[int]):\n        self._lines_set = lines_set\n\n    def visit_simple_stmt(self, node: Node) -> Iterator[None]:\n        # This is only called for top-level statements, since `visit_suite`\n        # won't visit its children nodes.\n        yield from []\n        newline_leaf = last_leaf(node)\n        if not newline_leaf:\n            return\n        assert (\n            newline_leaf.type == NEWLINE\n        ), f\"Unexpectedly found leaf.type={newline_leaf.type}\"\n        # We need to find the furthest ancestor with the NEWLINE as the last\n        # leaf, since a `suite` can simply be a `simple_stmt` when it puts\n        # its body on the same line. Example: `if cond: pass`.\n        ancestor = furthest_ancestor_with_last_leaf(newline_leaf)\n        if not _get_line_range(ancestor).intersection(self._lines_set):\n            _convert_node_to_standalone_comment(ancestor)\n\n    def visit_suite(self, node: Node) -> Iterator[None]:\n        yield from []\n        # If there is a STANDALONE_COMMENT node, it means parts of the node tree\n        # have fmt on/off/skip markers. Those STANDALONE_COMMENT nodes can't\n        # be simply converted by calling str(node). So we just don't convert\n        # here.\n        if _contains_standalone_comment(node):\n            return\n        # Find the semantic parent of this suite. For `async_stmt` and\n        # `async_funcdef`, the ASYNC token is defined on a separate level by the\n        # grammar.\n        semantic_parent = node.parent\n        if semantic_parent is not None:\n            if (\n                semantic_parent.prev_sibling is not None\n                and semantic_parent.prev_sibling.type == ASYNC\n            ):\n                semantic_parent = semantic_parent.parent\n        if semantic_parent is not None and not _get_line_range(\n            semantic_parent\n        ).intersection(self._lines_set):\n            _convert_node_to_standalone_comment(semantic_parent)\n\n\ndef _convert_unchanged_line_by_line(node: Node, lines_set: Set[int]) -> None:\n    \"\"\"Converts unchanged to STANDALONE_COMMENT line by line.\"\"\"\n    for leaf in node.leaves():\n        if leaf.type != NEWLINE:\n            # We only consider \"unwrapped lines\", which are divided by the NEWLINE\n            # token.\n            continue\n        if leaf.parent and leaf.parent.type == syms.match_stmt:\n            # The `suite` node is defined as:\n            #   match_stmt: \"match\" subject_expr ':' NEWLINE INDENT case_block+ DEDENT\n            # Here we need to check `subject_expr`. The `case_block+` will be\n            # checked by their own NEWLINEs.\n            nodes_to_ignore: List[LN] = []\n            prev_sibling = leaf.prev_sibling\n            while prev_sibling:\n                nodes_to_ignore.insert(0, prev_sibling)\n                prev_sibling = prev_sibling.prev_sibling\n            if not _get_line_range(nodes_to_ignore).intersection(lines_set):\n                _convert_nodes_to_standalone_comment(nodes_to_ignore, newline=leaf)\n        elif leaf.parent and leaf.parent.type == syms.suite:\n            # The `suite` node is defined as:\n            #   suite: simple_stmt | NEWLINE INDENT stmt+ DEDENT\n            # We will check `simple_stmt` and `stmt+` separately against the lines set\n            parent_sibling = leaf.parent.prev_sibling\n            nodes_to_ignore = []\n            while parent_sibling and not parent_sibling.type == syms.suite:\n                # NOTE: Multiple suite nodes can exist as siblings in e.g. `if_stmt`.\n                nodes_to_ignore.insert(0, parent_sibling)\n                parent_sibling = parent_sibling.prev_sibling\n            # Special case for `async_stmt` and `async_funcdef` where the ASYNC\n            # token is on the grandparent node.\n            grandparent = leaf.parent.parent\n            if (\n                grandparent is not None\n                and grandparent.prev_sibling is not None\n                and grandparent.prev_sibling.type == ASYNC\n            ):\n                nodes_to_ignore.insert(0, grandparent.prev_sibling)\n            if not _get_line_range(nodes_to_ignore).intersection(lines_set):\n                _convert_nodes_to_standalone_comment(nodes_to_ignore, newline=leaf)\n        else:\n            ancestor = furthest_ancestor_with_last_leaf(leaf)\n            # Consider multiple decorators as a whole block, as their\n            # newlines have different behaviors than the rest of the grammar.\n            if (\n                ancestor.type == syms.decorator\n                and ancestor.parent\n                and ancestor.parent.type == syms.decorators\n            ):\n                ancestor = ancestor.parent\n            if not _get_line_range(ancestor).intersection(lines_set):\n                _convert_node_to_standalone_comment(ancestor)\n\n\ndef _convert_node_to_standalone_comment(node: LN) -> None:\n    \"\"\"Convert node to STANDALONE_COMMENT by modifying the tree inline.\"\"\"\n    parent = node.parent\n    if not parent:\n        return\n    first = first_leaf(node)\n    last = last_leaf(node)\n    if not first or not last:\n        return\n    if first is last:\n        # This can happen on the following edge cases:\n        # 1. A block of `# fmt: off/on` code except the `# fmt: on` is placed\n        #    on the end of the last line instead of on a new line.\n        # 2. A single backslash on its own line followed by a comment line.\n        # Ideally we don't want to format them when not requested, but fixing\n        # isn't easy. These cases are also badly formatted code, so it isn't\n        # too bad we reformat them.\n        return\n    # The prefix contains comments and indentation whitespaces. They are\n    # reformatted accordingly to the correct indentation level.\n    # This also means the indentation will be changed on the unchanged lines, and\n    # this is actually required to not break incremental reformatting.\n    prefix = first.prefix\n    first.prefix = \"\"\n    index = node.remove()\n    if index is not None:\n        # Remove the '\\n', as STANDALONE_COMMENT will have '\\n' appended when\n        # generating the formatted code.\n        value = str(node)[:-1]\n        parent.insert_child(\n            index,\n            Leaf(\n                STANDALONE_COMMENT,\n                value,\n                prefix=prefix,\n                fmt_pass_converted_first_leaf=first,\n            ),\n        )\n\n\ndef _convert_nodes_to_standalone_comment(nodes: Sequence[LN], *, newline: Leaf) -> None:\n    \"\"\"Convert nodes to STANDALONE_COMMENT by modifying the tree inline.\"\"\"\n    if not nodes:\n        return\n    parent = nodes[0].parent\n    first = first_leaf(nodes[0])\n    if not parent or not first:\n        return\n    prefix = first.prefix\n    first.prefix = \"\"\n    value = \"\".join(str(node) for node in nodes)\n    # The prefix comment on the NEWLINE leaf is the trailing comment of the statement.\n    if newline.prefix:\n        value += newline.prefix\n        newline.prefix = \"\"\n    index = nodes[0].remove()\n    for node in nodes[1:]:\n        node.remove()\n    if index is not None:\n        parent.insert_child(\n            index,\n            Leaf(\n                STANDALONE_COMMENT,\n                value,\n                prefix=prefix,\n                fmt_pass_converted_first_leaf=first,\n            ),\n        )\n\n\ndef _leaf_line_end(leaf: Leaf) -> int:\n    \"\"\"Returns the line number of the leaf node's last line.\"\"\"\n    if leaf.type == NEWLINE:\n        return leaf.lineno\n    else:\n        # Leaf nodes like multiline strings can occupy multiple lines.\n        return leaf.lineno + str(leaf).count(\"\\n\")\n\n\ndef _get_line_range(node_or_nodes: Union[LN, List[LN]]) -> Set[int]:\n    \"\"\"Returns the line range of this node or list of nodes.\"\"\"\n    if isinstance(node_or_nodes, list):\n        nodes = node_or_nodes\n        if not nodes:\n            return set()\n        first = first_leaf(nodes[0])\n        last = last_leaf(nodes[-1])\n        if first and last:\n            line_start = first.lineno\n            line_end = _leaf_line_end(last)\n            return set(range(line_start, line_end + 1))\n        else:\n            return set()\n    else:\n        node = node_or_nodes\n        if isinstance(node, Leaf):\n            return set(range(node.lineno, _leaf_line_end(node) + 1))\n        else:\n            first = first_leaf(node)\n            last = last_leaf(node)\n            if first and last:\n                return set(range(first.lineno, _leaf_line_end(last) + 1))\n            else:\n                return set()\n\n\n@dataclass\nclass _LinesMapping:\n    \"\"\"1-based lines mapping from original source to modified source.\n\n    Lines [original_start, original_end] from original source\n    are mapped to [modified_start, modified_end].\n\n    The ranges are inclusive on both ends.\n    \"\"\"\n\n    original_start: int\n    original_end: int\n    modified_start: int\n    modified_end: int\n    # Whether this range corresponds to a changed block, or an unchanged block.\n    is_changed_block: bool\n\n\ndef _calculate_lines_mappings(\n    original_source: str,\n    modified_source: str,\n) -> Sequence[_LinesMapping]:\n    \"\"\"Returns a sequence of _LinesMapping by diffing the sources.\n\n    For example, given the following diff:\n        import re\n      - def func(arg1,\n      -   arg2, arg3):\n      + def func(arg1, arg2, arg3):\n          pass\n    It returns the following mappings:\n      original -> modified\n       (1, 1)  ->  (1, 1), is_changed_block=False (the \"import re\" line)\n       (2, 3)  ->  (2, 2), is_changed_block=True (the diff)\n       (4, 4)  ->  (3, 3), is_changed_block=False (the \"pass\" line)\n\n    You can think of this visually as if it brings up a side-by-side diff, and tries\n    to map the line ranges from the left side to the right side:\n\n      (1, 1)->(1, 1)    1. import re          1. import re\n      (2, 3)->(2, 2)    2. def func(arg1,     2. def func(arg1, arg2, arg3):\n                        3.   arg2, arg3):\n      (4, 4)->(3, 3)    4.   pass             3.   pass\n\n    Args:\n      original_source: the original source.\n      modified_source: the modified source.\n    \"\"\"\n    matcher = difflib.SequenceMatcher(\n        None,\n        original_source.splitlines(keepends=True),\n        modified_source.splitlines(keepends=True),\n    )\n    matching_blocks = matcher.get_matching_blocks()\n    lines_mappings: List[_LinesMapping] = []\n    # matching_blocks is a sequence of \"same block of code ranges\", see\n...\n",
+              "language": "python",
+              "path": "src/black/ranges.py",
+              "repository": "psf/black"
+            },
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "path": "src/black/ranges.py",
+                "workspace_id": "py_002_ctx4k"
+              },
+              "durationMs": 3,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "read_file",
+              "transport": "in_memory"
+            },
+            "tool_name": "read_file"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 37561,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-nano",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 40244,
+          "metadata": {},
+          "name": "strategy.local_mcp.execute",
+          "type": "strategy.local_mcp.execute"
+        },
+        {
+          "duration_ms": 40244,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 29,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": 0,
+        "cachedInputTokens": 0,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 2,
+        "inputTokens": 5377,
+        "loopControlDurationMsEstimated": 20,
+        "mcpToolCalls": 2,
+        "modelCalls": 3,
+        "modelDurationMs": 40215,
+        "outputTokens": 464,
+        "promptChars": 1593,
+        "questionTokensEstimated": 213,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 0,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 3,
+        "strategyDurationMs": 40244,
+        "taskStatementChars": 1423,
+        "toolCalls": 2,
+        "toolDurationMs": 9,
+        "totalDurationMs": 40244,
+        "totalTokens": 5841,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779728016.0,
+        "conversation": null,
+        "created_at": 1779728015.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_0647b83240683ba0006a147e8f4b788190991bb0be07c25725",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "ceac864768"
+        },
+        "model": "gpt-5.4-nano-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "arguments": "{\"workspace_id\":\"py_002_ctx4k\"}",
+            "call_id": "call_UYXWQPR9WD62BXJVszuqdUvp",
+            "id": "fc_0647b83240683ba0006a147e8fe04c8190889bf3a9bec887ca",
+            "name": "list_files",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 575,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 24,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 599
+        },
+        "user": null
+      },
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779728017.0,
+        "conversation": null,
+        "created_at": 1779728016.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_0647b83240683ba0006a147e9077d08190befabb7f5cbc7e5e",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "ceac864768"
+        },
+        "model": "gpt-5.4-nano-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "arguments": "{\"workspace_id\":\"py_002_ctx4k\",\"path\":\"src/black/ranges.py\"}",
+            "call_id": "call_yzyCTudVK8DG9dtcBvvEYeQY",
+            "id": "fc_0647b83240683ba0006a147e9137388190b493ff9c11ea13e6",
+            "name": "read_file",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 653,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 33,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 686
+        },
+        "user": null
+      },
+      {
+        "background": false,
+        "completed_at": 1779728052.0,
+        "conversation": null,
+        "created_at": 1779728018.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_0647b83240683ba0006a147e91fca8819093feec7e23044a7c",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "ceac864768"
+        },
+        "model": "gpt-5.4-nano-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "logprobs": [],
+                "text": "```python\ndef convert_unchanged_lines(src_node: Node, lines: Collection[Tuple[int, int]]) -> None:\n    \"\"\"Converts unchanged lines to STANDALONE_COMMENT.\n\n    The idea is similar to how `# fmt: on/off` is implemented. It also converts the\n    nodes between those markers as a single `STANDALONE_COMMENT` leaf node with\n    the unformatted code as its value. `STANDALONE_COMMENT` is a \"fake\" token\n    that will be formatted as-is with its prefix normalized.\n\n    Here we perform two passes:\n\n    1. Visit the top-level statements, and convert them to a single\n       `STANDALONE_COMMENT` when unchanged. This speeds up formatting when some\n       of the top-level statements aren't changed.\n    2. Convert unchanged \"unwrapped lines\" to `STANDALONE_COMMENT` nodes line by\n       line. \"unwrapped lines\" are divided by the `NEWLINE` token. e.g. a\n       multi-line statement is *one* \"unwrapped line\" that ends with `NEWLINE`,\n       even though this statement itself can span multiple lines, and the\n       tokenizer only sees the last '\\n' as the `NEWLINE` token.\n\n    NOTE: During pass (2), comment prefixes and indentations are ALWAYS\n    normalized even when the lines aren't changed. This is fixable by moving\n    more formatting to pass (1). However, it's hard to get it correct when\n    incorrect indentations are used. So we defer this to future optimizations.\n    \"\"\"\n    lines_set: Set[int] = set()\n    for start, end in lines:\n        lines_set.update(range(start, end + 1))\n    visitor = _TopLevelStatementsVisitor(lines_set)\n    _ = list(visitor.visit(src_node))  # Consume all results.\n    _convert_unchanged_line_by_line(src_node, lines_set)\n```",
+                "type": "output_text"
+              }
+            ],
+            "id": "msg_0647b83240683ba0006a147e926da48190b9aace20558d8357",
+            "phase": "final_answer",
+            "role": "assistant",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 4149,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 407,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 4556
+        },
+        "user": null
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "workspace_id": "py_002_ctx4k"
+        },
+        "durationMs": 5,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "list_files",
+        "transport": "in_memory"
+      },
+      {
+        "arguments": {
+          "path": "src/black/ranges.py",
+          "workspace_id": "py_002_ctx4k"
+        },
+        "durationMs": 3,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "read_file",
+        "transport": "in_memory"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "workspace_id": "py_002_ctx4k"
+        },
+        "id": "call_UYXWQPR9WD62BXJVszuqdUvp",
+        "isError": false,
+        "name": "list_files",
+        "result": [
+          {
+            "language": "python",
+            "parse_status": "ok_filtered",
+            "path": "src/black/ranges.py",
+            "repository": "psf/black",
+            "symbol_count": 12
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "path": "src/black/ranges.py",
+          "workspace_id": "py_002_ctx4k"
+        },
+        "id": "call_yzyCTudVK8DG9dtcBvvEYeQY",
+        "isError": false,
+        "name": "read_file",
+        "result": {
+          "content": "            start,\n            lines_mappings,\n            current_mapping_index,\n        )\n        end_mapping_index = _find_lines_mapping_index(\n            end,\n            lines_mappings,\n            start_mapping_index,\n        )\n        current_mapping_index = start_mapping_index\n        if start_mapping_index >= len(lines_mappings) or end_mapping_index >= len(\n            lines_mappings\n        ):\n            # Protect against invalid inputs.\n            continue\n        start_mapping = lines_mappings[start_mapping_index]\n        end_mapping = lines_mappings[end_mapping_index]\n        if start_mapping.is_changed_block:\n            # When the line falls into a changed block, expands to the whole block.\n            new_start = start_mapping.modified_start\n        else:\n            new_start = (\n                start - start_mapping.original_start + start_mapping.modified_start\n            )\n        if end_mapping.is_changed_block:\n            # When the line falls into a changed block, expands to the whole block.\n            new_end = end_mapping.modified_end\n        else:\n            new_end = end - end_mapping.original_start + end_mapping.modified_start\n        new_range = (new_start, new_end)\n        if is_valid_line_range(new_range):\n            new_lines.append(new_range)\n    return new_lines\n\n\n\ndef convert_unchanged_lines(src_node: Node, lines: Collection[Tuple[int, int]]) -> None:\n    \"\"\"Converts unchanged lines to STANDALONE_COMMENT.\n\n    The idea is similar to how `# fmt: on/off` is implemented. It also converts the\n    nodes between those markers as a single `STANDALONE_COMMENT` leaf node with\n    the unformatted code as its value. `STANDALONE_COMMENT` is a \"fake\" token\n    that will be formatted as-is with its prefix normalized.\n\n    Here we perform two passes:\n\n    1. Visit the top-level statements, and convert them to a single\n       `STANDALONE_COMMENT` when unchanged. This speeds up formatting when some\n       of the top-level statements aren't changed.\n    2. Convert unchanged \"unwrapped lines\" to `STANDALONE_COMMENT` nodes line by\n       line. \"unwrapped lines\" are divided by the `NEWLINE` token. e.g. a\n       multi-line statement is *one* \"unwrapped line\" that ends with `NEWLINE`,\n       even though this statement itself can span multiple lines, and the\n       tokenizer only sees the last '\\n' as the `NEWLINE` token.\n\n    NOTE: During pass (2), comment prefixes and indentations are ALWAYS\n    normalized even when the lines aren't changed. This is fixable by moving\n    more formatting to pass (1). However, it's hard to get it correct when\n    incorrect indentations are used. So we defer this to future optimizations.\n    \"\"\"\n    lines_set: Set[int] = set()\n    for start, end in lines:\n        lines_set.update(range(start, end + 1))\n    visitor = _TopLevelStatementsVisitor(lines_set)\n    _ = list(visitor.visit(src_node))  # Consume all results.\n    _convert_unchanged_line_by_line(src_node, lines_set)\n\n\ndef _contains_standalone_comment(node: LN) -> bool:\n    if isinstance(node, Leaf):\n        return node.type == STANDALONE_COMMENT\n    else:\n        for child in node.children:\n            if _contains_standalone_comment(child):\n                return True\n        return False\n\n\nclass _TopLevelStatementsVisitor(Visitor[None]):\n    \"\"\"\n    A node visitor that converts unchanged top-level statements to\n    STANDALONE_COMMENT.\n\n    This is used in addition to _convert_unchanged_line_by_line, to\n    speed up formatting when there are unchanged top-level\n    classes/functions/statements.\n    \"\"\"\n\n    def __init__(self, lines_set: Set[int]):\n        self._lines_set = lines_set\n\n    def visit_simple_stmt(self, node: Node) -> Iterator[None]:\n        # This is only called for top-level statements, since `visit_suite`\n        # won't visit its children nodes.\n        yield from []\n        newline_leaf = last_leaf(node)\n        if not newline_leaf:\n            return\n        assert (\n            newline_leaf.type == NEWLINE\n        ), f\"Unexpectedly found leaf.type={newline_leaf.type}\"\n        # We need to find the furthest ancestor with the NEWLINE as the last\n        # leaf, since a `suite` can simply be a `simple_stmt` when it puts\n        # its body on the same line. Example: `if cond: pass`.\n        ancestor = furthest_ancestor_with_last_leaf(newline_leaf)\n        if not _get_line_range(ancestor).intersection(self._lines_set):\n            _convert_node_to_standalone_comment(ancestor)\n\n    def visit_suite(self, node: Node) -> Iterator[None]:\n        yield from []\n        # If there is a STANDALONE_COMMENT node, it means parts of the node tree\n        # have fmt on/off/skip markers. Those STANDALONE_COMMENT nodes can't\n        # be simply converted by calling str(node). So we just don't convert\n        # here.\n        if _contains_standalone_comment(node):\n            return\n        # Find the semantic parent of this suite. For `async_stmt` and\n        # `async_funcdef`, the ASYNC token is defined on a separate level by the\n        # grammar.\n        semantic_parent = node.parent\n        if semantic_parent is not None:\n            if (\n                semantic_parent.prev_sibling is not None\n                and semantic_parent.prev_sibling.type == ASYNC\n            ):\n                semantic_parent = semantic_parent.parent\n        if semantic_parent is not None and not _get_line_range(\n            semantic_parent\n        ).intersection(self._lines_set):\n            _convert_node_to_standalone_comment(semantic_parent)\n\n\ndef _convert_unchanged_line_by_line(node: Node, lines_set: Set[int]) -> None:\n    \"\"\"Converts unchanged to STANDALONE_COMMENT line by line.\"\"\"\n    for leaf in node.leaves():\n        if leaf.type != NEWLINE:\n            # We only consider \"unwrapped lines\", which are divided by the NEWLINE\n            # token.\n            continue\n        if leaf.parent and leaf.parent.type == syms.match_stmt:\n            # The `suite` node is defined as:\n            #   match_stmt: \"match\" subject_expr ':' NEWLINE INDENT case_block+ DEDENT\n            # Here we need to check `subject_expr`. The `case_block+` will be\n            # checked by their own NEWLINEs.\n            nodes_to_ignore: List[LN] = []\n            prev_sibling = leaf.prev_sibling\n            while prev_sibling:\n                nodes_to_ignore.insert(0, prev_sibling)\n                prev_sibling = prev_sibling.prev_sibling\n            if not _get_line_range(nodes_to_ignore).intersection(lines_set):\n                _convert_nodes_to_standalone_comment(nodes_to_ignore, newline=leaf)\n        elif leaf.parent and leaf.parent.type == syms.suite:\n            # The `suite` node is defined as:\n            #   suite: simple_stmt | NEWLINE INDENT stmt+ DEDENT\n            # We will check `simple_stmt` and `stmt+` separately against the lines set\n            parent_sibling = leaf.parent.prev_sibling\n            nodes_to_ignore = []\n            while parent_sibling and not parent_sibling.type == syms.suite:\n                # NOTE: Multiple suite nodes can exist as siblings in e.g. `if_stmt`.\n                nodes_to_ignore.insert(0, parent_sibling)\n                parent_sibling = parent_sibling.prev_sibling\n            # Special case for `async_stmt` and `async_funcdef` where the ASYNC\n            # token is on the grandparent node.\n            grandparent = leaf.parent.parent\n            if (\n                grandparent is not None\n                and grandparent.prev_sibling is not None\n                and grandparent.prev_sibling.type == ASYNC\n            ):\n                nodes_to_ignore.insert(0, grandparent.prev_sibling)\n            if not _get_line_range(nodes_to_ignore).intersection(lines_set):\n                _convert_nodes_to_standalone_comment(nodes_to_ignore, newline=leaf)\n        else:\n            ancestor = furthest_ancestor_with_last_leaf(leaf)\n            # Consider multiple decorators as a whole block, as their\n            # newlines have different behaviors than the rest of the grammar.\n            if (\n                ancestor.type == syms.decorator\n                and ancestor.parent\n                and ancestor.parent.type == syms.decorators\n            ):\n                ancestor = ancestor.parent\n            if not _get_line_range(ancestor).intersection(lines_set):\n                _convert_node_to_standalone_comment(ancestor)\n\n\ndef _convert_node_to_standalone_comment(node: LN) -> None:\n    \"\"\"Convert node to STANDALONE_COMMENT by modifying the tree inline.\"\"\"\n    parent = node.parent\n    if not parent:\n        return\n    first = first_leaf(node)\n    last = last_leaf(node)\n    if not first or not last:\n        return\n    if first is last:\n        # This can happen on the following edge cases:\n        # 1. A block of `# fmt: off/on` code except the `# fmt: on` is placed\n        #    on the end of the last line instead of on a new line.\n        # 2. A single backslash on its own line followed by a comment line.\n        # Ideally we don't want to format them when not requested, but fixing\n        # isn't easy. These cases are also badly formatted code, so it isn't\n        # too bad we reformat them.\n        return\n    # The prefix contains comments and indentation whitespaces. They are\n    # reformatted accordingly to the correct indentation level.\n    # This also means the indentation will be changed on the unchanged lines, and\n    # this is actually required to not break incremental reformatting.\n    prefix = first.prefix\n    first.prefix = \"\"\n    index = node.remove()\n    if index is not None:\n        # Remove the '\\n', as STANDALONE_COMMENT will have '\\n' appended when\n        # generating the formatted code.\n        value = str(node)[:-1]\n        parent.insert_child(\n            index,\n            Leaf(\n                STANDALONE_COMMENT,\n                value,\n                prefix=prefix,\n                fmt_pass_converted_first_leaf=first,\n            ),\n        )\n\n\ndef _convert_nodes_to_standalone_comment(nodes: Sequence[LN], *, newline: Leaf) -> None:\n    \"\"\"Convert nodes to STANDALONE_COMMENT by modifying the tree inline.\"\"\"\n    if not nodes:\n        return\n    parent = nodes[0].parent\n    first = first_leaf(nodes[0])\n    if not parent or not first:\n        return\n    prefix = first.prefix\n    first.prefix = \"\"\n    value = \"\".join(str(node) for node in nodes)\n    # The prefix comment on the NEWLINE leaf is the trailing comment of the statement.\n    if newline.prefix:\n        value += newline.prefix\n        newline.prefix = \"\"\n    index = nodes[0].remove()\n    for node in nodes[1:]:\n        node.remove()\n    if index is not None:\n        parent.insert_child(\n            index,\n            Leaf(\n                STANDALONE_COMMENT,\n                value,\n                prefix=prefix,\n                fmt_pass_converted_first_leaf=first,\n            ),\n        )\n\n\ndef _leaf_line_end(leaf: Leaf) -> int:\n    \"\"\"Returns the line number of the leaf node's last line.\"\"\"\n    if leaf.type == NEWLINE:\n        return leaf.lineno\n    else:\n        # Leaf nodes like multiline strings can occupy multiple lines.\n        return leaf.lineno + str(leaf).count(\"\\n\")\n\n\ndef _get_line_range(node_or_nodes: Union[LN, List[LN]]) -> Set[int]:\n    \"\"\"Returns the line range of this node or list of nodes.\"\"\"\n    if isinstance(node_or_nodes, list):\n        nodes = node_or_nodes\n        if not nodes:\n            return set()\n        first = first_leaf(nodes[0])\n        last = last_leaf(nodes[-1])\n        if first and last:\n            line_start = first.lineno\n            line_end = _leaf_line_end(last)\n            return set(range(line_start, line_end + 1))\n        else:\n            return set()\n    else:\n        node = node_or_nodes\n        if isinstance(node, Leaf):\n            return set(range(node.lineno, _leaf_line_end(node) + 1))\n        else:\n            first = first_leaf(node)\n            last = last_leaf(node)\n            if first and last:\n                return set(range(first.lineno, _leaf_line_end(last) + 1))\n            else:\n                return set()\n\n\n@dataclass\nclass _LinesMapping:\n    \"\"\"1-based lines mapping from original source to modified source.\n\n    Lines [original_start, original_end] from original source\n    are mapped to [modified_start, modified_end].\n\n    The ranges are inclusive on both ends.\n    \"\"\"\n\n    original_start: int\n    original_end: int\n    modified_start: int\n    modified_end: int\n    # Whether this range corresponds to a changed block, or an unchanged block.\n    is_changed_block: bool\n\n\ndef _calculate_lines_mappings(\n    original_source: str,\n    modified_source: str,\n) -> Sequence[_LinesMapping]:\n    \"\"\"Returns a sequence of _LinesMapping by diffing the sources.\n\n    For example, given the following diff:\n        import re\n      - def func(arg1,\n      -   arg2, arg3):\n      + def func(arg1, arg2, arg3):\n          pass\n    It returns the following mappings:\n      original -> modified\n       (1, 1)  ->  (1, 1), is_changed_block=False (the \"import re\" line)\n       (2, 3)  ->  (2, 2), is_changed_block=True (the diff)\n       (4, 4)  ->  (3, 3), is_changed_block=False (the \"pass\" line)\n\n    You can think of this visually as if it brings up a side-by-side diff, and tries\n    to map the line ranges from the left side to the right side:\n\n      (1, 1)->(1, 1)    1. import re          1. import re\n      (2, 3)->(2, 2)    2. def func(arg1,     2. def func(arg1, arg2, arg3):\n                        3.   arg2, arg3):\n      (4, 4)->(3, 3)    4.   pass             3.   pass\n\n    Args:\n      original_source: the original source.\n      modified_source: the modified source.\n    \"\"\"\n    matcher = difflib.SequenceMatcher(\n        None,\n        original_source.splitlines(keepends=True),\n        modified_source.splitlines(keepends=True),\n    )\n    matching_blocks = matcher.get_matching_blocks()\n    lines_mappings: List[_LinesMapping] = []\n    # matching_blocks is a sequence of \"same block of code ranges\", see\n...\n",
+          "language": "python",
+          "path": "src/black/ranges.py",
+          "repository": "psf/black"
+        }
+      }
+    ]
+  },
+  "trialId": "ceac864768"
+}

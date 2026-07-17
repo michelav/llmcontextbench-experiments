@@ -1,0 +1,1506 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 1796,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "py_002_ctx16k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 7,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 40,
+                "kind": "function",
+                "name": "parse_line_ranges",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "parse_line_ranges",
+                "signature": "def parse_line_ranges(line_ranges: Sequence[str]) -> List[Tuple[int, int]]",
+                "start_line": 21,
+                "symbol_id": "src/black/ranges.py#function:parse_line_ranges:21"
+              },
+              {
+                "children": [],
+                "documentation": "Returns whether the line range is valid.",
+                "end_line": 45,
+                "kind": "function",
+                "name": "is_valid_line_range",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "is_valid_line_range",
+                "signature": "def is_valid_line_range(lines: Tuple[int, int]) -> bool",
+                "start_line": 43,
+                "symbol_id": "src/black/ranges.py#function:is_valid_line_range:43"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the adjusted line ranges based on edits from the original code.\n\nThis computes the new line ranges by diffing original_source and\nmodified_source, and adjust each range based on how the range overlaps with\nthe diffs.\n\nNote the diff can contain lines outside of the original line ranges. This can\nhappen when the formatting has to be done in adjacent to maintain consistent\nlocal results. For example:\n\n1. def my_func(arg1, arg2,\n2.             arg3,):\n3.   pass\n\nIf it restricts to line 2-2, it can't simply reformat line 2, it also has\nto reformat line 1:\n\n1. def my_func(\n2.     arg1,\n3.     arg2,\n4.     arg3,\n5. ):\n6.   pass\n\nIn this case, we will expand the line ranges to also include the whole diff\nblock.\n\nArgs:\n  lines: a collection of line ranges.\n  original_source: the original source.\n  modified_source: the modified source.",
+                "end_line": 125,
+                "kind": "function",
+                "name": "adjusted_lines",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "adjusted_lines",
+                "signature": "def adjusted_lines(\n    lines: Collection[Tuple[int, int]],\n    original_source: str,\n    modified_source: str,\n) -> List[Tuple[int, int]]",
+                "start_line": 48,
+                "symbol_id": "src/black/ranges.py#function:adjusted_lines:48"
+              },
+              {
+                "children": [],
+                "documentation": "Converts unchanged lines to STANDALONE_COMMENT.\n\n    The idea is similar to how `# fmt: on/off` is implemented. It also converts the\n    nodes between those markers as a single `STANDALONE_COMMENT` leaf node with\n    the unformatted code as its value. `STANDALONE_COMMENT` is a \"fake\" token\n    that will be formatted as-is with its prefix normalized.\n\n    Here we perform two passes:\n\n    1. Visit the top-level statements, and convert them to a single\n       `STANDALONE_COMMENT` when unchanged. This speeds up formatting when some\n       of the top-level statements aren't changed.\n    2. Convert unchanged \"unwrapped lines\" to `STANDALONE_COMMENT` nodes line by\n       line. \"unwrapped lines\" are divided by the `NEWLINE` token. e.g. a\n       multi-line statement is *one* \"unwrapped line\" that ends with `NEWLINE`,\n       even though this statement itself can span multiple lines, and the\n       tokenizer only sees the last '\n' as the `NEWLINE` token.\n\n    NOTE: During pass (2), comment prefixes and indentations are ALWAYS\n    normalized even when the lines aren't changed. This is fixable by moving\n    more formatting to pass (1). However, it's hard to get it correct when\n    incorrect indentations are used. So we defer this to future optimizations.",
+                "end_line": 157,
+                "kind": "function",
+                "name": "convert_unchanged_lines",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "convert_unchanged_lines",
+                "signature": "def convert_unchanged_lines(src_node: Node, lines: Collection[Tuple[int, int]]) -> None",
+                "start_line": 128,
+                "symbol_id": "src/black/ranges.py#function:convert_unchanged_lines:128"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 167,
+                "kind": "function",
+                "name": "_contains_standalone_comment",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "_contains_standalone_comment",
+                "signature": "def _contains_standalone_comment(node: LN) -> bool",
+                "start_line": 160,
+                "symbol_id": "src/black/ranges.py#function:_contains_standalone_comment:160"
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "documentation": null,
+                    "end_line": 181,
+                    "kind": "method",
+                    "name": "__init__",
+                    "parent_id": "src/black/ranges.py#class:_TopLevelStatementsVisitor:170",
+                    "parent_name": "_TopLevelStatementsVisitor",
+                    "path": "src/black/ranges.py",
+                    "qualified_name": "_TopLevelStatementsVisitor.__init__",
+                    "signature": "def __init__(self, lines_set: Set[int])",
+                    "start_line": 180,
+                    "symbol_id": "src/black/ranges.py#method:_TopLevelStatementsVisitor.__init__:180"
+                  },
+                  {
+                    "children": [],
+                    "documentation": null,
+                    "end_line": 198,
+                    "kind": "method",
+                    "name": "visit_simple_stmt",
+                    "parent_id": "src/black/ranges.py#class:_TopLevelStatementsVisitor:170",
+                    "parent_name": "_TopLevelStatementsVisitor",
+                    "path": "src/black/ranges.py",
+                    "qualified_name": "_TopLevelStatementsVisitor.visit_simple_stmt",
+                    "signature": "def visit_simple_stmt(self, node: Node) -> Iterator[None]",
+                    "start_line": 183,
+                    "symbol_id": "src/black/ranges.py#method:_TopLevelStatementsVisitor.visit_simple_stmt:183"
+                  },
+                  {
+                    "children": [],
+                    "documentation": null,
+                    "end_line": 221,
+                    "kind": "method",
+                    "name": "visit_suite",
+                    "parent_id": "src/black/ranges.py#class:_TopLevelStatementsVisitor:170",
+                    "parent_name": "_TopLevelStatementsVisitor",
+                    "path": "src/black/ranges.py",
+                    "qualified_name": "_TopLevelStatementsVisitor.visit_suite",
+                    "signature": "def visit_suite(self, node: Node) -> Iterator[None]",
+                    "start_line": 200,
+                    "symbol_id": "src/black/ranges.py#method:_TopLevelStatementsVisitor.visit_suite:200"
+                  }
+                ],
+                "documentation": "A node visitor that converts unchanged top-level statements to\nSTANDALONE_COMMENT.\n\nThis is used in addition to _convert_unchanged_line_by_line, to\nspeed up formatting when there are unchanged top-level\nclasses/functions/statements.",
+                "end_line": 221,
+                "kind": "class",
+                "name": "_TopLevelStatementsVisitor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "_TopLevelStatementsVisitor",
+                "signature": "class _TopLevelStatementsVisitor(Visitor[None])",
+                "start_line": 170,
+                "symbol_id": "src/black/ranges.py#class:_TopLevelStatementsVisitor:170"
+              },
+              {
+                "children": [],
+                "documentation": "Converts unchanged to STANDALONE_COMMENT line by line.",
+                "end_line": 275,
+                "kind": "function",
+                "name": "_convert_unchanged_line_by_line",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "_convert_unchanged_line_by_line",
+                "signature": "def _convert_unchanged_line_by_line(node: Node, lines_set: Set[int]) -> None",
+                "start_line": 224,
+                "symbol_id": "src/black/ranges.py#function:_convert_unchanged_line_by_line:224"
+              },
+              {
+                "children": [],
+                "documentation": "Convert node to STANDALONE_COMMENT by modifying the tree inline.",
+                "end_line": 315,
+                "kind": "function",
+                "name": "_convert_node_to_standalone_comment",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "_convert_node_to_standalone_comment",
+                "signature": "def _convert_node_to_standalone_comment(node: LN) -> None",
+                "start_line": 278,
+                "symbol_id": "src/black/ranges.py#function:_convert_node_to_standalone_comment:278"
+              },
+              {
+                "children": [],
+                "documentation": "Convert nodes to STANDALONE_COMMENT by modifying the tree inline.",
+                "end_line": 345,
+                "kind": "function",
+                "name": "_convert_nodes_to_standalone_comment",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "_convert_nodes_to_standalone_comment",
+                "signature": "def _convert_nodes_to_standalone_comment(nodes: Sequence[LN], *, newline: Leaf) -> None",
+                "start_line": 318,
+                "symbol_id": "src/black/ranges.py#function:_convert_nodes_to_standalone_comment:318"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the line number of the leaf node's last line.",
+                "end_line": 354,
+                "kind": "function",
+                "name": "_leaf_line_end",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "_leaf_line_end",
+                "signature": "def _leaf_line_end(leaf: Leaf) -> int",
+                "start_line": 348,
+                "symbol_id": "src/black/ranges.py#function:_leaf_line_end:348"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the line range of this node or list of nodes.",
+                "end_line": 381,
+                "kind": "function",
+                "name": "_get_line_range",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "_get_line_range",
+                "signature": "def _get_line_range(node_or_nodes: Union[LN, List[LN]]) -> Set[int]",
+                "start_line": 357,
+                "symbol_id": "src/black/ranges.py#function:_get_line_range:357"
+              },
+              {
+                "children": [],
+                "documentation": "1-based lines mapping from original source to modified source.\n\nLines [original_start, original_end] from original source\nare mapped to [modified_start, modified_end].\n\nThe ranges are inclusive on both ends.",
+                "end_line": 399,
+                "kind": "class",
+                "name": "_LinesMapping",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "_LinesMapping",
+                "signature": "class _LinesMapping",
+                "start_line": 385,
+                "symbol_id": "src/black/ranges.py#class:_LinesMapping:385"
+              },
+              {
+                "children": [],
+                "documentation": "Returns a sequence of _LinesMapping by diffing the sources.\n\nFor example, given the following diff:\n    import re\n  - def func(arg1,\n  -   arg2, arg3):\n  + def func(arg1, arg2, arg3):\n      pass\nIt returns the following mappings:\n  original -> modified\n   (1, 1)  ->  (1, 1), is_changed_block=False (the \"import re\" line)\n   (2, 3)  ->  (2, 2), is_changed_block=True (the diff)\n   (4, 4)  ->  (3, 3), is_changed_block=False (the \"pass\" line)\n\nYou can think of this visually as if it brings up a side-by-side diff, and tries\nto map the line ranges from the left side to the right side:\n\n  (1, 1)->(1, 1)    1. import re          1. import re\n  (2, 3)->(2, 2)    2. def func(arg1,     2. def func(arg1, arg2, arg3):\n                    3.   arg2, arg3):\n  (4, 4)->(3, 3)    4.   pass             3.   pass\n\nArgs:\n  original_source: the original source.\n  modified_source: the modified source.",
+                "end_line": 478,
+                "kind": "function",
+                "name": "_calculate_lines_mappings",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "_calculate_lines_mappings",
+                "signature": "def _calculate_lines_mappings(\n    original_source: str,\n    modified_source: str,\n) -> Sequence[_LinesMapping]",
+                "start_line": 402,
+                "symbol_id": "src/black/ranges.py#function:_calculate_lines_mappings:402"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the original index of the lines mappings for the original line.",
+                "end_line": 493,
+                "kind": "function",
+                "name": "_find_lines_mapping_index",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "_find_lines_mapping_index",
+                "signature": "def _find_lines_mapping_index(\n    original_line: int,\n    lines_mappings: Sequence[_LinesMapping],\n    start_index: int,\n) -> int",
+                "start_line": 481,
+                "symbol_id": "src/black/ranges.py#function:_find_lines_mapping_index:481"
+              },
+              {
+                "children": [],
+                "documentation": "Raised when input source code fails all parse attempts.",
+                "end_line": 21,
+                "kind": "class",
+                "name": "InvalidInput",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/parsing.py",
+                "qualified_name": "InvalidInput",
+                "signature": "class InvalidInput(ValueError)",
+                "start_line": 20,
+                "symbol_id": "src/black/parsing.py#class:InvalidInput:20"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 52,
+                "kind": "function",
+                "name": "get_grammars",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/parsing.py",
+                "qualified_name": "get_grammars",
+                "signature": "def get_grammars(target_versions: Set[TargetVersion]) -> List[Grammar]",
+                "start_line": 24,
+                "symbol_id": "src/black/parsing.py#function:get_grammars:24"
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "documentation": null,
+                    "end_line": 113,
+                    "kind": "method",
+                    "name": "from_configuration",
+                    "parent_id": "src/black/__init__.py#class:WriteBack:96",
+                    "parent_name": "WriteBack",
+                    "path": "src/black/__init__.py",
+                    "qualified_name": "WriteBack.from_configuration",
+                    "signature": "def from_configuration(\n        cls, *, check: bool, diff: bool, color: bool = False\n    ) -> \"WriteBack\"",
+                    "start_line": 104,
+                    "symbol_id": "src/black/__init__.py#method:WriteBack.from_configuration:104"
+                  }
+                ],
+                "documentation": null,
+                "end_line": 113,
+                "kind": "class",
+                "name": "WriteBack",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/__init__.py",
+                "qualified_name": "WriteBack",
+                "signature": "class WriteBack(Enum)",
+                "start_line": 96,
+                "symbol_id": "src/black/__init__.py#class:WriteBack:96"
+              },
+              {
+                "children": [],
+                "documentation": "Inject Black configuration from \"pyproject.toml\" into defaults in `ctx`.\n\nReturns the path to a successfully found and read configuration file, None\notherwise.",
+                "end_line": 182,
+                "kind": "function",
+                "name": "read_pyproject_toml",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/__init__.py",
+                "qualified_name": "read_pyproject_toml",
+                "signature": "def read_pyproject_toml(\n    ctx: click.Context, param: click.Parameter, value: Optional[str]\n) -> Optional[str]",
+                "start_line": 120,
+                "symbol_id": "src/black/__init__.py#function:read_pyproject_toml:120"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 198,
+                "kind": "function",
+                "name": "spellcheck_pyproject_toml_keys",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/__init__.py",
+                "qualified_name": "spellcheck_pyproject_toml_keys",
+                "signature": "def spellcheck_pyproject_toml_keys(\n    ctx: click.Context, config_keys: List[str], config_file_path: str\n) -> None",
+                "start_line": 185,
+                "symbol_id": "src/black/__init__.py#function:spellcheck_pyproject_toml_keys:185"
+              },
+              {
+                "children": [],
+                "documentation": "Compute the target versions from a --target-version flag.\n\nThis is its own function because mypy couldn't infer the type correctly\nwhen it was a lambda, causing mypyc trouble.",
+                "end_line": 209,
+                "kind": "function",
+                "name": "target_version_option_callback",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/__init__.py",
+                "qualified_name": "target_version_option_callback",
+                "signature": "def target_version_option_callback(\n    c: click.Context, p: Union[click.Option, click.Parameter], v: Tuple[str, ...]\n) -> List[TargetVersion]",
+                "start_line": 201,
+                "symbol_id": "src/black/__init__.py#function:target_version_option_callback:201"
+              },
+              {
+                "children": [],
+                "documentation": "Compute the features from an --enable-unstable-feature flag.",
+                "end_line": 216,
+                "kind": "function",
+                "name": "enable_unstable_feature_callback",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/__init__.py",
+                "qualified_name": "enable_unstable_feature_callback",
+                "signature": "def enable_unstable_feature_callback(\n    c: click.Context, p: Union[click.Option, click.Parameter], v: Tuple[str, ...]\n) -> List[Preview]",
+                "start_line": 212,
+                "symbol_id": "src/black/__init__.py#function:enable_unstable_feature_callback:212"
+              },
+              {
+                "children": [],
+                "documentation": "Compile a regular expression string in `regex`.\n\nIf it contains newlines, use verbose mode.",
+                "end_line": 227,
+                "kind": "function",
+                "name": "re_compile_maybe_verbose",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/__init__.py",
+                "qualified_name": "re_compile_maybe_verbose",
+                "signature": "def re_compile_maybe_verbose(regex: str) -> Pattern[str]",
+                "start_line": 219,
+                "symbol_id": "src/black/__init__.py#function:re_compile_maybe_verbose:219"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 238,
+                "kind": "function",
+                "name": "validate_regex",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/__init__.py",
+                "qualified_name": "validate_regex",
+                "signature": "def validate_regex(\n    ctx: click.Context,\n    param: click.Parameter,\n    value: Optional[str],\n) -> Optional[Pattern[str]]",
+                "start_line": 230,
+                "symbol_id": "src/black/__init__.py#function:validate_regex:230"
+              },
+              {
+                "children": [],
+                "documentation": "The uncompromising code formatter.",
+                "end_line": 718,
+                "kind": "function",
+                "name": "main",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/__init__.py",
+                "qualified_name": "main",
+                "signature": "def main(  # noqa: C901\n    ctx: click.Context,\n    code: Optional[str],\n    line_length: int,\n    target_version: List[TargetVersion],\n    check: bool,\n    diff: bool,\n    line_ranges: Sequence[str],\n    color: bool,\n    fast: bool,\n    pyi: bool,\n    ipynb: bool,\n    python_cell_magics: Sequence[str],\n    skip_source_first_line: bool,\n    skip_string_normalization: bool,\n    skip_magic_trailing_comma: bool,\n    preview: bool,\n    unstable: bool,\n    enable_unstable_feature: List[Preview],\n    quiet: bool,\n    verbose: bool,\n    required_version: Optional[str],\n    include: Pattern[str],\n    exclude: Optional[Pattern[str]],\n    extend_exclude: Optional[Pattern[str]],\n    force_exclude: Optional[Pattern[str]],\n    stdin_filename: Optional[str],\n    workers: Optional[int],\n    src: Tuple[str, ...],\n    config: Optional[str],\n) -> None",
+                "start_line": 515,
+                "symbol_id": "src/black/__init__.py#function:main:515"
+              },
+              {
+                "children": [],
+                "documentation": "Compute the set of files to be formatted.",
+                "end_line": 810,
+                "kind": "function",
+                "name": "get_sources",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/__init__.py",
+                "qualified_name": "get_sources",
+                "signature": "def get_sources(\n    *,\n    root: Path,\n    src: Tuple[str, ...],\n    quiet: bool,\n    verbose: bool,\n    include: Pattern[str],\n    exclude: Optional[Pattern[str]],\n    extend_exclude: Optional[Pattern[str]],\n    force_exclude: Optional[Pattern[str]],\n    report: \"Report\",\n    stdin_filename: Optional[str],\n) -> Set[Path]",
+                "start_line": 721,
+                "symbol_id": "src/black/__init__.py#function:get_sources:721"
+              },
+              {
+                "children": [],
+                "documentation": "Exit if there is no `src` provided for formatting",
+                "end_line": 822,
+                "kind": "function",
+                "name": "path_empty",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/__init__.py",
+                "qualified_name": "path_empty",
+                "signature": "def path_empty(\n    src: Sized, msg: str, quiet: bool, verbose: bool, ctx: click.Context\n) -> None",
+                "start_line": 813,
+                "symbol_id": "src/black/__init__.py#function:path_empty:813"
+              },
+              {
+                "children": [],
+                "documentation": "Reformat and print out `content` without spawning child processes.\nSimilar to `reformat_one`, but for string content.\n\n`fast`, `write_back`, and `mode` options are passed to\n:func:`format_file_in_place` or :func:`format_stdin_to_stdout`.",
+                "end_line": 852,
+                "kind": "function",
+                "name": "reformat_code",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/__init__.py",
+                "qualified_name": "reformat_code",
+                "signature": "def reformat_code(\n    content: str,\n    fast: bool,\n    write_back: WriteBack,\n    mode: Mode,\n    report: Report,\n    *,\n    lines: Collection[Tuple[int, int]] = (),\n) -> None",
+                "start_line": 825,
+                "symbol_id": "src/black/__init__.py#function:reformat_code:825"
+              },
+              {
+                "children": [],
+                "documentation": "Reformat a single file under `src` without spawning child processes.\n\n`fast`, `write_back`, and `mode` options are passed to\n:func:`format_file_in_place` or :func:`format_stdin_to_stdout`.",
+                "end_line": 911,
+                "kind": "function",
+                "name": "reformat_one",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/__init__.py",
+                "qualified_name": "reformat_one",
+                "signature": "def reformat_one(\n    src: Path,\n    fast: bool,\n    write_back: WriteBack,\n    mode: Mode,\n    report: \"Report\",\n    *,\n    lines: Collection[Tuple[int, int]] = (),\n) -> None",
+                "start_line": 858,
+                "symbol_id": "src/black/__init__.py#function:reformat_one:858"
+              },
+              {
+                "children": [],
+                "documentation": "Format file under `src` path. Return True if changed.\n\nIf `write_back` is DIFF, write a diff to stdout. If it is YES, write reformatted\ncode to the file.\n`mode` and `fast` options are passed to :func:`format_file_contents`.",
+                "end_line": 979,
+                "kind": "function",
+                "name": "format_file_in_place",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/__init__.py",
+                "qualified_name": "format_file_in_place",
+                "signature": "def format_file_in_place(\n    src: Path,\n    fast: bool,\n    mode: Mode,\n    write_back: WriteBack = WriteBack.NO,\n    lock: Any = None,  # multiprocessing.Manager().Lock() is some crazy proxy\n    *,\n    lines: Collection[Tuple[int, int]] = (),\n) -> bool",
+                "start_line": 914,
+                "symbol_id": "src/black/__init__.py#function:format_file_in_place:914"
+              },
+              {
+                "children": [],
+                "documentation": "Format file on stdin. Return True if changed.\n\nIf content is None, it's read from sys.stdin.\n\nIf `write_back` is YES, write reformatted code back to stdout. If it is DIFF,\nwrite a diff to stdout. The `mode` argument is passed to\n:func:`format_file_contents`.",
+                "end_line": 1031,
+                "kind": "function",
+                "name": "format_stdin_to_stdout",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/__init__.py",
+                "qualified_name": "format_stdin_to_stdout",
+                "signature": "def format_stdin_to_stdout(\n    fast: bool,\n    *,\n    content: Optional[str] = None,\n    write_back: WriteBack = WriteBack.NO,\n    mode: Mode,\n    lines: Collection[Tuple[int, int]] = (),\n) -> bool",
+                "start_line": 982,
+                "symbol_id": "src/black/__init__.py#function:format_stdin_to_stdout:982"
+              },
+              {
+                "children": [],
+                "documentation": "Perform stability and equivalence checks.\n\nRaise AssertionError if source and destination contents are not\nequivalent, or if a second pass of the formatter would format the\ncontent differently.",
+                "end_line": 1048,
+                "kind": "function",
+                "name": "check_stability_and_equivalence",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/__init__.py",
+                "qualified_name": "check_stability_and_equivalence",
+                "signature": "def check_stability_and_equivalence(\n    src_contents: str,\n    dst_contents: str,\n    *,\n    mode: Mode,\n    lines: Collection[Tuple[int, int]] = (),\n) -> None",
+                "start_line": 1034,
+                "symbol_id": "src/black/__init__.py#function:check_stability_and_equivalence:1034"
+              }
+            ],
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "py_002_ctx16k"
+              },
+              "durationMs": 6,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "list_symbols",
+              "transport": "in_memory"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 4222,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "symbol_id": "src/black/ranges.py#function:convert_unchanged_lines:128",
+              "workspace_id": "py_002_ctx16k"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 5,
+          "metadata": {
+            "is_error": false,
+            "result": {
+              "children": [],
+              "code": "def convert_unchanged_lines(src_node: Node, lines: Collection[Tuple[int, int]]) -> None:\n    \"\"\"Converts unchanged lines to STANDALONE_COMMENT.\n\n    The idea is similar to how `# fmt: on/off` is implemented. It also converts the\n    nodes between those markers as a single `STANDALONE_COMMENT` leaf node with\n    the unformatted code as its value. `STANDALONE_COMMENT` is a \"fake\" token\n    that will be formatted as-is with its prefix normalized.\n\n    Here we perform two passes:\n\n    1. Visit the top-level statements, and convert them to a single\n       `STANDALONE_COMMENT` when unchanged. This speeds up formatting when some\n       of the top-level statements aren't changed.\n    2. Convert unchanged \"unwrapped lines\" to `STANDALONE_COMMENT` nodes line by\n       line. \"unwrapped lines\" are divided by the `NEWLINE` token. e.g. a\n       multi-line statement is *one* \"unwrapped line\" that ends with `NEWLINE`,\n       even though this statement itself can span multiple lines, and the\n       tokenizer only sees the last '\\n' as the `NEWLINE` token.\n\n    NOTE: During pass (2), comment prefixes and indentations are ALWAYS\n    normalized even when the lines aren't changed. This is fixable by moving\n    more formatting to pass (1). However, it's hard to get it correct when\n    incorrect indentations are used. So we defer this to future optimizations.\n    \"\"\"\n    lines_set: Set[int] = set()\n    for start, end in lines:\n        lines_set.update(range(start, end + 1))\n    visitor = _TopLevelStatementsVisitor(lines_set)\n    _ = list(visitor.visit(src_node))  # Consume all results.\n    _convert_unchanged_line_by_line(src_node, lines_set)",
+              "documentation": "Converts unchanged lines to STANDALONE_COMMENT.\n\n    The idea is similar to how `# fmt: on/off` is implemented. It also converts the\n    nodes between those markers as a single `STANDALONE_COMMENT` leaf node with\n    the unformatted code as its value. `STANDALONE_COMMENT` is a \"fake\" token\n    that will be formatted as-is with its prefix normalized.\n\n    Here we perform two passes:\n\n    1. Visit the top-level statements, and convert them to a single\n       `STANDALONE_COMMENT` when unchanged. This speeds up formatting when some\n       of the top-level statements aren't changed.\n    2. Convert unchanged \"unwrapped lines\" to `STANDALONE_COMMENT` nodes line by\n       line. \"unwrapped lines\" are divided by the `NEWLINE` token. e.g. a\n       multi-line statement is *one* \"unwrapped line\" that ends with `NEWLINE`,\n       even though this statement itself can span multiple lines, and the\n       tokenizer only sees the last '\n' as the `NEWLINE` token.\n\n    NOTE: During pass (2), comment prefixes and indentations are ALWAYS\n    normalized even when the lines aren't changed. This is fixable by moving\n    more formatting to pass (1). However, it's hard to get it correct when\n    incorrect indentations are used. So we defer this to future optimizations.",
+              "end_line": 157,
+              "kind": "function",
+              "name": "convert_unchanged_lines",
+              "parent_id": null,
+              "parent_name": null,
+              "path": "src/black/ranges.py",
+              "qualified_name": "convert_unchanged_lines",
+              "signature": "def convert_unchanged_lines(src_node: Node, lines: Collection[Tuple[int, int]]) -> None",
+              "start_line": 128,
+              "symbol_id": "src/black/ranges.py#function:convert_unchanged_lines:128"
+            },
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "symbol_id": "src/black/ranges.py#function:convert_unchanged_lines:128",
+                "workspace_id": "py_002_ctx16k"
+              },
+              "durationMs": 5,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "get_symbol",
+              "transport": "in_memory"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 2995,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 9066,
+          "metadata": {},
+          "name": "strategy.local_mcp.execute",
+          "type": "strategy.local_mcp.execute"
+        },
+        {
+          "duration_ms": 9066,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 53,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": null,
+        "cachedInputTokens": 1567,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 2,
+        "inputTokens": 10216,
+        "loopControlDurationMsEstimated": 41,
+        "mcpToolCalls": 2,
+        "modelCalls": 3,
+        "modelDurationMs": 9013,
+        "outputTokens": 526,
+        "promptChars": 1594,
+        "questionTokensEstimated": 213,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 847,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 3,
+        "strategyDurationMs": 9066,
+        "taskStatementChars": 1423,
+        "toolCalls": 2,
+        "toolDurationMs": 12,
+        "totalDurationMs": 9066,
+        "totalTokens": 11589,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "workspace_id": "py_002_ctx16k"
+                    },
+                    "id": null,
+                    "name": "list_symbols",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CsUFAQw51sf_xp8wJIHq8MPsLNuUb9LKDxVxfmyooRDGpbo-34VcISs9av8zOM9uC2NSXX_doQmURokm3C6pJq-tuCdn-5a1B0ZoeZFWcBTcTXwxXmf6jIQj64sM3GiZeOP1FBbU0EgKitkO-1q39hIaYdfdKydP1pZ8YmHXQQxn9ZYxbSv5CH2mNnTLbF0aOKyYwcFfuzPBbQkwUmlVbbKuFeg3uzajXhk93Jkt87M7le7K-c1PdyGTqB5cmjvF3bXSXMzEXTESpOTu4_FNb6En8kf11LiiP4hwnPQuuFLq1iNskD48ocq7dLWCdwdTByqnyIFR59s08QFLxQU-9DsM59h2vOtwNYfYs9TBPTOFfz_VxQNamjqeq2t9aU5IgqzLSiTpRrM5wvdKkdMHza2fQp22uqtzQmaB9t1Atj1T1EQH7roezSl1hNrYbhI9NMadLGvcD5dV8Fz9oq3RlrGKsobffwoSZb3FEg8y3CDCdvADTs6o4jpiji8WZXq-y2mQnqe140y5S89A9KwrhIdZUsVUJpQ5WFKn1xi29HPQ9RMu7KH6V8pOOSx2j6-GDPbpK0d2U5ryDpJK2iSIS-3TMXGVv-HKOJx08H9QUVFYvhE6Xw1L40bEsn-Rboyw-uoGViH9MJsXtlHp-o5h-Ee5zSe7F9LZ3T42DgiEZzKwHrb3shN_wXyjW9a7NYxdjryPaH5Md6zBywrOVf4xQaZDGa0mWqfsfjMIjb-eVCKr_a53JrKRu2mo8OQzMe5ICs52CpZ-Pa5BH01a4wEn3t0QZEAnvoUiPDcAsGWF9hDILXSryB7txFC5s8L-bmr3WE6EVgvFTibTe6A-n-hyqVK-6ugYaO11qiTUlt1SDZ1-DyJ2o50zUETczbxg3lI4V6SOs8N_KoCHyslboZiFvEHvf7VmPeyA3OD085-AF9oEAmm2-nCjZA==",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "b38UarvpEJOIz7IPxaC_yAw",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 16:57:20 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1520",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 26,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 694,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 694
+            }
+          ],
+          "thoughts_token_count": 136,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 856,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "symbol_id": "src/black/ranges.py#function:convert_unchanged_lines:128",
+                      "workspace_id": "py_002_ctx16k"
+                    },
+                    "id": null,
+                    "name": "get_symbol",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CrEYAQw51sdG6hiiTdvfU8hDr6kl4mOMzQt0sRY_Wqx-n_CvGILObyI92G7N1wCtN_mHlQWU6OxCz8e3GO_4ZNxl_PGbKYoaZHfsNe5WCFY1asn70EBR98Y9d0qiRYUygbNUu9B1PB4CgTGVwqgGpeK_o7xe0cCPM0vEJ6cqV58aky472OH49beryNogxDirYG7sqPo0Jc_1_ABleMu6RN5FM6XnhZIGBd75nZ8lIgNDjRULZYeyzD1LmFHenDd9XU3N2oYu-8qHT4KswCrIHG8Vk7An8jAO4YTT6dLnvU_aOpmIGKQzkpUdnQWdOpxVB28lyYgjBid_LSgSGHM_f9X6WdmlahTaEuWR3XdM2A87YyLZQCnVGBAmwAjkk3k2eGBS5-rQj5IsHeV4oCOVBW-6TDLo5aqVHxToGgH7uSeEeDJeaMPOwgoZ9ge9RsZmKF9wzaSKtbsRFKO_-D8r7xiYfQnan5UPrGxKX3D4SQgNqda8GFYBUolJtNIWxR7TsxfjD8KV7kyarq_8-Rwcz_uSpQGs_tx5CdH_lamSssl5KpMTu9yBagdvsL3nAhgLFRKM7NvJYOVb3TvSd3UcFa1fj2gCVY43js7dNXJJiK4EMCImbCHwpWmhFbMNZUAV9XpYMlIVzKRmlkmlr0v5f2WxH5_fRvCuNBJaAIDoCcQmyNuIfBJB_4hEIbm_pMJrLo1rCz-qE29CA3Ppa9Ep0brEXxze6HdLCE4ARofUjMMvpKVfQirSp2LUxIJhlBdIQ4McWyUlkuNfmVfmH-OYFDHsvAiyT46tj2ukFGISW6nJ8hxT0yGvHZoAmcJb0M12JICOPRFqtowOg23mtyLD7eYZlaOszXylc7FkNtM4tffMeBO-0w0txYE_HpH2f_LIN9YKJwMur7DabWhqcD6gGRbNDJBglTEXEMJfJtW6ldyWJO7Ksm_sqRD13hRqrrezvcxN84su6AQGC4gUwrQxiZEK616GZLOJXcNv4E2NSqPQiboS7ThAu8KRAtCHT5nCIcwlsn_c5oDMC4rXSSIujjKVdgdz3joBNC1x9XzZIVJ3oWTs8nD3f_0UolCDeTb3_kOeee-j4qm6o8Y6xay-oTxIAefB3XcCzvoapSU-fk6XZ5KZOk46Q9Egt34vP8eYgtZLFyE8LSUIV7nW-TnEfTSZuQJ5FTq1EwOFt7bXWWOVdoxo7YDRVOZwUDw8X-94wO2J63VCMiH-MrT-QIXRVQsblsw8rm-I862RWVfuTF8nrkiV1ArCFcGMdFgKUqiR0fc7V08PA9o7htSVJAucAtRy4wQAu_qHKURU2ehvPDbtBFSEtEp3qoGUSoAWNQYpDIZJ2FedPiEZsQ9HKaFdMOmPNBq6FnD8cPFxuNXUQ_MehORsf_Rae5jr4YMJ2kCxM0yoYXFmbHg6OH-Np0MG5m2LVEx_PCRY6J_uFkML53S-fHoCP_WZ6Kj5w2SeLIXavNMQi5o_1Si0K3-ywzuMBJ6EjndEY2c9FoWGWofZagZ83w1euo283h3Drt72vyqVAKzsobVAFMP6zWjh90MWoW8WlCgNTGZ7L2f1c_gT98Mk9TargypOO6qTw5RgO9mr9O5HvEsJAN5-u1mJ66l5hGzPyyV79uRzXmVNLurDmYALqZqwI4ZD_dssC3jHK9sPuQZ_T5cxtQ8h9sQBtTKL17k5Bi3F5rYv55rTaQ8ISYyeI1i4zh8N_87I6SBZwjPT3s0Zcai_OkCAWsDZIm-J_-wilC-gyLPB_LGLOI3XqHZsizSFnJgZnbHKSnGDDaYLVEqlgrQsz_l1tlrBrvO5oDsGP2FDT2UIJSW_VqglvLQ-W2K9Jh6m1Z9FhqtQUWs_V2YkK3dcIM12gM90Sxv9vvYOb0r-OA89nltxxBLjUl-xSLpdZCLU33J1ci-HKIwoWzcG1rXrJzjGHDFw-N2QI-Lbj2SZNUxmQlKBbeObAEo53vU4qs-bjclqwS6zF-2VlXO6udnCbTLC17_l8pIN6Tu8AB2Fn70RhrX989zDZSzwtuLsQkaVil4JquztSQxOIvWZe_-ecRs-a-WTijY03ZmOgt6P-x1xwo1g7ZrC86l-i3K80s434IgNtnFMF0jp2a2TLBHLvAQY4E7FcCmlUsTEwvcGLaKZl6_Gx64H__i8zxxHw0029j3rUC0xYFryaOrP4K2f48dIg27M8o8-i8SWGZ7RYfJpZleR7qWNHMWIoQk45C9A1iwEHZxl-BlQotl9KWB2eMHhQlLu7fOVnd396NFXxqSWwg8-eOZtorvnpWXOT2_5t80RbCVKrHv399zdCnrAaQ_1XlyFtAOivMw5ss8R7iThU8IojHwfSBGWdzXCEhzSo3P7BJVNiPQp_YHYgimwJMYTixP4JSCZXA-mtnEUPe3l8suQafPpqTwgg3sISIXfBw-Q3TRM4XD-h5zk3J4a9QdxL6ZtCdS0mC3jQW2bL6vCC0xdEvBBPBsFZAUrByE6WTcGxBFVYlFZu5gnsUPcRkOgnpDYxrST9dKu12DxjZcRxH8z8I_0up2phMVNj9SRrHHaBvkL_f9KLvpigih1A8qWoWwiWOoA83egoBwft2BwuGTgdmNeoHxtRa4a4xL_skR0YT_e788458vf2pnW7yN5LwJ5R0ZvDfDIxXvsH3uYRbwNLbWxw7tA-Sx1oT7A0YUFXfcmAakMAGLIHSfAhW1jL3BATfTDHX2Xjsmnh6OmCUzythOQN9sXgyoQwk4Eaek8wFlNi3yoJV7OLV2vN_vfnV7KG8Plfs2OwyWVAMaY9fYZ5F70Os-NM7TiXxCkvfkHk91oaYr6nIQcrZWIETbZorhxHujXbJon6X_9dUK-d3hMI62z97QKwTEXoj95J3VnzYdjY6T76XBRyu_aVy50m1cDaVg5fyC-WcE_QYeTsgFxzqF3O8ZEYRkFZJR0Xd9O-Y2-nsVeF4lKpvYNxqM4O8-7yDtCgvUzypNfC28R-Y0rotx8uiJ0rqbj06fLBJxo-ob8U_j6QSiNi3aApwRO_Ov0GKZZaT0tGyMNG7tVa40gKHIIZh9FakXJgGslYUtUDCwkvsTZFskpJogRoKqnfgX8XEE9fYK0LuomeHWebnvsYg2umZwb_xr8NvsjXU8rnDccoM1Q-OrMpdKFNOtD-NSv2fU0pi1pFGAaim80uKAPZ8mqQsRhDwM8kfFngyIV63pKi3-OyZ9lIQIshHgwKCiGDa6yA0EhLZeukaS0d3qVIUxKTaWJMYoXRmpyFz1a8XjBDQOj-FhnjkmBGG6SEDaAi87Bl7UpgrIJnd5teON4IlWgozfVhtVqkZfqOOgiL6k_55m6DrlOh0oRdDq2OYfikY1xVtZYAAhDexCS_08c-xs3OsJOUVPDgeuk1dL8wHefvqlwoKgb2t8-5KjOKi0jnBCD_TiLFAMw5ODZ-vFmJr_CzPjthcBzWoWSUFCrCeen15I31F1VYL9Bmt1OxR_M6gmAWy4noPgKQCSnEsDA-YRW1Cx3Cx6Mp0FiR4jyv4-2LATBdj7dTlCKGRJMhqgN6Ku_B1eajsQyEw8J0duaCWHDPcEOrVHvr0tBSdAkYIssFadJeOwezzCWK8MAmjMfuICmKrqnRekS_cHUI_wXMofEfajVMKZ0-jFVfZLe6OxwbhqPBU6QLjyDVtL3o1G6tYUoBAxF6t1jwwwZv3gB7rL8dlpezGoG8xMjSBtIYtC1wS5mA6WGH7yKzPKW2-MqE5tWlIWHruE8v-ccoF2RRTkb4jNN5S3tl5vaIPXK8vcfFquyjK-h_JAJ2kHFArn5DTiasVQ19RIbAJ3lJq66x4pZsCiwR2n7VfO10l8QDet_wdg4PNENRQ6fT-I08gWnX32waU8LP5FN__yf_ItoB-K58bj5y0c0pvJrXuyXvGQA5mayrjMbIohPIpAAIoyQHmpcaydwcMsrJUe375IWA4i4LUSsZQZysjpwJ1Sng8TggG1BVO3SgtMneXvVCe0CH45OT3HKSbesyc21bN0OvwfaYyeD060U3Mv4mOorjzudvvYsanhqcE4IX2FlFvN7dGBxrKvCNEmRL-R7PmTOJnAHvqL1p6VKJIRA6cLence1UR-R0zRQcNi5U6kv619Bm4sTyejME9ySs6KVBtqnYooQRQBUYlQIz2uuflkcGI-1JF823hHD7A==",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "cX8UauvMDcCVmtkPwbKqoQk",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 16:57:24 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=4002",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 954
+            }
+          ],
+          "cached_content_token_count": 954,
+          "candidates_token_count": 52,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 7813,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 7813
+            }
+          ],
+          "thoughts_token_count": 711,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 8576,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": {
+              "citations": [
+                {
+                  "end_index": 336,
+                  "license": "",
+                  "publication_date": null,
+                  "start_index": 10,
+                  "title": null,
+                  "uri": "https://github.com/JakeMurrayMcGuirk/SDEV-CA2"
+                },
+                {
+                  "end_index": 1641,
+                  "license": "",
+                  "publication_date": null,
+                  "start_index": 218,
+                  "title": null,
+                  "uri": "https://github.com/google/pyink"
+                }
+              ]
+            },
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": null,
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": "```python\ndef convert_unchanged_lines(src_node: Node, lines: Collection[Tuple[int, int]]) -> None:\n    \"\"\"Converts unchanged lines to STANDALONE_COMMENT.\n\n    The idea is similar to how `# fmt: on/off` is implemented. It also converts the\n    nodes between those markers as a single `STANDALONE_COMMENT` leaf node with\n    the unformatted code as its value. `STANDALONE_COMMENT` is a \"fake\" token\n    that will be formatted as-is with its prefix normalized.\n\n    Here we perform two passes:\n\n    1. Visit the top-level statements, and convert them to a single\n       `STANDALONE_COMMENT` when unchanged. This speeds up formatting when some\n       of the top-level statements aren't changed.\n    2. Convert unchanged \"unwrapped lines\" to `STANDALONE_COMMENT` nodes line by\n       line. \"unwrapped lines\" are divided by the `NEWLINE` token. e.g. a\n       multi-line statement is *one* \"unwrapped line\" that ends with `NEWLINE`,\n       even though this statement itself can span multiple lines, and the\n       tokenizer only sees the last '\\n' as the `NEWLINE` token.\n\n    NOTE: During pass (2), comment prefixes and indentations are ALWAYS\n    normalized even when the lines aren't changed. This is fixable by moving\n    more formatting to pass (1). However, it's hard to get it correct when\n    incorrect indentations are used. So we defer this to future optimizations.\n    \"\"\"\n    lines_set: Set[int] = set()\n    for start, end in lines:\n        lines_set.update(range(start, end + 1))\n    visitor = _TopLevelStatementsVisitor(lines_set)\n    _ = list(visitor.visit(src_node))  # Consume all results.\n    _convert_unchanged_line_by_line(src_node, lines_set)\n```",
+                  "thought": null,
+                  "thought_signature": null,
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                },
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": null,
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": "\n",
+                  "thought": null,
+                  "thought_signature": null,
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "dX8UapLlF4Ggz7IPw8zH8Aw",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 16:57:27 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=2790",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 613
+            }
+          ],
+          "cached_content_token_count": 613,
+          "candidates_token_count": 448,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 1709,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 1709
+            }
+          ],
+          "thoughts_token_count": null,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 2157,
+          "traffic_type": null
+        }
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "workspace_id": "py_002_ctx16k"
+        },
+        "durationMs": 6,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "list_symbols",
+        "transport": "in_memory"
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/black/ranges.py#function:convert_unchanged_lines:128",
+          "workspace_id": "py_002_ctx16k"
+        },
+        "durationMs": 5,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "get_symbol",
+        "transport": "in_memory"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "workspace_id": "py_002_ctx16k"
+        },
+        "id": "step-1-tool-1",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 40,
+            "kind": "function",
+            "name": "parse_line_ranges",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "parse_line_ranges",
+            "signature": "def parse_line_ranges(line_ranges: Sequence[str]) -> List[Tuple[int, int]]",
+            "start_line": 21,
+            "symbol_id": "src/black/ranges.py#function:parse_line_ranges:21"
+          },
+          {
+            "children": [],
+            "documentation": "Returns whether the line range is valid.",
+            "end_line": 45,
+            "kind": "function",
+            "name": "is_valid_line_range",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "is_valid_line_range",
+            "signature": "def is_valid_line_range(lines: Tuple[int, int]) -> bool",
+            "start_line": 43,
+            "symbol_id": "src/black/ranges.py#function:is_valid_line_range:43"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the adjusted line ranges based on edits from the original code.\n\nThis computes the new line ranges by diffing original_source and\nmodified_source, and adjust each range based on how the range overlaps with\nthe diffs.\n\nNote the diff can contain lines outside of the original line ranges. This can\nhappen when the formatting has to be done in adjacent to maintain consistent\nlocal results. For example:\n\n1. def my_func(arg1, arg2,\n2.             arg3,):\n3.   pass\n\nIf it restricts to line 2-2, it can't simply reformat line 2, it also has\nto reformat line 1:\n\n1. def my_func(\n2.     arg1,\n3.     arg2,\n4.     arg3,\n5. ):\n6.   pass\n\nIn this case, we will expand the line ranges to also include the whole diff\nblock.\n\nArgs:\n  lines: a collection of line ranges.\n  original_source: the original source.\n  modified_source: the modified source.",
+            "end_line": 125,
+            "kind": "function",
+            "name": "adjusted_lines",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "adjusted_lines",
+            "signature": "def adjusted_lines(\n    lines: Collection[Tuple[int, int]],\n    original_source: str,\n    modified_source: str,\n) -> List[Tuple[int, int]]",
+            "start_line": 48,
+            "symbol_id": "src/black/ranges.py#function:adjusted_lines:48"
+          },
+          {
+            "children": [],
+            "documentation": "Converts unchanged lines to STANDALONE_COMMENT.\n\n    The idea is similar to how `# fmt: on/off` is implemented. It also converts the\n    nodes between those markers as a single `STANDALONE_COMMENT` leaf node with\n    the unformatted code as its value. `STANDALONE_COMMENT` is a \"fake\" token\n    that will be formatted as-is with its prefix normalized.\n\n    Here we perform two passes:\n\n    1. Visit the top-level statements, and convert them to a single\n       `STANDALONE_COMMENT` when unchanged. This speeds up formatting when some\n       of the top-level statements aren't changed.\n    2. Convert unchanged \"unwrapped lines\" to `STANDALONE_COMMENT` nodes line by\n       line. \"unwrapped lines\" are divided by the `NEWLINE` token. e.g. a\n       multi-line statement is *one* \"unwrapped line\" that ends with `NEWLINE`,\n       even though this statement itself can span multiple lines, and the\n       tokenizer only sees the last '\n' as the `NEWLINE` token.\n\n    NOTE: During pass (2), comment prefixes and indentations are ALWAYS\n    normalized even when the lines aren't changed. This is fixable by moving\n    more formatting to pass (1). However, it's hard to get it correct when\n    incorrect indentations are used. So we defer this to future optimizations.",
+            "end_line": 157,
+            "kind": "function",
+            "name": "convert_unchanged_lines",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "convert_unchanged_lines",
+            "signature": "def convert_unchanged_lines(src_node: Node, lines: Collection[Tuple[int, int]]) -> None",
+            "start_line": 128,
+            "symbol_id": "src/black/ranges.py#function:convert_unchanged_lines:128"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 167,
+            "kind": "function",
+            "name": "_contains_standalone_comment",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "_contains_standalone_comment",
+            "signature": "def _contains_standalone_comment(node: LN) -> bool",
+            "start_line": 160,
+            "symbol_id": "src/black/ranges.py#function:_contains_standalone_comment:160"
+          },
+          {
+            "children": [
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 181,
+                "kind": "method",
+                "name": "__init__",
+                "parent_id": "src/black/ranges.py#class:_TopLevelStatementsVisitor:170",
+                "parent_name": "_TopLevelStatementsVisitor",
+                "path": "src/black/ranges.py",
+                "qualified_name": "_TopLevelStatementsVisitor.__init__",
+                "signature": "def __init__(self, lines_set: Set[int])",
+                "start_line": 180,
+                "symbol_id": "src/black/ranges.py#method:_TopLevelStatementsVisitor.__init__:180"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 198,
+                "kind": "method",
+                "name": "visit_simple_stmt",
+                "parent_id": "src/black/ranges.py#class:_TopLevelStatementsVisitor:170",
+                "parent_name": "_TopLevelStatementsVisitor",
+                "path": "src/black/ranges.py",
+                "qualified_name": "_TopLevelStatementsVisitor.visit_simple_stmt",
+                "signature": "def visit_simple_stmt(self, node: Node) -> Iterator[None]",
+                "start_line": 183,
+                "symbol_id": "src/black/ranges.py#method:_TopLevelStatementsVisitor.visit_simple_stmt:183"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 221,
+                "kind": "method",
+                "name": "visit_suite",
+                "parent_id": "src/black/ranges.py#class:_TopLevelStatementsVisitor:170",
+                "parent_name": "_TopLevelStatementsVisitor",
+                "path": "src/black/ranges.py",
+                "qualified_name": "_TopLevelStatementsVisitor.visit_suite",
+                "signature": "def visit_suite(self, node: Node) -> Iterator[None]",
+                "start_line": 200,
+                "symbol_id": "src/black/ranges.py#method:_TopLevelStatementsVisitor.visit_suite:200"
+              }
+            ],
+            "documentation": "A node visitor that converts unchanged top-level statements to\nSTANDALONE_COMMENT.\n\nThis is used in addition to _convert_unchanged_line_by_line, to\nspeed up formatting when there are unchanged top-level\nclasses/functions/statements.",
+            "end_line": 221,
+            "kind": "class",
+            "name": "_TopLevelStatementsVisitor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "_TopLevelStatementsVisitor",
+            "signature": "class _TopLevelStatementsVisitor(Visitor[None])",
+            "start_line": 170,
+            "symbol_id": "src/black/ranges.py#class:_TopLevelStatementsVisitor:170"
+          },
+          {
+            "children": [],
+            "documentation": "Converts unchanged to STANDALONE_COMMENT line by line.",
+            "end_line": 275,
+            "kind": "function",
+            "name": "_convert_unchanged_line_by_line",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "_convert_unchanged_line_by_line",
+            "signature": "def _convert_unchanged_line_by_line(node: Node, lines_set: Set[int]) -> None",
+            "start_line": 224,
+            "symbol_id": "src/black/ranges.py#function:_convert_unchanged_line_by_line:224"
+          },
+          {
+            "children": [],
+            "documentation": "Convert node to STANDALONE_COMMENT by modifying the tree inline.",
+            "end_line": 315,
+            "kind": "function",
+            "name": "_convert_node_to_standalone_comment",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "_convert_node_to_standalone_comment",
+            "signature": "def _convert_node_to_standalone_comment(node: LN) -> None",
+            "start_line": 278,
+            "symbol_id": "src/black/ranges.py#function:_convert_node_to_standalone_comment:278"
+          },
+          {
+            "children": [],
+            "documentation": "Convert nodes to STANDALONE_COMMENT by modifying the tree inline.",
+            "end_line": 345,
+            "kind": "function",
+            "name": "_convert_nodes_to_standalone_comment",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "_convert_nodes_to_standalone_comment",
+            "signature": "def _convert_nodes_to_standalone_comment(nodes: Sequence[LN], *, newline: Leaf) -> None",
+            "start_line": 318,
+            "symbol_id": "src/black/ranges.py#function:_convert_nodes_to_standalone_comment:318"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the line number of the leaf node's last line.",
+            "end_line": 354,
+            "kind": "function",
+            "name": "_leaf_line_end",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "_leaf_line_end",
+            "signature": "def _leaf_line_end(leaf: Leaf) -> int",
+            "start_line": 348,
+            "symbol_id": "src/black/ranges.py#function:_leaf_line_end:348"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the line range of this node or list of nodes.",
+            "end_line": 381,
+            "kind": "function",
+            "name": "_get_line_range",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "_get_line_range",
+            "signature": "def _get_line_range(node_or_nodes: Union[LN, List[LN]]) -> Set[int]",
+            "start_line": 357,
+            "symbol_id": "src/black/ranges.py#function:_get_line_range:357"
+          },
+          {
+            "children": [],
+            "documentation": "1-based lines mapping from original source to modified source.\n\nLines [original_start, original_end] from original source\nare mapped to [modified_start, modified_end].\n\nThe ranges are inclusive on both ends.",
+            "end_line": 399,
+            "kind": "class",
+            "name": "_LinesMapping",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "_LinesMapping",
+            "signature": "class _LinesMapping",
+            "start_line": 385,
+            "symbol_id": "src/black/ranges.py#class:_LinesMapping:385"
+          },
+          {
+            "children": [],
+            "documentation": "Returns a sequence of _LinesMapping by diffing the sources.\n\nFor example, given the following diff:\n    import re\n  - def func(arg1,\n  -   arg2, arg3):\n  + def func(arg1, arg2, arg3):\n      pass\nIt returns the following mappings:\n  original -> modified\n   (1, 1)  ->  (1, 1), is_changed_block=False (the \"import re\" line)\n   (2, 3)  ->  (2, 2), is_changed_block=True (the diff)\n   (4, 4)  ->  (3, 3), is_changed_block=False (the \"pass\" line)\n\nYou can think of this visually as if it brings up a side-by-side diff, and tries\nto map the line ranges from the left side to the right side:\n\n  (1, 1)->(1, 1)    1. import re          1. import re\n  (2, 3)->(2, 2)    2. def func(arg1,     2. def func(arg1, arg2, arg3):\n                    3.   arg2, arg3):\n  (4, 4)->(3, 3)    4.   pass             3.   pass\n\nArgs:\n  original_source: the original source.\n  modified_source: the modified source.",
+            "end_line": 478,
+            "kind": "function",
+            "name": "_calculate_lines_mappings",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "_calculate_lines_mappings",
+            "signature": "def _calculate_lines_mappings(\n    original_source: str,\n    modified_source: str,\n) -> Sequence[_LinesMapping]",
+            "start_line": 402,
+            "symbol_id": "src/black/ranges.py#function:_calculate_lines_mappings:402"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the original index of the lines mappings for the original line.",
+            "end_line": 493,
+            "kind": "function",
+            "name": "_find_lines_mapping_index",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "_find_lines_mapping_index",
+            "signature": "def _find_lines_mapping_index(\n    original_line: int,\n    lines_mappings: Sequence[_LinesMapping],\n    start_index: int,\n) -> int",
+            "start_line": 481,
+            "symbol_id": "src/black/ranges.py#function:_find_lines_mapping_index:481"
+          },
+          {
+            "children": [],
+            "documentation": "Raised when input source code fails all parse attempts.",
+            "end_line": 21,
+            "kind": "class",
+            "name": "InvalidInput",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/parsing.py",
+            "qualified_name": "InvalidInput",
+            "signature": "class InvalidInput(ValueError)",
+            "start_line": 20,
+            "symbol_id": "src/black/parsing.py#class:InvalidInput:20"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 52,
+            "kind": "function",
+            "name": "get_grammars",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/parsing.py",
+            "qualified_name": "get_grammars",
+            "signature": "def get_grammars(target_versions: Set[TargetVersion]) -> List[Grammar]",
+            "start_line": 24,
+            "symbol_id": "src/black/parsing.py#function:get_grammars:24"
+          },
+          {
+            "children": [
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 113,
+                "kind": "method",
+                "name": "from_configuration",
+                "parent_id": "src/black/__init__.py#class:WriteBack:96",
+                "parent_name": "WriteBack",
+                "path": "src/black/__init__.py",
+                "qualified_name": "WriteBack.from_configuration",
+                "signature": "def from_configuration(\n        cls, *, check: bool, diff: bool, color: bool = False\n    ) -> \"WriteBack\"",
+                "start_line": 104,
+                "symbol_id": "src/black/__init__.py#method:WriteBack.from_configuration:104"
+              }
+            ],
+            "documentation": null,
+            "end_line": 113,
+            "kind": "class",
+            "name": "WriteBack",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/__init__.py",
+            "qualified_name": "WriteBack",
+            "signature": "class WriteBack(Enum)",
+            "start_line": 96,
+            "symbol_id": "src/black/__init__.py#class:WriteBack:96"
+          },
+          {
+            "children": [],
+            "documentation": "Inject Black configuration from \"pyproject.toml\" into defaults in `ctx`.\n\nReturns the path to a successfully found and read configuration file, None\notherwise.",
+            "end_line": 182,
+            "kind": "function",
+            "name": "read_pyproject_toml",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/__init__.py",
+            "qualified_name": "read_pyproject_toml",
+            "signature": "def read_pyproject_toml(\n    ctx: click.Context, param: click.Parameter, value: Optional[str]\n) -> Optional[str]",
+            "start_line": 120,
+            "symbol_id": "src/black/__init__.py#function:read_pyproject_toml:120"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 198,
+            "kind": "function",
+            "name": "spellcheck_pyproject_toml_keys",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/__init__.py",
+            "qualified_name": "spellcheck_pyproject_toml_keys",
+            "signature": "def spellcheck_pyproject_toml_keys(\n    ctx: click.Context, config_keys: List[str], config_file_path: str\n) -> None",
+            "start_line": 185,
+            "symbol_id": "src/black/__init__.py#function:spellcheck_pyproject_toml_keys:185"
+          },
+          {
+            "children": [],
+            "documentation": "Compute the target versions from a --target-version flag.\n\nThis is its own function because mypy couldn't infer the type correctly\nwhen it was a lambda, causing mypyc trouble.",
+            "end_line": 209,
+            "kind": "function",
+            "name": "target_version_option_callback",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/__init__.py",
+            "qualified_name": "target_version_option_callback",
+            "signature": "def target_version_option_callback(\n    c: click.Context, p: Union[click.Option, click.Parameter], v: Tuple[str, ...]\n) -> List[TargetVersion]",
+            "start_line": 201,
+            "symbol_id": "src/black/__init__.py#function:target_version_option_callback:201"
+          },
+          {
+            "children": [],
+            "documentation": "Compute the features from an --enable-unstable-feature flag.",
+            "end_line": 216,
+            "kind": "function",
+            "name": "enable_unstable_feature_callback",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/__init__.py",
+            "qualified_name": "enable_unstable_feature_callback",
+            "signature": "def enable_unstable_feature_callback(\n    c: click.Context, p: Union[click.Option, click.Parameter], v: Tuple[str, ...]\n) -> List[Preview]",
+            "start_line": 212,
+            "symbol_id": "src/black/__init__.py#function:enable_unstable_feature_callback:212"
+          },
+          {
+            "children": [],
+            "documentation": "Compile a regular expression string in `regex`.\n\nIf it contains newlines, use verbose mode.",
+            "end_line": 227,
+            "kind": "function",
+            "name": "re_compile_maybe_verbose",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/__init__.py",
+            "qualified_name": "re_compile_maybe_verbose",
+            "signature": "def re_compile_maybe_verbose(regex: str) -> Pattern[str]",
+            "start_line": 219,
+            "symbol_id": "src/black/__init__.py#function:re_compile_maybe_verbose:219"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 238,
+            "kind": "function",
+            "name": "validate_regex",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/__init__.py",
+            "qualified_name": "validate_regex",
+            "signature": "def validate_regex(\n    ctx: click.Context,\n    param: click.Parameter,\n    value: Optional[str],\n) -> Optional[Pattern[str]]",
+            "start_line": 230,
+            "symbol_id": "src/black/__init__.py#function:validate_regex:230"
+          },
+          {
+            "children": [],
+            "documentation": "The uncompromising code formatter.",
+            "end_line": 718,
+            "kind": "function",
+            "name": "main",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/__init__.py",
+            "qualified_name": "main",
+            "signature": "def main(  # noqa: C901\n    ctx: click.Context,\n    code: Optional[str],\n    line_length: int,\n    target_version: List[TargetVersion],\n    check: bool,\n    diff: bool,\n    line_ranges: Sequence[str],\n    color: bool,\n    fast: bool,\n    pyi: bool,\n    ipynb: bool,\n    python_cell_magics: Sequence[str],\n    skip_source_first_line: bool,\n    skip_string_normalization: bool,\n    skip_magic_trailing_comma: bool,\n    preview: bool,\n    unstable: bool,\n    enable_unstable_feature: List[Preview],\n    quiet: bool,\n    verbose: bool,\n    required_version: Optional[str],\n    include: Pattern[str],\n    exclude: Optional[Pattern[str]],\n    extend_exclude: Optional[Pattern[str]],\n    force_exclude: Optional[Pattern[str]],\n    stdin_filename: Optional[str],\n    workers: Optional[int],\n    src: Tuple[str, ...],\n    config: Optional[str],\n) -> None",
+            "start_line": 515,
+            "symbol_id": "src/black/__init__.py#function:main:515"
+          },
+          {
+            "children": [],
+            "documentation": "Compute the set of files to be formatted.",
+            "end_line": 810,
+            "kind": "function",
+            "name": "get_sources",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/__init__.py",
+            "qualified_name": "get_sources",
+            "signature": "def get_sources(\n    *,\n    root: Path,\n    src: Tuple[str, ...],\n    quiet: bool,\n    verbose: bool,\n    include: Pattern[str],\n    exclude: Optional[Pattern[str]],\n    extend_exclude: Optional[Pattern[str]],\n    force_exclude: Optional[Pattern[str]],\n    report: \"Report\",\n    stdin_filename: Optional[str],\n) -> Set[Path]",
+            "start_line": 721,
+            "symbol_id": "src/black/__init__.py#function:get_sources:721"
+          },
+          {
+            "children": [],
+            "documentation": "Exit if there is no `src` provided for formatting",
+            "end_line": 822,
+            "kind": "function",
+            "name": "path_empty",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/__init__.py",
+            "qualified_name": "path_empty",
+            "signature": "def path_empty(\n    src: Sized, msg: str, quiet: bool, verbose: bool, ctx: click.Context\n) -> None",
+            "start_line": 813,
+            "symbol_id": "src/black/__init__.py#function:path_empty:813"
+          },
+          {
+            "children": [],
+            "documentation": "Reformat and print out `content` without spawning child processes.\nSimilar to `reformat_one`, but for string content.\n\n`fast`, `write_back`, and `mode` options are passed to\n:func:`format_file_in_place` or :func:`format_stdin_to_stdout`.",
+            "end_line": 852,
+            "kind": "function",
+            "name": "reformat_code",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/__init__.py",
+            "qualified_name": "reformat_code",
+            "signature": "def reformat_code(\n    content: str,\n    fast: bool,\n    write_back: WriteBack,\n    mode: Mode,\n    report: Report,\n    *,\n    lines: Collection[Tuple[int, int]] = (),\n) -> None",
+            "start_line": 825,
+            "symbol_id": "src/black/__init__.py#function:reformat_code:825"
+          },
+          {
+            "children": [],
+            "documentation": "Reformat a single file under `src` without spawning child processes.\n\n`fast`, `write_back`, and `mode` options are passed to\n:func:`format_file_in_place` or :func:`format_stdin_to_stdout`.",
+            "end_line": 911,
+            "kind": "function",
+            "name": "reformat_one",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/__init__.py",
+            "qualified_name": "reformat_one",
+            "signature": "def reformat_one(\n    src: Path,\n    fast: bool,\n    write_back: WriteBack,\n    mode: Mode,\n    report: \"Report\",\n    *,\n    lines: Collection[Tuple[int, int]] = (),\n) -> None",
+            "start_line": 858,
+            "symbol_id": "src/black/__init__.py#function:reformat_one:858"
+          },
+          {
+            "children": [],
+            "documentation": "Format file under `src` path. Return True if changed.\n\nIf `write_back` is DIFF, write a diff to stdout. If it is YES, write reformatted\ncode to the file.\n`mode` and `fast` options are passed to :func:`format_file_contents`.",
+            "end_line": 979,
+            "kind": "function",
+            "name": "format_file_in_place",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/__init__.py",
+            "qualified_name": "format_file_in_place",
+            "signature": "def format_file_in_place(\n    src: Path,\n    fast: bool,\n    mode: Mode,\n    write_back: WriteBack = WriteBack.NO,\n    lock: Any = None,  # multiprocessing.Manager().Lock() is some crazy proxy\n    *,\n    lines: Collection[Tuple[int, int]] = (),\n) -> bool",
+            "start_line": 914,
+            "symbol_id": "src/black/__init__.py#function:format_file_in_place:914"
+          },
+          {
+            "children": [],
+            "documentation": "Format file on stdin. Return True if changed.\n\nIf content is None, it's read from sys.stdin.\n\nIf `write_back` is YES, write reformatted code back to stdout. If it is DIFF,\nwrite a diff to stdout. The `mode` argument is passed to\n:func:`format_file_contents`.",
+            "end_line": 1031,
+            "kind": "function",
+            "name": "format_stdin_to_stdout",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/__init__.py",
+            "qualified_name": "format_stdin_to_stdout",
+            "signature": "def format_stdin_to_stdout(\n    fast: bool,\n    *,\n    content: Optional[str] = None,\n    write_back: WriteBack = WriteBack.NO,\n    mode: Mode,\n    lines: Collection[Tuple[int, int]] = (),\n) -> bool",
+            "start_line": 982,
+            "symbol_id": "src/black/__init__.py#function:format_stdin_to_stdout:982"
+          },
+          {
+            "children": [],
+            "documentation": "Perform stability and equivalence checks.\n\nRaise AssertionError if source and destination contents are not\nequivalent, or if a second pass of the formatter would format the\ncontent differently.",
+            "end_line": 1048,
+            "kind": "function",
+            "name": "check_stability_and_equivalence",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/__init__.py",
+            "qualified_name": "check_stability_and_equivalence",
+            "signature": "def check_stability_and_equivalence(\n    src_contents: str,\n    dst_contents: str,\n    *,\n    mode: Mode,\n    lines: Collection[Tuple[int, int]] = (),\n) -> None",
+            "start_line": 1034,
+            "symbol_id": "src/black/__init__.py#function:check_stability_and_equivalence:1034"
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/black/ranges.py#function:convert_unchanged_lines:128",
+          "workspace_id": "py_002_ctx16k"
+        },
+        "id": "step-2-tool-1",
+        "isError": false,
+        "name": "get_symbol",
+        "result": {
+          "children": [],
+          "code": "def convert_unchanged_lines(src_node: Node, lines: Collection[Tuple[int, int]]) -> None:\n    \"\"\"Converts unchanged lines to STANDALONE_COMMENT.\n\n    The idea is similar to how `# fmt: on/off` is implemented. It also converts the\n    nodes between those markers as a single `STANDALONE_COMMENT` leaf node with\n    the unformatted code as its value. `STANDALONE_COMMENT` is a \"fake\" token\n    that will be formatted as-is with its prefix normalized.\n\n    Here we perform two passes:\n\n    1. Visit the top-level statements, and convert them to a single\n       `STANDALONE_COMMENT` when unchanged. This speeds up formatting when some\n       of the top-level statements aren't changed.\n    2. Convert unchanged \"unwrapped lines\" to `STANDALONE_COMMENT` nodes line by\n       line. \"unwrapped lines\" are divided by the `NEWLINE` token. e.g. a\n       multi-line statement is *one* \"unwrapped line\" that ends with `NEWLINE`,\n       even though this statement itself can span multiple lines, and the\n       tokenizer only sees the last '\\n' as the `NEWLINE` token.\n\n    NOTE: During pass (2), comment prefixes and indentations are ALWAYS\n    normalized even when the lines aren't changed. This is fixable by moving\n    more formatting to pass (1). However, it's hard to get it correct when\n    incorrect indentations are used. So we defer this to future optimizations.\n    \"\"\"\n    lines_set: Set[int] = set()\n    for start, end in lines:\n        lines_set.update(range(start, end + 1))\n    visitor = _TopLevelStatementsVisitor(lines_set)\n    _ = list(visitor.visit(src_node))  # Consume all results.\n    _convert_unchanged_line_by_line(src_node, lines_set)",
+          "documentation": "Converts unchanged lines to STANDALONE_COMMENT.\n\n    The idea is similar to how `# fmt: on/off` is implemented. It also converts the\n    nodes between those markers as a single `STANDALONE_COMMENT` leaf node with\n    the unformatted code as its value. `STANDALONE_COMMENT` is a \"fake\" token\n    that will be formatted as-is with its prefix normalized.\n\n    Here we perform two passes:\n\n    1. Visit the top-level statements, and convert them to a single\n       `STANDALONE_COMMENT` when unchanged. This speeds up formatting when some\n       of the top-level statements aren't changed.\n    2. Convert unchanged \"unwrapped lines\" to `STANDALONE_COMMENT` nodes line by\n       line. \"unwrapped lines\" are divided by the `NEWLINE` token. e.g. a\n       multi-line statement is *one* \"unwrapped line\" that ends with `NEWLINE`,\n       even though this statement itself can span multiple lines, and the\n       tokenizer only sees the last '\n' as the `NEWLINE` token.\n\n    NOTE: During pass (2), comment prefixes and indentations are ALWAYS\n    normalized even when the lines aren't changed. This is fixable by moving\n    more formatting to pass (1). However, it's hard to get it correct when\n    incorrect indentations are used. So we defer this to future optimizations.",
+          "end_line": 157,
+          "kind": "function",
+          "name": "convert_unchanged_lines",
+          "parent_id": null,
+          "parent_name": null,
+          "path": "src/black/ranges.py",
+          "qualified_name": "convert_unchanged_lines",
+          "signature": "def convert_unchanged_lines(src_node: Node, lines: Collection[Tuple[int, int]]) -> None",
+          "start_line": 128,
+          "symbol_id": "src/black/ranges.py#function:convert_unchanged_lines:128"
+        }
+      }
+    ]
+  },
+  "trialId": "14a60c701b"
+}

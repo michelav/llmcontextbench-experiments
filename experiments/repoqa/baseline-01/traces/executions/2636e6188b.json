@@ -1,0 +1,1532 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 2037,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "py_001_ctx16k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 1,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "language": "python",
+                "parse_status": "ok_filtered",
+                "path": "src/black/trans.py",
+                "repository": "psf/black",
+                "symbol_count": 30
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "py_001_ctx16k"
+              },
+              "durationMs": 1,
+              "toolName": "list_files",
+              "workspace_id": "py_001_ctx16k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1835,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "src/black/trans.py",
+              "workspace_id": "py_001_ctx16k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "documentation": "Merge strings that were split across multiple lines using\nline-continuation backslashes.\n\nReturns:\n    Ok(new_line), if @line contains backslash line-continuation\n    characters.\n        OR\n    Err(CannotTransform), otherwise.",
+                    "end_line": 584,
+                    "kind": "method",
+                    "name": "_remove_backslash_line_continuation_chars",
+                    "parent_id": "src/black/trans.py#class:StringMerger:445",
+                    "parent_name": "StringMerger",
+                    "path": "src/black/trans.py",
+                    "qualified_name": "StringMerger._remove_backslash_line_continuation_chars",
+                    "signature": "def _remove_backslash_line_continuation_chars(\n        line: Line, string_indices: List[int]\n    ) -> TResult[Line]",
+                    "start_line": 545,
+                    "symbol_id": "src/black/trans.py#method:StringMerger._remove_backslash_line_continuation_chars:545"
+                  },
+                  {
+                    "children": [],
+                    "documentation": "Merges string groups (i.e. set of adjacent strings).\n\nEach index from `string_indices` designates one string group's first\nleaf in `line.leaves`.\n\nReturns:\n    Ok(new_line), if ALL of the validation checks found in\n    _validate_msg(...) pass.\n        OR\n    Err(CannotTransform), otherwise.",
+                    "end_line": 639,
+                    "kind": "method",
+                    "name": "_merge_string_group",
+                    "parent_id": "src/black/trans.py#class:StringMerger:445",
+                    "parent_name": "StringMerger",
+                    "path": "src/black/trans.py",
+                    "qualified_name": "StringMerger._merge_string_group",
+                    "signature": "def _merge_string_group(\n        self, line: Line, string_indices: List[int]\n    ) -> TResult[Line]",
+                    "start_line": 586,
+                    "symbol_id": "src/black/trans.py#method:StringMerger._merge_string_group:586"
+                  },
+                  {
+                    "children": [],
+                    "documentation": "Merges one string group where the first string in the group is\n`LL[string_idx]`.\n\nReturns:\n    A tuple of `(num_of_strings, leaf)` where `num_of_strings` is the\n    number of strings merged and `leaf` is the newly merged string\n    to be replaced in the new line.",
+                    "end_line": 793,
+                    "kind": "method",
+                    "name": "_merge_one_string_group",
+                    "parent_id": "src/black/trans.py#class:StringMerger:445",
+                    "parent_name": "StringMerger",
+                    "path": "src/black/trans.py",
+                    "qualified_name": "StringMerger._merge_one_string_group",
+                    "signature": "def _merge_one_string_group(\n        self, LL: List[Leaf], string_idx: int, is_valid_index: Callable[[int], bool]\n    ) -> Tuple[int, Leaf]",
+                    "start_line": 641,
+                    "symbol_id": "src/black/trans.py#method:StringMerger._merge_one_string_group:641"
+                  },
+                  {
+                    "children": [],
+                    "documentation": "Validate (M)erge (S)tring (G)roup\n\nTransform-time string validation logic for _merge_string_group(...).\n\nReturns:\n    * Ok(None), if ALL validation checks (listed below) pass.\n        OR\n    * Err(CannotTransform), if any of the following are true:\n        - The target string group does not contain ANY stand-alone comments.\n        - The target string is not in a string group (i.e. it has no\n          adjacent strings).\n        - The string group has more than one inline comment.\n        - The string group has an inline comment that appears to be a pragma.\n        - The set of all string prefixes in the string group is of\n          length greater than one and is not equal to {\"\", \"f\"}.\n        - The string group consists of raw strings.\n        - The string group is stringified type annotations. We don't want to\n          process stringified type annotations since pyright doesn't support\n          them spanning multiple string values. (NOTE: mypy, pytype, pyre do\n          support them, so we can change if pyright also gains support in the\n          future. See https://github.com/microsoft/pyright/issues/4359.)",
+                    "end_line": 879,
+                    "kind": "method",
+                    "name": "_validate_msg",
+                    "parent_id": "src/black/trans.py#class:StringMerger:445",
+                    "parent_name": "StringMerger",
+                    "path": "src/black/trans.py",
+                    "qualified_name": "StringMerger._validate_msg",
+                    "signature": "def _validate_msg(line: Line, string_idx: int) -> TResult[None]",
+                    "start_line": 796,
+                    "symbol_id": "src/black/trans.py#method:StringMerger._validate_msg:796"
+                  }
+                ],
+                "documentation": null,
+                "end_line": 879,
+                "kind": "class",
+                "name": "StringMerger",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/trans.py",
+                "qualified_name": "StringMerger",
+                "signature": null,
+                "start_line": 445,
+                "symbol_id": "src/black/trans.py#class:StringMerger:445"
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "documentation": null,
+                    "end_line": 1004,
+                    "kind": "method",
+                    "name": "do_match",
+                    "parent_id": "src/black/trans.py#class:StringParenStripper:882",
+                    "parent_name": "StringParenStripper",
+                    "path": "src/black/trans.py",
+                    "qualified_name": "StringParenStripper.do_match",
+                    "signature": "def do_match(self, line: Line) -> TMatchResult",
+                    "start_line": 902,
+                    "symbol_id": "src/black/trans.py#method:StringParenStripper.do_match:902"
+                  },
+                  {
+                    "children": [],
+                    "documentation": null,
+                    "end_line": 1031,
+                    "kind": "method",
+                    "name": "do_transform",
+                    "parent_id": "src/black/trans.py#class:StringParenStripper:882",
+                    "parent_name": "StringParenStripper",
+                    "path": "src/black/trans.py",
+                    "qualified_name": "StringParenStripper.do_transform",
+                    "signature": "def do_transform(\n        self, line: Line, string_indices: List[int]\n    ) -> Iterator[TResult[Line]]",
+                    "start_line": 1006,
+                    "symbol_id": "src/black/trans.py#method:StringParenStripper.do_transform:1006"
+                  },
+                  {
+                    "children": [],
+                    "documentation": null,
+                    "end_line": 1066,
+                    "kind": "method",
+                    "name": "_transform_to_new_line",
+                    "parent_id": "src/black/trans.py#class:StringParenStripper:882",
+                    "parent_name": "StringParenStripper",
+                    "path": "src/black/trans.py",
+                    "qualified_name": "StringParenStripper._transform_to_new_line",
+                    "signature": "def _transform_to_new_line(\n        self, line: Line, string_and_rpar_indices: List[int]\n    ) -> Line",
+                    "start_line": 1033,
+                    "symbol_id": "src/black/trans.py#method:StringParenStripper._transform_to_new_line:1033"
+                  }
+                ],
+                "documentation": "StringTransformer that strips surrounding parentheses from strings.\n\nRequirements:\n    The line contains a string which is surrounded by parentheses and:\n        - The target string is NOT the only argument to a function call.\n        - The target string is NOT a \"pointless\" string.\n        - If the target string contains a PERCENT, the brackets are not\n          preceded or followed by an operator with higher precedence than\n          PERCENT.\n\nTransformations:\n    The parentheses mentioned in the 'Requirements' section are stripped.\n\nCollaborations:\n    StringParenStripper has its own inherent usefulness, but it is also\n    relied on to clean up the parentheses created by StringParenWrapper (in\n    the event that they are no longer needed).",
+                "end_line": 1066,
+                "kind": "class",
+                "name": "StringParenStripper",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/trans.py",
+                "qualified_name": "StringParenStripper",
+                "signature": "class StringParenStripper(StringTransformer)",
+                "start_line": 882,
+                "symbol_id": "src/black/trans.py#class:StringParenStripper:882"
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "documentation": "BaseStringSplitter asks its clients to override this method instead of\n`StringTransformer.do_match(...)`.\n\nFollows the same protocol as `StringTransformer.do_match(...)`.\n\nRefer to `help(StringTransformer.do_match)` for more information.",
+                    "end_line": 1115,
+                    "kind": "method",
+                    "name": "do_splitter_match",
+                    "parent_id": "src/black/trans.py#class:BaseStringSplitter:1069",
+                    "parent_name": "BaseStringSplitter",
+                    "path": "src/black/trans.py",
+                    "qualified_name": "BaseStringSplitter.do_splitter_match",
+                    "signature": "def do_splitter_match(self, line: Line) -> TMatchResult",
+                    "start_line": 1107,
+                    "symbol_id": "src/black/trans.py#method:BaseStringSplitter.do_splitter_match:1107"
+                  },
+                  {
+                    "children": [],
+                    "documentation": null,
+                    "end_line": 1132,
+                    "kind": "method",
+                    "name": "do_match",
+                    "parent_id": "src/black/trans.py#class:BaseStringSplitter:1069",
+                    "parent_name": "BaseStringSplitter",
+                    "path": "src/black/trans.py",
+                    "qualified_name": "BaseStringSplitter.do_match",
+                    "signature": "def do_match(self, line: Line) -> TMatchResult",
+                    "start_line": 1117,
+                    "symbol_id": "src/black/trans.py#method:BaseStringSplitter.do_match:1117"
+                  },
+                  {
+                    "children": [],
+                    "documentation": "Checks that @line meets all of the requirements listed in this classes'\ndocstring. Refer to `help(BaseStringSplitter)` for a detailed\ndescription of those requirements.\n\nReturns:\n    * Ok(None), if ALL of the requirements are met.\n      OR\n    * Err(CannotTransform), if ANY of the requirements are NOT met.",
+                    "end_line": 1175,
+                    "kind": "method",
+                    "name": "_validate",
+                    "parent_id": "src/black/trans.py#class:BaseStringSplitter:1069",
+                    "parent_name": "BaseStringSplitter",
+                    "path": "src/black/trans.py",
+                    "qualified_name": "BaseStringSplitter._validate",
+                    "signature": "def _validate(self, line: Line, string_idx: int) -> TResult[None]",
+                    "start_line": 1134,
+                    "symbol_id": "src/black/trans.py#method:BaseStringSplitter._validate:1134"
+                  },
+                  {
+                    "children": [],
+                    "documentation": "Calculates the max string length used when attempting to determine\nwhether or not the target string is responsible for causing the line to\ngo over the line length limit.\n\nWARNING: This method is tightly coupled to both StringSplitter and\n(especially) StringParenWrapper. There is probably a better way to\naccomplish what is being done here.\n\nReturns:\n    max_string_length: such that `line.leaves[string_idx].value >\n    max_string_length` implies that the target string IS responsible\n    for causing this line to exceed the line length limit.",
+                    "end_line": 1284,
+                    "kind": "method",
+                    "name": "_get_max_string_length",
+                    "parent_id": "src/black/trans.py#class:BaseStringSplitter:1069",
+                    "parent_name": "BaseStringSplitter",
+                    "path": "src/black/trans.py",
+                    "qualified_name": "BaseStringSplitter._get_max_string_length",
+                    "signature": "def _get_max_string_length(self, line: Line, string_idx: int) -> int",
+                    "start_line": 1177,
+                    "symbol_id": "src/black/trans.py#method:BaseStringSplitter._get_max_string_length:1177"
+                  },
+                  {
+                    "children": [],
+                    "documentation": "Returns:\n    string_idx such that @LL[string_idx] is equal to our target (i.e.\n    matched) string, if this line matches the \"prefer paren wrap\" statement\n    requirements listed in the 'Requirements' section of the StringParenWrapper\n    class's docstring.\n        OR\n    None, otherwise.",
+                    "end_line": 1329,
+                    "kind": "method",
+                    "name": "_prefer_paren_wrap_match",
+                    "parent_id": "src/black/trans.py#class:BaseStringSplitter:1069",
+                    "parent_name": "BaseStringSplitter",
+                    "path": "src/black/trans.py",
+                    "qualified_name": "BaseStringSplitter._prefer_paren_wrap_match",
+                    "signature": "def _prefer_paren_wrap_match(LL: List[Leaf]) -> Optional[int]",
+                    "start_line": 1287,
+                    "symbol_id": "src/black/trans.py#method:BaseStringSplitter._prefer_paren_wrap_match:1287"
+                  }
+                ],
+                "documentation": "Abstract class for StringTransformers which transform a Line's strings by splitting\nthem or placing them on their own lines where necessary to avoid going over\nthe configured line length.\n\nRequirements:\n    * The target string value is responsible for the line going over the\n      line length limit. It follows that after all of black's other line\n      split methods have been exhausted, this line (or one of the resulting\n      lines after all line splits are performed) would still be over the\n      line_length limit unless we split this string.\n      AND\n\n    * The target string is NOT a \"pointless\" string (i.e. a string that has\n      no parent or siblings).\n      AND\n\n    * The target string is not followed by an inline comment that appears\n      to be a pragma.\n      AND\n\n    * The target string is not a multiline (i.e. triple-quote) string.",
+                "end_line": 1329,
+                "kind": "class",
+                "name": "BaseStringSplitter",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/trans.py",
+                "qualified_name": "BaseStringSplitter",
+                "signature": "class BaseStringSplitter(StringTransformer)",
+                "start_line": 1069,
+                "symbol_id": "src/black/trans.py#class:BaseStringSplitter:1069"
+              },
+              {
+                "children": [],
+                "documentation": "Yields spans corresponding to expressions in a given f-string.\nSpans are half-open ranges (left inclusive, right exclusive).\nAssumes the input string is a valid f-string, but will not crash if the input\nstring is invalid.",
+                "end_line": 1376,
+                "kind": "function",
+                "name": "iter_fexpr_spans",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/trans.py",
+                "qualified_name": "iter_fexpr_spans",
+                "signature": "def iter_fexpr_spans(s: str) -> Iterator[Tuple[int, int]]",
+                "start_line": 1332,
+                "symbol_id": "src/black/trans.py#function:iter_fexpr_spans:1332"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1380,
+                "kind": "function",
+                "name": "fstring_contains_expr",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/trans.py",
+                "qualified_name": "fstring_contains_expr",
+                "signature": "def fstring_contains_expr(s: str) -> bool",
+                "start_line": 1379,
+                "symbol_id": "src/black/trans.py#function:fstring_contains_expr:1379"
+              },
+              {
+                "children": [],
+                "documentation": "Toggles quotes used in f-string expressions that are `old_quote`.\n\nf-string expressions can't contain backslashes, so we need to toggle the\nquotes if the f-string itself will end up using the same quote. We can\nsimply toggle without escaping because, quotes can't be reused in f-string\nexpressions. They will fail to parse.\n\nNOTE: If PEP 701 is accepted, above statement will no longer be true.\nThough if quotes can be reused, we can simply reuse them without updates or\nescaping, once Black figures out how to parse the new grammar.",
+                "end_line": 1404,
+                "kind": "function",
+                "name": "_toggle_fexpr_quotes",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/trans.py",
+                "qualified_name": "_toggle_fexpr_quotes",
+                "signature": "def _toggle_fexpr_quotes(fstring: str, old_quote: str) -> str",
+                "start_line": 1383,
+                "symbol_id": "src/black/trans.py#function:_toggle_fexpr_quotes:1383"
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "documentation": null,
+                    "end_line": 1499,
+                    "kind": "method",
+                    "name": "do_splitter_match",
+                    "parent_id": "src/black/trans.py#class:StringSplitter:1407",
+                    "parent_name": "StringSplitter",
+                    "path": "src/black/trans.py",
+                    "qualified_name": "StringSplitter.do_splitter_match",
+                    "signature": "def do_splitter_match(self, line: Line) -> TMatchResult",
+                    "start_line": 1447,
+                    "symbol_id": "src/black/trans.py#method:StringSplitter.do_splitter_match:1447"
+                  },
+                  {
+                    "children": [],
+                    "documentation": null,
+                    "end_line": 1731,
+                    "kind": "method",
+                    "name": "do_transform",
+                    "parent_id": "src/black/trans.py#class:StringSplitter:1407",
+                    "parent_name": "StringSplitter",
+                    "path": "src/black/trans.py",
+                    "qualified_name": "StringSplitter.do_transform",
+                    "signature": "def do_transform(\n        self, line: Line, string_indices: List[int]\n    ) -> Iterator[TResult[Line]]",
+                    "start_line": 1501,
+                    "symbol_id": "src/black/trans.py#method:StringSplitter.do_transform:1501"
+                  },
+                  {
+                    "children": [],
+                    "documentation": "Yields:\n    All ranges of @string which, if @string were to be split there,\n    would result in the splitting of an \\N{...} expression (which is NOT\n    allowed).",
+                    "end_line": 1762,
+                    "kind": "method",
+                    "name": "_iter_nameescape_slices",
+                    "parent_id": "src/black/trans.py#class:StringSplitter:1407",
+                    "parent_name": "StringSplitter",
+                    "path": "src/black/trans.py",
+                    "qualified_name": "StringSplitter._iter_nameescape_slices",
+                    "signature": "def _iter_nameescape_slices(self, string: str) -> Iterator[Tuple[Index, Index]]",
+                    "start_line": 1733,
+                    "symbol_id": "src/black/trans.py#method:StringSplitter._iter_nameescape_slices:1733"
+                  },
+                  {
+                    "children": [],
+                    "documentation": "Yields:\n    All ranges of @string which, if @string were to be split there,\n    would result in the splitting of an f-expression (which is NOT\n    allowed).",
+                    "end_line": 1773,
+                    "kind": "method",
+                    "name": "_iter_fexpr_slices",
+                    "parent_id": "src/black/trans.py#class:StringSplitter:1407",
+                    "parent_name": "StringSplitter",
+                    "path": "src/black/trans.py",
+                    "qualified_name": "StringSplitter._iter_fexpr_slices",
+                    "signature": "def _iter_fexpr_slices(self, string: str) -> Iterator[Tuple[Index, Index]]",
+                    "start_line": 1764,
+                    "symbol_id": "src/black/trans.py#method:StringSplitter._iter_fexpr_slices:1764"
+                  },
+                  {
+                    "children": [],
+                    "documentation": null,
+                    "end_line": 1784,
+                    "kind": "method",
+                    "name": "_get_illegal_split_indices",
+                    "parent_id": "src/black/trans.py#class:StringSplitter:1407",
+                    "parent_name": "StringSplitter",
+                    "path": "src/black/trans.py",
+                    "qualified_name": "StringSplitter._get_illegal_split_indices",
+                    "signature": "def _get_illegal_split_indices(self, string: str) -> Set[Index]",
+                    "start_line": 1775,
+                    "symbol_id": "src/black/trans.py#method:StringSplitter._get_illegal_split_indices:1775"
+                  },
+                  {
+                    "children": [],
+                    "documentation": "This method contains the algorithm that StringSplitter uses to\ndetermine which character to split each string at.\n\nArgs:\n    @string: The substring that we are attempting to split.\n    @max_break_idx: The ideal break index. We will return this value if it\n    meets all the necessary conditions. In the likely event that it\n    doesn't we will try to find the closest index BELOW @max_break_idx\n    that does. If that fails, we will expand our search by also\n    considering all valid indices ABOVE @max_break_idx.\n\nPre-Conditions:\n    * assert_is_leaf_string(@string)\n    * 0 <= @max_break_idx < len(@string)\n\nReturns:\n    break_idx, if an index is able to be found that meets all of the\n    conditions listed in the 'Transformations' section of this classes'\n    docstring.\n        OR\n    None, otherwise.",
+                    "end_line": 1869,
+                    "kind": "method",
+                    "name": "_get_break_idx",
+                    "parent_id": "src/black/trans.py#class:StringSplitter:1407",
+                    "parent_name": "StringSplitter",
+                    "path": "src/black/trans.py",
+                    "qualified_name": "StringSplitter._get_break_idx",
+                    "signature": "def _get_break_idx(self, string: str, max_break_idx: int) -> Optional[int]",
+                    "start_line": 1786,
+                    "symbol_id": "src/black/trans.py#method:StringSplitter._get_break_idx:1786"
+                  },
+                  {
+                    "children": [],
+                    "documentation": null,
+                    "end_line": 1873,
+                    "kind": "method",
+                    "name": "_maybe_normalize_string_quotes",
+                    "parent_id": "src/black/trans.py#class:StringSplitter:1407",
+                    "parent_name": "StringSplitter",
+                    "path": "src/black/trans.py",
+                    "qualified_name": "StringSplitter._maybe_normalize_string_quotes",
+                    "signature": "def _maybe_normalize_string_quotes(self, leaf: Leaf) -> None",
+                    "start_line": 1871,
+                    "symbol_id": "src/black/trans.py#method:StringSplitter._maybe_normalize_string_quotes:1871"
+                  },
+                  {
+                    "children": [],
+                    "documentation": "Pre-Conditions:\n    * assert_is_leaf_string(@string)\n\nReturns:\n    * If @string is an f-string that contains no f-expressions, we\n    return a string identical to @string except that the 'f' prefix\n    has been stripped and all double braces (i.e. '{{' or '}}') have\n    been normalized (i.e. turned into '{' or '}').\n        OR\n    * Otherwise, we return @string.",
+                    "end_line": 1900,
+                    "kind": "method",
+                    "name": "_normalize_f_string",
+                    "parent_id": "src/black/trans.py#class:StringSplitter:1407",
+                    "parent_name": "StringSplitter",
+                    "path": "src/black/trans.py",
+                    "qualified_name": "StringSplitter._normalize_f_string",
+                    "signature": "def _normalize_f_string(self, string: str, prefix: str) -> str",
+                    "start_line": 1875,
+                    "symbol_id": "src/black/trans.py#method:StringSplitter._normalize_f_string:1875"
+                  },
+                  {
+                    "children": [],
+                    "documentation": null,
+                    "end_line": 1911,
+                    "kind": "method",
+                    "name": "_get_string_operator_leaves",
+                    "parent_id": "src/black/trans.py#class:StringSplitter:1407",
+                    "parent_name": "StringSplitter",
+                    "path": "src/black/trans.py",
+                    "qualified_name": "StringSplitter._get_string_operator_leaves",
+                    "signature": "def _get_string_operator_leaves(self, leaves: Iterable[Leaf]) -> List[Leaf]",
+                    "start_line": 1902,
+                    "symbol_id": "src/black/trans.py#method:StringSplitter._get_string_operator_leaves:1902"
+                  }
+                ],
+                "documentation": "StringTransformer that splits \"atom\" strings (i.e. strings which exist on\nlines by themselves).\n\nRequirements:\n    * The line consists ONLY of a single string (possibly prefixed by a\n      string operator [e.g. '+' or '==']), MAYBE a string trailer, and MAYBE\n      a trailing comma.\n      AND\n    * All of the requirements listed in BaseStringSplitter's docstring.\n\nTransformations:\n    The string mentioned in the 'Requirements' section is split into as\n    many substrings as necessary to adhere to the configured line length.\n\n    In the final set of substrings, no substring should be smaller than\n    MIN_SUBSTR_SIZE characters.\n\n    The string will ONLY be split on spaces (i.e. each new substring should\n    start with a space). Note that the string will NOT be split on a space\n    which is escaped with a backslash.\n\n    If the string is an f-string, it will NOT be split in the middle of an\n    f-expression (e.g. in f\"FooBar: {foo() if x else bar()}\", {foo() if x\n    else bar()} is an f-expression).\n\n    If the string that is being split has an associated set of custom split\n    records and those custom splits will NOT result in any line going over\n    the configured line length, those custom splits are used. Otherwise the\n    string is split as late as possible (from left-to-right) while still\n    adhering to the transformation rules listed above.\n\nCollaborations:\n    StringSplitter relies on StringMerger to construct the appropriate\n    CustomSplit objects and add them to the custom split map.",
+                "end_line": 1911,
+                "kind": "class",
+                "name": "StringSplitter",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/trans.py",
+                "qualified_name": "StringSplitter",
+                "signature": "class StringSplitter(BaseStringSplitter, CustomSplitMapMixin)",
+                "start_line": 1407,
+                "symbol_id": "src/black/trans.py#class:StringSplitter:1407"
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "documentation": null,
+                    "end_line": 2008,
+                    "kind": "method",
+                    "name": "do_splitter_match",
+                    "parent_id": "src/black/trans.py#class:StringParenWrapper:1914",
+                    "parent_name": "StringParenWrapper",
+                    "path": "src/black/trans.py",
+                    "qualified_name": "StringParenWrapper.do_splitter_match",
+                    "signature": "def do_splitter_match(self, line: Line) -> TMatchResult",
+                    "start_line": 1972,
+                    "symbol_id": "src/black/trans.py#method:StringParenWrapper.do_splitter_match:1972"
+                  }
+                ],
+                "documentation": null,
+                "end_line": 2304,
+                "kind": "class",
+                "name": "StringParenWrapper",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/trans.py",
+                "qualified_name": "StringParenWrapper",
+                "signature": "class StringParenWrapper(BaseStringSplitter, CustomSplitMapMixin)",
+                "start_line": 1914,
+                "symbol_id": "src/black/trans.py#class:StringParenWrapper:1914"
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "src/black/trans.py",
+                "workspace_id": "py_001_ctx16k"
+              },
+              "durationMs": 0,
+              "toolName": "list_symbols",
+              "workspace_id": "py_001_ctx16k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 3281,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "symbol_id": "src/black/trans.py#method:StringMerger._merge_string_group:586",
+              "workspace_id": "py_001_ctx16k"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": {
+              "children": [],
+              "code": "def _merge_string_group(\n        self, line: Line, string_indices: List[int]\n    ) -> TResult[Line]:\n        \"\"\"\n        Merges string groups (i.e. set of adjacent strings).\n\n        Each index from `string_indices` designates one string group's first\n        leaf in `line.leaves`.\n\n        Returns:\n            Ok(new_line), if ALL of the validation checks found in\n            _validate_msg(...) pass.\n                OR\n            Err(CannotTransform), otherwise.\n        \"\"\"\n        LL = line.leaves\n\n        is_valid_index = is_valid_index_factory(LL)\n\n        # A dict of {string_idx: tuple[num_of_strings, string_leaf]}.\n        merged_string_idx_dict: Dict[int, Tuple[int, Leaf]] = {}\n        for string_idx in string_indices:\n            vresult = self._validate_msg(line, string_idx)\n            if isinstance(vresult, Err):\n                continue\n            merged_string_idx_dict[string_idx] = self._merge_one_string_group(\n                LL, string_idx, is_valid_index\n            )\n\n        if not merged_string_idx_dict:\n            return TErr(\"No string group is merged\")\n\n        # Build the final line ('new_line') that this method will later return.\n        new_line = line.clone()\n        previous_merged_string_idx = -1\n        previous_merged_num_of_strings = -1\n        for i, leaf in enumerate(LL):\n            if i in merged_string_idx_dict:\n                previous_merged_string_idx = i\n                previous_merged_num_of_strings, string_leaf = merged_string_idx_dict[i]\n                new_line.append(string_leaf)\n\n            if (\n                previous_merged_string_idx\n                <= i\n                < previous_merged_string_idx + previous_merged_num_of_strings\n            ):\n                for comment_leaf in line.comments_after(LL[i]):\n                    new_line.append(comment_leaf, preformatted=True)\n                continue\n\n            append_leaves(new_line, line, [leaf])\n\n        return Ok(new_line)",
+              "documentation": "Merges string groups (i.e. set of adjacent strings).\n\nEach index from `string_indices` designates one string group's first\nleaf in `line.leaves`.\n\nReturns:\n    Ok(new_line), if ALL of the validation checks found in\n    _validate_msg(...) pass.\n        OR\n    Err(CannotTransform), otherwise.",
+              "end_line": 639,
+              "kind": "method",
+              "name": "_merge_string_group",
+              "parent_id": "src/black/trans.py#class:StringMerger:445",
+              "parent_name": "StringMerger",
+              "path": "src/black/trans.py",
+              "qualified_name": "StringMerger._merge_string_group",
+              "signature": "def _merge_string_group(\n        self, line: Line, string_indices: List[int]\n    ) -> TResult[Line]",
+              "start_line": 586,
+              "symbol_id": "src/black/trans.py#method:StringMerger._merge_string_group:586"
+            },
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "symbol_id": "src/black/trans.py#method:StringMerger._merge_string_group:586",
+                "workspace_id": "py_001_ctx16k"
+              },
+              "durationMs": 0,
+              "toolName": "get_symbol",
+              "workspace_id": "py_001_ctx16k"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 3029,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 10239,
+          "metadata": {},
+          "name": "strategy.local_function.execute",
+          "type": "strategy.local_function.execute"
+        },
+        {
+          "duration_ms": 10239,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 57,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": null,
+        "cachedInputTokens": 966,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 3,
+        "inputTokens": 10813,
+        "loopControlDurationMsEstimated": 56,
+        "mcpToolCalls": 3,
+        "modelCalls": 4,
+        "modelDurationMs": 10182,
+        "outputTokens": 655,
+        "promptChars": 1286,
+        "questionTokensEstimated": 187,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 669,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 4,
+        "strategyDurationMs": 10239,
+        "taskStatementChars": 1115,
+        "toolCalls": 3,
+        "toolDurationMs": 1,
+        "totalDurationMs": 10239,
+        "totalTokens": 12137,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "workspace_id": "py_001_ctx16k"
+                    },
+                    "id": null,
+                    "name": "list_files",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CpQHAQw51seS2FyJBt3QaKRin30i7GJapnIcnRldoMAty0Gzq5Du8fwRtUiTNe9xyV0KrGQZf_yPKGayjibvEWAQL2Rejl9mlGA3qFyjvQydV6Qt4n9uYg_AHvQP-yYftYlB9dyMmEHrcFQ0qgnJaCWT-joebxq8-pzQSjLTkL2Dfpg2LrTA8Ph-tzavctnE5U8Yx4oQFW3X9qVWOhUI1RqPGXQdIGji5g65VYMVhD_ueiBSMo5j7dhSGqqcLTSktDkQzzQOrOk9FNOfET84DCsl5xKDvakX1E9_Xd7G3fMkVzYtlFx3sDriYB8qtfcQ7lgp0WYEoLcKdx4iPhtZ3yd_2xJqotyItNPMOV306OP_1VZ7U5CbWMX6z211fE5AZpSL8SsMFlqjji_5Pj1pjDaxzXvS0XR7rclLiaBsooB1zX0q9qm3ABfb8M9vNGBQbHCXDTdkHfPvwiaTAqtkW1L9OkC9ObksKaY95qeAUeofv3n4wsgL0zmKkcrjOs32E4rzm0oxpPEKxK4DugmRjcueMSYSwdmkfyUPTum8rBqK_1d57ovkVk-wEdJ95nbNFhrmm-H3Bb9vgCKjPvrlKtgi-GjrbrbjD2u2FzFxYfXveG0GDl90gU25x7AXE_nGVJBTGjuMtQZzxjOG5RQruYTAMjm7ZTFjFObTCw7D9uAJSRX9hXhdna7IzzFgW2K3pQC3uiFmWtr7DNX7-URHgXbRRyIkiyyE7fUtM91GYPaIsKraQAlswlz4bnDUwOyU_Uv4C0MaymeoweD97NcWsGNLF42Rh4TNtgev01_6VlAJqqcOTzJ2rMJ8lPG38IqY4oHfWWthw6qi3IIncSWUyejryQUfUbB1SZ6qy0QUsC_9rYMQQHnjbEajy9bdzbN1H_7tkGyQlq2gNImedSKl7CiulJl1lzLmEjqqwh-t-uG6wnZeBKXA_1hrguV1xT4H_m4FOes9lndu4kwcg9xemG278iNL47yB8jNK41bwP-53ns_AvDY-l3th6-EFFZHrwQEzNar1hjuPQZZZ24XbNXrtxilzZiy70PkxK0Y4P_OrJOkOKhqqPz0WKj62tSRxo38iTHRDERwgcJmFhbPklYOlPD5N_RkdSTGtcXgKJ4mUDlvvKkO6xrvZPlDRUQwueyzzsDNuTnB9t4vJ406f3C1wL1earzqPqpvvlNHIU2aGTljFtYqmG55htthc7f35_iVnXZmp_w==",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "FH4Uat7JPJetqtsP46OmyAk",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 16:51:34 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1823",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 26,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 672,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 672
+            }
+          ],
+          "thoughts_token_count": 188,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 886,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "kind": "function",
+                      "path": "src/black/trans.py",
+                      "workspace_id": "py_001_ctx16k"
+                    },
+                    "id": null,
+                    "name": "list_symbols",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CrUBAQw51sflOMWsza0pfTrN4WxiIjQxGuTKGZ1-YgVT4KXhACOoxmJllGgdzCMztRBGJh_kRgacoCe2hP9t08Q9pWWaLExzX5nJMbMHZ0VQhYA7-uxXpMulZ5QDFL_A4JWnhB0kgYmq1QZpTJqdE589pHMFEDk_x-k-YEAykiR4HBH9TvF_TcYtoZwimEmaLefj4uxs_W5PiGmvb0WvDE9q76GA37QQa2_nMa059ZoLnjomS4o2BQ==",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "F34UaqXoAf6tz7IPtI_EwAs",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 16:51:36 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1624",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 42,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 757,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 757
+            }
+          ],
+          "thoughts_token_count": 35,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 834,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "symbol_id": "src/black/trans.py#method:StringMerger._merge_string_group:586",
+                      "workspace_id": "py_001_ctx16k"
+                    },
+                    "id": null,
+                    "name": "get_symbol",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CokPAQw51sf_uvkLy7UX_m09ECrNUD-TfgCoc5GK3fYy7_vpWd3BWeuwAovOMmu-ecbhfMQqq9jPY4aJVRTAepBdJQ8wQM9SydPuFO-hHm2k8RLOiVIC3BEKqFLJvVOJBq1ixZT-M01tJxCciXkLAhbZPYxrqsMJqoJW9zWNMz7aOfL6QJIfg6Yf1-q6cH1MJeEDzemXKZTTw-ncSxeZAsKGdmwdb6jTj1hIuurR0o2KQ5OEGCponfuvBp5fBZa3Pu0qVTjltN0cOIObf-CitSTC-_QwEvTWPCqzjXEgGmlWnJ04ghm4hZdhIOqvL2hF5ykPjZQBLSqR-1wnrgZxDD6bGr78738bMA6R97nOjDApqfhBqoLNadttX6CX5AQ0-ksvgCaaXx4ZO7__GlYmhYo0BN1Y2jabCGvvHnXYBAbWxV2jOS6eXCtzuiv81IN6JHjPwmccpOuVkwC0oTBh9lQwl6_Kl57YISiI-ni_wK228MFFMWm9e_nsx_8AN_hbj7fdAJjfDHanHv_aOTgSaTXw7A0gen4j6Otnn5M7D6AqoB2q8LMN3akpjBajfBSthNQoq2hc-yPE32JtsyGub-fqeSZod2ETRr7G75LcMXOYREX7zAln8vOiWqspA44GUz9J0a1LAi_NenyvNHy7pYDzTcBXMOHdRUMw6MyrMA2tUuzDca_QZThIUmUkpHA-ovQU16JaS8Ei-WptsRR_R3XWyQn2yeitmE3p_S40wPv70qiH1gj4-09PmsArle_4E-H0Eq0o8dGPYBqVdwugvJ3jHL6sIosSajrLQf4H6PSS03entla1NKOxjF3i72QLsVnH5QMewdMgglANy23Cb3rPDAZwXggE_8s4RpYHKPvueF4neQ0PK5MwrizMW1lxiL1SHCJWLxe_xwkCs7uvHXq24G9PjCRQxPAmISZtEDl9VqUocbIJJIANk-9yT21Q20JFyFDy9g-M1tl363rmsJsOMcXiorkJgOTtqRwdbGVPLVUn0wfiihCTXz5C9k_QTKENC9ynaijjjdxuOvhJPIWR_dy8J5pivGs94ikBJ_NPFb5lFKXmMHZSF-NivRkWV1OJNXqN3OGwcaF-Si5apZA9o_gfZwBATSdFjDeFnIOaTcXzu3LAu60OKyXC_mhNfXxBSI0OwMOj9jslf6QBgAIfcjx82v4mT9_QoMAP8hqOKp7psnh4lGnk0sZolDf-Rp4pN1F81CFpPhizWXSRIBI31ohs0IOz4NeS8lp81FT2mt1Z8fcOIinmcAwvK0O7Y6ZlAYVcWAnUHl5CMs4Rd_Ul7RYqa0WBjVOUdHQcGngRSFX8s84TyXdtgHuLYawM5ifvS8PZAIy3LkZkwo3WRE5tWjroMikbY2619bmk66k7j7RsjTri610n6cU0LIAgnl6Vqn4esQsv_0deSWI3lfX51kBBgu8kyhcmfp40YOYaPfwdX9OXW9gpxN026uMYDkDg-MTt2Tsjr1pY20b7KvbEwCvdm7y-x96uCSzS8l48phI9xhulNTkiBO3LC_7ZGhUH8xxu2yh7kMK01ZC39666OjULfspjqMFe0UKeB-0NLcxVwfqWhbs76usERtcfTiVjMVWX8ZdD5BsHGNIdWzN_WBBEXW-dxeJSOeB6vu8QVRaKB7QL6EEUSLhTvD-zM1Lkf36TTd7XLJa4xuOocKbORnKICvTQtz957D0xC0OaAQwnChY7QFY8ciNO2SlB6fsrqjWs_WmDw2hOmxia2rIn9Vbm-l82MjaoavE9ZFzVXlnvzfS3qQjzfqzs-Y3Z93ItIH3MovE0Np9RBACPIUjY0R-AVXOZinxl2OB7hfxjNshVLiPkgYTGhAfzSZ5Q7RZ-AOo2AZxGWHxZSJmGwy7zx2DMwchBc-Qg7KAePhTb0ssIElZZsm2UwcJtTgKHuKVnqQLZ_U8smJCcNz5BdknUcbK58nd95La2mA2PVfE5b-G61DWLzFGoVlrVk9IOtae4_W6l6paESLLBQAjSCyvhU4JH3TrbxyR0A1hIfVU3aqcSfdnSM0oLrRepFjuWI9O8ARq1M6oHhRgrWfAFFqjSu48ayUcxYNUeIIfYcgjdBo-foSmO066QCKtk-VDYwIaHNoGrMa02QPNj3oJe9C1GiW0GN-Yw9QsI-fVt3W57EHmvg-f2b-xp6PtAXS1PAhlogtReSAW6Sydds4UgFEGYo7nll2KSj2h8Gw0LvR6feNeY4fGo6_Rwwk35If71OOoheZps36PyqTftJoRyLCJcsjgUbeWhDTrKEETdkF65JHVp4XPh9sIPVE8Hd6o_Ee7fuFP7lCzVu0prrPvppts-pFhRPO6dBrRd4v6FLHzxGnbDgoMOCXFNq1cft7LSxsa_UOufgjG8vr6sGeScuiAPNeCA2xE3IBvH_yZedb3Pq_D40I56U8fE0YSQM29YwoOafoRgmcg41kCKje1-TDSNrpUKf6HEwQGrl23JnAfPXqyMqjA-WJCQlVevD7Frfvfu-kzVjYDezerCjZJZMIqOuBWfyEAjwOl4f31GpplvJ-oP8-UZCmR-IjOR76x5ziWO9MLpE9w7Jq9E",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "GX4UavsQzofPsg-68-_YDw",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 16:51:39 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=3069",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 966
+            }
+          ],
+          "cached_content_token_count": 966,
+          "candidates_token_count": 55,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 7810,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 7810
+            }
+          ],
+          "thoughts_token_count": 446,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 8311,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": {
+              "citations": [
+                {
+                  "end_index": 500,
+                  "license": "",
+                  "publication_date": null,
+                  "start_index": 10,
+                  "title": null,
+                  "uri": "https://github.com/psf/black"
+                },
+                {
+                  "end_index": 1894,
+                  "license": "",
+                  "publication_date": null,
+                  "start_index": 369,
+                  "title": null,
+                  "uri": "https://github.com/psf/black"
+                }
+              ]
+            },
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": null,
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": "```python\ndef _merge_string_group(\n        self, line: Line, string_indices: List[int]\n    ) -> TResult[Line]:\n        \"\"\"\n        Merges string groups (i.e. set of adjacent strings).\n\n        Each index from `string_indices` designates one string group's first\n        leaf in `line.leaves`.\n\n        Returns:\n            Ok(new_line), if ALL of the validation checks found in\n            _validate_msg(...) pass.\n                OR\n            Err(CannotTransform), otherwise.\n        \"\"\"\n        LL = line.leaves\n\n        is_valid_index = is_valid_index_factory(LL)\n\n        # A dict of {string_idx: tuple[num_of_strings, string_leaf]}.\n        merged_string_idx_dict: Dict[int, Tuple[int, Leaf]] = {}\n        for string_idx in string_indices:\n            vresult = self._validate_msg(line, string_idx)\n            if isinstance(vresult, Err):\n                continue\n            merged_string_idx_dict[string_idx] = self._merge_one_string_group(\n                LL, string_idx, is_valid_index\n            )\n\n        if not merged_string_idx_dict:\n            return TErr(\"No string group is merged\")\n\n        # Build the final line ('new_line') that this method will later return.\n        new_line = line.clone()\n        previous_merged_string_idx = -1\n        previous_merged_num_of_strings = -1\n        for i, leaf in enumerate(LL):\n            if i in merged_string_idx_dict:\n                previous_merged_string_idx = i\n                previous_merged_num_of_strings, string_leaf = merged_string_idx_dict[i]\n                new_line.append(string_leaf)\n\n            if (\n                previous_merged_string_idx\n                <= i\n                < previous_merged_string_idx + previous_merged_num_of_strings\n            ):\n                for comment_leaf in line.comments_after(LL[i]):\n                    new_line.append(comment_leaf, preformatted=True)\n                continue\n\n            append_leaves(new_line, line, [leaf])\n\n        return Ok(new_line)\n```",
+                  "thought": null,
+                  "thought_signature": null,
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                },
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": null,
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": "\n",
+                  "thought": null,
+                  "thought_signature": null,
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "HH4Uav2BDJaFz7IP9MrqwQo",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 16:51:42 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=2822",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 532,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 1574,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 1574
+            }
+          ],
+          "thoughts_token_count": null,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 2106,
+          "traffic_type": null
+        }
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "workspace_id": "py_001_ctx16k"
+        },
+        "durationMs": 1,
+        "toolName": "list_files",
+        "workspace_id": "py_001_ctx16k"
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/black/trans.py",
+          "workspace_id": "py_001_ctx16k"
+        },
+        "durationMs": 0,
+        "toolName": "list_symbols",
+        "workspace_id": "py_001_ctx16k"
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/black/trans.py#method:StringMerger._merge_string_group:586",
+          "workspace_id": "py_001_ctx16k"
+        },
+        "durationMs": 0,
+        "toolName": "get_symbol",
+        "workspace_id": "py_001_ctx16k"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "workspace_id": "py_001_ctx16k"
+        },
+        "id": "step-1-tool-1",
+        "isError": false,
+        "name": "list_files",
+        "result": [
+          {
+            "language": "python",
+            "parse_status": "ok_filtered",
+            "path": "src/black/trans.py",
+            "repository": "psf/black",
+            "symbol_count": 30
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/black/trans.py",
+          "workspace_id": "py_001_ctx16k"
+        },
+        "id": "step-2-tool-1",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [
+              {
+                "children": [],
+                "documentation": "Merge strings that were split across multiple lines using\nline-continuation backslashes.\n\nReturns:\n    Ok(new_line), if @line contains backslash line-continuation\n    characters.\n        OR\n    Err(CannotTransform), otherwise.",
+                "end_line": 584,
+                "kind": "method",
+                "name": "_remove_backslash_line_continuation_chars",
+                "parent_id": "src/black/trans.py#class:StringMerger:445",
+                "parent_name": "StringMerger",
+                "path": "src/black/trans.py",
+                "qualified_name": "StringMerger._remove_backslash_line_continuation_chars",
+                "signature": "def _remove_backslash_line_continuation_chars(\n        line: Line, string_indices: List[int]\n    ) -> TResult[Line]",
+                "start_line": 545,
+                "symbol_id": "src/black/trans.py#method:StringMerger._remove_backslash_line_continuation_chars:545"
+              },
+              {
+                "children": [],
+                "documentation": "Merges string groups (i.e. set of adjacent strings).\n\nEach index from `string_indices` designates one string group's first\nleaf in `line.leaves`.\n\nReturns:\n    Ok(new_line), if ALL of the validation checks found in\n    _validate_msg(...) pass.\n        OR\n    Err(CannotTransform), otherwise.",
+                "end_line": 639,
+                "kind": "method",
+                "name": "_merge_string_group",
+                "parent_id": "src/black/trans.py#class:StringMerger:445",
+                "parent_name": "StringMerger",
+                "path": "src/black/trans.py",
+                "qualified_name": "StringMerger._merge_string_group",
+                "signature": "def _merge_string_group(\n        self, line: Line, string_indices: List[int]\n    ) -> TResult[Line]",
+                "start_line": 586,
+                "symbol_id": "src/black/trans.py#method:StringMerger._merge_string_group:586"
+              },
+              {
+                "children": [],
+                "documentation": "Merges one string group where the first string in the group is\n`LL[string_idx]`.\n\nReturns:\n    A tuple of `(num_of_strings, leaf)` where `num_of_strings` is the\n    number of strings merged and `leaf` is the newly merged string\n    to be replaced in the new line.",
+                "end_line": 793,
+                "kind": "method",
+                "name": "_merge_one_string_group",
+                "parent_id": "src/black/trans.py#class:StringMerger:445",
+                "parent_name": "StringMerger",
+                "path": "src/black/trans.py",
+                "qualified_name": "StringMerger._merge_one_string_group",
+                "signature": "def _merge_one_string_group(\n        self, LL: List[Leaf], string_idx: int, is_valid_index: Callable[[int], bool]\n    ) -> Tuple[int, Leaf]",
+                "start_line": 641,
+                "symbol_id": "src/black/trans.py#method:StringMerger._merge_one_string_group:641"
+              },
+              {
+                "children": [],
+                "documentation": "Validate (M)erge (S)tring (G)roup\n\nTransform-time string validation logic for _merge_string_group(...).\n\nReturns:\n    * Ok(None), if ALL validation checks (listed below) pass.\n        OR\n    * Err(CannotTransform), if any of the following are true:\n        - The target string group does not contain ANY stand-alone comments.\n        - The target string is not in a string group (i.e. it has no\n          adjacent strings).\n        - The string group has more than one inline comment.\n        - The string group has an inline comment that appears to be a pragma.\n        - The set of all string prefixes in the string group is of\n          length greater than one and is not equal to {\"\", \"f\"}.\n        - The string group consists of raw strings.\n        - The string group is stringified type annotations. We don't want to\n          process stringified type annotations since pyright doesn't support\n          them spanning multiple string values. (NOTE: mypy, pytype, pyre do\n          support them, so we can change if pyright also gains support in the\n          future. See https://github.com/microsoft/pyright/issues/4359.)",
+                "end_line": 879,
+                "kind": "method",
+                "name": "_validate_msg",
+                "parent_id": "src/black/trans.py#class:StringMerger:445",
+                "parent_name": "StringMerger",
+                "path": "src/black/trans.py",
+                "qualified_name": "StringMerger._validate_msg",
+                "signature": "def _validate_msg(line: Line, string_idx: int) -> TResult[None]",
+                "start_line": 796,
+                "symbol_id": "src/black/trans.py#method:StringMerger._validate_msg:796"
+              }
+            ],
+            "documentation": null,
+            "end_line": 879,
+            "kind": "class",
+            "name": "StringMerger",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/trans.py",
+            "qualified_name": "StringMerger",
+            "signature": null,
+            "start_line": 445,
+            "symbol_id": "src/black/trans.py#class:StringMerger:445"
+          },
+          {
+            "children": [
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1004,
+                "kind": "method",
+                "name": "do_match",
+                "parent_id": "src/black/trans.py#class:StringParenStripper:882",
+                "parent_name": "StringParenStripper",
+                "path": "src/black/trans.py",
+                "qualified_name": "StringParenStripper.do_match",
+                "signature": "def do_match(self, line: Line) -> TMatchResult",
+                "start_line": 902,
+                "symbol_id": "src/black/trans.py#method:StringParenStripper.do_match:902"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1031,
+                "kind": "method",
+                "name": "do_transform",
+                "parent_id": "src/black/trans.py#class:StringParenStripper:882",
+                "parent_name": "StringParenStripper",
+                "path": "src/black/trans.py",
+                "qualified_name": "StringParenStripper.do_transform",
+                "signature": "def do_transform(\n        self, line: Line, string_indices: List[int]\n    ) -> Iterator[TResult[Line]]",
+                "start_line": 1006,
+                "symbol_id": "src/black/trans.py#method:StringParenStripper.do_transform:1006"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1066,
+                "kind": "method",
+                "name": "_transform_to_new_line",
+                "parent_id": "src/black/trans.py#class:StringParenStripper:882",
+                "parent_name": "StringParenStripper",
+                "path": "src/black/trans.py",
+                "qualified_name": "StringParenStripper._transform_to_new_line",
+                "signature": "def _transform_to_new_line(\n        self, line: Line, string_and_rpar_indices: List[int]\n    ) -> Line",
+                "start_line": 1033,
+                "symbol_id": "src/black/trans.py#method:StringParenStripper._transform_to_new_line:1033"
+              }
+            ],
+            "documentation": "StringTransformer that strips surrounding parentheses from strings.\n\nRequirements:\n    The line contains a string which is surrounded by parentheses and:\n        - The target string is NOT the only argument to a function call.\n        - The target string is NOT a \"pointless\" string.\n        - If the target string contains a PERCENT, the brackets are not\n          preceded or followed by an operator with higher precedence than\n          PERCENT.\n\nTransformations:\n    The parentheses mentioned in the 'Requirements' section are stripped.\n\nCollaborations:\n    StringParenStripper has its own inherent usefulness, but it is also\n    relied on to clean up the parentheses created by StringParenWrapper (in\n    the event that they are no longer needed).",
+            "end_line": 1066,
+            "kind": "class",
+            "name": "StringParenStripper",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/trans.py",
+            "qualified_name": "StringParenStripper",
+            "signature": "class StringParenStripper(StringTransformer)",
+            "start_line": 882,
+            "symbol_id": "src/black/trans.py#class:StringParenStripper:882"
+          },
+          {
+            "children": [
+              {
+                "children": [],
+                "documentation": "BaseStringSplitter asks its clients to override this method instead of\n`StringTransformer.do_match(...)`.\n\nFollows the same protocol as `StringTransformer.do_match(...)`.\n\nRefer to `help(StringTransformer.do_match)` for more information.",
+                "end_line": 1115,
+                "kind": "method",
+                "name": "do_splitter_match",
+                "parent_id": "src/black/trans.py#class:BaseStringSplitter:1069",
+                "parent_name": "BaseStringSplitter",
+                "path": "src/black/trans.py",
+                "qualified_name": "BaseStringSplitter.do_splitter_match",
+                "signature": "def do_splitter_match(self, line: Line) -> TMatchResult",
+                "start_line": 1107,
+                "symbol_id": "src/black/trans.py#method:BaseStringSplitter.do_splitter_match:1107"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1132,
+                "kind": "method",
+                "name": "do_match",
+                "parent_id": "src/black/trans.py#class:BaseStringSplitter:1069",
+                "parent_name": "BaseStringSplitter",
+                "path": "src/black/trans.py",
+                "qualified_name": "BaseStringSplitter.do_match",
+                "signature": "def do_match(self, line: Line) -> TMatchResult",
+                "start_line": 1117,
+                "symbol_id": "src/black/trans.py#method:BaseStringSplitter.do_match:1117"
+              },
+              {
+                "children": [],
+                "documentation": "Checks that @line meets all of the requirements listed in this classes'\ndocstring. Refer to `help(BaseStringSplitter)` for a detailed\ndescription of those requirements.\n\nReturns:\n    * Ok(None), if ALL of the requirements are met.\n      OR\n    * Err(CannotTransform), if ANY of the requirements are NOT met.",
+                "end_line": 1175,
+                "kind": "method",
+                "name": "_validate",
+                "parent_id": "src/black/trans.py#class:BaseStringSplitter:1069",
+                "parent_name": "BaseStringSplitter",
+                "path": "src/black/trans.py",
+                "qualified_name": "BaseStringSplitter._validate",
+                "signature": "def _validate(self, line: Line, string_idx: int) -> TResult[None]",
+                "start_line": 1134,
+                "symbol_id": "src/black/trans.py#method:BaseStringSplitter._validate:1134"
+              },
+              {
+                "children": [],
+                "documentation": "Calculates the max string length used when attempting to determine\nwhether or not the target string is responsible for causing the line to\ngo over the line length limit.\n\nWARNING: This method is tightly coupled to both StringSplitter and\n(especially) StringParenWrapper. There is probably a better way to\naccomplish what is being done here.\n\nReturns:\n    max_string_length: such that `line.leaves[string_idx].value >\n    max_string_length` implies that the target string IS responsible\n    for causing this line to exceed the line length limit.",
+                "end_line": 1284,
+                "kind": "method",
+                "name": "_get_max_string_length",
+                "parent_id": "src/black/trans.py#class:BaseStringSplitter:1069",
+                "parent_name": "BaseStringSplitter",
+                "path": "src/black/trans.py",
+                "qualified_name": "BaseStringSplitter._get_max_string_length",
+                "signature": "def _get_max_string_length(self, line: Line, string_idx: int) -> int",
+                "start_line": 1177,
+                "symbol_id": "src/black/trans.py#method:BaseStringSplitter._get_max_string_length:1177"
+              },
+              {
+                "children": [],
+                "documentation": "Returns:\n    string_idx such that @LL[string_idx] is equal to our target (i.e.\n    matched) string, if this line matches the \"prefer paren wrap\" statement\n    requirements listed in the 'Requirements' section of the StringParenWrapper\n    class's docstring.\n        OR\n    None, otherwise.",
+                "end_line": 1329,
+                "kind": "method",
+                "name": "_prefer_paren_wrap_match",
+                "parent_id": "src/black/trans.py#class:BaseStringSplitter:1069",
+                "parent_name": "BaseStringSplitter",
+                "path": "src/black/trans.py",
+                "qualified_name": "BaseStringSplitter._prefer_paren_wrap_match",
+                "signature": "def _prefer_paren_wrap_match(LL: List[Leaf]) -> Optional[int]",
+                "start_line": 1287,
+                "symbol_id": "src/black/trans.py#method:BaseStringSplitter._prefer_paren_wrap_match:1287"
+              }
+            ],
+            "documentation": "Abstract class for StringTransformers which transform a Line's strings by splitting\nthem or placing them on their own lines where necessary to avoid going over\nthe configured line length.\n\nRequirements:\n    * The target string value is responsible for the line going over the\n      line length limit. It follows that after all of black's other line\n      split methods have been exhausted, this line (or one of the resulting\n      lines after all line splits are performed) would still be over the\n      line_length limit unless we split this string.\n      AND\n\n    * The target string is NOT a \"pointless\" string (i.e. a string that has\n      no parent or siblings).\n      AND\n\n    * The target string is not followed by an inline comment that appears\n      to be a pragma.\n      AND\n\n    * The target string is not a multiline (i.e. triple-quote) string.",
+            "end_line": 1329,
+            "kind": "class",
+            "name": "BaseStringSplitter",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/trans.py",
+            "qualified_name": "BaseStringSplitter",
+            "signature": "class BaseStringSplitter(StringTransformer)",
+            "start_line": 1069,
+            "symbol_id": "src/black/trans.py#class:BaseStringSplitter:1069"
+          },
+          {
+            "children": [],
+            "documentation": "Yields spans corresponding to expressions in a given f-string.\nSpans are half-open ranges (left inclusive, right exclusive).\nAssumes the input string is a valid f-string, but will not crash if the input\nstring is invalid.",
+            "end_line": 1376,
+            "kind": "function",
+            "name": "iter_fexpr_spans",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/trans.py",
+            "qualified_name": "iter_fexpr_spans",
+            "signature": "def iter_fexpr_spans(s: str) -> Iterator[Tuple[int, int]]",
+            "start_line": 1332,
+            "symbol_id": "src/black/trans.py#function:iter_fexpr_spans:1332"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 1380,
+            "kind": "function",
+            "name": "fstring_contains_expr",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/trans.py",
+            "qualified_name": "fstring_contains_expr",
+            "signature": "def fstring_contains_expr(s: str) -> bool",
+            "start_line": 1379,
+            "symbol_id": "src/black/trans.py#function:fstring_contains_expr:1379"
+          },
+          {
+            "children": [],
+            "documentation": "Toggles quotes used in f-string expressions that are `old_quote`.\n\nf-string expressions can't contain backslashes, so we need to toggle the\nquotes if the f-string itself will end up using the same quote. We can\nsimply toggle without escaping because, quotes can't be reused in f-string\nexpressions. They will fail to parse.\n\nNOTE: If PEP 701 is accepted, above statement will no longer be true.\nThough if quotes can be reused, we can simply reuse them without updates or\nescaping, once Black figures out how to parse the new grammar.",
+            "end_line": 1404,
+            "kind": "function",
+            "name": "_toggle_fexpr_quotes",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/trans.py",
+            "qualified_name": "_toggle_fexpr_quotes",
+            "signature": "def _toggle_fexpr_quotes(fstring: str, old_quote: str) -> str",
+            "start_line": 1383,
+            "symbol_id": "src/black/trans.py#function:_toggle_fexpr_quotes:1383"
+          },
+          {
+            "children": [
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1499,
+                "kind": "method",
+                "name": "do_splitter_match",
+                "parent_id": "src/black/trans.py#class:StringSplitter:1407",
+                "parent_name": "StringSplitter",
+                "path": "src/black/trans.py",
+                "qualified_name": "StringSplitter.do_splitter_match",
+                "signature": "def do_splitter_match(self, line: Line) -> TMatchResult",
+                "start_line": 1447,
+                "symbol_id": "src/black/trans.py#method:StringSplitter.do_splitter_match:1447"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1731,
+                "kind": "method",
+                "name": "do_transform",
+                "parent_id": "src/black/trans.py#class:StringSplitter:1407",
+                "parent_name": "StringSplitter",
+                "path": "src/black/trans.py",
+                "qualified_name": "StringSplitter.do_transform",
+                "signature": "def do_transform(\n        self, line: Line, string_indices: List[int]\n    ) -> Iterator[TResult[Line]]",
+                "start_line": 1501,
+                "symbol_id": "src/black/trans.py#method:StringSplitter.do_transform:1501"
+              },
+              {
+                "children": [],
+                "documentation": "Yields:\n    All ranges of @string which, if @string were to be split there,\n    would result in the splitting of an \\N{...} expression (which is NOT\n    allowed).",
+                "end_line": 1762,
+                "kind": "method",
+                "name": "_iter_nameescape_slices",
+                "parent_id": "src/black/trans.py#class:StringSplitter:1407",
+                "parent_name": "StringSplitter",
+                "path": "src/black/trans.py",
+                "qualified_name": "StringSplitter._iter_nameescape_slices",
+                "signature": "def _iter_nameescape_slices(self, string: str) -> Iterator[Tuple[Index, Index]]",
+                "start_line": 1733,
+                "symbol_id": "src/black/trans.py#method:StringSplitter._iter_nameescape_slices:1733"
+              },
+              {
+                "children": [],
+                "documentation": "Yields:\n    All ranges of @string which, if @string were to be split there,\n    would result in the splitting of an f-expression (which is NOT\n    allowed).",
+                "end_line": 1773,
+                "kind": "method",
+                "name": "_iter_fexpr_slices",
+                "parent_id": "src/black/trans.py#class:StringSplitter:1407",
+                "parent_name": "StringSplitter",
+                "path": "src/black/trans.py",
+                "qualified_name": "StringSplitter._iter_fexpr_slices",
+                "signature": "def _iter_fexpr_slices(self, string: str) -> Iterator[Tuple[Index, Index]]",
+                "start_line": 1764,
+                "symbol_id": "src/black/trans.py#method:StringSplitter._iter_fexpr_slices:1764"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1784,
+                "kind": "method",
+                "name": "_get_illegal_split_indices",
+                "parent_id": "src/black/trans.py#class:StringSplitter:1407",
+                "parent_name": "StringSplitter",
+                "path": "src/black/trans.py",
+                "qualified_name": "StringSplitter._get_illegal_split_indices",
+                "signature": "def _get_illegal_split_indices(self, string: str) -> Set[Index]",
+                "start_line": 1775,
+                "symbol_id": "src/black/trans.py#method:StringSplitter._get_illegal_split_indices:1775"
+              },
+              {
+                "children": [],
+                "documentation": "This method contains the algorithm that StringSplitter uses to\ndetermine which character to split each string at.\n\nArgs:\n    @string: The substring that we are attempting to split.\n    @max_break_idx: The ideal break index. We will return this value if it\n    meets all the necessary conditions. In the likely event that it\n    doesn't we will try to find the closest index BELOW @max_break_idx\n    that does. If that fails, we will expand our search by also\n    considering all valid indices ABOVE @max_break_idx.\n\nPre-Conditions:\n    * assert_is_leaf_string(@string)\n    * 0 <= @max_break_idx < len(@string)\n\nReturns:\n    break_idx, if an index is able to be found that meets all of the\n    conditions listed in the 'Transformations' section of this classes'\n    docstring.\n        OR\n    None, otherwise.",
+                "end_line": 1869,
+                "kind": "method",
+                "name": "_get_break_idx",
+                "parent_id": "src/black/trans.py#class:StringSplitter:1407",
+                "parent_name": "StringSplitter",
+                "path": "src/black/trans.py",
+                "qualified_name": "StringSplitter._get_break_idx",
+                "signature": "def _get_break_idx(self, string: str, max_break_idx: int) -> Optional[int]",
+                "start_line": 1786,
+                "symbol_id": "src/black/trans.py#method:StringSplitter._get_break_idx:1786"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1873,
+                "kind": "method",
+                "name": "_maybe_normalize_string_quotes",
+                "parent_id": "src/black/trans.py#class:StringSplitter:1407",
+                "parent_name": "StringSplitter",
+                "path": "src/black/trans.py",
+                "qualified_name": "StringSplitter._maybe_normalize_string_quotes",
+                "signature": "def _maybe_normalize_string_quotes(self, leaf: Leaf) -> None",
+                "start_line": 1871,
+                "symbol_id": "src/black/trans.py#method:StringSplitter._maybe_normalize_string_quotes:1871"
+              },
+              {
+                "children": [],
+                "documentation": "Pre-Conditions:\n    * assert_is_leaf_string(@string)\n\nReturns:\n    * If @string is an f-string that contains no f-expressions, we\n    return a string identical to @string except that the 'f' prefix\n    has been stripped and all double braces (i.e. '{{' or '}}') have\n    been normalized (i.e. turned into '{' or '}').\n        OR\n    * Otherwise, we return @string.",
+                "end_line": 1900,
+                "kind": "method",
+                "name": "_normalize_f_string",
+                "parent_id": "src/black/trans.py#class:StringSplitter:1407",
+                "parent_name": "StringSplitter",
+                "path": "src/black/trans.py",
+                "qualified_name": "StringSplitter._normalize_f_string",
+                "signature": "def _normalize_f_string(self, string: str, prefix: str) -> str",
+                "start_line": 1875,
+                "symbol_id": "src/black/trans.py#method:StringSplitter._normalize_f_string:1875"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1911,
+                "kind": "method",
+                "name": "_get_string_operator_leaves",
+                "parent_id": "src/black/trans.py#class:StringSplitter:1407",
+                "parent_name": "StringSplitter",
+                "path": "src/black/trans.py",
+                "qualified_name": "StringSplitter._get_string_operator_leaves",
+                "signature": "def _get_string_operator_leaves(self, leaves: Iterable[Leaf]) -> List[Leaf]",
+                "start_line": 1902,
+                "symbol_id": "src/black/trans.py#method:StringSplitter._get_string_operator_leaves:1902"
+              }
+            ],
+            "documentation": "StringTransformer that splits \"atom\" strings (i.e. strings which exist on\nlines by themselves).\n\nRequirements:\n    * The line consists ONLY of a single string (possibly prefixed by a\n      string operator [e.g. '+' or '==']), MAYBE a string trailer, and MAYBE\n      a trailing comma.\n      AND\n    * All of the requirements listed in BaseStringSplitter's docstring.\n\nTransformations:\n    The string mentioned in the 'Requirements' section is split into as\n    many substrings as necessary to adhere to the configured line length.\n\n    In the final set of substrings, no substring should be smaller than\n    MIN_SUBSTR_SIZE characters.\n\n    The string will ONLY be split on spaces (i.e. each new substring should\n    start with a space). Note that the string will NOT be split on a space\n    which is escaped with a backslash.\n\n    If the string is an f-string, it will NOT be split in the middle of an\n    f-expression (e.g. in f\"FooBar: {foo() if x else bar()}\", {foo() if x\n    else bar()} is an f-expression).\n\n    If the string that is being split has an associated set of custom split\n    records and those custom splits will NOT result in any line going over\n    the configured line length, those custom splits are used. Otherwise the\n    string is split as late as possible (from left-to-right) while still\n    adhering to the transformation rules listed above.\n\nCollaborations:\n    StringSplitter relies on StringMerger to construct the appropriate\n    CustomSplit objects and add them to the custom split map.",
+            "end_line": 1911,
+            "kind": "class",
+            "name": "StringSplitter",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/trans.py",
+            "qualified_name": "StringSplitter",
+            "signature": "class StringSplitter(BaseStringSplitter, CustomSplitMapMixin)",
+            "start_line": 1407,
+            "symbol_id": "src/black/trans.py#class:StringSplitter:1407"
+          },
+          {
+            "children": [
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 2008,
+                "kind": "method",
+                "name": "do_splitter_match",
+                "parent_id": "src/black/trans.py#class:StringParenWrapper:1914",
+                "parent_name": "StringParenWrapper",
+                "path": "src/black/trans.py",
+                "qualified_name": "StringParenWrapper.do_splitter_match",
+                "signature": "def do_splitter_match(self, line: Line) -> TMatchResult",
+                "start_line": 1972,
+                "symbol_id": "src/black/trans.py#method:StringParenWrapper.do_splitter_match:1972"
+              }
+            ],
+            "documentation": null,
+            "end_line": 2304,
+            "kind": "class",
+            "name": "StringParenWrapper",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/trans.py",
+            "qualified_name": "StringParenWrapper",
+            "signature": "class StringParenWrapper(BaseStringSplitter, CustomSplitMapMixin)",
+            "start_line": 1914,
+            "symbol_id": "src/black/trans.py#class:StringParenWrapper:1914"
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/black/trans.py#method:StringMerger._merge_string_group:586",
+          "workspace_id": "py_001_ctx16k"
+        },
+        "id": "step-3-tool-1",
+        "isError": false,
+        "name": "get_symbol",
+        "result": {
+          "children": [],
+          "code": "def _merge_string_group(\n        self, line: Line, string_indices: List[int]\n    ) -> TResult[Line]:\n        \"\"\"\n        Merges string groups (i.e. set of adjacent strings).\n\n        Each index from `string_indices` designates one string group's first\n        leaf in `line.leaves`.\n\n        Returns:\n            Ok(new_line), if ALL of the validation checks found in\n            _validate_msg(...) pass.\n                OR\n            Err(CannotTransform), otherwise.\n        \"\"\"\n        LL = line.leaves\n\n        is_valid_index = is_valid_index_factory(LL)\n\n        # A dict of {string_idx: tuple[num_of_strings, string_leaf]}.\n        merged_string_idx_dict: Dict[int, Tuple[int, Leaf]] = {}\n        for string_idx in string_indices:\n            vresult = self._validate_msg(line, string_idx)\n            if isinstance(vresult, Err):\n                continue\n            merged_string_idx_dict[string_idx] = self._merge_one_string_group(\n                LL, string_idx, is_valid_index\n            )\n\n        if not merged_string_idx_dict:\n            return TErr(\"No string group is merged\")\n\n        # Build the final line ('new_line') that this method will later return.\n        new_line = line.clone()\n        previous_merged_string_idx = -1\n        previous_merged_num_of_strings = -1\n        for i, leaf in enumerate(LL):\n            if i in merged_string_idx_dict:\n                previous_merged_string_idx = i\n                previous_merged_num_of_strings, string_leaf = merged_string_idx_dict[i]\n                new_line.append(string_leaf)\n\n            if (\n                previous_merged_string_idx\n                <= i\n                < previous_merged_string_idx + previous_merged_num_of_strings\n            ):\n                for comment_leaf in line.comments_after(LL[i]):\n                    new_line.append(comment_leaf, preformatted=True)\n                continue\n\n            append_leaves(new_line, line, [leaf])\n\n        return Ok(new_line)",
+          "documentation": "Merges string groups (i.e. set of adjacent strings).\n\nEach index from `string_indices` designates one string group's first\nleaf in `line.leaves`.\n\nReturns:\n    Ok(new_line), if ALL of the validation checks found in\n    _validate_msg(...) pass.\n        OR\n    Err(CannotTransform), otherwise.",
+          "end_line": 639,
+          "kind": "method",
+          "name": "_merge_string_group",
+          "parent_id": "src/black/trans.py#class:StringMerger:445",
+          "parent_name": "StringMerger",
+          "path": "src/black/trans.py",
+          "qualified_name": "StringMerger._merge_string_group",
+          "signature": "def _merge_string_group(\n        self, line: Line, string_indices: List[int]\n    ) -> TResult[Line]",
+          "start_line": 586,
+          "symbol_id": "src/black/trans.py#method:StringMerger._merge_string_group:586"
+        }
+      }
+    ]
+  },
+  "trialId": "2636e6188b"
+}

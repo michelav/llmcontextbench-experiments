@@ -1,0 +1,1111 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 808,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-mini",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": null,
+              "workspace_id": "ts_004_ctx8k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 7,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "Retrieves a file from either a remote URL using the Fetch API or from the local file system using the FileSystem API.\nIf the filesystem is available and `env.useCache = true`, the file will be downloaded and cached.\n\n@param {string} path_or_repo_id This can be either:\n- a string, the *model id* of a model repo on huggingface.co.\n- a path to a *directory* potentially containing the file.\n@param {string} filename The name of the file to locate in `path_or_repo`.\n@param {boolean} [fatal=true] Whether to throw an error if the file is not found.\n@param {PretrainedOptions} [options] An object containing optional parameters.\n\n@throws Will throw an error if the file is not found and `fatal` is true.\n@returns {Promise} A Promise that resolves with the file content as a buffer.",
+                "end_line": 562,
+                "kind": "function",
+                "name": "getModelFile",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/hub.js",
+                "qualified_name": "getModelFile",
+                "signature": "async function getModelFile(path_or_repo_id, filename, fatal = true, options = {}) {\n\n    if (!env.allowLocalModels) {\n        // User has disabled local models, so we just make sure other settings are correct.\n\n        if (options.local_files_only) {\n            throw Error(\"Invalid configuration detected: local models are disabled (`env.allowLocalModels=false`) but you have requested to only use local models (`local_files_only=true`).\")\n        } else if (!env.allowRemoteModels) {\n            throw Error(\"Invalid configuration detected: both local and remote models are disabled. Fix by setting `env.allowLocalModels` or `env.allowRemoteModels` to `true`.\")\n        }\n    }\n\n    // Initiate file retrieval\n    dispatchCallback(options.progress_callback, {\n        status: 'initiate',\n        name: path_or_repo_id,\n        file: filename\n    })\n\n    // First, check if the a caching backend is available\n    // If no caching mechanism available, will download the file every time\n    let cache;\n    if (!cache && env.useBrowserCache) {\n        if (typeof caches === 'undefined') {\n            throw Error('Browser cache is not available in this environment.')\n        }\n        try {\n            // In some cases, the browser cache may be visible, but not accessible due to security restrictions.\n            // For example, when running an application in an iframe, if a user attempts to load the page in\n            // incognito mode, the following error is thrown: `DOMException: Failed to execute 'open' on 'CacheStorage':\n            // An attempt was made to break through the security policy of the user agent.`\n            // So, instead of crashing, we just ignore the error and continue without using the cache.\n            cache = await caches.open('transformers-cache');\n        } catch (e) {\n            console.warn('An error occurred while opening the browser cache:', e);\n        }\n    }\n\n    if (!cache && env.useFSCache) {\n        // TODO throw error if not available\n\n        // If `cache_dir` is not specified, use the default cache directory\n        cache = new FileCache(options.cache_dir ?? env.cacheDir);\n    }\n\n    if (!cache && env.useCustomCache) {\n        // Allow the user to specify a custom cache system.\n        if (!env.customCache) {\n            throw Error('`env.useCustomCache=true`, but `env.customCache` is not defined.')\n        }\n\n        // Check that the required methods are defined:\n        if (!env.customCache.match || !env.customCache.put) {\n            throw new Error(\n                \"`env.customCache` must be an object which implements the `match` and `put` functions of the Web Cache API. \" +\n                \"For more information, see https://developer.mozilla.org/en-US/docs/Web/API/Cache\"\n            )\n        }\n        cache = env.customCache;\n    }\n\n    const revision = options.revision ?? 'main';\n\n    let requestURL = pathJoin(path_or_repo_id, filename);\n    let localPath = pathJoin(env.localModelPath, requestURL);\n\n    let remoteURL = pathJoin(\n        env.remoteHost,\n        env.remotePathTemplate\n            .replaceAll('{model}', path_or_repo_id)\n            .replaceAll('{revision}', encodeURIComponent(revision)),\n        filename\n    );\n\n    // Choose cache key for filesystem cache\n    // When using the main revision (default), we use the request URL as the cache key.\n    // If a specific revision is requested, we account for this in the cache key.\n    let fsCacheKey = revision === 'main' ? requestURL : pathJoin(path_or_repo_id, revision, filename);\n\n    /** @type {string} */\n    let cacheKey;\n    let proposedCacheKey = cache instanceof FileCache ? fsCacheKey : remoteURL;\n\n    // Whether to cache the final response in the end.\n    let toCacheResponse = false;\n\n    /** @type {Response|FileResponse|undefined} */\n    let response;\n\n    if (cache) {\n        // A caching system is available, so we try to get the file from it.\n        //  1. We first try to get from cache using the local path. In some environments (like deno),\n        //     non-URL cache keys are not allowed. In these cases, `response` will be undefined.\n        //  2. If no response is found, we try to get from cache using the remote URL or file system cache.\n        response = await tryCache(cache, localPath, proposedCacheKey);\n    }\n\n    const cacheHit = response !== undefined;\n\n    if (response === undefined) {\n        // Caching not available, or file is not cached, so we perform the request\n\n        if (env.allowLocalModels) {\n            // Accessing local models is enabled, so we try to get the file locally.\n            // If request is a valid HTTP URL, we skip the local file check. Otherwise, we try to get the file locally.\n            const isURL = isValidHttpUrl(requestURL);\n            if (!isURL) {\n                try {\n                    response = await getFile(localPath);\n                    cacheKey = localPath; // Update the cache key to be the local path\n                } catch (e) {\n                    // Something went wrong while trying to get the file locally.\n                    // NOTE: error handling is done in the next step (since `response` will be undefined)\n                    console.warn(`Unable to load from local path \"${localPath}\": \"${e}\"`);\n                }\n            } else if (options.local_files_only) {\n                throw new Error(`\\`local_files_only=true\\`, but attempted to load a remote file from: ${requestURL}.`);\n            } else if (!env.allowRemoteModels) {\n                throw new Error(`\\`env.allowRemoteModels=false\\`, but attempted to load a remote file from: ${requestURL}.`);\n            }\n        }\n\n        if (response === undefined || response.status === 404) {\n            // File not found locally. This means either:\n            // - The user has disabled local file access (`env.allowLocalModels=false`)\n            // - the path is a valid HTTP url (`response === undefined`)\n            // - the path is not a valid HTTP url and the file is not present on the file system or local server (`response.status === 404`)\n\n            if (options.local_files_only || !env.allowRemoteModels) {\n                // User requested local files only, but the file is not found locally.\n                if (fatal) {\n                    throw Error(`\\`local_files_only=true\\` or \\`env.allowRemoteModels=false\\` and file was not found locally at \"${localPath}\".`);\n                } else {\n                    // File not found, but this file is optional.\n                    // TODO in future, cache the response?\n                    return null;\n                }\n            }\n\n            // File not found locally, so we try to download it from the remote server\n            response = await getFile(remoteURL);\n\n            if (response.status !== 200) {\n                return handleError(response.status, remoteURL, fatal);\n            }\n\n            // Success! We use the proposed cache key from earlier\n            cacheKey = proposedCacheKey;\n        }\n\n        // Only cache the response if:\n        toCacheResponse =\n            cache                              // 1. A caching system is available\n            && typeof Response !== 'undefined' // 2. `Response` is defined (i.e., we are in a browser-like environment)\n            && response instanceof Response    // 3. result is a `Response` object (i.e., not a `FileResponse`)\n            && response.status === 200         // 4. request was successful (status code 200)\n    }\n\n    // Start downloading\n    dispatchCallback(options.progress_callback, {\n        status: 'download',\n        name: path_or_repo_id,\n        file: filename\n    })\n\n    const progressInfo = {\n        status: 'progress',\n        name: path_or_repo_id,\n        file: filename\n    }\n\n    /** @type {Uint8Array} */\n    let buffer;\n\n    if (!options.progress_callback) {\n        // If no progress callback is specified, we can use the `.arrayBuffer()`\n        // method to read the response.\n        buffer = new Uint8Array(await response.arrayBuffer());\n\n    } else if (\n        cacheHit // The item is being read from the cache\n        &&\n        typeof navigator !== 'undefined' && /firefox/i.test(navigator.userAgent) // We are in Firefox\n    ) {\n        // Due to bug in Firefox, we cannot display progress when loading from cache.\n        // Fortunately, since this should be instantaneous, this should not impact users too much.\n        buffer = new Uint8Array(await response.arrayBuffer());\n\n        // For completeness, we still fire the final progress callback\n        dispatchCallback(options.progress_callback, {\n            ...progressInfo,\n            progress: 100,\n            loaded: buffer.length,\n            total: buffer.length,\n        })\n    } else {\n        buffer = await readResponse(response, data => {\n            dispatchCallback(options.progress_callback, {\n                ...progressInfo,\n                ...data,\n            })\n        })\n    }\n\n    if (\n        // Only cache web responses\n        // i.e., do not cache FileResponses (prevents duplication)\n        toCacheResponse && cacheKey\n        &&\n        // Check again whether request is in cache. If not, we add the response to the cache\n        (await cache.match(cacheKey) === undefined)\n    ) {\n        // NOTE: We use `new Response(buffer, ...)` instead of `response.clone()` to handle LFS files\n        await cache.put(cacheKey, new Response(buffer, {\n            headers: response.headers\n        }))\n            .catch(err => {\n                // Do not crash if unable to add to cache (e.g., QuotaExceededError).\n                // Rather, log a warning and proceed with execution.\n                console.warn(`Unable to add response to browser cache: ${err}.`);\n            });\n\n    }\n\n    dispatchCallback(options.progress_callback, {\n        status: 'done',\n        name: path_or_repo_id,\n        file: filename\n    });\n\n    return buffer;\n}",
+                "start_line": 331,
+                "symbol_id": "src/utils/hub.js#function:getModelFile:331"
+              },
+              {
+                "children": [],
+                "documentation": "Fetches a JSON file from a given path and file name.\n\n@param {string} modelPath The path to the directory containing the file.\n@param {string} fileName The name of the file to fetch.\n@param {boolean} [fatal=true] Whether to throw an error if the file is not found.\n@param {PretrainedOptions} [options] An object containing optional parameters.\n@returns {Promise<Object>} The JSON data parsed into a JavaScript object.\n@throws Will throw an error if the file is not found and `fatal` is true.",
+                "end_line": 585,
+                "kind": "function",
+                "name": "getModelJSON",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/hub.js",
+                "qualified_name": "getModelJSON",
+                "signature": "async function getModelJSON(modelPath, fileName, fatal = true, options = {}) {\n    let buffer = await getModelFile(modelPath, fileName, fatal, options);\n    if (buffer === null) {\n        // Return empty object\n        return {}\n    }\n\n    let decoder = new TextDecoder('utf-8');\n    let jsonData = decoder.decode(buffer);\n\n    return JSON.parse(jsonData);\n}",
+                "start_line": 574,
+                "symbol_id": "src/utils/hub.js#function:getModelJSON:574"
+              },
+              {
+                "children": [],
+                "documentation": "Read and track progress when reading a Response object\n\n@param {any} response The Response object to read\n@param {function} progress_callback The function to call with progress updates\n@returns {Promise<Uint8Array>} A Promise that resolves with the Uint8Array buffer",
+                "end_line": 641,
+                "kind": "function",
+                "name": "readResponse",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/hub.js",
+                "qualified_name": "readResponse",
+                "signature": "async function readResponse(response, progress_callback) {\n\n    const contentLength = response.headers.get('Content-Length');\n    if (contentLength === null) {\n        console.warn('Unable to determine content-length from response headers. Will expand buffer when needed.')\n    }\n    let total = parseInt(contentLength ?? '0');\n    let buffer = new Uint8Array(total);\n    let loaded = 0;\n\n    const reader = response.body.getReader();\n    async function read() {\n        const { done, value } = await reader.read();\n        if (done) return;\n\n        let newLoaded = loaded + value.length;\n        if (newLoaded > total) {\n            total = newLoaded;\n\n            // Adding the new data will overflow buffer.\n            // In this case, we extend the buffer\n            let newBuffer = new Uint8Array(total);\n\n            // copy contents\n            newBuffer.set(buffer);\n\n            buffer = newBuffer;\n        }\n        buffer.set(value, loaded)\n        loaded = newLoaded;\n\n        const progress = (loaded / total) * 100;\n\n        // Call your function here\n        progress_callback({\n            progress: progress,\n            loaded: loaded,\n            total: total,\n        })\n\n        return read();\n    }\n\n    // Actually read\n    await read();\n\n    return buffer;\n}",
+                "start_line": 594,
+                "symbol_id": "src/utils/hub.js#function:readResponse:594"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 635,
+                "kind": "function",
+                "name": "read",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/hub.js",
+                "qualified_name": "read",
+                "signature": "async function read() {\n        const { done, value } = await reader.read();\n        if (done) return;\n\n        let newLoaded = loaded + value.length;\n        if (newLoaded > total) {\n            total = newLoaded;\n\n            // Adding the new data will overflow buffer.\n            // In this case, we extend the buffer\n            let newBuffer = new Uint8Array(total);\n\n            // copy contents\n            newBuffer.set(buffer);\n\n            buffer = newBuffer;\n        }\n        buffer.set(value, loaded)\n        loaded = newLoaded;\n\n        const progress = (loaded / total) * 100;\n\n        // Call your function here\n        progress_callback({\n            progress: progress,\n            loaded: loaded,\n            total: total,\n        })\n\n        return read();\n    }",
+                "start_line": 605,
+                "symbol_id": "src/utils/hub.js#function:read:605"
+              },
+              {
+                "children": [],
+                "documentation": "Joins multiple parts of a path into a single path, while handling leading and trailing slashes.\n\n@param {...string} parts Multiple parts of a path.\n@returns {string} A string representing the joined path.",
+                "end_line": 661,
+                "kind": "function",
+                "name": "pathJoin",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/hub.js",
+                "qualified_name": "pathJoin",
+                "signature": "function pathJoin(...parts) {\n    // https://stackoverflow.com/a/55142565\n    parts = parts.map((part, index) => {\n        if (index) {\n            part = part.replace(new RegExp('^/'), '');\n        }\n        if (index !== parts.length - 1) {\n            part = part.replace(new RegExp('/$'), '');\n        }\n        return part;\n    })\n    return parts.join('/');\n}",
+                "start_line": 649,
+                "symbol_id": "src/utils/hub.js#function:pathJoin:649"
+              },
+              {
+                "children": [],
+                "documentation": "Loads a config from the specified path.\n@param {string} pretrained_model_name_or_path The path to the config directory.\n@param {PretrainedOptions} options Additional options for loading the config.\n@returns {Promise<Array>} A promise that resolves with information about the loaded config.",
+                "end_line": 48,
+                "kind": "function",
+                "name": "loadConfig",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/configs.js",
+                "qualified_name": "loadConfig",
+                "signature": "async function loadConfig(pretrained_model_name_or_path, options) {\n    let info = await getModelJSON(pretrained_model_name_or_path, 'config.json', true, options);\n    return info;\n}",
+                "start_line": 45,
+                "symbol_id": "src/configs.js#function:loadConfig:45"
+              },
+              {
+                "children": [],
+                "documentation": "Create a new PreTrainedTokenizer instance.\n@param {Object} configJSON The JSON of the config.",
+                "end_line": 66,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/configs.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(configJSON) {\n        this.model_type = null;\n        this.is_encoder_decoder = false;\n\n        Object.assign(this, configJSON);\n    }",
+                "start_line": 61,
+                "symbol_id": "src/configs.js#method:constructor:61"
+              },
+              {
+                "children": [],
+                "documentation": "Loads a pre-trained config from the given `pretrained_model_name_or_path`.\n\n@param {string} pretrained_model_name_or_path The path to the pre-trained config.\n@param {PretrainedOptions} options Additional options for loading the config.\n@throws {Error} Throws an error if the config.json is not found in the `pretrained_model_name_or_path`.\n\n@returns {Promise<PretrainedConfig>} A new instance of the `PretrainedConfig` class.",
+                "end_line": 93,
+                "kind": "method",
+                "name": "from_pretrained",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/configs.js",
+                "qualified_name": "from_pretrained",
+                "signature": "static async from_pretrained(pretrained_model_name_or_path, {\n        progress_callback = null,\n        config = null,\n        cache_dir = null,\n        local_files_only = false,\n        revision = 'main',\n    } = {}) {\n\n        let data = config ?? await loadConfig(pretrained_model_name_or_path, {\n            progress_callback,\n            config,\n            cache_dir,\n            local_files_only,\n            revision,\n        })\n        return new this(data);\n    }",
+                "start_line": 77,
+                "symbol_id": "src/configs.js#method:from_pretrained:77"
+              },
+              {
+                "children": [],
+                "documentation": "@type {PretrainedConfig.from_pretrained}",
+                "end_line": 106,
+                "kind": "method",
+                "name": "from_pretrained",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/configs.js",
+                "qualified_name": "from_pretrained",
+                "signature": "static async from_pretrained(...args) {\n        return PretrainedConfig.from_pretrained(...args);\n    }",
+                "start_line": 104,
+                "symbol_id": "src/configs.js#method:from_pretrained:104"
+              },
+              {
+                "children": [],
+                "documentation": "@param {TypedArray} input",
+                "end_line": 87,
+                "kind": "function",
+                "name": "interpolate_data",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/maths.js",
+                "qualified_name": "interpolate_data",
+                "signature": "function interpolate_data(input, [in_channels, in_height, in_width], [out_height, out_width], mode = 'bilinear', align_corners = false) {\n    // TODO use mode and align_corners\n\n    // Output image dimensions\n    const x_scale = out_width / in_width;\n    const y_scale = out_height / in_height;\n\n    // Output image\n    // @ts-ignore\n    const out_img = new input.constructor(out_height * out_width * in_channels);\n\n    // Pre-calculate strides\n    const inStride = in_height * in_width;\n    const outStride = out_height * out_width;\n\n    for (let i = 0; i < out_height; ++i) {\n        for (let j = 0; j < out_width; ++j) {\n            // Calculate output offset\n            const outOffset = i * out_width + j;\n\n            // Calculate input pixel coordinates\n            const x = (j + 0.5) / x_scale - 0.5;\n            const y = (i + 0.5) / y_scale - 0.5;\n\n            // Calculate the four nearest input pixels\n            // We also check if the input pixel coordinates are within the image bounds\n            let x1 = Math.floor(x);\n            let y1 = Math.floor(y);\n            const x2 = Math.min(x1 + 1, in_width - 1);\n            const y2 = Math.min(y1 + 1, in_height - 1);\n\n            x1 = Math.max(x1, 0);\n            y1 = Math.max(y1, 0);\n\n\n            // Calculate the fractional distances between the input pixel and the four nearest pixels\n            const s = x - x1;\n            const t = y - y1;\n\n            // Perform bilinear interpolation\n            const w1 = (1 - s) * (1 - t);\n            const w2 = s * (1 - t);\n            const w3 = (1 - s) * t;\n            const w4 = s * t;\n\n            // Calculate the four nearest input pixel indices\n            const yStride = y1 * in_width;\n            const xStride = y2 * in_width;\n            const idx1 = yStride + x1;\n            const idx2 = yStride + x2;\n            const idx3 = xStride + x1;\n            const idx4 = xStride + x2;\n\n            for (let k = 0; k < in_channels; ++k) {\n                // Calculate channel offset\n                const cOffset = k * inStride;\n\n                out_img[k * outStride + outOffset] =\n                    w1 * input[cOffset + idx1] +\n                    w2 * input[cOffset + idx2] +\n                    w3 * input[cOffset + idx3] +\n                    w4 * input[cOffset + idx4];\n            }\n        }\n    }\n\n    return out_img;\n}",
+                "start_line": 20,
+                "symbol_id": "src/utils/maths.js#function:interpolate_data:20"
+              },
+              {
+                "children": [],
+                "documentation": "Helper method to permute a `AnyTypedArray` directly\n@template {AnyTypedArray} T\n@param {T} array\n@param {number[]} dims\n@param {number[]} axes\n@returns {[T, number[]]} The permuted array and the new shape.",
+                "end_line": 128,
+                "kind": "function",
+                "name": "permute_data",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/maths.js",
+                "qualified_name": "permute_data",
+                "signature": "function permute_data(array, dims, axes) {\n    // Calculate the new shape of the permuted array\n    // and the stride of the original array\n    const shape = new Array(axes.length);\n    const stride = new Array(axes.length);\n\n    for (let i = axes.length - 1, s = 1; i >= 0; --i) {\n        stride[i] = s;\n        shape[i] = dims[axes[i]];\n        s *= shape[i];\n    }\n\n    // Precompute inverse mapping of stride\n    const invStride = axes.map((_, i) => stride[axes.indexOf(i)]);\n\n    // Create the permuted array with the new shape\n    // @ts-ignore\n    const permutedData = new array.constructor(array.length);\n\n    // Permute the original array to the new array\n    for (let i = 0; i < array.length; ++i) {\n        let newIndex = 0;\n        for (let j = dims.length - 1, k = i; j >= 0; --j) {\n            newIndex += (k % dims[j]) * invStride[j];\n            k = Math.floor(k / dims[j]);\n        }\n        permutedData[newIndex] = array[i];\n    }\n\n    return [permutedData, shape];\n}",
+                "start_line": 98,
+                "symbol_id": "src/utils/maths.js#function:permute_data:98"
+              },
+              {
+                "children": [],
+                "documentation": "Compute the softmax of an array of numbers.\n@template {TypedArray|number[]} T\n@param {T} arr The array of numbers to compute the softmax of.\n@returns {T} The softmax array.",
+                "end_line": 152,
+                "kind": "function",
+                "name": "softmax",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/maths.js",
+                "qualified_name": "softmax",
+                "signature": "function softmax(arr) {\n    // Compute the maximum value in the array\n    const maxVal = max(arr)[0];\n\n    // Compute the exponentials of the array values\n    const exps = arr.map(x => Math.exp(x - maxVal));\n\n    // Compute the sum of the exponentials\n    // @ts-ignore\n    const sumExps = exps.reduce((acc, val) => acc + val, 0);\n\n    // Compute the softmax values\n    const softmaxArr = exps.map(x => x / sumExps);\n\n    return /** @type {T} */(softmaxArr);\n}",
+                "start_line": 137,
+                "symbol_id": "src/utils/maths.js#function:softmax:137"
+              },
+              {
+                "children": [],
+                "documentation": "Calculates the logarithm of the softmax function for the input array.\n@template {TypedArray|number[]} T\n@param {T} arr The input array to calculate the log_softmax function for.\n@returns {T} The resulting log_softmax array.",
+                "end_line": 168,
+                "kind": "function",
+                "name": "log_softmax",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/maths.js",
+                "qualified_name": "log_softmax",
+                "signature": "function log_softmax(arr) {\n    // Compute the softmax values\n    const softmaxArr = softmax(arr);\n\n    // Apply log formula to each element\n    const logSoftmaxArr = softmaxArr.map(x => Math.log(x));\n\n    return /** @type {T} */(logSoftmaxArr);\n}",
+                "start_line": 160,
+                "symbol_id": "src/utils/maths.js#function:log_softmax:160"
+              },
+              {
+                "children": [],
+                "documentation": "Calculates the dot product of two arrays.\n@param {number[]} arr1 The first array.\n@param {number[]} arr2 The second array.\n@returns {number} The dot product of arr1 and arr2.",
+                "end_line": 182,
+                "kind": "function",
+                "name": "dot",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/maths.js",
+                "qualified_name": "dot",
+                "signature": "function dot(arr1, arr2) {\n    let result = 0;\n    for (let i = 0; i < arr1.length; ++i) {\n        result += arr1[i] * arr2[i];\n    }\n    return result;\n}",
+                "start_line": 176,
+                "symbol_id": "src/utils/maths.js#function:dot:176"
+              },
+              {
+                "children": [],
+                "documentation": "Get the top k items from an iterable, sorted by descending order\n@param {any[]|TypedArray} items The items to be sorted\n@param {number|null} [top_k=0] The number of top items to return (default: 0 = return all)\n@returns {[number, any][]} The top k items, sorted by descending order",
+                "end_line": 203,
+                "kind": "function",
+                "name": "getTopItems",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/maths.js",
+                "qualified_name": "getTopItems",
+                "signature": "function getTopItems(items, top_k = 0) {\n    // if top == 0, return all\n\n    items = Array.from(items)\n        .map((x, i) => [i, x])            // Get indices ([index, score])\n        .sort((a, b) => b[1] - a[1])      // Sort by log probabilities\n\n    if (top_k !== null && top_k > 0) {\n        items = items.slice(0, top_k);    // Get top k items\n    }\n\n    return items\n}",
+                "start_line": 191,
+                "symbol_id": "src/utils/maths.js#function:getTopItems:191"
+              },
+              {
+                "children": [],
+                "documentation": "Computes the cosine similarity between two arrays.\n\n@param {number[]} arr1 The first array.\n@param {number[]} arr2 The second array.\n@returns {number} The cosine similarity between the two arrays.",
+                "end_line": 226,
+                "kind": "function",
+                "name": "cos_sim",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/maths.js",
+                "qualified_name": "cos_sim",
+                "signature": "function cos_sim(arr1, arr2) {\n    // Calculate dot product of the two arrays\n    const dotProduct = dot(arr1, arr2);\n\n    // Calculate the magnitude of the first array\n    const magnitudeA = magnitude(arr1);\n\n    // Calculate the magnitude of the second array\n    const magnitudeB = magnitude(arr2);\n\n    // Calculate the cosine similarity\n    const cosineSimilarity = dotProduct / (magnitudeA * magnitudeB);\n\n    return cosineSimilarity;\n}",
+                "start_line": 212,
+                "symbol_id": "src/utils/maths.js#function:cos_sim:212"
+              },
+              {
+                "children": [],
+                "documentation": "Calculates the magnitude of a given array.\n@param {number[]} arr The array to calculate the magnitude of.\n@returns {number} The magnitude of the array.",
+                "end_line": 235,
+                "kind": "function",
+                "name": "magnitude",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/maths.js",
+                "qualified_name": "magnitude",
+                "signature": "function magnitude(arr) {\n    return Math.sqrt(arr.reduce((acc, val) => acc + val * val, 0));\n}",
+                "start_line": 233,
+                "symbol_id": "src/utils/maths.js#function:magnitude:233"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the value and index of the minimum element in an array.\n@param {number[]|TypedArray} arr array of numbers.\n@returns {number[]} the value and index of the minimum element, of the form: [valueOfMin, indexOfMin]\n@throws {Error} If array is empty.",
+                "end_line": 255,
+                "kind": "function",
+                "name": "min",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/maths.js",
+                "qualified_name": "min",
+                "signature": "function min(arr) {\n    if (arr.length === 0) throw Error('Array must not be empty');\n    let min = arr[0];\n    let indexOfMin = 0;\n    for (let i = 1; i < arr.length; ++i) {\n        if (arr[i] < min) {\n            min = arr[i];\n            indexOfMin = i;\n        }\n    }\n    return [min, indexOfMin];\n}",
+                "start_line": 244,
+                "symbol_id": "src/utils/maths.js#function:min:244"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the value and index of the maximum element in an array.\n@param {number[]|AnyTypedArray} arr array of numbers.\n@returns {[number, number]} the value and index of the maximum element, of the form: [valueOfMax, indexOfMax]\n@throws {Error} If array is empty.",
+                "end_line": 275,
+                "kind": "function",
+                "name": "max",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/maths.js",
+                "qualified_name": "max",
+                "signature": "function max(arr) {\n    if (arr.length === 0) throw Error('Array must not be empty');\n    let max = arr[0];\n    let indexOfMax = 0;\n    for (let i = 1; i < arr.length; ++i) {\n        if (arr[i] > max) {\n            max = arr[i];\n            indexOfMax = i;\n        }\n    }\n    return [Number(max), indexOfMax];\n}",
+                "start_line": 264,
+                "symbol_id": "src/utils/maths.js#function:max:264"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 280,
+                "kind": "function",
+                "name": "isPowerOfTwo",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/maths.js",
+                "qualified_name": "isPowerOfTwo",
+                "signature": "function isPowerOfTwo(number) {\n    // Check if the number is greater than 0 and has only one bit set to 1\n    return (number > 0) && ((number & (number - 1)) === 0);\n}",
+                "start_line": 277,
+                "symbol_id": "src/utils/maths.js#function:isPowerOfTwo:277"
+              },
+              {
+                "children": [],
+                "documentation": "@param {number} size The size of the input array. Must be a power of two larger than 1.\n@throws {Error} FFT size must be a power of two larger than 1.",
+                "end_line": 327,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/maths.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(size) {\n        this.size = size | 0; // convert to a 32-bit signed integer\n        if (this.size <= 1 || !isPowerOfTwo(this.size))\n            throw new Error('FFT size must be a power of two larger than 1');\n\n        this._csize = size << 1;\n\n        this.table = new Float64Array(this.size * 2);\n        for (let i = 0; i < this.table.length; i += 2) {\n            const angle = Math.PI * i / this.size;\n            this.table[i] = Math.cos(angle);\n            this.table[i + 1] = -Math.sin(angle);\n        }\n\n        // Find size's power of two\n        let power = 0;\n        for (let t = 1; this.size > t; t <<= 1)\n            ++power;\n\n        // Calculate initial step's width:\n        //   * If we are full radix-4, it is 2x smaller to give inital len=8\n        //   * Otherwise it is the same as `power` to give len=4\n        this._width = power % 2 === 0 ? power - 1 : power;\n\n        // Pre-compute bit-reversal patterns\n        this._bitrev = new Int32Array(1 << this._width);\n        for (let j = 0; j < this._bitrev.length; ++j) {\n            this._bitrev[j] = 0;\n            for (let shift = 0; shift < this._width; shift += 2) {\n                const revShift = this._width - shift - 2;\n                this._bitrev[j] |= ((j >>> shift) & 3) << revShift;\n            }\n        }\n    }",
+                "start_line": 294,
+                "symbol_id": "src/utils/maths.js#method:constructor:294"
+              }
+            ],
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": null,
+                "workspace_id": "ts_004_ctx8k"
+              },
+              "durationMs": 7,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "list_symbols",
+              "transport": "in_memory"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1558,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-mini",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 2389,
+          "metadata": {},
+          "name": "strategy.local_mcp.execute",
+          "type": "strategy.local_mcp.execute"
+        },
+        {
+          "duration_ms": 2389,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 23,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": 0,
+        "cachedInputTokens": 0,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 1,
+        "inputTokens": 9626,
+        "loopControlDurationMsEstimated": 16,
+        "mcpToolCalls": 1,
+        "modelCalls": 2,
+        "modelDurationMs": 2366,
+        "outputTokens": 125,
+        "promptChars": 1247,
+        "questionTokensEstimated": 185,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 0,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 2,
+        "strategyDurationMs": 2389,
+        "taskStatementChars": 1077,
+        "toolCalls": 1,
+        "toolDurationMs": 7,
+        "totalDurationMs": 2389,
+        "totalTokens": 9751,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779731232.0,
+        "conversation": null,
+        "created_at": 1779731232.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_020bd06df2c35053006a148b203c108192bd606a946abf5609",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "ae55e55c55"
+        },
+        "model": "gpt-5.4-mini-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "arguments": "{\"workspace_id\":\"ts_004_ctx8k\",\"path\":null,\"kind\":\"function\"}",
+            "call_id": "call_aw8PYVcxcB8FiTZ3zP6o8JSH",
+            "id": "fc_020bd06df2c35053006a148b208b708192a6dbebe1ee2d4fdf",
+            "name": "list_symbols",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 560,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 32,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 592
+        },
+        "user": null
+      },
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779731234.0,
+        "conversation": null,
+        "created_at": 1779731233.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_020bd06df2c35053006a148b2117308192a21fb4aba5192abd",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "ae55e55c55"
+        },
+        "model": "gpt-5.4-mini-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "logprobs": [],
+                "text": "```js\nasync function getModelJSON(modelPath, fileName, fatal = true, options = {}) {\n    let buffer = await getModelFile(modelPath, fileName, fatal, options);\n    if (buffer === null) {\n        // Return empty object\n        return {}\n    }\n\n    let decoder = new TextDecoder('utf-8');\n    let jsonData = decoder.decode(buffer);\n\n    return JSON.parse(jsonData);\n}\n```",
+                "type": "output_text"
+              }
+            ],
+            "id": "msg_020bd06df2c35053006a148b218dcc81929c9e18592573cda8",
+            "phase": "final_answer",
+            "role": "assistant",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 9066,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 93,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 9159
+        },
+        "user": null
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "kind": "function",
+          "path": null,
+          "workspace_id": "ts_004_ctx8k"
+        },
+        "durationMs": 7,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "list_symbols",
+        "transport": "in_memory"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "kind": "function",
+          "path": null,
+          "workspace_id": "ts_004_ctx8k"
+        },
+        "id": "call_aw8PYVcxcB8FiTZ3zP6o8JSH",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "Retrieves a file from either a remote URL using the Fetch API or from the local file system using the FileSystem API.\nIf the filesystem is available and `env.useCache = true`, the file will be downloaded and cached.\n\n@param {string} path_or_repo_id This can be either:\n- a string, the *model id* of a model repo on huggingface.co.\n- a path to a *directory* potentially containing the file.\n@param {string} filename The name of the file to locate in `path_or_repo`.\n@param {boolean} [fatal=true] Whether to throw an error if the file is not found.\n@param {PretrainedOptions} [options] An object containing optional parameters.\n\n@throws Will throw an error if the file is not found and `fatal` is true.\n@returns {Promise} A Promise that resolves with the file content as a buffer.",
+            "end_line": 562,
+            "kind": "function",
+            "name": "getModelFile",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/hub.js",
+            "qualified_name": "getModelFile",
+            "signature": "async function getModelFile(path_or_repo_id, filename, fatal = true, options = {}) {\n\n    if (!env.allowLocalModels) {\n        // User has disabled local models, so we just make sure other settings are correct.\n\n        if (options.local_files_only) {\n            throw Error(\"Invalid configuration detected: local models are disabled (`env.allowLocalModels=false`) but you have requested to only use local models (`local_files_only=true`).\")\n        } else if (!env.allowRemoteModels) {\n            throw Error(\"Invalid configuration detected: both local and remote models are disabled. Fix by setting `env.allowLocalModels` or `env.allowRemoteModels` to `true`.\")\n        }\n    }\n\n    // Initiate file retrieval\n    dispatchCallback(options.progress_callback, {\n        status: 'initiate',\n        name: path_or_repo_id,\n        file: filename\n    })\n\n    // First, check if the a caching backend is available\n    // If no caching mechanism available, will download the file every time\n    let cache;\n    if (!cache && env.useBrowserCache) {\n        if (typeof caches === 'undefined') {\n            throw Error('Browser cache is not available in this environment.')\n        }\n        try {\n            // In some cases, the browser cache may be visible, but not accessible due to security restrictions.\n            // For example, when running an application in an iframe, if a user attempts to load the page in\n            // incognito mode, the following error is thrown: `DOMException: Failed to execute 'open' on 'CacheStorage':\n            // An attempt was made to break through the security policy of the user agent.`\n            // So, instead of crashing, we just ignore the error and continue without using the cache.\n            cache = await caches.open('transformers-cache');\n        } catch (e) {\n            console.warn('An error occurred while opening the browser cache:', e);\n        }\n    }\n\n    if (!cache && env.useFSCache) {\n        // TODO throw error if not available\n\n        // If `cache_dir` is not specified, use the default cache directory\n        cache = new FileCache(options.cache_dir ?? env.cacheDir);\n    }\n\n    if (!cache && env.useCustomCache) {\n        // Allow the user to specify a custom cache system.\n        if (!env.customCache) {\n            throw Error('`env.useCustomCache=true`, but `env.customCache` is not defined.')\n        }\n\n        // Check that the required methods are defined:\n        if (!env.customCache.match || !env.customCache.put) {\n            throw new Error(\n                \"`env.customCache` must be an object which implements the `match` and `put` functions of the Web Cache API. \" +\n                \"For more information, see https://developer.mozilla.org/en-US/docs/Web/API/Cache\"\n            )\n        }\n        cache = env.customCache;\n    }\n\n    const revision = options.revision ?? 'main';\n\n    let requestURL = pathJoin(path_or_repo_id, filename);\n    let localPath = pathJoin(env.localModelPath, requestURL);\n\n    let remoteURL = pathJoin(\n        env.remoteHost,\n        env.remotePathTemplate\n            .replaceAll('{model}', path_or_repo_id)\n            .replaceAll('{revision}', encodeURIComponent(revision)),\n        filename\n    );\n\n    // Choose cache key for filesystem cache\n    // When using the main revision (default), we use the request URL as the cache key.\n    // If a specific revision is requested, we account for this in the cache key.\n    let fsCacheKey = revision === 'main' ? requestURL : pathJoin(path_or_repo_id, revision, filename);\n\n    /** @type {string} */\n    let cacheKey;\n    let proposedCacheKey = cache instanceof FileCache ? fsCacheKey : remoteURL;\n\n    // Whether to cache the final response in the end.\n    let toCacheResponse = false;\n\n    /** @type {Response|FileResponse|undefined} */\n    let response;\n\n    if (cache) {\n        // A caching system is available, so we try to get the file from it.\n        //  1. We first try to get from cache using the local path. In some environments (like deno),\n        //     non-URL cache keys are not allowed. In these cases, `response` will be undefined.\n        //  2. If no response is found, we try to get from cache using the remote URL or file system cache.\n        response = await tryCache(cache, localPath, proposedCacheKey);\n    }\n\n    const cacheHit = response !== undefined;\n\n    if (response === undefined) {\n        // Caching not available, or file is not cached, so we perform the request\n\n        if (env.allowLocalModels) {\n            // Accessing local models is enabled, so we try to get the file locally.\n            // If request is a valid HTTP URL, we skip the local file check. Otherwise, we try to get the file locally.\n            const isURL = isValidHttpUrl(requestURL);\n            if (!isURL) {\n                try {\n                    response = await getFile(localPath);\n                    cacheKey = localPath; // Update the cache key to be the local path\n                } catch (e) {\n                    // Something went wrong while trying to get the file locally.\n                    // NOTE: error handling is done in the next step (since `response` will be undefined)\n                    console.warn(`Unable to load from local path \"${localPath}\": \"${e}\"`);\n                }\n            } else if (options.local_files_only) {\n                throw new Error(`\\`local_files_only=true\\`, but attempted to load a remote file from: ${requestURL}.`);\n            } else if (!env.allowRemoteModels) {\n                throw new Error(`\\`env.allowRemoteModels=false\\`, but attempted to load a remote file from: ${requestURL}.`);\n            }\n        }\n\n        if (response === undefined || response.status === 404) {\n            // File not found locally. This means either:\n            // - The user has disabled local file access (`env.allowLocalModels=false`)\n            // - the path is a valid HTTP url (`response === undefined`)\n            // - the path is not a valid HTTP url and the file is not present on the file system or local server (`response.status === 404`)\n\n            if (options.local_files_only || !env.allowRemoteModels) {\n                // User requested local files only, but the file is not found locally.\n                if (fatal) {\n                    throw Error(`\\`local_files_only=true\\` or \\`env.allowRemoteModels=false\\` and file was not found locally at \"${localPath}\".`);\n                } else {\n                    // File not found, but this file is optional.\n                    // TODO in future, cache the response?\n                    return null;\n                }\n            }\n\n            // File not found locally, so we try to download it from the remote server\n            response = await getFile(remoteURL);\n\n            if (response.status !== 200) {\n                return handleError(response.status, remoteURL, fatal);\n            }\n\n            // Success! We use the proposed cache key from earlier\n            cacheKey = proposedCacheKey;\n        }\n\n        // Only cache the response if:\n        toCacheResponse =\n            cache                              // 1. A caching system is available\n            && typeof Response !== 'undefined' // 2. `Response` is defined (i.e., we are in a browser-like environment)\n            && response instanceof Response    // 3. result is a `Response` object (i.e., not a `FileResponse`)\n            && response.status === 200         // 4. request was successful (status code 200)\n    }\n\n    // Start downloading\n    dispatchCallback(options.progress_callback, {\n        status: 'download',\n        name: path_or_repo_id,\n        file: filename\n    })\n\n    const progressInfo = {\n        status: 'progress',\n        name: path_or_repo_id,\n        file: filename\n    }\n\n    /** @type {Uint8Array} */\n    let buffer;\n\n    if (!options.progress_callback) {\n        // If no progress callback is specified, we can use the `.arrayBuffer()`\n        // method to read the response.\n        buffer = new Uint8Array(await response.arrayBuffer());\n\n    } else if (\n        cacheHit // The item is being read from the cache\n        &&\n        typeof navigator !== 'undefined' && /firefox/i.test(navigator.userAgent) // We are in Firefox\n    ) {\n        // Due to bug in Firefox, we cannot display progress when loading from cache.\n        // Fortunately, since this should be instantaneous, this should not impact users too much.\n        buffer = new Uint8Array(await response.arrayBuffer());\n\n        // For completeness, we still fire the final progress callback\n        dispatchCallback(options.progress_callback, {\n            ...progressInfo,\n            progress: 100,\n            loaded: buffer.length,\n            total: buffer.length,\n        })\n    } else {\n        buffer = await readResponse(response, data => {\n            dispatchCallback(options.progress_callback, {\n                ...progressInfo,\n                ...data,\n            })\n        })\n    }\n\n    if (\n        // Only cache web responses\n        // i.e., do not cache FileResponses (prevents duplication)\n        toCacheResponse && cacheKey\n        &&\n        // Check again whether request is in cache. If not, we add the response to the cache\n        (await cache.match(cacheKey) === undefined)\n    ) {\n        // NOTE: We use `new Response(buffer, ...)` instead of `response.clone()` to handle LFS files\n        await cache.put(cacheKey, new Response(buffer, {\n            headers: response.headers\n        }))\n            .catch(err => {\n                // Do not crash if unable to add to cache (e.g., QuotaExceededError).\n                // Rather, log a warning and proceed with execution.\n                console.warn(`Unable to add response to browser cache: ${err}.`);\n            });\n\n    }\n\n    dispatchCallback(options.progress_callback, {\n        status: 'done',\n        name: path_or_repo_id,\n        file: filename\n    });\n\n    return buffer;\n}",
+            "start_line": 331,
+            "symbol_id": "src/utils/hub.js#function:getModelFile:331"
+          },
+          {
+            "children": [],
+            "documentation": "Fetches a JSON file from a given path and file name.\n\n@param {string} modelPath The path to the directory containing the file.\n@param {string} fileName The name of the file to fetch.\n@param {boolean} [fatal=true] Whether to throw an error if the file is not found.\n@param {PretrainedOptions} [options] An object containing optional parameters.\n@returns {Promise<Object>} The JSON data parsed into a JavaScript object.\n@throws Will throw an error if the file is not found and `fatal` is true.",
+            "end_line": 585,
+            "kind": "function",
+            "name": "getModelJSON",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/hub.js",
+            "qualified_name": "getModelJSON",
+            "signature": "async function getModelJSON(modelPath, fileName, fatal = true, options = {}) {\n    let buffer = await getModelFile(modelPath, fileName, fatal, options);\n    if (buffer === null) {\n        // Return empty object\n        return {}\n    }\n\n    let decoder = new TextDecoder('utf-8');\n    let jsonData = decoder.decode(buffer);\n\n    return JSON.parse(jsonData);\n}",
+            "start_line": 574,
+            "symbol_id": "src/utils/hub.js#function:getModelJSON:574"
+          },
+          {
+            "children": [],
+            "documentation": "Read and track progress when reading a Response object\n\n@param {any} response The Response object to read\n@param {function} progress_callback The function to call with progress updates\n@returns {Promise<Uint8Array>} A Promise that resolves with the Uint8Array buffer",
+            "end_line": 641,
+            "kind": "function",
+            "name": "readResponse",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/hub.js",
+            "qualified_name": "readResponse",
+            "signature": "async function readResponse(response, progress_callback) {\n\n    const contentLength = response.headers.get('Content-Length');\n    if (contentLength === null) {\n        console.warn('Unable to determine content-length from response headers. Will expand buffer when needed.')\n    }\n    let total = parseInt(contentLength ?? '0');\n    let buffer = new Uint8Array(total);\n    let loaded = 0;\n\n    const reader = response.body.getReader();\n    async function read() {\n        const { done, value } = await reader.read();\n        if (done) return;\n\n        let newLoaded = loaded + value.length;\n        if (newLoaded > total) {\n            total = newLoaded;\n\n            // Adding the new data will overflow buffer.\n            // In this case, we extend the buffer\n            let newBuffer = new Uint8Array(total);\n\n            // copy contents\n            newBuffer.set(buffer);\n\n            buffer = newBuffer;\n        }\n        buffer.set(value, loaded)\n        loaded = newLoaded;\n\n        const progress = (loaded / total) * 100;\n\n        // Call your function here\n        progress_callback({\n            progress: progress,\n            loaded: loaded,\n            total: total,\n        })\n\n        return read();\n    }\n\n    // Actually read\n    await read();\n\n    return buffer;\n}",
+            "start_line": 594,
+            "symbol_id": "src/utils/hub.js#function:readResponse:594"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 635,
+            "kind": "function",
+            "name": "read",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/hub.js",
+            "qualified_name": "read",
+            "signature": "async function read() {\n        const { done, value } = await reader.read();\n        if (done) return;\n\n        let newLoaded = loaded + value.length;\n        if (newLoaded > total) {\n            total = newLoaded;\n\n            // Adding the new data will overflow buffer.\n            // In this case, we extend the buffer\n            let newBuffer = new Uint8Array(total);\n\n            // copy contents\n            newBuffer.set(buffer);\n\n            buffer = newBuffer;\n        }\n        buffer.set(value, loaded)\n        loaded = newLoaded;\n\n        const progress = (loaded / total) * 100;\n\n        // Call your function here\n        progress_callback({\n            progress: progress,\n            loaded: loaded,\n            total: total,\n        })\n\n        return read();\n    }",
+            "start_line": 605,
+            "symbol_id": "src/utils/hub.js#function:read:605"
+          },
+          {
+            "children": [],
+            "documentation": "Joins multiple parts of a path into a single path, while handling leading and trailing slashes.\n\n@param {...string} parts Multiple parts of a path.\n@returns {string} A string representing the joined path.",
+            "end_line": 661,
+            "kind": "function",
+            "name": "pathJoin",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/hub.js",
+            "qualified_name": "pathJoin",
+            "signature": "function pathJoin(...parts) {\n    // https://stackoverflow.com/a/55142565\n    parts = parts.map((part, index) => {\n        if (index) {\n            part = part.replace(new RegExp('^/'), '');\n        }\n        if (index !== parts.length - 1) {\n            part = part.replace(new RegExp('/$'), '');\n        }\n        return part;\n    })\n    return parts.join('/');\n}",
+            "start_line": 649,
+            "symbol_id": "src/utils/hub.js#function:pathJoin:649"
+          },
+          {
+            "children": [],
+            "documentation": "Loads a config from the specified path.\n@param {string} pretrained_model_name_or_path The path to the config directory.\n@param {PretrainedOptions} options Additional options for loading the config.\n@returns {Promise<Array>} A promise that resolves with information about the loaded config.",
+            "end_line": 48,
+            "kind": "function",
+            "name": "loadConfig",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/configs.js",
+            "qualified_name": "loadConfig",
+            "signature": "async function loadConfig(pretrained_model_name_or_path, options) {\n    let info = await getModelJSON(pretrained_model_name_or_path, 'config.json', true, options);\n    return info;\n}",
+            "start_line": 45,
+            "symbol_id": "src/configs.js#function:loadConfig:45"
+          },
+          {
+            "children": [],
+            "documentation": "Create a new PreTrainedTokenizer instance.\n@param {Object} configJSON The JSON of the config.",
+            "end_line": 66,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/configs.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(configJSON) {\n        this.model_type = null;\n        this.is_encoder_decoder = false;\n\n        Object.assign(this, configJSON);\n    }",
+            "start_line": 61,
+            "symbol_id": "src/configs.js#method:constructor:61"
+          },
+          {
+            "children": [],
+            "documentation": "Loads a pre-trained config from the given `pretrained_model_name_or_path`.\n\n@param {string} pretrained_model_name_or_path The path to the pre-trained config.\n@param {PretrainedOptions} options Additional options for loading the config.\n@throws {Error} Throws an error if the config.json is not found in the `pretrained_model_name_or_path`.\n\n@returns {Promise<PretrainedConfig>} A new instance of the `PretrainedConfig` class.",
+            "end_line": 93,
+            "kind": "method",
+            "name": "from_pretrained",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/configs.js",
+            "qualified_name": "from_pretrained",
+            "signature": "static async from_pretrained(pretrained_model_name_or_path, {\n        progress_callback = null,\n        config = null,\n        cache_dir = null,\n        local_files_only = false,\n        revision = 'main',\n    } = {}) {\n\n        let data = config ?? await loadConfig(pretrained_model_name_or_path, {\n            progress_callback,\n            config,\n            cache_dir,\n            local_files_only,\n            revision,\n        })\n        return new this(data);\n    }",
+            "start_line": 77,
+            "symbol_id": "src/configs.js#method:from_pretrained:77"
+          },
+          {
+            "children": [],
+            "documentation": "@type {PretrainedConfig.from_pretrained}",
+            "end_line": 106,
+            "kind": "method",
+            "name": "from_pretrained",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/configs.js",
+            "qualified_name": "from_pretrained",
+            "signature": "static async from_pretrained(...args) {\n        return PretrainedConfig.from_pretrained(...args);\n    }",
+            "start_line": 104,
+            "symbol_id": "src/configs.js#method:from_pretrained:104"
+          },
+          {
+            "children": [],
+            "documentation": "@param {TypedArray} input",
+            "end_line": 87,
+            "kind": "function",
+            "name": "interpolate_data",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/maths.js",
+            "qualified_name": "interpolate_data",
+            "signature": "function interpolate_data(input, [in_channels, in_height, in_width], [out_height, out_width], mode = 'bilinear', align_corners = false) {\n    // TODO use mode and align_corners\n\n    // Output image dimensions\n    const x_scale = out_width / in_width;\n    const y_scale = out_height / in_height;\n\n    // Output image\n    // @ts-ignore\n    const out_img = new input.constructor(out_height * out_width * in_channels);\n\n    // Pre-calculate strides\n    const inStride = in_height * in_width;\n    const outStride = out_height * out_width;\n\n    for (let i = 0; i < out_height; ++i) {\n        for (let j = 0; j < out_width; ++j) {\n            // Calculate output offset\n            const outOffset = i * out_width + j;\n\n            // Calculate input pixel coordinates\n            const x = (j + 0.5) / x_scale - 0.5;\n            const y = (i + 0.5) / y_scale - 0.5;\n\n            // Calculate the four nearest input pixels\n            // We also check if the input pixel coordinates are within the image bounds\n            let x1 = Math.floor(x);\n            let y1 = Math.floor(y);\n            const x2 = Math.min(x1 + 1, in_width - 1);\n            const y2 = Math.min(y1 + 1, in_height - 1);\n\n            x1 = Math.max(x1, 0);\n            y1 = Math.max(y1, 0);\n\n\n            // Calculate the fractional distances between the input pixel and the four nearest pixels\n            const s = x - x1;\n            const t = y - y1;\n\n            // Perform bilinear interpolation\n            const w1 = (1 - s) * (1 - t);\n            const w2 = s * (1 - t);\n            const w3 = (1 - s) * t;\n            const w4 = s * t;\n\n            // Calculate the four nearest input pixel indices\n            const yStride = y1 * in_width;\n            const xStride = y2 * in_width;\n            const idx1 = yStride + x1;\n            const idx2 = yStride + x2;\n            const idx3 = xStride + x1;\n            const idx4 = xStride + x2;\n\n            for (let k = 0; k < in_channels; ++k) {\n                // Calculate channel offset\n                const cOffset = k * inStride;\n\n                out_img[k * outStride + outOffset] =\n                    w1 * input[cOffset + idx1] +\n                    w2 * input[cOffset + idx2] +\n                    w3 * input[cOffset + idx3] +\n                    w4 * input[cOffset + idx4];\n            }\n        }\n    }\n\n    return out_img;\n}",
+            "start_line": 20,
+            "symbol_id": "src/utils/maths.js#function:interpolate_data:20"
+          },
+          {
+            "children": [],
+            "documentation": "Helper method to permute a `AnyTypedArray` directly\n@template {AnyTypedArray} T\n@param {T} array\n@param {number[]} dims\n@param {number[]} axes\n@returns {[T, number[]]} The permuted array and the new shape.",
+            "end_line": 128,
+            "kind": "function",
+            "name": "permute_data",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/maths.js",
+            "qualified_name": "permute_data",
+            "signature": "function permute_data(array, dims, axes) {\n    // Calculate the new shape of the permuted array\n    // and the stride of the original array\n    const shape = new Array(axes.length);\n    const stride = new Array(axes.length);\n\n    for (let i = axes.length - 1, s = 1; i >= 0; --i) {\n        stride[i] = s;\n        shape[i] = dims[axes[i]];\n        s *= shape[i];\n    }\n\n    // Precompute inverse mapping of stride\n    const invStride = axes.map((_, i) => stride[axes.indexOf(i)]);\n\n    // Create the permuted array with the new shape\n    // @ts-ignore\n    const permutedData = new array.constructor(array.length);\n\n    // Permute the original array to the new array\n    for (let i = 0; i < array.length; ++i) {\n        let newIndex = 0;\n        for (let j = dims.length - 1, k = i; j >= 0; --j) {\n            newIndex += (k % dims[j]) * invStride[j];\n            k = Math.floor(k / dims[j]);\n        }\n        permutedData[newIndex] = array[i];\n    }\n\n    return [permutedData, shape];\n}",
+            "start_line": 98,
+            "symbol_id": "src/utils/maths.js#function:permute_data:98"
+          },
+          {
+            "children": [],
+            "documentation": "Compute the softmax of an array of numbers.\n@template {TypedArray|number[]} T\n@param {T} arr The array of numbers to compute the softmax of.\n@returns {T} The softmax array.",
+            "end_line": 152,
+            "kind": "function",
+            "name": "softmax",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/maths.js",
+            "qualified_name": "softmax",
+            "signature": "function softmax(arr) {\n    // Compute the maximum value in the array\n    const maxVal = max(arr)[0];\n\n    // Compute the exponentials of the array values\n    const exps = arr.map(x => Math.exp(x - maxVal));\n\n    // Compute the sum of the exponentials\n    // @ts-ignore\n    const sumExps = exps.reduce((acc, val) => acc + val, 0);\n\n    // Compute the softmax values\n    const softmaxArr = exps.map(x => x / sumExps);\n\n    return /** @type {T} */(softmaxArr);\n}",
+            "start_line": 137,
+            "symbol_id": "src/utils/maths.js#function:softmax:137"
+          },
+          {
+            "children": [],
+            "documentation": "Calculates the logarithm of the softmax function for the input array.\n@template {TypedArray|number[]} T\n@param {T} arr The input array to calculate the log_softmax function for.\n@returns {T} The resulting log_softmax array.",
+            "end_line": 168,
+            "kind": "function",
+            "name": "log_softmax",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/maths.js",
+            "qualified_name": "log_softmax",
+            "signature": "function log_softmax(arr) {\n    // Compute the softmax values\n    const softmaxArr = softmax(arr);\n\n    // Apply log formula to each element\n    const logSoftmaxArr = softmaxArr.map(x => Math.log(x));\n\n    return /** @type {T} */(logSoftmaxArr);\n}",
+            "start_line": 160,
+            "symbol_id": "src/utils/maths.js#function:log_softmax:160"
+          },
+          {
+            "children": [],
+            "documentation": "Calculates the dot product of two arrays.\n@param {number[]} arr1 The first array.\n@param {number[]} arr2 The second array.\n@returns {number} The dot product of arr1 and arr2.",
+            "end_line": 182,
+            "kind": "function",
+            "name": "dot",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/maths.js",
+            "qualified_name": "dot",
+            "signature": "function dot(arr1, arr2) {\n    let result = 0;\n    for (let i = 0; i < arr1.length; ++i) {\n        result += arr1[i] * arr2[i];\n    }\n    return result;\n}",
+            "start_line": 176,
+            "symbol_id": "src/utils/maths.js#function:dot:176"
+          },
+          {
+            "children": [],
+            "documentation": "Get the top k items from an iterable, sorted by descending order\n@param {any[]|TypedArray} items The items to be sorted\n@param {number|null} [top_k=0] The number of top items to return (default: 0 = return all)\n@returns {[number, any][]} The top k items, sorted by descending order",
+            "end_line": 203,
+            "kind": "function",
+            "name": "getTopItems",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/maths.js",
+            "qualified_name": "getTopItems",
+            "signature": "function getTopItems(items, top_k = 0) {\n    // if top == 0, return all\n\n    items = Array.from(items)\n        .map((x, i) => [i, x])            // Get indices ([index, score])\n        .sort((a, b) => b[1] - a[1])      // Sort by log probabilities\n\n    if (top_k !== null && top_k > 0) {\n        items = items.slice(0, top_k);    // Get top k items\n    }\n\n    return items\n}",
+            "start_line": 191,
+            "symbol_id": "src/utils/maths.js#function:getTopItems:191"
+          },
+          {
+            "children": [],
+            "documentation": "Computes the cosine similarity between two arrays.\n\n@param {number[]} arr1 The first array.\n@param {number[]} arr2 The second array.\n@returns {number} The cosine similarity between the two arrays.",
+            "end_line": 226,
+            "kind": "function",
+            "name": "cos_sim",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/maths.js",
+            "qualified_name": "cos_sim",
+            "signature": "function cos_sim(arr1, arr2) {\n    // Calculate dot product of the two arrays\n    const dotProduct = dot(arr1, arr2);\n\n    // Calculate the magnitude of the first array\n    const magnitudeA = magnitude(arr1);\n\n    // Calculate the magnitude of the second array\n    const magnitudeB = magnitude(arr2);\n\n    // Calculate the cosine similarity\n    const cosineSimilarity = dotProduct / (magnitudeA * magnitudeB);\n\n    return cosineSimilarity;\n}",
+            "start_line": 212,
+            "symbol_id": "src/utils/maths.js#function:cos_sim:212"
+          },
+          {
+            "children": [],
+            "documentation": "Calculates the magnitude of a given array.\n@param {number[]} arr The array to calculate the magnitude of.\n@returns {number} The magnitude of the array.",
+            "end_line": 235,
+            "kind": "function",
+            "name": "magnitude",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/maths.js",
+            "qualified_name": "magnitude",
+            "signature": "function magnitude(arr) {\n    return Math.sqrt(arr.reduce((acc, val) => acc + val * val, 0));\n}",
+            "start_line": 233,
+            "symbol_id": "src/utils/maths.js#function:magnitude:233"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the value and index of the minimum element in an array.\n@param {number[]|TypedArray} arr array of numbers.\n@returns {number[]} the value and index of the minimum element, of the form: [valueOfMin, indexOfMin]\n@throws {Error} If array is empty.",
+            "end_line": 255,
+            "kind": "function",
+            "name": "min",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/maths.js",
+            "qualified_name": "min",
+            "signature": "function min(arr) {\n    if (arr.length === 0) throw Error('Array must not be empty');\n    let min = arr[0];\n    let indexOfMin = 0;\n    for (let i = 1; i < arr.length; ++i) {\n        if (arr[i] < min) {\n            min = arr[i];\n            indexOfMin = i;\n        }\n    }\n    return [min, indexOfMin];\n}",
+            "start_line": 244,
+            "symbol_id": "src/utils/maths.js#function:min:244"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the value and index of the maximum element in an array.\n@param {number[]|AnyTypedArray} arr array of numbers.\n@returns {[number, number]} the value and index of the maximum element, of the form: [valueOfMax, indexOfMax]\n@throws {Error} If array is empty.",
+            "end_line": 275,
+            "kind": "function",
+            "name": "max",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/maths.js",
+            "qualified_name": "max",
+            "signature": "function max(arr) {\n    if (arr.length === 0) throw Error('Array must not be empty');\n    let max = arr[0];\n    let indexOfMax = 0;\n    for (let i = 1; i < arr.length; ++i) {\n        if (arr[i] > max) {\n            max = arr[i];\n            indexOfMax = i;\n        }\n    }\n    return [Number(max), indexOfMax];\n}",
+            "start_line": 264,
+            "symbol_id": "src/utils/maths.js#function:max:264"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 280,
+            "kind": "function",
+            "name": "isPowerOfTwo",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/maths.js",
+            "qualified_name": "isPowerOfTwo",
+            "signature": "function isPowerOfTwo(number) {\n    // Check if the number is greater than 0 and has only one bit set to 1\n    return (number > 0) && ((number & (number - 1)) === 0);\n}",
+            "start_line": 277,
+            "symbol_id": "src/utils/maths.js#function:isPowerOfTwo:277"
+          },
+          {
+            "children": [],
+            "documentation": "@param {number} size The size of the input array. Must be a power of two larger than 1.\n@throws {Error} FFT size must be a power of two larger than 1.",
+            "end_line": 327,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/maths.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(size) {\n        this.size = size | 0; // convert to a 32-bit signed integer\n        if (this.size <= 1 || !isPowerOfTwo(this.size))\n            throw new Error('FFT size must be a power of two larger than 1');\n\n        this._csize = size << 1;\n\n        this.table = new Float64Array(this.size * 2);\n        for (let i = 0; i < this.table.length; i += 2) {\n            const angle = Math.PI * i / this.size;\n            this.table[i] = Math.cos(angle);\n            this.table[i + 1] = -Math.sin(angle);\n        }\n\n        // Find size's power of two\n        let power = 0;\n        for (let t = 1; this.size > t; t <<= 1)\n            ++power;\n\n        // Calculate initial step's width:\n        //   * If we are full radix-4, it is 2x smaller to give inital len=8\n        //   * Otherwise it is the same as `power` to give len=4\n        this._width = power % 2 === 0 ? power - 1 : power;\n\n        // Pre-compute bit-reversal patterns\n        this._bitrev = new Int32Array(1 << this._width);\n        for (let j = 0; j < this._bitrev.length; ++j) {\n            this._bitrev[j] = 0;\n            for (let shift = 0; shift < this._width; shift += 2) {\n                const revShift = this._width - shift - 2;\n                this._bitrev[j] |= ((j >>> shift) & 3) << revShift;\n            }\n        }\n    }",
+            "start_line": 294,
+            "symbol_id": "src/utils/maths.js#method:constructor:294"
+          }
+        ]
+      }
+    ]
+  },
+  "trialId": "ae55e55c55"
+}

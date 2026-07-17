@@ -1,0 +1,857 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 1956,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "java_001_ctx16k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 1,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "language": "java",
+                "parse_status": "ok_filtered",
+                "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+                "repository": "google/gson",
+                "symbol_count": 3
+              },
+              {
+                "language": "java",
+                "parse_status": "ok_filtered",
+                "path": "gson/src/main/java/com/google/gson/stream/JsonScope.java",
+                "repository": "google/gson",
+                "symbol_count": 2
+              },
+              {
+                "language": "java",
+                "parse_status": "ok_filtered",
+                "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+                "repository": "google/gson",
+                "symbol_count": 40
+              },
+              {
+                "language": "java",
+                "parse_status": "ok_filtered",
+                "path": "gson/src/main/java/com/google/gson/FormattingStyle.java",
+                "repository": "google/gson",
+                "symbol_count": 8
+              },
+              {
+                "language": "java",
+                "parse_status": "ok_filtered",
+                "path": "gson/src/main/java/com/google/gson/annotations/JsonAdapter.java",
+                "repository": "google/gson",
+                "symbol_count": 0
+              },
+              {
+                "language": "java",
+                "parse_status": "ok_filtered",
+                "path": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java",
+                "repository": "google/gson",
+                "symbol_count": 13
+              },
+              {
+                "language": "java",
+                "parse_status": "ok_filtered",
+                "path": "gson/src/main/java/com/google/gson/ReflectionAccessFilter.java",
+                "repository": "google/gson",
+                "symbol_count": 3
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "java_001_ctx16k"
+              },
+              "durationMs": 1,
+              "toolName": "list_files",
+              "workspace_id": "java_001_ctx16k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1611,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+              "workspace_id": "java_001_ctx16k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "Adds a reflection access filter. A reflection access filter prevents Gson from using reflection\nfor the serialization and deserialization of certain classes. The logic in the filter specifies\nwhich classes those are.\n\n<p>Filters will be invoked in reverse registration order, that is, the most recently added\nfilter will be invoked first.\n\n<p>By default Gson has no filters configured and will try to use reflection for all classes for\nwhich no {@link TypeAdapter} has been registered, and for which no built-in Gson {@code\nTypeAdapter} exists.\n\n<p>The created Gson instance might only use an access filter once for a class or its members\nand cache the result. It is not guaranteed that the filter will be used again every time a\nclass or its members are accessed during serialization or deserialization.\n\n@param filter filter to add\n@return a reference to this {@code GsonBuilder} object to fulfill the \"Builder\" pattern\n@since 2.9.1",
+                "end_line": 868,
+                "kind": "method",
+                "name": "addReflectionAccessFilter",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+                "qualified_name": "addReflectionAccessFilter",
+                "signature": "@CanIgnoreReturnValue\n  public GsonBuilder addReflectionAccessFilter(ReflectionAccessFilter filter) {\n    Objects.requireNonNull(filter);\n    reflectionFilters.addFirst(filter);\n    return this;\n  }",
+                "start_line": 863,
+                "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:addReflectionAccessFilter:863"
+              },
+              {
+                "children": [],
+                "documentation": "Creates a {@link Gson} instance based on the current configuration. This method is free of\nside-effects to this {@code GsonBuilder} instance and hence can be called multiple times.\n\n@return an instance of Gson configured with the options currently set in this builder",
+                "end_line": 910,
+                "kind": "method",
+                "name": "create",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+                "qualified_name": "create",
+                "signature": "public Gson create() {\n    List<TypeAdapterFactory> factories =\n        new ArrayList<>(this.factories.size() + this.hierarchyFactories.size() + 3);\n    factories.addAll(this.factories);\n    Collections.reverse(factories);\n\n    List<TypeAdapterFactory> hierarchyFactories = new ArrayList<>(this.hierarchyFactories);\n    Collections.reverse(hierarchyFactories);\n    factories.addAll(hierarchyFactories);\n\n    addTypeAdaptersForDate(datePattern, dateStyle, timeStyle, factories);\n\n    return new Gson(\n        excluder,\n        fieldNamingPolicy,\n        new HashMap<>(instanceCreators),\n        serializeNulls,\n        complexMapKeySerialization,\n        generateNonExecutableJson,\n        escapeHtmlChars,\n        formattingStyle,\n        strictness,\n        serializeSpecialFloatingPointValues,\n        useJdkUnsafe,\n        longSerializationPolicy,\n        datePattern,\n        dateStyle,\n        timeStyle,\n        new ArrayList<>(this.factories),\n        new ArrayList<>(this.hierarchyFactories),\n        factories,\n        objectToNumberStrategy,\n        numberToNumberStrategy,\n        new ArrayList<>(reflectionFilters));\n  }",
+                "start_line": 876,
+                "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:create:876"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 946,
+                "kind": "method",
+                "name": "addTypeAdaptersForDate",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+                "qualified_name": "addTypeAdaptersForDate",
+                "signature": "private static void addTypeAdaptersForDate(\n      String datePattern, int dateStyle, int timeStyle, List<TypeAdapterFactory> factories) {\n    TypeAdapterFactory dateAdapterFactory;\n    boolean sqlTypesSupported = SqlTypesSupport.SUPPORTS_SQL_TYPES;\n    TypeAdapterFactory sqlTimestampAdapterFactory = null;\n    TypeAdapterFactory sqlDateAdapterFactory = null;\n\n    if (datePattern != null && !datePattern.trim().isEmpty()) {\n      dateAdapterFactory = DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(datePattern);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(datePattern);\n        sqlDateAdapterFactory = SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(datePattern);\n      }\n    } else if (dateStyle != DateFormat.DEFAULT || timeStyle != DateFormat.DEFAULT) {\n      dateAdapterFactory =\n          DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(dateStyle, timeStyle);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n        sqlDateAdapterFactory =\n            SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n      }\n    } else {\n      return;\n    }\n\n    factories.add(dateAdapterFactory);\n    if (sqlTypesSupported) {\n      factories.add(sqlTimestampAdapterFactory);\n      factories.add(sqlDateAdapterFactory);\n    }\n  }",
+                "start_line": 912,
+                "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:addTypeAdaptersForDate:912"
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+                "workspace_id": "java_001_ctx16k"
+              },
+              "durationMs": 0,
+              "toolName": "list_symbols",
+              "workspace_id": "java_001_ctx16k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 3438,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:addTypeAdaptersForDate:912",
+              "workspace_id": "java_001_ctx16k"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": {
+              "children": [],
+              "code": "private static void addTypeAdaptersForDate(\n      String datePattern, int dateStyle, int timeStyle, List<TypeAdapterFactory> factories) {\n    TypeAdapterFactory dateAdapterFactory;\n    boolean sqlTypesSupported = SqlTypesSupport.SUPPORTS_SQL_TYPES;\n    TypeAdapterFactory sqlTimestampAdapterFactory = null;\n    TypeAdapterFactory sqlDateAdapterFactory = null;\n\n    if (datePattern != null && !datePattern.trim().isEmpty()) {\n      dateAdapterFactory = DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(datePattern);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(datePattern);\n        sqlDateAdapterFactory = SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(datePattern);\n      }\n    } else if (dateStyle != DateFormat.DEFAULT || timeStyle != DateFormat.DEFAULT) {\n      dateAdapterFactory =\n          DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(dateStyle, timeStyle);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n        sqlDateAdapterFactory =\n            SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n      }\n    } else {\n      return;\n    }\n\n    factories.add(dateAdapterFactory);\n    if (sqlTypesSupported) {\n      factories.add(sqlTimestampAdapterFactory);\n      factories.add(sqlDateAdapterFactory);\n    }\n  }",
+              "documentation": null,
+              "end_line": 946,
+              "kind": "method",
+              "name": "addTypeAdaptersForDate",
+              "parent_id": null,
+              "parent_name": null,
+              "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+              "qualified_name": "addTypeAdaptersForDate",
+              "signature": "private static void addTypeAdaptersForDate(\n      String datePattern, int dateStyle, int timeStyle, List<TypeAdapterFactory> factories) {\n    TypeAdapterFactory dateAdapterFactory;\n    boolean sqlTypesSupported = SqlTypesSupport.SUPPORTS_SQL_TYPES;\n    TypeAdapterFactory sqlTimestampAdapterFactory = null;\n    TypeAdapterFactory sqlDateAdapterFactory = null;\n\n    if (datePattern != null && !datePattern.trim().isEmpty()) {\n      dateAdapterFactory = DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(datePattern);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(datePattern);\n        sqlDateAdapterFactory = SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(datePattern);\n      }\n    } else if (dateStyle != DateFormat.DEFAULT || timeStyle != DateFormat.DEFAULT) {\n      dateAdapterFactory =\n          DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(dateStyle, timeStyle);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n        sqlDateAdapterFactory =\n            SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n      }\n    } else {\n      return;\n    }\n\n    factories.add(dateAdapterFactory);\n    if (sqlTypesSupported) {\n      factories.add(sqlTimestampAdapterFactory);\n      factories.add(sqlDateAdapterFactory);\n    }\n  }",
+              "start_line": 912,
+              "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:addTypeAdaptersForDate:912"
+            },
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:addTypeAdaptersForDate:912",
+                "workspace_id": "java_001_ctx16k"
+              },
+              "durationMs": 0,
+              "toolName": "get_symbol",
+              "workspace_id": "java_001_ctx16k"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 2391,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 9445,
+          "metadata": {},
+          "name": "strategy.local_function.execute",
+          "type": "strategy.local_function.execute"
+        },
+        {
+          "duration_ms": 9445,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 49,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": null,
+        "cachedInputTokens": 2780,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 3,
+        "inputTokens": 5322,
+        "loopControlDurationMsEstimated": 48,
+        "mcpToolCalls": 3,
+        "modelCalls": 4,
+        "modelDurationMs": 9396,
+        "outputTokens": 517,
+        "promptChars": 1110,
+        "questionTokensEstimated": 148,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 564,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 4,
+        "strategyDurationMs": 9445,
+        "taskStatementChars": 937,
+        "toolCalls": 3,
+        "toolDurationMs": 1,
+        "totalDurationMs": 9445,
+        "totalTokens": 6403,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "workspace_id": "java_001_ctx16k"
+                    },
+                    "id": null,
+                    "name": "list_files",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CuwGAQw51sd0xZduaLcwpAt8wG9b1W16Jk4vdtfkbP0qwOb_J9EO3GX-QL2ernA_l4Ey45uviREegJVKFh_pDjNaNJmwfqSz_VSU5TMWsKWmN7XvNM2shmZTdEFjjlK0_7fN29d1EJ3J7h75IWqf_CZPmHyT0Rbe3naQ3UmIfCir1QbnnZKL7W_u0H22spp90sPpbXMi-RODpF_RLIpK514SY-ps6FN2BK7c0Dm-rebxNktL5tJNErQcxjhGiddGluN8vfF2vWF9YTZPleVQZyz3LZAoQ-mMgvwzbuGmSDG4HVFN03tlSAh3bqOGOaMnwGK2iWW60e6s-0CrNH_7stWbw7CHmIdVQyP2I0DZJ33f5odyK2DypqnWg_TheBe1tlNTDC22v8OVZsatvNcXwQOhUuUNl8X5TfsuQDANy1xX8HPOb1xoM9Sf5OZNGKfyaDrPA31ybS_Yc14gsC7hk3SgDO98tR6Rs9e4OYxI1pRsVJJLrmrL9gbJYcveAMAJgWMZmdnjcvEi2Wt9AV3UCGAtAuB7PiMmMl4gIZBIj52b_g6tdhEhJPOEc5nwFQg7zB6rnuQeias48t6dPLXZNaqqBpOjSwpXSbdl6egbLpP4itmadZnx0mACqNXk_ovwEyJ6Vjwh_FBRpRv1qWIpQjd6GqtQ0T9GqrdRXFhQhUaOVx3MZyob-mPD-1CxjG-tN9jgFnrWSUvBIVi7NS1rzeeXlaIWFG77pfScGftBjJMJQyZKEPg1aKc6XuGe8wVnjcRWj1hCdadwWDeLvO_KETimKBxY0i850v_LEyt3Gy6aFjWNemJkz9rcB0_7tHwPm-xss7cY_BZhyUvCRFUf2s8rGlQpRJ76WPcfHdLUzIsOjnoWQs9zanPvqQSgnvCIRuVCX8dp3ujP_XsorcQZPeITrqmFoc-41Pr3Vh-8EQ17bzwn6_KGDwXW0U52jM6zs0OzWwzBm3_UOFKECVit8BjHD7KOyHk6Cg-beLsbM93a_Qlg0V_xByrYt27rplE7mt1Q5Og0YDM51F4uveiDnz9-UmPWSA7XaAGdRvJ6linFdL56XykE9M_hWFKM6xUpTJg1421SgfVtIGg9Sffvb2J3sBjoBykf4qG1T6ENwGANoOSOVdSUVjB_QDlCnXsVsTQsKhl4q1gKpZuJjsQJ",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "IoQUavf6O5aIqtsPiY3n8Qk",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:17:24 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1751",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 613
+            }
+          ],
+          "cached_content_token_count": 613,
+          "candidates_token_count": 26,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 619,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 619
+            }
+          ],
+          "thoughts_token_count": 192,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 837,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "kind": "function",
+                      "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+                      "workspace_id": "java_001_ctx16k"
+                    },
+                    "id": null,
+                    "name": "list_symbols",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "Cs4DAQw51sd4valT61_0inM6XUHqi51HeoW89EeQ52Yp_EtLbJyOMYA0HMpWYQ1aR29T8pq0rpMuGlS2SpMSKBptxNO8eh1GYn76LSnpQy-nOS0mvggtUuKjS__fEBcHdhhDmsdiXMv8dBVmlfNV2E5FXHmUIE12DKesdX1UkG66ryaS-WesbBkS-UY77Q0IbIJmrvK_6VCuqlgcH24HtcuxIB-OtQT-iA49ZekxHRgTSRMlYJ0FeYDzXn0IJq0i0hcDeQEm0zUf7HLt8vOWv4DzLqNA0dwwoqOq9gqcfdHUqt6ohpp3XNlOebM5dYHIDre3_5NbPMHKB-M1YrQNWvbtDKBZWL9mryCeJh2JbCX4fg9Dd0q5Cz_8j5gRSngawy-GGTlgvCVZOO2dPotANRw6_kC4lcFOmoZK37-kVNdOZHjQZWmX5xDsA_iM3wydSGInCVGalxJ70b_KbMFVerPU9ObAsEioKIaEhX9RUoJwy7iWbRsVQtBIq7kZoD8cKGI09gQ83kXcTLaee6j-C8rtFwA0R4RtkOyBEXzqtmdpeyc8iIqDyvCLahnspxJm7qjJYxXsyvWzPJmaojAwHAl7Z7jzQNlcZynGwGqoXSzt",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "JIQUav2rOtPWz7IPqqGo8A0",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:17:26 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1409",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 644
+            }
+          ],
+          "cached_content_token_count": 644,
+          "candidates_token_count": 53,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 1056,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 1056
+            }
+          ],
+          "thoughts_token_count": 99,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 1208,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:addTypeAdaptersForDate:912",
+                      "workspace_id": "java_001_ctx16k"
+                    },
+                    "id": null,
+                    "name": "get_symbol",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CvoJAQw51scqzBcUbyW2iCnk44J9l1dNLyBcGo6Ses40Yy2guB1C_00AQ-7urfHQeLQ_h7nuTnkaTOXOl5FmazFHRDWJCSYWKBn5YjXkQZwtvzcNWT3t0Bn0Zb6-h8zDIAZ17ZH7Hfe401pZdC7MagqQ6eg_njFrxsnxP0mtBNziH7uOjZpp4ANkAXcMCBDf5WYIrnqZBjAVB94zzCnYBcjb3nlbjfwfiiEdbss1oi5bSaEIzzK67sECfL8ziNTQum-T096b5R-8SzW2WFtN7qpNYj6bIKSsC9rjpWI06ajLcMI0DXFWmmFZurpVm2WhjLL8qxbDjRM9mH6NnSnhD7KiBqPu9qpvx5O81JUDR-TWhwIUuvH0PZ-4GUEkdzdAh24r2pE1Saysxym_ami4MYVW5f4ytvrYowgHufL9fDToL1MpK7bVJDzyC-MaOayaBZAcZ855jtYgEkipPQ6c7IGhALHLJPxDyWCgpxOO-wre22X0vJbFKihEzqoJCcL8de0bQ-CxrdvO__gAG9usL7bEStb2ZrmREd9P73j4o_dT9-z9njoDF8-TrSfqzvUsbezTUYZg-BgBuUZ1uwjOq_5p6P7H9wWTNbLAeEe7Fpq894jjVHAF433aG2EFQxUHsD9c1ZpbwyD7Zj8VmHTSqiMJ9cpcutU9iPKAB10M6uFxieIUJVdCjJxAHlIulePC835rW76VOKzSijW2pWQxIFvzEmWsIN9QpOnMt73HTxYrgMBztru5oPElVX7WMLJTxAcMMuymrcsGVIRbtSdGy5rlt55c7QqeiVpXzy8ILTwoF5Y-vMnvM7gDB-zxEEpm8oh-VpJg0_evmR-Kk3eNWU98QfPK_5a1Uo0UP-ruuTkOO0_9itLOct-JJ4TtCe5AZBlFUFJGZ9Br6cBurwH2NgXqxiY27hsbMAt0H1XdnbBghKhgHKHjmDUeMulPr7AxEk9l6G8QxxK0K14tk8TL2CsL3yReh2GrXnZJrD9blIAdw_m_g5_ZKAI5wBDK70hZhRhZJJ1Sj55paIMGbpJECL7SICntA4AuX48udJQ7UoQOr9zJ0xBKsYf0P9v-WeNtdtcxxEDibLGxdTPwhxgDozMXaD5euDSDf-s5dx0QuFuR0IlAw2TT5zKXATYBh0oNfFwvXv-jbVyIW0gaYoAYfXyFK_e9blGmSqS6hKLcifaj1TwtjFf5RIO4zc__b9_ASU1PGyhztYOGIZHxWrqXwyDXEQ4snNkpzRp1GdsNyLORs8LWcE7rPLgxc9crl86kue32r5Tr4rM4BKZ2dzfyxBXb3R0M2-0S-DVVPgw7a8Udps_M4wdCI_PXz9Lg2RD3ewesSrzMGspS1WTgdlp_h_RkclCPmnUqTsbWyiUZN6dJ-eHD9dyNJ3NkR7NxgjKM7RisQKlU1FhQKcbD-WIWUezbl1ETZxjcnv1V1wUbDlA0mrbb2AF0wIn7vSywVAXxjxWs5vy7nQ0Lrctq3p8MVCTB3KWdJ-LTLe4ype3egrYcqhPkktfl9eQ4TRBHFNsJceVeQ9GYG7n1XMn35iEKExZ-ukOAGUOZlPx0PTmgZVn-gia31CXxTCpTZP4uQa5iq7Rioh6gWZdG5t8YMUPu_WCs5Z8172qYjuLQ4ZuhIvMa_Ib1WnkZbxgBgDI7saCWOzLGL_oInvU9Nl1e7HnG2dL_N9Z4Luf6RuSMARY=",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "JoQUas7hJbrgz7IPrb2KsQ0",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:17:29 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=3210",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 813
+            }
+          ],
+          "cached_content_token_count": 813,
+          "candidates_token_count": 63,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 2054,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 2054
+            }
+          ],
+          "thoughts_token_count": 273,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 2390,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": {
+              "citations": [
+                {
+                  "end_index": 1473,
+                  "license": "",
+                  "publication_date": null,
+                  "start_index": 8,
+                  "title": null,
+                  "uri": "https://github.com/google/gson"
+                }
+              ]
+            },
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": null,
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": "```java\nprivate static void addTypeAdaptersForDate(\n      String datePattern, int dateStyle, int timeStyle, List<TypeAdapterFactory> factories) {\n    TypeAdapterFactory dateAdapterFactory;\n    boolean sqlTypesSupported = SqlTypesSupport.SUPPORTS_SQL_TYPES;\n    TypeAdapterFactory sqlTimestampAdapterFactory = null;\n    TypeAdapterFactory sqlDateAdapterFactory = null;\n\n    if (datePattern != null && !datePattern.trim().isEmpty()) {\n      dateAdapterFactory = DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(datePattern);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(datePattern);\n        sqlDateAdapterFactory = SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(datePattern);\n      }\n    } else if (dateStyle != DateFormat.DEFAULT || timeStyle != DateFormat.DEFAULT) {\n      dateAdapterFactory =\n          DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(dateStyle, timeStyle);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n        sqlDateAdapterFactory =\n            SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n      }\n    } else {\n      return;\n    }\n\n    factories.add(dateAdapterFactory);\n    if (sqlTypesSupported) {\n      factories.add(sqlTimestampAdapterFactory);\n      factories.add(sqlDateAdapterFactory);\n    }\n  }\n```",
+                  "thought": null,
+                  "thought_signature": null,
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                },
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": null,
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": "\n",
+                  "thought": null,
+                  "thought_signature": null,
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "KoQUasrzAoqJz7IPgIevwQo",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:17:32 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=2184",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 710
+            }
+          ],
+          "cached_content_token_count": 710,
+          "candidates_token_count": 375,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 1593,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 1593
+            }
+          ],
+          "thoughts_token_count": null,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 1968,
+          "traffic_type": null
+        }
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "workspace_id": "java_001_ctx16k"
+        },
+        "durationMs": 1,
+        "toolName": "list_files",
+        "workspace_id": "java_001_ctx16k"
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+          "workspace_id": "java_001_ctx16k"
+        },
+        "durationMs": 0,
+        "toolName": "list_symbols",
+        "workspace_id": "java_001_ctx16k"
+      },
+      {
+        "arguments": {
+          "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:addTypeAdaptersForDate:912",
+          "workspace_id": "java_001_ctx16k"
+        },
+        "durationMs": 0,
+        "toolName": "get_symbol",
+        "workspace_id": "java_001_ctx16k"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "workspace_id": "java_001_ctx16k"
+        },
+        "id": "step-1-tool-1",
+        "isError": false,
+        "name": "list_files",
+        "result": [
+          {
+            "language": "java",
+            "parse_status": "ok_filtered",
+            "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+            "repository": "google/gson",
+            "symbol_count": 3
+          },
+          {
+            "language": "java",
+            "parse_status": "ok_filtered",
+            "path": "gson/src/main/java/com/google/gson/stream/JsonScope.java",
+            "repository": "google/gson",
+            "symbol_count": 2
+          },
+          {
+            "language": "java",
+            "parse_status": "ok_filtered",
+            "path": "gson/src/main/java/com/google/gson/stream/JsonWriter.java",
+            "repository": "google/gson",
+            "symbol_count": 40
+          },
+          {
+            "language": "java",
+            "parse_status": "ok_filtered",
+            "path": "gson/src/main/java/com/google/gson/FormattingStyle.java",
+            "repository": "google/gson",
+            "symbol_count": 8
+          },
+          {
+            "language": "java",
+            "parse_status": "ok_filtered",
+            "path": "gson/src/main/java/com/google/gson/annotations/JsonAdapter.java",
+            "repository": "google/gson",
+            "symbol_count": 0
+          },
+          {
+            "language": "java",
+            "parse_status": "ok_filtered",
+            "path": "gson/src/main/java/com/google/gson/internal/ReflectionAccessFilterHelper.java",
+            "repository": "google/gson",
+            "symbol_count": 13
+          },
+          {
+            "language": "java",
+            "parse_status": "ok_filtered",
+            "path": "gson/src/main/java/com/google/gson/ReflectionAccessFilter.java",
+            "repository": "google/gson",
+            "symbol_count": 3
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+          "workspace_id": "java_001_ctx16k"
+        },
+        "id": "step-2-tool-1",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "Adds a reflection access filter. A reflection access filter prevents Gson from using reflection\nfor the serialization and deserialization of certain classes. The logic in the filter specifies\nwhich classes those are.\n\n<p>Filters will be invoked in reverse registration order, that is, the most recently added\nfilter will be invoked first.\n\n<p>By default Gson has no filters configured and will try to use reflection for all classes for\nwhich no {@link TypeAdapter} has been registered, and for which no built-in Gson {@code\nTypeAdapter} exists.\n\n<p>The created Gson instance might only use an access filter once for a class or its members\nand cache the result. It is not guaranteed that the filter will be used again every time a\nclass or its members are accessed during serialization or deserialization.\n\n@param filter filter to add\n@return a reference to this {@code GsonBuilder} object to fulfill the \"Builder\" pattern\n@since 2.9.1",
+            "end_line": 868,
+            "kind": "method",
+            "name": "addReflectionAccessFilter",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+            "qualified_name": "addReflectionAccessFilter",
+            "signature": "@CanIgnoreReturnValue\n  public GsonBuilder addReflectionAccessFilter(ReflectionAccessFilter filter) {\n    Objects.requireNonNull(filter);\n    reflectionFilters.addFirst(filter);\n    return this;\n  }",
+            "start_line": 863,
+            "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:addReflectionAccessFilter:863"
+          },
+          {
+            "children": [],
+            "documentation": "Creates a {@link Gson} instance based on the current configuration. This method is free of\nside-effects to this {@code GsonBuilder} instance and hence can be called multiple times.\n\n@return an instance of Gson configured with the options currently set in this builder",
+            "end_line": 910,
+            "kind": "method",
+            "name": "create",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+            "qualified_name": "create",
+            "signature": "public Gson create() {\n    List<TypeAdapterFactory> factories =\n        new ArrayList<>(this.factories.size() + this.hierarchyFactories.size() + 3);\n    factories.addAll(this.factories);\n    Collections.reverse(factories);\n\n    List<TypeAdapterFactory> hierarchyFactories = new ArrayList<>(this.hierarchyFactories);\n    Collections.reverse(hierarchyFactories);\n    factories.addAll(hierarchyFactories);\n\n    addTypeAdaptersForDate(datePattern, dateStyle, timeStyle, factories);\n\n    return new Gson(\n        excluder,\n        fieldNamingPolicy,\n        new HashMap<>(instanceCreators),\n        serializeNulls,\n        complexMapKeySerialization,\n        generateNonExecutableJson,\n        escapeHtmlChars,\n        formattingStyle,\n        strictness,\n        serializeSpecialFloatingPointValues,\n        useJdkUnsafe,\n        longSerializationPolicy,\n        datePattern,\n        dateStyle,\n        timeStyle,\n        new ArrayList<>(this.factories),\n        new ArrayList<>(this.hierarchyFactories),\n        factories,\n        objectToNumberStrategy,\n        numberToNumberStrategy,\n        new ArrayList<>(reflectionFilters));\n  }",
+            "start_line": 876,
+            "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:create:876"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 946,
+            "kind": "method",
+            "name": "addTypeAdaptersForDate",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+            "qualified_name": "addTypeAdaptersForDate",
+            "signature": "private static void addTypeAdaptersForDate(\n      String datePattern, int dateStyle, int timeStyle, List<TypeAdapterFactory> factories) {\n    TypeAdapterFactory dateAdapterFactory;\n    boolean sqlTypesSupported = SqlTypesSupport.SUPPORTS_SQL_TYPES;\n    TypeAdapterFactory sqlTimestampAdapterFactory = null;\n    TypeAdapterFactory sqlDateAdapterFactory = null;\n\n    if (datePattern != null && !datePattern.trim().isEmpty()) {\n      dateAdapterFactory = DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(datePattern);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(datePattern);\n        sqlDateAdapterFactory = SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(datePattern);\n      }\n    } else if (dateStyle != DateFormat.DEFAULT || timeStyle != DateFormat.DEFAULT) {\n      dateAdapterFactory =\n          DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(dateStyle, timeStyle);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n        sqlDateAdapterFactory =\n            SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n      }\n    } else {\n      return;\n    }\n\n    factories.add(dateAdapterFactory);\n    if (sqlTypesSupported) {\n      factories.add(sqlTimestampAdapterFactory);\n      factories.add(sqlDateAdapterFactory);\n    }\n  }",
+            "start_line": 912,
+            "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:addTypeAdaptersForDate:912"
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:addTypeAdaptersForDate:912",
+          "workspace_id": "java_001_ctx16k"
+        },
+        "id": "step-3-tool-1",
+        "isError": false,
+        "name": "get_symbol",
+        "result": {
+          "children": [],
+          "code": "private static void addTypeAdaptersForDate(\n      String datePattern, int dateStyle, int timeStyle, List<TypeAdapterFactory> factories) {\n    TypeAdapterFactory dateAdapterFactory;\n    boolean sqlTypesSupported = SqlTypesSupport.SUPPORTS_SQL_TYPES;\n    TypeAdapterFactory sqlTimestampAdapterFactory = null;\n    TypeAdapterFactory sqlDateAdapterFactory = null;\n\n    if (datePattern != null && !datePattern.trim().isEmpty()) {\n      dateAdapterFactory = DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(datePattern);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(datePattern);\n        sqlDateAdapterFactory = SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(datePattern);\n      }\n    } else if (dateStyle != DateFormat.DEFAULT || timeStyle != DateFormat.DEFAULT) {\n      dateAdapterFactory =\n          DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(dateStyle, timeStyle);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n        sqlDateAdapterFactory =\n            SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n      }\n    } else {\n      return;\n    }\n\n    factories.add(dateAdapterFactory);\n    if (sqlTypesSupported) {\n      factories.add(sqlTimestampAdapterFactory);\n      factories.add(sqlDateAdapterFactory);\n    }\n  }",
+          "documentation": null,
+          "end_line": 946,
+          "kind": "method",
+          "name": "addTypeAdaptersForDate",
+          "parent_id": null,
+          "parent_name": null,
+          "path": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+          "qualified_name": "addTypeAdaptersForDate",
+          "signature": "private static void addTypeAdaptersForDate(\n      String datePattern, int dateStyle, int timeStyle, List<TypeAdapterFactory> factories) {\n    TypeAdapterFactory dateAdapterFactory;\n    boolean sqlTypesSupported = SqlTypesSupport.SUPPORTS_SQL_TYPES;\n    TypeAdapterFactory sqlTimestampAdapterFactory = null;\n    TypeAdapterFactory sqlDateAdapterFactory = null;\n\n    if (datePattern != null && !datePattern.trim().isEmpty()) {\n      dateAdapterFactory = DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(datePattern);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(datePattern);\n        sqlDateAdapterFactory = SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(datePattern);\n      }\n    } else if (dateStyle != DateFormat.DEFAULT || timeStyle != DateFormat.DEFAULT) {\n      dateAdapterFactory =\n          DefaultDateTypeAdapter.DateType.DATE.createAdapterFactory(dateStyle, timeStyle);\n\n      if (sqlTypesSupported) {\n        sqlTimestampAdapterFactory =\n            SqlTypesSupport.TIMESTAMP_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n        sqlDateAdapterFactory =\n            SqlTypesSupport.DATE_DATE_TYPE.createAdapterFactory(dateStyle, timeStyle);\n      }\n    } else {\n      return;\n    }\n\n    factories.add(dateAdapterFactory);\n    if (sqlTypesSupported) {\n      factories.add(sqlTimestampAdapterFactory);\n      factories.add(sqlDateAdapterFactory);\n    }\n  }",
+          "start_line": 912,
+          "symbol_id": "gson/src/main/java/com/google/gson/GsonBuilder.java#method:addTypeAdaptersForDate:912"
+        }
+      }
+    ]
+  },
+  "trialId": "0dba3cce06"
+}

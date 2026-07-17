@@ -1,0 +1,3697 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 1385,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-nano",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "ts_005_ctx16k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 9,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "language": "typescript",
+                "parse_status": "ok_filtered",
+                "path": "src/utils/audio.js",
+                "repository": "xenova/transformers.js",
+                "symbol_count": 103
+              },
+              {
+                "language": "typescript",
+                "parse_status": "ok_filtered",
+                "path": "src/utils/image.js",
+                "repository": "xenova/transformers.js",
+                "symbol_count": 81
+              },
+              {
+                "language": "typescript",
+                "parse_status": "ok_filtered",
+                "path": "src/processors.js",
+                "repository": "xenova/transformers.js",
+                "symbol_count": 0
+              }
+            ],
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "ts_005_ctx16k"
+              },
+              "durationMs": 9,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "list_files",
+              "transport": "in_memory"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1430,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-nano",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": null,
+              "path": "src/utils/audio.js",
+              "workspace_id": "ts_005_ctx16k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 6,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "Helper function to read audio from a path/URL.\n@param {string|URL} url The path/URL to load the audio from.\n@param {number} sampling_rate The sampling rate to use when decoding the audio.\n@returns {Promise<Float32Array>} The decoded audio as a `Float32Array`.",
+                "end_line": 78,
+                "kind": "function",
+                "name": "read_audio",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "read_audio",
+                "signature": "async function read_audio(url, sampling_rate) {\n    if (typeof AudioContext === 'undefined') {\n        // Running in node or an environment without AudioContext\n        throw Error(\n            \"Unable to load audio from path/URL since `AudioContext` is not available in your environment. \" +\n            \"Instead, audio data should be passed directly to the pipeline/processor. \" +\n            \"For more information and some example code, see https://huggingface.co/docs/transformers.js/guides/node-audio-processing.\"\n        )\n    }\n\n    const response = await (await getFile(url)).arrayBuffer();\n    const audioCTX = new AudioContext({ sampleRate: sampling_rate });\n    if (typeof sampling_rate === 'undefined') {\n        console.warn(`No sampling rate provided, using default of ${audioCTX.sampleRate}Hz.`)\n    }\n    const decoded = await audioCTX.decodeAudioData(response);\n\n    /** @type {Float32Array} */\n    let audio;\n\n    // We now replicate HuggingFace's `ffmpeg_read` method:\n    if (decoded.numberOfChannels === 2) {\n        // When downmixing a stereo audio file to mono using the -ac 1 option in FFmpeg,\n        // the audio signal is summed across both channels to create a single mono channel.\n        // However, if the audio is at full scale (i.e. the highest possible volume level),\n        // the summing of the two channels can cause the audio signal to clip or distort.\n\n        // To prevent this clipping, FFmpeg applies a scaling factor of 1/sqrt(2) (~ 0.707)\n        // to the audio signal before summing the two channels. This scaling factor ensures\n        // that the combined audio signal will not exceed the maximum possible level, even\n        // if both channels are at full scale.\n\n        // After applying this scaling factor, the audio signal from both channels is summed\n        // to create a single mono channel. It's worth noting that this scaling factor is\n        // only applied when downmixing stereo audio to mono using the -ac 1 option in FFmpeg.\n        // If you're using a different downmixing method, or if you're not downmixing the\n        // audio at all, this scaling factor may not be needed.\n        const SCALING_FACTOR = Math.sqrt(2);\n\n        const left = decoded.getChannelData(0);\n        const right = decoded.getChannelData(1);\n\n        audio = new Float32Array(left.length);\n        for (let i = 0; i < decoded.length; ++i) {\n            audio[i] = SCALING_FACTOR * (left[i] + right[i]) / 2;\n        }\n\n    } else {\n        // If the audio is not stereo, we can just use the first channel:\n        audio = decoded.getChannelData(0);\n    }\n\n    return audio;\n}",
+                "start_line": 25,
+                "symbol_id": "src/utils/audio.js#function:read_audio:25"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 35,
+                "kind": "declaration",
+                "name": "response",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "response",
+                "signature": "const response = await (await getFile(url)).arrayBuffer();",
+                "start_line": 35,
+                "symbol_id": "src/utils/audio.js#declaration:response:35"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 36,
+                "kind": "declaration",
+                "name": "audioCTX",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "audioCTX",
+                "signature": "const audioCTX = new AudioContext({ sampleRate: sampling_rate });",
+                "start_line": 36,
+                "symbol_id": "src/utils/audio.js#declaration:audioCTX:36"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 40,
+                "kind": "declaration",
+                "name": "decoded",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "decoded",
+                "signature": "const decoded = await audioCTX.decodeAudioData(response);",
+                "start_line": 40,
+                "symbol_id": "src/utils/audio.js#declaration:decoded:40"
+              },
+              {
+                "children": [],
+                "documentation": "@type {Float32Array}",
+                "end_line": 43,
+                "kind": "declaration",
+                "name": "<anonymous>",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "<anonymous>",
+                "signature": "let audio;",
+                "start_line": 43,
+                "symbol_id": "src/utils/audio.js#declaration:anonymous:43"
+              },
+              {
+                "children": [],
+                "documentation": "After applying this scaling factor, the audio signal from both channels is summed\nto create a single mono channel. It's worth noting that this scaling factor is\nonly applied when downmixing stereo audio to mono using the -ac 1 option in FFmpeg.\nIf you're using a different downmixing method, or if you're not downmixing the\naudio at all, this scaling factor may not be needed.",
+                "end_line": 62,
+                "kind": "declaration",
+                "name": "SCALING_FACTOR",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "SCALING_FACTOR",
+                "signature": "const SCALING_FACTOR = Math.sqrt(2);",
+                "start_line": 62,
+                "symbol_id": "src/utils/audio.js#declaration:SCALING_FACTOR:62"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 64,
+                "kind": "declaration",
+                "name": "left",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "left",
+                "signature": "const left = decoded.getChannelData(0);",
+                "start_line": 64,
+                "symbol_id": "src/utils/audio.js#declaration:left:64"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 65,
+                "kind": "declaration",
+                "name": "right",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "right",
+                "signature": "const right = decoded.getChannelData(1);",
+                "start_line": 65,
+                "symbol_id": "src/utils/audio.js#declaration:right:65"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 68,
+                "kind": "declaration",
+                "name": "i",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "i",
+                "signature": "let i = 0;",
+                "start_line": 68,
+                "symbol_id": "src/utils/audio.js#declaration:i:68"
+              },
+              {
+                "children": [],
+                "documentation": "Generates a Hanning window of length M.\n\n@param {number} M The length of the Hanning window to generate.\n@returns {Float64Array} The generated Hanning window.",
+                "end_line": 101,
+                "kind": "function",
+                "name": "hanning",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "hanning",
+                "signature": "function hanning(M) {\n    if (M < 1) {\n        return new Float64Array();\n    }\n    if (M === 1) {\n        return new Float64Array([1]);\n    }\n    const denom = M - 1;\n    const factor = Math.PI / denom;\n    const cos_vals = new Float64Array(M);\n    for (let i = 0; i < M; ++i) {\n        const n = 2 * i - denom;\n        cos_vals[i] = 0.5 + 0.5 * Math.cos(factor * n);\n    }\n    return cos_vals;\n}",
+                "start_line": 86,
+                "symbol_id": "src/utils/audio.js#function:hanning:86"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 93,
+                "kind": "declaration",
+                "name": "denom",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "denom",
+                "signature": "const denom = M - 1;",
+                "start_line": 93,
+                "symbol_id": "src/utils/audio.js#declaration:denom:93"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 94,
+                "kind": "declaration",
+                "name": "factor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "factor",
+                "signature": "const factor = Math.PI / denom;",
+                "start_line": 94,
+                "symbol_id": "src/utils/audio.js#declaration:factor:94"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 95,
+                "kind": "declaration",
+                "name": "cos_vals",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "cos_vals",
+                "signature": "const cos_vals = new Float64Array(M);",
+                "start_line": 95,
+                "symbol_id": "src/utils/audio.js#declaration:cos_vals:95"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 96,
+                "kind": "declaration",
+                "name": "i",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "i",
+                "signature": "let i = 0;",
+                "start_line": 96,
+                "symbol_id": "src/utils/audio.js#declaration:i:96"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 97,
+                "kind": "declaration",
+                "name": "n",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "n",
+                "signature": "const n = 2 * i - denom;",
+                "start_line": 97,
+                "symbol_id": "src/utils/audio.js#declaration:n:97"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 110,
+                "kind": "declaration",
+                "name": "HERTZ_TO_MEL_MAPPING",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "HERTZ_TO_MEL_MAPPING",
+                "signature": "const HERTZ_TO_MEL_MAPPING = {\n    \"htk\": (/** @type {number} */ freq) => 2595.0 * Math.log10(1.0 + (freq / 700.0)),\n    \"kaldi\": (/** @type {number} */ freq) => 1127.0 * Math.log(1.0 + (freq / 700.0)),\n    \"slaney\": (/** @type {number} */ freq, min_log_hertz = 1000.0, min_log_mel = 15.0, logstep = 27.0 / Math.log(6.4)) =>\n        freq >= min_log_hertz\n            ? min_log_mel + Math.log(freq / min_log_hertz) * logstep\n            : 3.0 * freq / 200.0,\n}",
+                "start_line": 103,
+                "symbol_id": "src/utils/audio.js#declaration:HERTZ_TO_MEL_MAPPING:103"
+              },
+              {
+                "children": [],
+                "documentation": "@template {Float32Array|Float64Array|number} T\n@param {T} freq\n@param {string} [mel_scale]\n@returns {T}",
+                "end_line": 125,
+                "kind": "function",
+                "name": "hertz_to_mel",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "hertz_to_mel",
+                "signature": "function hertz_to_mel(freq, mel_scale = \"htk\") {\n    const fn = HERTZ_TO_MEL_MAPPING[mel_scale];\n    if (!fn) {\n        throw new Error('mel_scale should be one of \"htk\", \"slaney\" or \"kaldi\".');\n    }\n\n    return typeof freq === 'number' ? fn(freq) : freq.map(x => fn(x));\n}",
+                "start_line": 118,
+                "symbol_id": "src/utils/audio.js#function:hertz_to_mel:118"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 119,
+                "kind": "declaration",
+                "name": "fn",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "fn",
+                "signature": "const fn = HERTZ_TO_MEL_MAPPING[mel_scale];",
+                "start_line": 119,
+                "symbol_id": "src/utils/audio.js#declaration:fn:119"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 133,
+                "kind": "declaration",
+                "name": "MEL_TO_HERTZ_MAPPING",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "MEL_TO_HERTZ_MAPPING",
+                "signature": "const MEL_TO_HERTZ_MAPPING = {\n    \"htk\": (/** @type {number} */ mels) => 700.0 * (10.0 ** (mels / 2595.0) - 1.0),\n    \"kaldi\": (/** @type {number} */ mels) => 700.0 * (Math.exp(mels / 1127.0) - 1.0),\n    \"slaney\": (/** @type {number} */ mels, min_log_hertz = 1000.0, min_log_mel = 15.0, logstep = Math.log(6.4) / 27.0) => mels >= min_log_mel\n        ? min_log_hertz * Math.exp(logstep * (mels - min_log_mel))\n        : 200.0 * mels / 3.0,\n}",
+                "start_line": 127,
+                "symbol_id": "src/utils/audio.js#declaration:MEL_TO_HERTZ_MAPPING:127"
+              },
+              {
+                "children": [],
+                "documentation": "@template {Float32Array|Float64Array|number} T\n@param {T} mels\n@param {string} [mel_scale]\n@returns {T}",
+                "end_line": 148,
+                "kind": "function",
+                "name": "mel_to_hertz",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "mel_to_hertz",
+                "signature": "function mel_to_hertz(mels, mel_scale = \"htk\") {\n    const fn = MEL_TO_HERTZ_MAPPING[mel_scale];\n    if (!fn) {\n        throw new Error('mel_scale should be one of \"htk\", \"slaney\" or \"kaldi\".');\n    }\n\n    return typeof mels === 'number' ? fn(mels) : mels.map(x => fn(x));\n}",
+                "start_line": 141,
+                "symbol_id": "src/utils/audio.js#function:mel_to_hertz:141"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 142,
+                "kind": "declaration",
+                "name": "fn",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "fn",
+                "signature": "const fn = MEL_TO_HERTZ_MAPPING[mel_scale];",
+                "start_line": 142,
+                "symbol_id": "src/utils/audio.js#declaration:fn:142"
+              },
+              {
+                "children": [],
+                "documentation": "Creates a triangular filter bank.\n\nAdapted from torchaudio and librosa.\n\n@param {Float64Array} fft_freqs Discrete frequencies of the FFT bins in Hz, of shape `(num_frequency_bins,)`.\n@param {Float64Array} filter_freqs Center frequencies of the triangular filters to create, in Hz, of shape `(num_mel_filters,)`.\n@returns {number[][]} of shape `(num_frequency_bins, num_mel_filters)`.",
+                "end_line": 188,
+                "kind": "function",
+                "name": "_create_triangular_filter_bank",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "_create_triangular_filter_bank",
+                "signature": "function _create_triangular_filter_bank(fft_freqs, filter_freqs) {\n    const filter_diff = Float64Array.from(\n        { length: filter_freqs.length - 1 },\n        (_, i) => filter_freqs[i + 1] - filter_freqs[i]\n    );\n\n    const slopes = Array.from({\n        length: fft_freqs.length\n    }, () => new Array(filter_freqs.length));\n\n    for (let j = 0; j < fft_freqs.length; ++j) {\n        const slope = slopes[j];\n        for (let i = 0; i < filter_freqs.length; ++i) {\n            slope[i] = filter_freqs[i] - fft_freqs[j];\n        }\n    }\n\n    const numFreqs = filter_freqs.length - 2;\n    const ret = Array.from({ length: numFreqs }, () => new Array(fft_freqs.length));\n\n    for (let j = 0; j < fft_freqs.length; ++j) { // 201\n        const slope = slopes[j];\n        for (let i = 0; i < numFreqs; ++i) { // 80\n            const down = -slope[i] / filter_diff[i];\n            const up = slope[i + 2] / filter_diff[i + 1];\n            ret[i][j] = Math.max(0, Math.min(down, up));\n        }\n    }\n    return ret;\n}",
+                "start_line": 159,
+                "symbol_id": "src/utils/audio.js#function:_create_triangular_filter_bank:159"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 163,
+                "kind": "declaration",
+                "name": "filter_diff",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "filter_diff",
+                "signature": "const filter_diff = Float64Array.from(\n        { length: filter_freqs.length - 1 },\n        (_, i) => filter_freqs[i + 1] - filter_freqs[i]\n    );",
+                "start_line": 160,
+                "symbol_id": "src/utils/audio.js#declaration:filter_diff:160"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 167,
+                "kind": "declaration",
+                "name": "slopes",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "slopes",
+                "signature": "const slopes = Array.from({\n        length: fft_freqs.length\n    }, () => new Array(filter_freqs.length));",
+                "start_line": 165,
+                "symbol_id": "src/utils/audio.js#declaration:slopes:165"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 169,
+                "kind": "declaration",
+                "name": "j",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "j",
+                "signature": "let j = 0;",
+                "start_line": 169,
+                "symbol_id": "src/utils/audio.js#declaration:j:169"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 170,
+                "kind": "declaration",
+                "name": "slope",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "slope",
+                "signature": "const slope = slopes[j];",
+                "start_line": 170,
+                "symbol_id": "src/utils/audio.js#declaration:slope:170"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 171,
+                "kind": "declaration",
+                "name": "i",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "i",
+                "signature": "let i = 0;",
+                "start_line": 171,
+                "symbol_id": "src/utils/audio.js#declaration:i:171"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 176,
+                "kind": "declaration",
+                "name": "numFreqs",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "numFreqs",
+                "signature": "const numFreqs = filter_freqs.length - 2;",
+                "start_line": 176,
+                "symbol_id": "src/utils/audio.js#declaration:numFreqs:176"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 177,
+                "kind": "declaration",
+                "name": "ret",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "ret",
+                "signature": "const ret = Array.from({ length: numFreqs }, () => new Array(fft_freqs.length));",
+                "start_line": 177,
+                "symbol_id": "src/utils/audio.js#declaration:ret:177"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 179,
+                "kind": "declaration",
+                "name": "j",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "j",
+                "signature": "let j = 0;",
+                "start_line": 179,
+                "symbol_id": "src/utils/audio.js#declaration:j:179"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 180,
+                "kind": "declaration",
+                "name": "slope",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "slope",
+                "signature": "const slope = slopes[j];",
+                "start_line": 180,
+                "symbol_id": "src/utils/audio.js#declaration:slope:180"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 181,
+                "kind": "declaration",
+                "name": "i",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "i",
+                "signature": "let i = 0;",
+                "start_line": 181,
+                "symbol_id": "src/utils/audio.js#declaration:i:181"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 182,
+                "kind": "declaration",
+                "name": "down",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "down",
+                "signature": "const down = -slope[i] / filter_diff[i];",
+                "start_line": 182,
+                "symbol_id": "src/utils/audio.js#declaration:down:182"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 183,
+                "kind": "declaration",
+                "name": "up",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "up",
+                "signature": "const up = slope[i + 2] / filter_diff[i + 1];",
+                "start_line": 183,
+                "symbol_id": "src/utils/audio.js#declaration:up:183"
+              },
+              {
+                "children": [],
+                "documentation": "Return evenly spaced numbers over a specified interval.\n@param {number} start The starting value of the sequence.\n@param {number} end The end value of the sequence.\n@param {number} num Number of samples to generate.\n@returns `num` evenly spaced samples, calculated over the interval `[start, stop]`.",
+                "end_line": 200,
+                "kind": "function",
+                "name": "linspace",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "linspace",
+                "signature": "function linspace(start, end, num) {\n    const step = (end - start) / (num - 1);\n    return Float64Array.from({ length: num }, (_, i) => start + step * i);\n}",
+                "start_line": 197,
+                "symbol_id": "src/utils/audio.js#function:linspace:197"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 198,
+                "kind": "declaration",
+                "name": "step",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "step",
+                "signature": "const step = (end - start) / (num - 1);",
+                "start_line": 198,
+                "symbol_id": "src/utils/audio.js#declaration:step:198"
+              },
+              {
+                "children": [],
+                "documentation": "Creates a frequency bin conversion matrix used to obtain a mel spectrogram. This is called a *mel filter bank*, and\nvarious implementation exist, which differ in the number of filters, the shape of the filters, the way the filters\nare spaced, the bandwidth of the filters, and the manner in which the spectrum is warped. The goal of these\nfeatures is to approximate the non-linear human perception of the variation in pitch with respect to the frequency.\n@param {number} num_frequency_bins Number of frequencies used to compute the spectrogram (should be the same as in `stft`).\n@param {number} num_mel_filters Number of mel filters to generate.\n@param {number} min_frequency Lowest frequency of interest in Hz.\n@param {number} max_frequency Highest frequency of interest in Hz. This should not exceed `sampling_rate / 2`.\n@param {number} sampling_rate Sample rate of the audio waveform.\n@param {string} [norm] If `\"slaney\"`, divide the triangular mel weights by the width of the mel band (area normalization).\n@param {string} [mel_scale] The mel frequency scale to use, `\"htk\"` or `\"slaney\"`.\n@param {boolean} [triangularize_in_mel_space] If this option is enabled, the triangular filter is applied in mel space rather than frequency space.\nThis should be set to `true` in order to get the same results as `torchaudio` when computing mel filters.\n@returns {number[][]} Triangular filter bank matrix, which is a 2D array of shape (`num_frequency_bins`, `num_mel_filters`).\nThis is a projection matrix to go from a spectrogram to a mel spectrogram.",
+                "end_line": 266,
+                "kind": "function",
+                "name": "mel_filter_bank",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "mel_filter_bank",
+                "signature": "function mel_filter_bank(\n    num_frequency_bins,\n    num_mel_filters,\n    min_frequency,\n    max_frequency,\n    sampling_rate,\n    norm = null,\n    mel_scale = \"htk\",\n    triangularize_in_mel_space = false,\n) {\n    if (norm !== null && norm !== \"slaney\") {\n        throw new Error('norm must be one of null or \"slaney\"');\n    }\n\n    const mel_min = hertz_to_mel(min_frequency, mel_scale);\n    const mel_max = hertz_to_mel(max_frequency, mel_scale);\n    const mel_freqs = linspace(mel_min, mel_max, num_mel_filters + 2);\n\n    let filter_freqs = mel_to_hertz(mel_freqs, mel_scale);\n    let fft_freqs; // frequencies of FFT bins in Hz\n\n    if (triangularize_in_mel_space) {\n        const fft_bin_width = sampling_rate / (num_frequency_bins * 2);\n        fft_freqs = hertz_to_mel(Float64Array.from({ length: num_frequency_bins }, (_, i) => i * fft_bin_width), mel_scale);\n        filter_freqs = mel_freqs;\n    } else {\n        fft_freqs = linspace(0, Math.floor(sampling_rate / 2), num_frequency_bins);\n    }\n\n    const mel_filters = _create_triangular_filter_bank(fft_freqs, filter_freqs);\n\n    if (norm !== null && norm === \"slaney\") {\n        // Slaney-style mel is scaled to be approx constant energy per channel\n        for (let i = 0; i < num_mel_filters; ++i) {\n            const filter = mel_filters[i];\n            const enorm = 2.0 / (filter_freqs[i + 2] - filter_freqs[i]);\n            for (let j = 0; j < num_frequency_bins; ++j) {\n                // Apply this enorm to all frequency bins\n                filter[j] *= enorm;\n            }\n        }\n    }\n\n    // TODO warn if there is a zero row\n\n    return mel_filters;\n\n}",
+                "start_line": 219,
+                "symbol_id": "src/utils/audio.js#function:mel_filter_bank:219"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 233,
+                "kind": "declaration",
+                "name": "mel_min",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "mel_min",
+                "signature": "const mel_min = hertz_to_mel(min_frequency, mel_scale);",
+                "start_line": 233,
+                "symbol_id": "src/utils/audio.js#declaration:mel_min:233"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 234,
+                "kind": "declaration",
+                "name": "mel_max",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "mel_max",
+                "signature": "const mel_max = hertz_to_mel(max_frequency, mel_scale);",
+                "start_line": 234,
+                "symbol_id": "src/utils/audio.js#declaration:mel_max:234"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 235,
+                "kind": "declaration",
+                "name": "mel_freqs",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "mel_freqs",
+                "signature": "const mel_freqs = linspace(mel_min, mel_max, num_mel_filters + 2);",
+                "start_line": 235,
+                "symbol_id": "src/utils/audio.js#declaration:mel_freqs:235"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 237,
+                "kind": "declaration",
+                "name": "filter_freqs",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "filter_freqs",
+                "signature": "let filter_freqs = mel_to_hertz(mel_freqs, mel_scale);",
+                "start_line": 237,
+                "symbol_id": "src/utils/audio.js#declaration:filter_freqs:237"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 238,
+                "kind": "declaration",
+                "name": "<anonymous>",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "<anonymous>",
+                "signature": "let fft_freqs;",
+                "start_line": 238,
+                "symbol_id": "src/utils/audio.js#declaration:anonymous:238"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 241,
+                "kind": "declaration",
+                "name": "fft_bin_width",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "fft_bin_width",
+                "signature": "const fft_bin_width = sampling_rate / (num_frequency_bins * 2);",
+                "start_line": 241,
+                "symbol_id": "src/utils/audio.js#declaration:fft_bin_width:241"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 248,
+                "kind": "declaration",
+                "name": "mel_filters",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "mel_filters",
+                "signature": "const mel_filters = _create_triangular_filter_bank(fft_freqs, filter_freqs);",
+                "start_line": 248,
+                "symbol_id": "src/utils/audio.js#declaration:mel_filters:248"
+              },
+              {
+                "children": [],
+                "documentation": "Slaney-style mel is scaled to be approx constant energy per channel",
+                "end_line": 252,
+                "kind": "declaration",
+                "name": "i",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "i",
+                "signature": "let i = 0;",
+                "start_line": 252,
+                "symbol_id": "src/utils/audio.js#declaration:i:252"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 253,
+                "kind": "declaration",
+                "name": "filter",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "filter",
+                "signature": "const filter = mel_filters[i];",
+                "start_line": 253,
+                "symbol_id": "src/utils/audio.js#declaration:filter:253"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 254,
+                "kind": "declaration",
+                "name": "enorm",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "enorm",
+                "signature": "const enorm = 2.0 / (filter_freqs[i + 2] - filter_freqs[i]);",
+                "start_line": 254,
+                "symbol_id": "src/utils/audio.js#declaration:enorm:254"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 255,
+                "kind": "declaration",
+                "name": "j",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "j",
+                "signature": "let j = 0;",
+                "start_line": 255,
+                "symbol_id": "src/utils/audio.js#declaration:j:255"
+              },
+              {
+                "children": [],
+                "documentation": "@template {Float32Array|Float64Array} T\nPads an array with a reflected version of itself on both ends.\n@param {T} array The array to pad.\n@param {number} left The amount of padding to add to the left.\n@param {number} right The amount of padding to add to the right.\n@returns {T} The padded array.",
+                "end_line": 294,
+                "kind": "function",
+                "name": "padReflect",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "padReflect",
+                "signature": "function padReflect(array, left, right) {\n    // @ts-ignore\n    const padded = new array.constructor(array.length + left + right);\n    const w = array.length - 1;\n\n    for (let i = 0; i < array.length; ++i) {\n        padded[left + i] = array[i];\n    }\n\n    for (let i = 1; i <= left; ++i) {\n        padded[left - i] = array[calculateReflectOffset(i, w)];\n    }\n\n    for (let i = 1; i <= right; ++i) {\n        padded[w + left + i] = array[calculateReflectOffset(w - i, w)];\n    }\n\n    return padded;\n}",
+                "start_line": 276,
+                "symbol_id": "src/utils/audio.js#function:padReflect:276"
+              },
+              {
+                "children": [],
+                "documentation": "@ts-ignore",
+                "end_line": 278,
+                "kind": "declaration",
+                "name": "padded",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "padded",
+                "signature": "const padded = new array.constructor(array.length + left + right);",
+                "start_line": 278,
+                "symbol_id": "src/utils/audio.js#declaration:padded:278"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 279,
+                "kind": "declaration",
+                "name": "w",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "w",
+                "signature": "const w = array.length - 1;",
+                "start_line": 279,
+                "symbol_id": "src/utils/audio.js#declaration:w:279"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 281,
+                "kind": "declaration",
+                "name": "i",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "i",
+                "signature": "let i = 0;",
+                "start_line": 281,
+                "symbol_id": "src/utils/audio.js#declaration:i:281"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 285,
+                "kind": "declaration",
+                "name": "i",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "i",
+                "signature": "let i = 1;",
+                "start_line": 285,
+                "symbol_id": "src/utils/audio.js#declaration:i:285"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 289,
+                "kind": "declaration",
+                "name": "i",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "i",
+                "signature": "let i = 1;",
+                "start_line": 289,
+                "symbol_id": "src/utils/audio.js#declaration:i:289"
+              },
+              {
+                "children": [],
+                "documentation": "Helper function to compute `amplitude_to_db` and `power_to_db`.\n@template {Float32Array|Float64Array} T\n@param {T} spectrogram\n@param {number} factor\n@param {number} reference\n@param {number} min_value\n@param {number} db_range\n@returns {T}",
+                "end_line": 333,
+                "kind": "function",
+                "name": "_db_conversion_helper",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "_db_conversion_helper",
+                "signature": "function _db_conversion_helper(spectrogram, factor, reference, min_value, db_range) {\n    if (reference <= 0) {\n        throw new Error('reference must be greater than zero');\n    }\n\n    if (min_value <= 0) {\n        throw new Error('min_value must be greater than zero');\n    }\n\n    reference = Math.max(min_value, reference);\n\n    const logReference = Math.log10(reference);\n    for (let i = 0; i < spectrogram.length; ++i) {\n        spectrogram[i] = factor * Math.log10(Math.max(min_value, spectrogram[i]) - logReference)\n    }\n\n    if (db_range !== null) {\n        if (db_range <= 0) {\n            throw new Error('db_range must be greater than zero');\n        }\n        const maxValue = max(spectrogram)[0] - db_range;\n        for (let i = 0; i < spectrogram.length; ++i) {\n            spectrogram[i] = Math.max(spectrogram[i], maxValue);\n        }\n    }\n\n    return spectrogram;\n}",
+                "start_line": 306,
+                "symbol_id": "src/utils/audio.js#function:_db_conversion_helper:306"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 317,
+                "kind": "declaration",
+                "name": "logReference",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "logReference",
+                "signature": "const logReference = Math.log10(reference);",
+                "start_line": 317,
+                "symbol_id": "src/utils/audio.js#declaration:logReference:317"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 318,
+                "kind": "declaration",
+                "name": "i",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "i",
+                "signature": "let i = 0;",
+                "start_line": 318,
+                "symbol_id": "src/utils/audio.js#declaration:i:318"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 326,
+                "kind": "declaration",
+                "name": "maxValue",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "maxValue",
+                "signature": "const maxValue = max(spectrogram)[0] - db_range;",
+                "start_line": 326,
+                "symbol_id": "src/utils/audio.js#declaration:maxValue:326"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 327,
+                "kind": "declaration",
+                "name": "i",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "i",
+                "signature": "let i = 0;",
+                "start_line": 327,
+                "symbol_id": "src/utils/audio.js#declaration:i:327"
+              },
+              {
+                "children": [],
+                "documentation": "Converts an amplitude spectrogram to the decibel scale. This computes `20 * log10(spectrogram / reference)`,\nusing basic logarithm properties for numerical stability. NOTE: Operates in-place.\n\nThe motivation behind applying the log function on the (mel) spectrogram is that humans do not hear loudness on a\nlinear scale. Generally to double the perceived volume of a sound we need to put 8 times as much energy into it.\nThis means that large variations in energy may not sound all that different if the sound is loud to begin with.\nThis compression operation makes the (mel) spectrogram features match more closely what humans actually hear.\n\n@template {Float32Array|Float64Array} T\n@param {T} spectrogram The input amplitude (mel) spectrogram.\n@param {number} [reference=1.0] Sets the input spectrogram value that corresponds to 0 dB.\nFor example, use `np.max(spectrogram)` to set the loudest part to 0 dB. Must be greater than zero.\n@param {number} [min_value=1e-5] The spectrogram will be clipped to this minimum value before conversion to decibels,\nto avoid taking `log(0)`. The default of `1e-5` corresponds to a minimum of -100 dB. Must be greater than zero.\n@param {number} [db_range=null] Sets the maximum dynamic range in decibels. For example, if `db_range = 80`, the\ndifference between the peak value and the smallest value will never be more than 80 dB. Must be greater than zero.\n@returns {T} The modified spectrogram in decibels.",
+                "end_line": 356,
+                "kind": "function",
+                "name": "amplitude_to_db",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "amplitude_to_db",
+                "signature": "function amplitude_to_db(spectrogram, reference = 1.0, min_value = 1e-5, db_range = null) {\n    return _db_conversion_helper(spectrogram, 20.0, reference, min_value, db_range);\n}",
+                "start_line": 354,
+                "symbol_id": "src/utils/audio.js#function:amplitude_to_db:354"
+              },
+              {
+                "children": [],
+                "documentation": "Converts a power spectrogram to the decibel scale. This computes `10 * log10(spectrogram / reference)`,\nusing basic logarithm properties for numerical stability. NOTE: Operates in-place.\n\nThe motivation behind applying the log function on the (mel) spectrogram is that humans do not hear loudness on a\nlinear scale. Generally to double the perceived volume of a sound we need to put 8 times as much energy into it.\nThis means that large variations in energy may not sound all that different if the sound is loud to begin with.\nThis compression operation makes the (mel) spectrogram features match more closely what humans actually hear.\n\nBased on the implementation of `librosa.power_to_db`.\n\n@template {Float32Array|Float64Array} T\n@param {T} spectrogram The input power (mel) spectrogram. Note that a power spectrogram has the amplitudes squared!\n@param {number} [reference=1.0] Sets the input spectrogram value that corresponds to 0 dB.\nFor example, use `np.max(spectrogram)` to set the loudest part to 0 dB. Must be greater than zero.\n@param {number} [min_value=1e-10] The spectrogram will be clipped to this minimum value before conversion to decibels,\nto avoid taking `log(0)`. The default of `1e-10` corresponds to a minimum of -100 dB. Must be greater than zero.\n@param {number} [db_range=null] Sets the maximum dynamic range in decibels. For example, if `db_range = 80`, the\ndifference between the peak value and the smallest value will never be more than 80 dB. Must be greater than zero.\n@returns {T} The modified spectrogram in decibels.",
+                "end_line": 381,
+                "kind": "function",
+                "name": "power_to_db",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "power_to_db",
+                "signature": "function power_to_db(spectrogram, reference = 1.0, min_value = 1e-10, db_range = null) {\n    return _db_conversion_helper(spectrogram, 10.0, reference, min_value, db_range);\n}",
+                "start_line": 379,
+                "symbol_id": "src/utils/audio.js#function:power_to_db:379"
+              },
+              {
+                "children": [],
+                "documentation": "Calculates a spectrogram over one waveform using the Short-Time Fourier Transform.\n\nThis function can create the following kinds of spectrograms:\n- amplitude spectrogram (`power = 1.0`)\n- power spectrogram (`power = 2.0`)\n- complex-valued spectrogram (`power = None`)\n- log spectrogram (use `log_mel` argument)\n- mel spectrogram (provide `mel_filters`)\n- log-mel spectrogram (provide `mel_filters` and `log_mel`)\n\nIn this implementation, the window is assumed to be zero-padded to have the same size as the analysis frame.\nA padded window can be obtained from `window_function()`. The FFT input buffer may be larger than the analysis frame,\ntypically the next power of two.\n\n@param {Float32Array|Float64Array} waveform The input waveform of shape `(length,)`. This must be a single real-valued, mono waveform.\n@param {Float32Array|Float64Array} window The windowing function to apply of shape `(frame_length,)`, including zero-padding if necessary. The actual window length may be\nshorter than `frame_length`, but we're assuming the array has already been zero-padded.\n@param {number} frame_length The length of the analysis frames in samples (a.k.a., `fft_length`).\n@param {number} hop_length The stride between successive analysis frames in samples.\n@param {Object} options\n@param {number} [options.fft_length=null] The size of the FFT buffer in samples. This determines how many frequency bins the spectrogram will have.\nFor optimal speed, this should be a power of two. If `null`, uses `frame_length`.\n@param {number} [options.power=1.0] If 1.0, returns the amplitude spectrogram. If 2.0, returns the power spectrogram. If `null`, returns complex numbers.\n@param {boolean} [options.center=true] Whether to pad the waveform so that frame `t` is centered around time `t * hop_length`. If `false`, frame\n`t` will start at time `t * hop_length`.\n@param {string} [options.pad_mode=\"reflect\"] Padding mode used when `center` is `true`. Possible values are: `\"constant\"` (pad with zeros),\n`\"edge\"` (pad with edge values), `\"reflect\"` (pads with mirrored values).\n@param {boolean} [options.onesided=true] If `true`, only computes the positive frequencies and returns a spectrogram containing `fft_length // 2 + 1`\nfrequency bins. If `false`, also computes the negative frequencies and returns `fft_length` frequency bins.\n@param {number} [options.preemphasis=null] Coefficient for a low-pass filter that applies pre-emphasis before the DFT.\n@param {number[][]} [options.mel_filters=null] The mel filter bank of shape `(num_freq_bins, num_mel_filters)`.\nIf supplied, applies this filter bank to create a mel spectrogram.\n@param {number} [options.mel_floor=1e-10] Minimum value of mel frequency banks.\n@param {string} [options.log_mel=null] How to convert the spectrogram to log scale. Possible options are:\n`null` (don't convert), `\"log\"` (take the natural logarithm) `\"log10\"` (take the base-10 logarithm), `\"dB\"` (convert to decibels).\nCan only be used when `power` is not `null`.\n@param {number} [options.reference=1.0] Sets the input spectrogram value that corresponds to 0 dB. For example, use `max(spectrogram)[0]` to set\nthe loudest part to 0 dB. Must be greater than zero.\n@param {number} [options.min_value=1e-10] The spectrogram will be clipped to this minimum value before conversion to decibels, to avoid taking `log(0)`.\nFor a power spectrogram, the default of `1e-10` corresponds to a minimum of -100 dB. For an amplitude spectrogram, the value `1e-5` corresponds to -100 dB.\nMust be greater than zero.\n@param {number} [options.db_range=null] Sets the maximum dynamic range in decibels. For example, if `db_range = 80`, the difference between the\npeak value and the smallest value will never be more than 80 dB. Must be greater than zero.\n@param {boolean} [options.remove_dc_offset=null] Subtract mean from waveform on each frame, applied before pre-emphasis. This should be set to `true` in\norder to get the same results as `torchaudio.compliance.kaldi.fbank` when computing mel filters.\n@param {number} [options.max_num_frames=null] If provided, limits the number of frames to compute to this value.\n@param {boolean} [options.do_pad=true] If `true`, pads the output spectrogram to have `max_num_frames` frames.\n@param {boolean} [options.transpose=false] If `true`, the returned spectrogram will have shape `(num_frames, num_frequency_bins/num_mel_filters)`. If `false`, the returned spectrogram will have shape `(num_frequency_bins/num_mel_filters, num_frames)`.\n@returns {{data: Float32Array, dims: number[]}} Spectrogram of shape `(num_frequency_bins, length)` (regular spectrogram) or shape `(num_mel_filters, length)` (mel spectrogram).",
+                "end_line": 622,
+                "kind": "function",
+                "name": "spectrogram",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "spectrogram",
+                "signature": "function spectrogram(\n    waveform,\n    window,\n    frame_length,\n    hop_length,\n    {\n        fft_length = null,\n        power = 1.0,\n        center = true,\n        pad_mode = \"reflect\",\n        onesided = true,\n        preemphasis = null,\n        mel_filters = null,\n        mel_floor = 1e-10,\n        log_mel = null,\n        reference = 1.0,\n        min_value = 1e-10,\n        db_range = null,\n        remove_dc_offset = null,\n\n        // Custom parameters for efficiency reasons\n        max_num_frames = null,\n        do_pad = true,\n        transpose = false,\n    } = {}\n) {\n    const window_length = window.length;\n    if (fft_length === null) {\n        fft_length = frame_length;\n    }\n    if (frame_length > fft_length) {\n        throw Error(`frame_length (${frame_length}) may not be larger than fft_length (${fft_length})`)\n    }\n\n    if (window_length !== frame_length) {\n        throw new Error(`Length of the window (${window_length}) must equal frame_length (${frame_length})`);\n    }\n\n    if (hop_length <= 0) {\n        throw new Error(\"hop_length must be greater than zero\");\n    }\n\n    if (center) {\n        if (pad_mode !== 'reflect') {\n            throw new Error(`pad_mode=\"${pad_mode}\" not implemented yet.`)\n        }\n        const half_window = Math.floor((fft_length - 1) / 2) + 1;\n        waveform = padReflect(waveform, half_window, half_window);\n    }\n\n    // split waveform into frames of frame_length size\n    const num_frames = Math.floor(1 + Math.floor((waveform.length - frame_length) / hop_length))\n\n    const num_frequency_bins = onesided ? Math.floor(fft_length / 2) + 1 : fft_length\n\n    let d1 = num_frames;\n    let d1Max = num_frames;\n\n    // If maximum number of frames is provided, we must either pad or truncate\n    if (max_num_frames !== null) {\n        if (max_num_frames > num_frames) { // input is too short, so we pad\n            if (do_pad) {\n                d1Max = max_num_frames;\n            }\n        } else { // input is too long, so we truncate\n            d1Max = d1 = max_num_frames;\n        }\n    }\n\n    // Preallocate arrays to store output.\n    const fft = new FFT(fft_length);\n    const inputBuffer = new Float64Array(fft_length);\n    const outputBuffer = new Float64Array(fft.outputBufferSize);\n    const magnitudes = new Array(d1);\n\n    for (let i = 0; i < d1; ++i) {\n        // Populate buffer with waveform data\n        const offset = i * hop_length;\n        for (let j = 0; j < frame_length; ++j) {\n            inputBuffer[j] = waveform[offset + j];\n        }\n\n        if (remove_dc_offset) {\n            let sum = 0;\n            for (let j = 0; j < frame_length; ++j) {\n                sum += inputBuffer[j];\n            }\n            const mean = sum / frame_length;\n            for (let j = 0; j < frame_length; ++j) {\n                inputBuffer[j] -= mean;\n            }\n        }\n\n        if (preemphasis !== null) {\n            // Done in reverse to avoid copies and distructive modification\n            for (let j = frame_length - 1; j >= 1; --j) {\n                inputBuffer[j] -= preemphasis * inputBuffer[j - 1];\n            }\n            inputBuffer[0] *= 1 - preemphasis;\n        }\n\n        for (let j = 0; j < window.length; ++j) {\n            inputBuffer[j] *= window[j];\n        }\n\n        fft.realTransform(outputBuffer, inputBuffer);\n\n        // compute magnitudes\n        const row = new Array(num_frequency_bins);\n        for (let j = 0; j < row.length; ++j) {\n            const j2 = j << 1;\n            row[j] = outputBuffer[j2] ** 2 + outputBuffer[j2 + 1] ** 2;\n        }\n        magnitudes[i] = row;\n    }\n\n    // TODO what should happen if power is None?\n    // https://github.com/huggingface/transformers/issues/27772\n    if (power !== null && power !== 2) {\n        // slight optimization to not sqrt\n        const pow = 2 / power; // we use 2 since we already squared\n        for (let i = 0; i < magnitudes.length; ++i) {\n            const magnitude = magnitudes[i];\n            for (let j = 0; j < magnitude.length; ++j) {\n                magnitude[j] **= pow;\n            }\n        }\n    }\n\n    // TODO: What if `mel_filters` is null?\n    const num_mel_filters = mel_filters.length;\n\n    // Only here do we create Float32Array\n    const mel_spec = new Float32Array(num_mel_filters * d1Max);\n\n    // Perform matrix muliplication:\n    // mel_spec = mel_filters @ magnitudes.T\n    //  - mel_filters.shape=(80, 201)\n    //  - magnitudes.shape=(3000, 201) => - magnitudes.T.shape=(201, 3000)\n    //  - mel_spec.shape=(80, 3000)\n    const dims = transpose ? [d1Max, num_mel_filters] : [num_mel_filters, d1Max];\n    for (let i = 0; i < num_mel_filters; ++i) { // num melfilters (e.g., 80)\n        const filter = mel_filters[i];\n        for (let j = 0; j < d1; ++j) { // num frames (e.g., 3000)\n            const magnitude = magnitudes[j];\n\n            let sum = 0;\n            for (let k = 0; k < num_frequency_bins; ++k) { // num frequency bins (e.g., 201)\n                sum += filter[k] * magnitude[k];\n            }\n\n            mel_spec[\n                transpose\n                    ? j * num_mel_filters + i\n                    : i * d1 + j\n            ] = Math.max(mel_floor, sum);\n        }\n    }\n\n    if (power !== null && log_mel !== null) {\n        const o = Math.min(mel_spec.length, d1 * num_mel_filters);\n        switch (log_mel) {\n            case 'log':\n                for (let i = 0; i < o; ++i) {\n                    mel_spec[i] = Math.log(mel_spec[i]);\n                }\n                break;\n            case 'log10':\n                for (let i = 0; i < o; ++i) {\n                    mel_spec[i] = Math.log10(mel_spec[i]);\n                }\n                break;\n            case 'dB':\n                if (power === 1.0) {\n                    // NOTE: operates in-place\n                    amplitude_to_db(mel_spec, reference, min_value, db_range);\n                } else if (power === 2.0) {\n                    power_to_db(mel_spec, reference, min_value, db_range);\n                } else {\n                    throw new Error(`Cannot use log_mel option '${log_mel}' with power ${power}`)\n                }\n                break;\n            default:\n                throw new Error(`log_mel must be one of null, 'log', 'log10' or 'dB'. Got '${log_mel}'`);\n        }\n    }\n\n    return { data: mel_spec, dims };\n}",
+                "start_line": 434,
+                "symbol_id": "src/utils/audio.js#function:spectrogram:434"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 460,
+                "kind": "declaration",
+                "name": "window_length",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "window_length",
+                "signature": "const window_length = window.length;",
+                "start_line": 460,
+                "symbol_id": "src/utils/audio.js#declaration:window_length:460"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 480,
+                "kind": "declaration",
+                "name": "half_window",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "half_window",
+                "signature": "const half_window = Math.floor((fft_length - 1) / 2) + 1;",
+                "start_line": 480,
+                "symbol_id": "src/utils/audio.js#declaration:half_window:480"
+              },
+              {
+                "children": [],
+                "documentation": "split waveform into frames of frame_length size",
+                "end_line": 485,
+                "kind": "declaration",
+                "name": "num_frames",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "num_frames",
+                "signature": "const num_frames = Math.floor(1 + Math.floor((waveform.length - frame_length) / hop_length))",
+                "start_line": 485,
+                "symbol_id": "src/utils/audio.js#declaration:num_frames:485"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 487,
+                "kind": "declaration",
+                "name": "num_frequency_bins",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "num_frequency_bins",
+                "signature": "const num_frequency_bins = onesided ? Math.floor(fft_length / 2) + 1 : fft_length",
+                "start_line": 487,
+                "symbol_id": "src/utils/audio.js#declaration:num_frequency_bins:487"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 489,
+                "kind": "declaration",
+                "name": "d1",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "d1",
+                "signature": "let d1 = num_frames;",
+                "start_line": 489,
+                "symbol_id": "src/utils/audio.js#declaration:d1:489"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 490,
+                "kind": "declaration",
+                "name": "d1Max",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "d1Max",
+                "signature": "let d1Max = num_frames;",
+                "start_line": 490,
+                "symbol_id": "src/utils/audio.js#declaration:d1Max:490"
+              },
+              {
+                "children": [],
+                "documentation": "Preallocate arrays to store output.",
+                "end_line": 504,
+                "kind": "declaration",
+                "name": "fft",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "fft",
+                "signature": "const fft = new FFT(fft_length);",
+                "start_line": 504,
+                "symbol_id": "src/utils/audio.js#declaration:fft:504"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 505,
+                "kind": "declaration",
+                "name": "inputBuffer",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "inputBuffer",
+                "signature": "const inputBuffer = new Float64Array(fft_length);",
+                "start_line": 505,
+                "symbol_id": "src/utils/audio.js#declaration:inputBuffer:505"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 506,
+                "kind": "declaration",
+                "name": "outputBuffer",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "outputBuffer",
+                "signature": "const outputBuffer = new Float64Array(fft.outputBufferSize);",
+                "start_line": 506,
+                "symbol_id": "src/utils/audio.js#declaration:outputBuffer:506"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 507,
+                "kind": "declaration",
+                "name": "magnitudes",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "magnitudes",
+                "signature": "const magnitudes = new Array(d1);",
+                "start_line": 507,
+                "symbol_id": "src/utils/audio.js#declaration:magnitudes:507"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 509,
+                "kind": "declaration",
+                "name": "i",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "i",
+                "signature": "let i = 0;",
+                "start_line": 509,
+                "symbol_id": "src/utils/audio.js#declaration:i:509"
+              },
+              {
+                "children": [],
+                "documentation": "Populate buffer with waveform data",
+                "end_line": 511,
+                "kind": "declaration",
+                "name": "offset",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "offset",
+                "signature": "const offset = i * hop_length;",
+                "start_line": 511,
+                "symbol_id": "src/utils/audio.js#declaration:offset:511"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 512,
+                "kind": "declaration",
+                "name": "j",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "j",
+                "signature": "let j = 0;",
+                "start_line": 512,
+                "symbol_id": "src/utils/audio.js#declaration:j:512"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 517,
+                "kind": "declaration",
+                "name": "sum",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "sum",
+                "signature": "let sum = 0;",
+                "start_line": 517,
+                "symbol_id": "src/utils/audio.js#declaration:sum:517"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 518,
+                "kind": "declaration",
+                "name": "j",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "j",
+                "signature": "let j = 0;",
+                "start_line": 518,
+                "symbol_id": "src/utils/audio.js#declaration:j:518"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 521,
+                "kind": "declaration",
+                "name": "mean",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "mean",
+                "signature": "const mean = sum / frame_length;",
+                "start_line": 521,
+                "symbol_id": "src/utils/audio.js#declaration:mean:521"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 522,
+                "kind": "declaration",
+                "name": "j",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "j",
+                "signature": "let j = 0;",
+                "start_line": 522,
+                "symbol_id": "src/utils/audio.js#declaration:j:522"
+              },
+              {
+                "children": [],
+                "documentation": "Done in reverse to avoid copies and distructive modification",
+                "end_line": 529,
+                "kind": "declaration",
+                "name": "j",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "j",
+                "signature": "let j = frame_length - 1;",
+                "start_line": 529,
+                "symbol_id": "src/utils/audio.js#declaration:j:529"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 535,
+                "kind": "declaration",
+                "name": "j",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "j",
+                "signature": "let j = 0;",
+                "start_line": 535,
+                "symbol_id": "src/utils/audio.js#declaration:j:535"
+              },
+              {
+                "children": [],
+                "documentation": "compute magnitudes",
+                "end_line": 542,
+                "kind": "declaration",
+                "name": "row",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "row",
+                "signature": "const row = new Array(num_frequency_bins);",
+                "start_line": 542,
+                "symbol_id": "src/utils/audio.js#declaration:row:542"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 543,
+                "kind": "declaration",
+                "name": "j",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "j",
+                "signature": "let j = 0;",
+                "start_line": 543,
+                "symbol_id": "src/utils/audio.js#declaration:j:543"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 544,
+                "kind": "declaration",
+                "name": "j2",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "j2",
+                "signature": "const j2 = j << 1;",
+                "start_line": 544,
+                "symbol_id": "src/utils/audio.js#declaration:j2:544"
+              },
+              {
+                "children": [],
+                "documentation": "slight optimization to not sqrt",
+                "end_line": 554,
+                "kind": "declaration",
+                "name": "pow",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "pow",
+                "signature": "const pow = 2 / power;",
+                "start_line": 554,
+                "symbol_id": "src/utils/audio.js#declaration:pow:554"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 555,
+                "kind": "declaration",
+                "name": "i",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "i",
+                "signature": "let i = 0;",
+                "start_line": 555,
+                "symbol_id": "src/utils/audio.js#declaration:i:555"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 556,
+                "kind": "declaration",
+                "name": "magnitude",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "magnitude",
+                "signature": "const magnitude = magnitudes[i];",
+                "start_line": 556,
+                "symbol_id": "src/utils/audio.js#declaration:magnitude:556"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 557,
+                "kind": "declaration",
+                "name": "j",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "j",
+                "signature": "let j = 0;",
+                "start_line": 557,
+                "symbol_id": "src/utils/audio.js#declaration:j:557"
+              },
+              {
+                "children": [],
+                "documentation": "TODO: What if `mel_filters` is null?",
+                "end_line": 564,
+                "kind": "declaration",
+                "name": "num_mel_filters",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "num_mel_filters",
+                "signature": "const num_mel_filters = mel_filters.length;",
+                "start_line": 564,
+                "symbol_id": "src/utils/audio.js#declaration:num_mel_filters:564"
+              },
+              {
+                "children": [],
+                "documentation": "Only here do we create Float32Array",
+                "end_line": 567,
+                "kind": "declaration",
+                "name": "mel_spec",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "mel_spec",
+                "signature": "const mel_spec = new Float32Array(num_mel_filters * d1Max);",
+                "start_line": 567,
+                "symbol_id": "src/utils/audio.js#declaration:mel_spec:567"
+              },
+              {
+                "children": [],
+                "documentation": "Perform matrix muliplication:\nmel_spec = mel_filters @ magnitudes.T\n- mel_filters.shape=(80, 201)\n- magnitudes.shape=(3000, 201) => - magnitudes.T.shape=(201, 3000)\n- mel_spec.shape=(80, 3000)",
+                "end_line": 574,
+                "kind": "declaration",
+                "name": "dims",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "dims",
+                "signature": "const dims = transpose ? [d1Max, num_mel_filters] : [num_mel_filters, d1Max];",
+                "start_line": 574,
+                "symbol_id": "src/utils/audio.js#declaration:dims:574"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 575,
+                "kind": "declaration",
+                "name": "i",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "i",
+                "signature": "let i = 0;",
+                "start_line": 575,
+                "symbol_id": "src/utils/audio.js#declaration:i:575"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 576,
+                "kind": "declaration",
+                "name": "filter",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "filter",
+                "signature": "const filter = mel_filters[i];",
+                "start_line": 576,
+                "symbol_id": "src/utils/audio.js#declaration:filter:576"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 577,
+                "kind": "declaration",
+                "name": "j",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "j",
+                "signature": "let j = 0;",
+                "start_line": 577,
+                "symbol_id": "src/utils/audio.js#declaration:j:577"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 578,
+                "kind": "declaration",
+                "name": "magnitude",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "magnitude",
+                "signature": "const magnitude = magnitudes[j];",
+                "start_line": 578,
+                "symbol_id": "src/utils/audio.js#declaration:magnitude:578"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 580,
+                "kind": "declaration",
+                "name": "sum",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "sum",
+                "signature": "let sum = 0;",
+                "start_line": 580,
+                "symbol_id": "src/utils/audio.js#declaration:sum:580"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 581,
+                "kind": "declaration",
+                "name": "k",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "k",
+                "signature": "let k = 0;",
+                "start_line": 581,
+                "symbol_id": "src/utils/audio.js#declaration:k:581"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 594,
+                "kind": "declaration",
+                "name": "o",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "o",
+                "signature": "const o = Math.min(mel_spec.length, d1 * num_mel_filters);",
+                "start_line": 594,
+                "symbol_id": "src/utils/audio.js#declaration:o:594"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 597,
+                "kind": "declaration",
+                "name": "i",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "i",
+                "signature": "let i = 0;",
+                "start_line": 597,
+                "symbol_id": "src/utils/audio.js#declaration:i:597"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 602,
+                "kind": "declaration",
+                "name": "i",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "i",
+                "signature": "let i = 0;",
+                "start_line": 602,
+                "symbol_id": "src/utils/audio.js#declaration:i:602"
+              },
+              {
+                "children": [],
+                "documentation": "Returns an array containing the specified window.\n@param {number} window_length The length of the window in samples.\n@param {string} name The name of the window function.\n@param {Object} options Additional options.\n@param {boolean} [options.periodic=true] Whether the window is periodic or symmetric.\n@param {number} [options.frame_length=null] The length of the analysis frames in samples.\nProvide a value for `frame_length` if the window is smaller than the frame length, so that it will be zero-padded.\n@param {boolean} [options.center=true] Whether to center the window inside the FFT buffer. Only used when `frame_length` is provided.\n@returns {Float64Array} The window of shape `(window_length,)` or `(frame_length,)`.",
+                "end_line": 667,
+                "kind": "function",
+                "name": "window_function",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "window_function",
+                "signature": "function window_function(window_length, name, {\n    periodic = true,\n    frame_length = null,\n    center = true,\n} = {}) {\n    const length = periodic ? window_length + 1 : window_length;\n    let window;\n    switch (name) {\n        case 'boxcar':\n            window = new Float64Array(length).fill(1.0);\n            break;\n        case 'hann':\n        case 'hann_window':\n            window = hanning(length);\n            break;\n        case 'povey':\n            window = hanning(length).map(x => Math.pow(x, 0.85));\n            break;\n        default:\n            throw new Error(`Unknown window type ${name}.`);\n    }\n    if (periodic) {\n        window = window.subarray(0, window_length);\n    }\n    if (frame_length === null) {\n        return window;\n    }\n    if (window_length > frame_length) {\n        throw new Error(`Length of the window (${window_length}) may not be larger than frame_length (${frame_length})`);\n    }\n\n    return window;\n}",
+                "start_line": 635,
+                "symbol_id": "src/utils/audio.js#function:window_function:635"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 640,
+                "kind": "declaration",
+                "name": "length",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "length",
+                "signature": "const length = periodic ? window_length + 1 : window_length;",
+                "start_line": 640,
+                "symbol_id": "src/utils/audio.js#declaration:length:640"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 641,
+                "kind": "declaration",
+                "name": "<anonymous>",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "<anonymous>",
+                "signature": "let window;",
+                "start_line": 641,
+                "symbol_id": "src/utils/audio.js#declaration:anonymous:641"
+              }
+            ],
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "kind": null,
+                "path": "src/utils/audio.js",
+                "workspace_id": "ts_005_ctx16k"
+              },
+              "durationMs": 6,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "list_symbols",
+              "transport": "in_memory"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 2072,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-nano",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 4924,
+          "metadata": {},
+          "name": "strategy.local_mcp.execute",
+          "type": "strategy.local_mcp.execute"
+        },
+        {
+          "duration_ms": 4925,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 37,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": 0,
+        "cachedInputTokens": 0,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 2,
+        "inputTokens": 19735,
+        "loopControlDurationMsEstimated": 22,
+        "mcpToolCalls": 2,
+        "modelCalls": 3,
+        "modelDurationMs": 4887,
+        "outputTokens": 199,
+        "promptChars": 1155,
+        "questionTokensEstimated": 159,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 0,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 3,
+        "strategyDurationMs": 4924,
+        "taskStatementChars": 984,
+        "toolCalls": 2,
+        "toolDurationMs": 15,
+        "totalDurationMs": 4925,
+        "totalTokens": 19934,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779731497.0,
+        "conversation": null,
+        "created_at": 1779731496.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_0f6e0610b215b005006a148c28d3b48197ab70818dd01220e9",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "7ae5f0e48b"
+        },
+        "model": "gpt-5.4-nano-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "arguments": "{\"workspace_id\":\"ts_005_ctx16k\"}",
+            "call_id": "call_OrugxEPQaLS8dWytqBohUAE8",
+            "id": "fc_0f6e0610b215b005006a148c296a7081978e6e1f19f4fa0aed",
+            "name": "list_files",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 510,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 24,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 534
+        },
+        "user": null
+      },
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779731499.0,
+        "conversation": null,
+        "created_at": 1779731498.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_0f6e0610b215b005006a148c29fd208197a21c8f92c871264e",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "7ae5f0e48b"
+        },
+        "model": "gpt-5.4-nano-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "arguments": "{\"workspace_id\":\"ts_005_ctx16k\",\"path\":\"src/utils/audio.js\",\"kind\":null}",
+            "call_id": "call_fQsLVW0ZckihSA7cKr4TkTIa",
+            "id": "fc_0f6e0610b215b005006a148c2ab424819790e6810f39a4803e",
+            "name": "list_symbols",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 673,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 35,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 708
+        },
+        "user": null
+      },
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779731501.0,
+        "conversation": null,
+        "created_at": 1779731499.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_0f6e0610b215b005006a148c2b8e38819796f268c55e3ca1cf",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "7ae5f0e48b"
+        },
+        "model": "gpt-5.4-nano-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "logprobs": [],
+                "text": "```js\nfunction hanning(M) {\n    if (M < 1) {\n        return new Float64Array();\n    }\n    if (M === 1) {\n        return new Float64Array([1]);\n    }\n    const denom = M - 1;\n    const factor = Math.PI / denom;\n    const cos_vals = new Float64Array(M);\n    for (let i = 0; i < M; ++i) {\n        const n = 2 * i - denom;\n        cos_vals[i] = 0.5 + 0.5 * Math.cos(factor * n);\n    }\n    return cos_vals;\n}\n```",
+                "type": "output_text"
+              }
+            ],
+            "id": "msg_0f6e0610b215b005006a148c2c2fd48197a3f6e5decee8a435",
+            "phase": "final_answer",
+            "role": "assistant",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 18552,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 140,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 18692
+        },
+        "user": null
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "workspace_id": "ts_005_ctx16k"
+        },
+        "durationMs": 9,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "list_files",
+        "transport": "in_memory"
+      },
+      {
+        "arguments": {
+          "kind": null,
+          "path": "src/utils/audio.js",
+          "workspace_id": "ts_005_ctx16k"
+        },
+        "durationMs": 6,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "list_symbols",
+        "transport": "in_memory"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "workspace_id": "ts_005_ctx16k"
+        },
+        "id": "call_OrugxEPQaLS8dWytqBohUAE8",
+        "isError": false,
+        "name": "list_files",
+        "result": [
+          {
+            "language": "typescript",
+            "parse_status": "ok_filtered",
+            "path": "src/utils/audio.js",
+            "repository": "xenova/transformers.js",
+            "symbol_count": 103
+          },
+          {
+            "language": "typescript",
+            "parse_status": "ok_filtered",
+            "path": "src/utils/image.js",
+            "repository": "xenova/transformers.js",
+            "symbol_count": 81
+          },
+          {
+            "language": "typescript",
+            "parse_status": "ok_filtered",
+            "path": "src/processors.js",
+            "repository": "xenova/transformers.js",
+            "symbol_count": 0
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": null,
+          "path": "src/utils/audio.js",
+          "workspace_id": "ts_005_ctx16k"
+        },
+        "id": "call_fQsLVW0ZckihSA7cKr4TkTIa",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "Helper function to read audio from a path/URL.\n@param {string|URL} url The path/URL to load the audio from.\n@param {number} sampling_rate The sampling rate to use when decoding the audio.\n@returns {Promise<Float32Array>} The decoded audio as a `Float32Array`.",
+            "end_line": 78,
+            "kind": "function",
+            "name": "read_audio",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "read_audio",
+            "signature": "async function read_audio(url, sampling_rate) {\n    if (typeof AudioContext === 'undefined') {\n        // Running in node or an environment without AudioContext\n        throw Error(\n            \"Unable to load audio from path/URL since `AudioContext` is not available in your environment. \" +\n            \"Instead, audio data should be passed directly to the pipeline/processor. \" +\n            \"For more information and some example code, see https://huggingface.co/docs/transformers.js/guides/node-audio-processing.\"\n        )\n    }\n\n    const response = await (await getFile(url)).arrayBuffer();\n    const audioCTX = new AudioContext({ sampleRate: sampling_rate });\n    if (typeof sampling_rate === 'undefined') {\n        console.warn(`No sampling rate provided, using default of ${audioCTX.sampleRate}Hz.`)\n    }\n    const decoded = await audioCTX.decodeAudioData(response);\n\n    /** @type {Float32Array} */\n    let audio;\n\n    // We now replicate HuggingFace's `ffmpeg_read` method:\n    if (decoded.numberOfChannels === 2) {\n        // When downmixing a stereo audio file to mono using the -ac 1 option in FFmpeg,\n        // the audio signal is summed across both channels to create a single mono channel.\n        // However, if the audio is at full scale (i.e. the highest possible volume level),\n        // the summing of the two channels can cause the audio signal to clip or distort.\n\n        // To prevent this clipping, FFmpeg applies a scaling factor of 1/sqrt(2) (~ 0.707)\n        // to the audio signal before summing the two channels. This scaling factor ensures\n        // that the combined audio signal will not exceed the maximum possible level, even\n        // if both channels are at full scale.\n\n        // After applying this scaling factor, the audio signal from both channels is summed\n        // to create a single mono channel. It's worth noting that this scaling factor is\n        // only applied when downmixing stereo audio to mono using the -ac 1 option in FFmpeg.\n        // If you're using a different downmixing method, or if you're not downmixing the\n        // audio at all, this scaling factor may not be needed.\n        const SCALING_FACTOR = Math.sqrt(2);\n\n        const left = decoded.getChannelData(0);\n        const right = decoded.getChannelData(1);\n\n        audio = new Float32Array(left.length);\n        for (let i = 0; i < decoded.length; ++i) {\n            audio[i] = SCALING_FACTOR * (left[i] + right[i]) / 2;\n        }\n\n    } else {\n        // If the audio is not stereo, we can just use the first channel:\n        audio = decoded.getChannelData(0);\n    }\n\n    return audio;\n}",
+            "start_line": 25,
+            "symbol_id": "src/utils/audio.js#function:read_audio:25"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 35,
+            "kind": "declaration",
+            "name": "response",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "response",
+            "signature": "const response = await (await getFile(url)).arrayBuffer();",
+            "start_line": 35,
+            "symbol_id": "src/utils/audio.js#declaration:response:35"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 36,
+            "kind": "declaration",
+            "name": "audioCTX",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "audioCTX",
+            "signature": "const audioCTX = new AudioContext({ sampleRate: sampling_rate });",
+            "start_line": 36,
+            "symbol_id": "src/utils/audio.js#declaration:audioCTX:36"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 40,
+            "kind": "declaration",
+            "name": "decoded",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "decoded",
+            "signature": "const decoded = await audioCTX.decodeAudioData(response);",
+            "start_line": 40,
+            "symbol_id": "src/utils/audio.js#declaration:decoded:40"
+          },
+          {
+            "children": [],
+            "documentation": "@type {Float32Array}",
+            "end_line": 43,
+            "kind": "declaration",
+            "name": "<anonymous>",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "<anonymous>",
+            "signature": "let audio;",
+            "start_line": 43,
+            "symbol_id": "src/utils/audio.js#declaration:anonymous:43"
+          },
+          {
+            "children": [],
+            "documentation": "After applying this scaling factor, the audio signal from both channels is summed\nto create a single mono channel. It's worth noting that this scaling factor is\nonly applied when downmixing stereo audio to mono using the -ac 1 option in FFmpeg.\nIf you're using a different downmixing method, or if you're not downmixing the\naudio at all, this scaling factor may not be needed.",
+            "end_line": 62,
+            "kind": "declaration",
+            "name": "SCALING_FACTOR",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "SCALING_FACTOR",
+            "signature": "const SCALING_FACTOR = Math.sqrt(2);",
+            "start_line": 62,
+            "symbol_id": "src/utils/audio.js#declaration:SCALING_FACTOR:62"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 64,
+            "kind": "declaration",
+            "name": "left",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "left",
+            "signature": "const left = decoded.getChannelData(0);",
+            "start_line": 64,
+            "symbol_id": "src/utils/audio.js#declaration:left:64"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 65,
+            "kind": "declaration",
+            "name": "right",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "right",
+            "signature": "const right = decoded.getChannelData(1);",
+            "start_line": 65,
+            "symbol_id": "src/utils/audio.js#declaration:right:65"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 68,
+            "kind": "declaration",
+            "name": "i",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "i",
+            "signature": "let i = 0;",
+            "start_line": 68,
+            "symbol_id": "src/utils/audio.js#declaration:i:68"
+          },
+          {
+            "children": [],
+            "documentation": "Generates a Hanning window of length M.\n\n@param {number} M The length of the Hanning window to generate.\n@returns {Float64Array} The generated Hanning window.",
+            "end_line": 101,
+            "kind": "function",
+            "name": "hanning",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "hanning",
+            "signature": "function hanning(M) {\n    if (M < 1) {\n        return new Float64Array();\n    }\n    if (M === 1) {\n        return new Float64Array([1]);\n    }\n    const denom = M - 1;\n    const factor = Math.PI / denom;\n    const cos_vals = new Float64Array(M);\n    for (let i = 0; i < M; ++i) {\n        const n = 2 * i - denom;\n        cos_vals[i] = 0.5 + 0.5 * Math.cos(factor * n);\n    }\n    return cos_vals;\n}",
+            "start_line": 86,
+            "symbol_id": "src/utils/audio.js#function:hanning:86"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 93,
+            "kind": "declaration",
+            "name": "denom",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "denom",
+            "signature": "const denom = M - 1;",
+            "start_line": 93,
+            "symbol_id": "src/utils/audio.js#declaration:denom:93"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 94,
+            "kind": "declaration",
+            "name": "factor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "factor",
+            "signature": "const factor = Math.PI / denom;",
+            "start_line": 94,
+            "symbol_id": "src/utils/audio.js#declaration:factor:94"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 95,
+            "kind": "declaration",
+            "name": "cos_vals",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "cos_vals",
+            "signature": "const cos_vals = new Float64Array(M);",
+            "start_line": 95,
+            "symbol_id": "src/utils/audio.js#declaration:cos_vals:95"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 96,
+            "kind": "declaration",
+            "name": "i",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "i",
+            "signature": "let i = 0;",
+            "start_line": 96,
+            "symbol_id": "src/utils/audio.js#declaration:i:96"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 97,
+            "kind": "declaration",
+            "name": "n",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "n",
+            "signature": "const n = 2 * i - denom;",
+            "start_line": 97,
+            "symbol_id": "src/utils/audio.js#declaration:n:97"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 110,
+            "kind": "declaration",
+            "name": "HERTZ_TO_MEL_MAPPING",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "HERTZ_TO_MEL_MAPPING",
+            "signature": "const HERTZ_TO_MEL_MAPPING = {\n    \"htk\": (/** @type {number} */ freq) => 2595.0 * Math.log10(1.0 + (freq / 700.0)),\n    \"kaldi\": (/** @type {number} */ freq) => 1127.0 * Math.log(1.0 + (freq / 700.0)),\n    \"slaney\": (/** @type {number} */ freq, min_log_hertz = 1000.0, min_log_mel = 15.0, logstep = 27.0 / Math.log(6.4)) =>\n        freq >= min_log_hertz\n            ? min_log_mel + Math.log(freq / min_log_hertz) * logstep\n            : 3.0 * freq / 200.0,\n}",
+            "start_line": 103,
+            "symbol_id": "src/utils/audio.js#declaration:HERTZ_TO_MEL_MAPPING:103"
+          },
+          {
+            "children": [],
+            "documentation": "@template {Float32Array|Float64Array|number} T\n@param {T} freq\n@param {string} [mel_scale]\n@returns {T}",
+            "end_line": 125,
+            "kind": "function",
+            "name": "hertz_to_mel",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "hertz_to_mel",
+            "signature": "function hertz_to_mel(freq, mel_scale = \"htk\") {\n    const fn = HERTZ_TO_MEL_MAPPING[mel_scale];\n    if (!fn) {\n        throw new Error('mel_scale should be one of \"htk\", \"slaney\" or \"kaldi\".');\n    }\n\n    return typeof freq === 'number' ? fn(freq) : freq.map(x => fn(x));\n}",
+            "start_line": 118,
+            "symbol_id": "src/utils/audio.js#function:hertz_to_mel:118"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 119,
+            "kind": "declaration",
+            "name": "fn",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "fn",
+            "signature": "const fn = HERTZ_TO_MEL_MAPPING[mel_scale];",
+            "start_line": 119,
+            "symbol_id": "src/utils/audio.js#declaration:fn:119"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 133,
+            "kind": "declaration",
+            "name": "MEL_TO_HERTZ_MAPPING",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "MEL_TO_HERTZ_MAPPING",
+            "signature": "const MEL_TO_HERTZ_MAPPING = {\n    \"htk\": (/** @type {number} */ mels) => 700.0 * (10.0 ** (mels / 2595.0) - 1.0),\n    \"kaldi\": (/** @type {number} */ mels) => 700.0 * (Math.exp(mels / 1127.0) - 1.0),\n    \"slaney\": (/** @type {number} */ mels, min_log_hertz = 1000.0, min_log_mel = 15.0, logstep = Math.log(6.4) / 27.0) => mels >= min_log_mel\n        ? min_log_hertz * Math.exp(logstep * (mels - min_log_mel))\n        : 200.0 * mels / 3.0,\n}",
+            "start_line": 127,
+            "symbol_id": "src/utils/audio.js#declaration:MEL_TO_HERTZ_MAPPING:127"
+          },
+          {
+            "children": [],
+            "documentation": "@template {Float32Array|Float64Array|number} T\n@param {T} mels\n@param {string} [mel_scale]\n@returns {T}",
+            "end_line": 148,
+            "kind": "function",
+            "name": "mel_to_hertz",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "mel_to_hertz",
+            "signature": "function mel_to_hertz(mels, mel_scale = \"htk\") {\n    const fn = MEL_TO_HERTZ_MAPPING[mel_scale];\n    if (!fn) {\n        throw new Error('mel_scale should be one of \"htk\", \"slaney\" or \"kaldi\".');\n    }\n\n    return typeof mels === 'number' ? fn(mels) : mels.map(x => fn(x));\n}",
+            "start_line": 141,
+            "symbol_id": "src/utils/audio.js#function:mel_to_hertz:141"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 142,
+            "kind": "declaration",
+            "name": "fn",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "fn",
+            "signature": "const fn = MEL_TO_HERTZ_MAPPING[mel_scale];",
+            "start_line": 142,
+            "symbol_id": "src/utils/audio.js#declaration:fn:142"
+          },
+          {
+            "children": [],
+            "documentation": "Creates a triangular filter bank.\n\nAdapted from torchaudio and librosa.\n\n@param {Float64Array} fft_freqs Discrete frequencies of the FFT bins in Hz, of shape `(num_frequency_bins,)`.\n@param {Float64Array} filter_freqs Center frequencies of the triangular filters to create, in Hz, of shape `(num_mel_filters,)`.\n@returns {number[][]} of shape `(num_frequency_bins, num_mel_filters)`.",
+            "end_line": 188,
+            "kind": "function",
+            "name": "_create_triangular_filter_bank",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "_create_triangular_filter_bank",
+            "signature": "function _create_triangular_filter_bank(fft_freqs, filter_freqs) {\n    const filter_diff = Float64Array.from(\n        { length: filter_freqs.length - 1 },\n        (_, i) => filter_freqs[i + 1] - filter_freqs[i]\n    );\n\n    const slopes = Array.from({\n        length: fft_freqs.length\n    }, () => new Array(filter_freqs.length));\n\n    for (let j = 0; j < fft_freqs.length; ++j) {\n        const slope = slopes[j];\n        for (let i = 0; i < filter_freqs.length; ++i) {\n            slope[i] = filter_freqs[i] - fft_freqs[j];\n        }\n    }\n\n    const numFreqs = filter_freqs.length - 2;\n    const ret = Array.from({ length: numFreqs }, () => new Array(fft_freqs.length));\n\n    for (let j = 0; j < fft_freqs.length; ++j) { // 201\n        const slope = slopes[j];\n        for (let i = 0; i < numFreqs; ++i) { // 80\n            const down = -slope[i] / filter_diff[i];\n            const up = slope[i + 2] / filter_diff[i + 1];\n            ret[i][j] = Math.max(0, Math.min(down, up));\n        }\n    }\n    return ret;\n}",
+            "start_line": 159,
+            "symbol_id": "src/utils/audio.js#function:_create_triangular_filter_bank:159"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 163,
+            "kind": "declaration",
+            "name": "filter_diff",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "filter_diff",
+            "signature": "const filter_diff = Float64Array.from(\n        { length: filter_freqs.length - 1 },\n        (_, i) => filter_freqs[i + 1] - filter_freqs[i]\n    );",
+            "start_line": 160,
+            "symbol_id": "src/utils/audio.js#declaration:filter_diff:160"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 167,
+            "kind": "declaration",
+            "name": "slopes",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "slopes",
+            "signature": "const slopes = Array.from({\n        length: fft_freqs.length\n    }, () => new Array(filter_freqs.length));",
+            "start_line": 165,
+            "symbol_id": "src/utils/audio.js#declaration:slopes:165"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 169,
+            "kind": "declaration",
+            "name": "j",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "j",
+            "signature": "let j = 0;",
+            "start_line": 169,
+            "symbol_id": "src/utils/audio.js#declaration:j:169"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 170,
+            "kind": "declaration",
+            "name": "slope",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "slope",
+            "signature": "const slope = slopes[j];",
+            "start_line": 170,
+            "symbol_id": "src/utils/audio.js#declaration:slope:170"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 171,
+            "kind": "declaration",
+            "name": "i",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "i",
+            "signature": "let i = 0;",
+            "start_line": 171,
+            "symbol_id": "src/utils/audio.js#declaration:i:171"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 176,
+            "kind": "declaration",
+            "name": "numFreqs",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "numFreqs",
+            "signature": "const numFreqs = filter_freqs.length - 2;",
+            "start_line": 176,
+            "symbol_id": "src/utils/audio.js#declaration:numFreqs:176"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 177,
+            "kind": "declaration",
+            "name": "ret",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "ret",
+            "signature": "const ret = Array.from({ length: numFreqs }, () => new Array(fft_freqs.length));",
+            "start_line": 177,
+            "symbol_id": "src/utils/audio.js#declaration:ret:177"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 179,
+            "kind": "declaration",
+            "name": "j",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "j",
+            "signature": "let j = 0;",
+            "start_line": 179,
+            "symbol_id": "src/utils/audio.js#declaration:j:179"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 180,
+            "kind": "declaration",
+            "name": "slope",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "slope",
+            "signature": "const slope = slopes[j];",
+            "start_line": 180,
+            "symbol_id": "src/utils/audio.js#declaration:slope:180"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 181,
+            "kind": "declaration",
+            "name": "i",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "i",
+            "signature": "let i = 0;",
+            "start_line": 181,
+            "symbol_id": "src/utils/audio.js#declaration:i:181"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 182,
+            "kind": "declaration",
+            "name": "down",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "down",
+            "signature": "const down = -slope[i] / filter_diff[i];",
+            "start_line": 182,
+            "symbol_id": "src/utils/audio.js#declaration:down:182"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 183,
+            "kind": "declaration",
+            "name": "up",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "up",
+            "signature": "const up = slope[i + 2] / filter_diff[i + 1];",
+            "start_line": 183,
+            "symbol_id": "src/utils/audio.js#declaration:up:183"
+          },
+          {
+            "children": [],
+            "documentation": "Return evenly spaced numbers over a specified interval.\n@param {number} start The starting value of the sequence.\n@param {number} end The end value of the sequence.\n@param {number} num Number of samples to generate.\n@returns `num` evenly spaced samples, calculated over the interval `[start, stop]`.",
+            "end_line": 200,
+            "kind": "function",
+            "name": "linspace",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "linspace",
+            "signature": "function linspace(start, end, num) {\n    const step = (end - start) / (num - 1);\n    return Float64Array.from({ length: num }, (_, i) => start + step * i);\n}",
+            "start_line": 197,
+            "symbol_id": "src/utils/audio.js#function:linspace:197"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 198,
+            "kind": "declaration",
+            "name": "step",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "step",
+            "signature": "const step = (end - start) / (num - 1);",
+            "start_line": 198,
+            "symbol_id": "src/utils/audio.js#declaration:step:198"
+          },
+          {
+            "children": [],
+            "documentation": "Creates a frequency bin conversion matrix used to obtain a mel spectrogram. This is called a *mel filter bank*, and\nvarious implementation exist, which differ in the number of filters, the shape of the filters, the way the filters\nare spaced, the bandwidth of the filters, and the manner in which the spectrum is warped. The goal of these\nfeatures is to approximate the non-linear human perception of the variation in pitch with respect to the frequency.\n@param {number} num_frequency_bins Number of frequencies used to compute the spectrogram (should be the same as in `stft`).\n@param {number} num_mel_filters Number of mel filters to generate.\n@param {number} min_frequency Lowest frequency of interest in Hz.\n@param {number} max_frequency Highest frequency of interest in Hz. This should not exceed `sampling_rate / 2`.\n@param {number} sampling_rate Sample rate of the audio waveform.\n@param {string} [norm] If `\"slaney\"`, divide the triangular mel weights by the width of the mel band (area normalization).\n@param {string} [mel_scale] The mel frequency scale to use, `\"htk\"` or `\"slaney\"`.\n@param {boolean} [triangularize_in_mel_space] If this option is enabled, the triangular filter is applied in mel space rather than frequency space.\nThis should be set to `true` in order to get the same results as `torchaudio` when computing mel filters.\n@returns {number[][]} Triangular filter bank matrix, which is a 2D array of shape (`num_frequency_bins`, `num_mel_filters`).\nThis is a projection matrix to go from a spectrogram to a mel spectrogram.",
+            "end_line": 266,
+            "kind": "function",
+            "name": "mel_filter_bank",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "mel_filter_bank",
+            "signature": "function mel_filter_bank(\n    num_frequency_bins,\n    num_mel_filters,\n    min_frequency,\n    max_frequency,\n    sampling_rate,\n    norm = null,\n    mel_scale = \"htk\",\n    triangularize_in_mel_space = false,\n) {\n    if (norm !== null && norm !== \"slaney\") {\n        throw new Error('norm must be one of null or \"slaney\"');\n    }\n\n    const mel_min = hertz_to_mel(min_frequency, mel_scale);\n    const mel_max = hertz_to_mel(max_frequency, mel_scale);\n    const mel_freqs = linspace(mel_min, mel_max, num_mel_filters + 2);\n\n    let filter_freqs = mel_to_hertz(mel_freqs, mel_scale);\n    let fft_freqs; // frequencies of FFT bins in Hz\n\n    if (triangularize_in_mel_space) {\n        const fft_bin_width = sampling_rate / (num_frequency_bins * 2);\n        fft_freqs = hertz_to_mel(Float64Array.from({ length: num_frequency_bins }, (_, i) => i * fft_bin_width), mel_scale);\n        filter_freqs = mel_freqs;\n    } else {\n        fft_freqs = linspace(0, Math.floor(sampling_rate / 2), num_frequency_bins);\n    }\n\n    const mel_filters = _create_triangular_filter_bank(fft_freqs, filter_freqs);\n\n    if (norm !== null && norm === \"slaney\") {\n        // Slaney-style mel is scaled to be approx constant energy per channel\n        for (let i = 0; i < num_mel_filters; ++i) {\n            const filter = mel_filters[i];\n            const enorm = 2.0 / (filter_freqs[i + 2] - filter_freqs[i]);\n            for (let j = 0; j < num_frequency_bins; ++j) {\n                // Apply this enorm to all frequency bins\n                filter[j] *= enorm;\n            }\n        }\n    }\n\n    // TODO warn if there is a zero row\n\n    return mel_filters;\n\n}",
+            "start_line": 219,
+            "symbol_id": "src/utils/audio.js#function:mel_filter_bank:219"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 233,
+            "kind": "declaration",
+            "name": "mel_min",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "mel_min",
+            "signature": "const mel_min = hertz_to_mel(min_frequency, mel_scale);",
+            "start_line": 233,
+            "symbol_id": "src/utils/audio.js#declaration:mel_min:233"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 234,
+            "kind": "declaration",
+            "name": "mel_max",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "mel_max",
+            "signature": "const mel_max = hertz_to_mel(max_frequency, mel_scale);",
+            "start_line": 234,
+            "symbol_id": "src/utils/audio.js#declaration:mel_max:234"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 235,
+            "kind": "declaration",
+            "name": "mel_freqs",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "mel_freqs",
+            "signature": "const mel_freqs = linspace(mel_min, mel_max, num_mel_filters + 2);",
+            "start_line": 235,
+            "symbol_id": "src/utils/audio.js#declaration:mel_freqs:235"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 237,
+            "kind": "declaration",
+            "name": "filter_freqs",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "filter_freqs",
+            "signature": "let filter_freqs = mel_to_hertz(mel_freqs, mel_scale);",
+            "start_line": 237,
+            "symbol_id": "src/utils/audio.js#declaration:filter_freqs:237"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 238,
+            "kind": "declaration",
+            "name": "<anonymous>",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "<anonymous>",
+            "signature": "let fft_freqs;",
+            "start_line": 238,
+            "symbol_id": "src/utils/audio.js#declaration:anonymous:238"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 241,
+            "kind": "declaration",
+            "name": "fft_bin_width",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "fft_bin_width",
+            "signature": "const fft_bin_width = sampling_rate / (num_frequency_bins * 2);",
+            "start_line": 241,
+            "symbol_id": "src/utils/audio.js#declaration:fft_bin_width:241"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 248,
+            "kind": "declaration",
+            "name": "mel_filters",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "mel_filters",
+            "signature": "const mel_filters = _create_triangular_filter_bank(fft_freqs, filter_freqs);",
+            "start_line": 248,
+            "symbol_id": "src/utils/audio.js#declaration:mel_filters:248"
+          },
+          {
+            "children": [],
+            "documentation": "Slaney-style mel is scaled to be approx constant energy per channel",
+            "end_line": 252,
+            "kind": "declaration",
+            "name": "i",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "i",
+            "signature": "let i = 0;",
+            "start_line": 252,
+            "symbol_id": "src/utils/audio.js#declaration:i:252"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 253,
+            "kind": "declaration",
+            "name": "filter",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "filter",
+            "signature": "const filter = mel_filters[i];",
+            "start_line": 253,
+            "symbol_id": "src/utils/audio.js#declaration:filter:253"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 254,
+            "kind": "declaration",
+            "name": "enorm",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "enorm",
+            "signature": "const enorm = 2.0 / (filter_freqs[i + 2] - filter_freqs[i]);",
+            "start_line": 254,
+            "symbol_id": "src/utils/audio.js#declaration:enorm:254"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 255,
+            "kind": "declaration",
+            "name": "j",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "j",
+            "signature": "let j = 0;",
+            "start_line": 255,
+            "symbol_id": "src/utils/audio.js#declaration:j:255"
+          },
+          {
+            "children": [],
+            "documentation": "@template {Float32Array|Float64Array} T\nPads an array with a reflected version of itself on both ends.\n@param {T} array The array to pad.\n@param {number} left The amount of padding to add to the left.\n@param {number} right The amount of padding to add to the right.\n@returns {T} The padded array.",
+            "end_line": 294,
+            "kind": "function",
+            "name": "padReflect",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "padReflect",
+            "signature": "function padReflect(array, left, right) {\n    // @ts-ignore\n    const padded = new array.constructor(array.length + left + right);\n    const w = array.length - 1;\n\n    for (let i = 0; i < array.length; ++i) {\n        padded[left + i] = array[i];\n    }\n\n    for (let i = 1; i <= left; ++i) {\n        padded[left - i] = array[calculateReflectOffset(i, w)];\n    }\n\n    for (let i = 1; i <= right; ++i) {\n        padded[w + left + i] = array[calculateReflectOffset(w - i, w)];\n    }\n\n    return padded;\n}",
+            "start_line": 276,
+            "symbol_id": "src/utils/audio.js#function:padReflect:276"
+          },
+          {
+            "children": [],
+            "documentation": "@ts-ignore",
+            "end_line": 278,
+            "kind": "declaration",
+            "name": "padded",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "padded",
+            "signature": "const padded = new array.constructor(array.length + left + right);",
+            "start_line": 278,
+            "symbol_id": "src/utils/audio.js#declaration:padded:278"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 279,
+            "kind": "declaration",
+            "name": "w",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "w",
+            "signature": "const w = array.length - 1;",
+            "start_line": 279,
+            "symbol_id": "src/utils/audio.js#declaration:w:279"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 281,
+            "kind": "declaration",
+            "name": "i",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "i",
+            "signature": "let i = 0;",
+            "start_line": 281,
+            "symbol_id": "src/utils/audio.js#declaration:i:281"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 285,
+            "kind": "declaration",
+            "name": "i",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "i",
+            "signature": "let i = 1;",
+            "start_line": 285,
+            "symbol_id": "src/utils/audio.js#declaration:i:285"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 289,
+            "kind": "declaration",
+            "name": "i",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "i",
+            "signature": "let i = 1;",
+            "start_line": 289,
+            "symbol_id": "src/utils/audio.js#declaration:i:289"
+          },
+          {
+            "children": [],
+            "documentation": "Helper function to compute `amplitude_to_db` and `power_to_db`.\n@template {Float32Array|Float64Array} T\n@param {T} spectrogram\n@param {number} factor\n@param {number} reference\n@param {number} min_value\n@param {number} db_range\n@returns {T}",
+            "end_line": 333,
+            "kind": "function",
+            "name": "_db_conversion_helper",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "_db_conversion_helper",
+            "signature": "function _db_conversion_helper(spectrogram, factor, reference, min_value, db_range) {\n    if (reference <= 0) {\n        throw new Error('reference must be greater than zero');\n    }\n\n    if (min_value <= 0) {\n        throw new Error('min_value must be greater than zero');\n    }\n\n    reference = Math.max(min_value, reference);\n\n    const logReference = Math.log10(reference);\n    for (let i = 0; i < spectrogram.length; ++i) {\n        spectrogram[i] = factor * Math.log10(Math.max(min_value, spectrogram[i]) - logReference)\n    }\n\n    if (db_range !== null) {\n        if (db_range <= 0) {\n            throw new Error('db_range must be greater than zero');\n        }\n        const maxValue = max(spectrogram)[0] - db_range;\n        for (let i = 0; i < spectrogram.length; ++i) {\n            spectrogram[i] = Math.max(spectrogram[i], maxValue);\n        }\n    }\n\n    return spectrogram;\n}",
+            "start_line": 306,
+            "symbol_id": "src/utils/audio.js#function:_db_conversion_helper:306"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 317,
+            "kind": "declaration",
+            "name": "logReference",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "logReference",
+            "signature": "const logReference = Math.log10(reference);",
+            "start_line": 317,
+            "symbol_id": "src/utils/audio.js#declaration:logReference:317"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 318,
+            "kind": "declaration",
+            "name": "i",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "i",
+            "signature": "let i = 0;",
+            "start_line": 318,
+            "symbol_id": "src/utils/audio.js#declaration:i:318"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 326,
+            "kind": "declaration",
+            "name": "maxValue",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "maxValue",
+            "signature": "const maxValue = max(spectrogram)[0] - db_range;",
+            "start_line": 326,
+            "symbol_id": "src/utils/audio.js#declaration:maxValue:326"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 327,
+            "kind": "declaration",
+            "name": "i",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "i",
+            "signature": "let i = 0;",
+            "start_line": 327,
+            "symbol_id": "src/utils/audio.js#declaration:i:327"
+          },
+          {
+            "children": [],
+            "documentation": "Converts an amplitude spectrogram to the decibel scale. This computes `20 * log10(spectrogram / reference)`,\nusing basic logarithm properties for numerical stability. NOTE: Operates in-place.\n\nThe motivation behind applying the log function on the (mel) spectrogram is that humans do not hear loudness on a\nlinear scale. Generally to double the perceived volume of a sound we need to put 8 times as much energy into it.\nThis means that large variations in energy may not sound all that different if the sound is loud to begin with.\nThis compression operation makes the (mel) spectrogram features match more closely what humans actually hear.\n\n@template {Float32Array|Float64Array} T\n@param {T} spectrogram The input amplitude (mel) spectrogram.\n@param {number} [reference=1.0] Sets the input spectrogram value that corresponds to 0 dB.\nFor example, use `np.max(spectrogram)` to set the loudest part to 0 dB. Must be greater than zero.\n@param {number} [min_value=1e-5] The spectrogram will be clipped to this minimum value before conversion to decibels,\nto avoid taking `log(0)`. The default of `1e-5` corresponds to a minimum of -100 dB. Must be greater than zero.\n@param {number} [db_range=null] Sets the maximum dynamic range in decibels. For example, if `db_range = 80`, the\ndifference between the peak value and the smallest value will never be more than 80 dB. Must be greater than zero.\n@returns {T} The modified spectrogram in decibels.",
+            "end_line": 356,
+            "kind": "function",
+            "name": "amplitude_to_db",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "amplitude_to_db",
+            "signature": "function amplitude_to_db(spectrogram, reference = 1.0, min_value = 1e-5, db_range = null) {\n    return _db_conversion_helper(spectrogram, 20.0, reference, min_value, db_range);\n}",
+            "start_line": 354,
+            "symbol_id": "src/utils/audio.js#function:amplitude_to_db:354"
+          },
+          {
+            "children": [],
+            "documentation": "Converts a power spectrogram to the decibel scale. This computes `10 * log10(spectrogram / reference)`,\nusing basic logarithm properties for numerical stability. NOTE: Operates in-place.\n\nThe motivation behind applying the log function on the (mel) spectrogram is that humans do not hear loudness on a\nlinear scale. Generally to double the perceived volume of a sound we need to put 8 times as much energy into it.\nThis means that large variations in energy may not sound all that different if the sound is loud to begin with.\nThis compression operation makes the (mel) spectrogram features match more closely what humans actually hear.\n\nBased on the implementation of `librosa.power_to_db`.\n\n@template {Float32Array|Float64Array} T\n@param {T} spectrogram The input power (mel) spectrogram. Note that a power spectrogram has the amplitudes squared!\n@param {number} [reference=1.0] Sets the input spectrogram value that corresponds to 0 dB.\nFor example, use `np.max(spectrogram)` to set the loudest part to 0 dB. Must be greater than zero.\n@param {number} [min_value=1e-10] The spectrogram will be clipped to this minimum value before conversion to decibels,\nto avoid taking `log(0)`. The default of `1e-10` corresponds to a minimum of -100 dB. Must be greater than zero.\n@param {number} [db_range=null] Sets the maximum dynamic range in decibels. For example, if `db_range = 80`, the\ndifference between the peak value and the smallest value will never be more than 80 dB. Must be greater than zero.\n@returns {T} The modified spectrogram in decibels.",
+            "end_line": 381,
+            "kind": "function",
+            "name": "power_to_db",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "power_to_db",
+            "signature": "function power_to_db(spectrogram, reference = 1.0, min_value = 1e-10, db_range = null) {\n    return _db_conversion_helper(spectrogram, 10.0, reference, min_value, db_range);\n}",
+            "start_line": 379,
+            "symbol_id": "src/utils/audio.js#function:power_to_db:379"
+          },
+          {
+            "children": [],
+            "documentation": "Calculates a spectrogram over one waveform using the Short-Time Fourier Transform.\n\nThis function can create the following kinds of spectrograms:\n- amplitude spectrogram (`power = 1.0`)\n- power spectrogram (`power = 2.0`)\n- complex-valued spectrogram (`power = None`)\n- log spectrogram (use `log_mel` argument)\n- mel spectrogram (provide `mel_filters`)\n- log-mel spectrogram (provide `mel_filters` and `log_mel`)\n\nIn this implementation, the window is assumed to be zero-padded to have the same size as the analysis frame.\nA padded window can be obtained from `window_function()`. The FFT input buffer may be larger than the analysis frame,\ntypically the next power of two.\n\n@param {Float32Array|Float64Array} waveform The input waveform of shape `(length,)`. This must be a single real-valued, mono waveform.\n@param {Float32Array|Float64Array} window The windowing function to apply of shape `(frame_length,)`, including zero-padding if necessary. The actual window length may be\nshorter than `frame_length`, but we're assuming the array has already been zero-padded.\n@param {number} frame_length The length of the analysis frames in samples (a.k.a., `fft_length`).\n@param {number} hop_length The stride between successive analysis frames in samples.\n@param {Object} options\n@param {number} [options.fft_length=null] The size of the FFT buffer in samples. This determines how many frequency bins the spectrogram will have.\nFor optimal speed, this should be a power of two. If `null`, uses `frame_length`.\n@param {number} [options.power=1.0] If 1.0, returns the amplitude spectrogram. If 2.0, returns the power spectrogram. If `null`, returns complex numbers.\n@param {boolean} [options.center=true] Whether to pad the waveform so that frame `t` is centered around time `t * hop_length`. If `false`, frame\n`t` will start at time `t * hop_length`.\n@param {string} [options.pad_mode=\"reflect\"] Padding mode used when `center` is `true`. Possible values are: `\"constant\"` (pad with zeros),\n`\"edge\"` (pad with edge values), `\"reflect\"` (pads with mirrored values).\n@param {boolean} [options.onesided=true] If `true`, only computes the positive frequencies and returns a spectrogram containing `fft_length // 2 + 1`\nfrequency bins. If `false`, also computes the negative frequencies and returns `fft_length` frequency bins.\n@param {number} [options.preemphasis=null] Coefficient for a low-pass filter that applies pre-emphasis before the DFT.\n@param {number[][]} [options.mel_filters=null] The mel filter bank of shape `(num_freq_bins, num_mel_filters)`.\nIf supplied, applies this filter bank to create a mel spectrogram.\n@param {number} [options.mel_floor=1e-10] Minimum value of mel frequency banks.\n@param {string} [options.log_mel=null] How to convert the spectrogram to log scale. Possible options are:\n`null` (don't convert), `\"log\"` (take the natural logarithm) `\"log10\"` (take the base-10 logarithm), `\"dB\"` (convert to decibels).\nCan only be used when `power` is not `null`.\n@param {number} [options.reference=1.0] Sets the input spectrogram value that corresponds to 0 dB. For example, use `max(spectrogram)[0]` to set\nthe loudest part to 0 dB. Must be greater than zero.\n@param {number} [options.min_value=1e-10] The spectrogram will be clipped to this minimum value before conversion to decibels, to avoid taking `log(0)`.\nFor a power spectrogram, the default of `1e-10` corresponds to a minimum of -100 dB. For an amplitude spectrogram, the value `1e-5` corresponds to -100 dB.\nMust be greater than zero.\n@param {number} [options.db_range=null] Sets the maximum dynamic range in decibels. For example, if `db_range = 80`, the difference between the\npeak value and the smallest value will never be more than 80 dB. Must be greater than zero.\n@param {boolean} [options.remove_dc_offset=null] Subtract mean from waveform on each frame, applied before pre-emphasis. This should be set to `true` in\norder to get the same results as `torchaudio.compliance.kaldi.fbank` when computing mel filters.\n@param {number} [options.max_num_frames=null] If provided, limits the number of frames to compute to this value.\n@param {boolean} [options.do_pad=true] If `true`, pads the output spectrogram to have `max_num_frames` frames.\n@param {boolean} [options.transpose=false] If `true`, the returned spectrogram will have shape `(num_frames, num_frequency_bins/num_mel_filters)`. If `false`, the returned spectrogram will have shape `(num_frequency_bins/num_mel_filters, num_frames)`.\n@returns {{data: Float32Array, dims: number[]}} Spectrogram of shape `(num_frequency_bins, length)` (regular spectrogram) or shape `(num_mel_filters, length)` (mel spectrogram).",
+            "end_line": 622,
+            "kind": "function",
+            "name": "spectrogram",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "spectrogram",
+            "signature": "function spectrogram(\n    waveform,\n    window,\n    frame_length,\n    hop_length,\n    {\n        fft_length = null,\n        power = 1.0,\n        center = true,\n        pad_mode = \"reflect\",\n        onesided = true,\n        preemphasis = null,\n        mel_filters = null,\n        mel_floor = 1e-10,\n        log_mel = null,\n        reference = 1.0,\n        min_value = 1e-10,\n        db_range = null,\n        remove_dc_offset = null,\n\n        // Custom parameters for efficiency reasons\n        max_num_frames = null,\n        do_pad = true,\n        transpose = false,\n    } = {}\n) {\n    const window_length = window.length;\n    if (fft_length === null) {\n        fft_length = frame_length;\n    }\n    if (frame_length > fft_length) {\n        throw Error(`frame_length (${frame_length}) may not be larger than fft_length (${fft_length})`)\n    }\n\n    if (window_length !== frame_length) {\n        throw new Error(`Length of the window (${window_length}) must equal frame_length (${frame_length})`);\n    }\n\n    if (hop_length <= 0) {\n        throw new Error(\"hop_length must be greater than zero\");\n    }\n\n    if (center) {\n        if (pad_mode !== 'reflect') {\n            throw new Error(`pad_mode=\"${pad_mode}\" not implemented yet.`)\n        }\n        const half_window = Math.floor((fft_length - 1) / 2) + 1;\n        waveform = padReflect(waveform, half_window, half_window);\n    }\n\n    // split waveform into frames of frame_length size\n    const num_frames = Math.floor(1 + Math.floor((waveform.length - frame_length) / hop_length))\n\n    const num_frequency_bins = onesided ? Math.floor(fft_length / 2) + 1 : fft_length\n\n    let d1 = num_frames;\n    let d1Max = num_frames;\n\n    // If maximum number of frames is provided, we must either pad or truncate\n    if (max_num_frames !== null) {\n        if (max_num_frames > num_frames) { // input is too short, so we pad\n            if (do_pad) {\n                d1Max = max_num_frames;\n            }\n        } else { // input is too long, so we truncate\n            d1Max = d1 = max_num_frames;\n        }\n    }\n\n    // Preallocate arrays to store output.\n    const fft = new FFT(fft_length);\n    const inputBuffer = new Float64Array(fft_length);\n    const outputBuffer = new Float64Array(fft.outputBufferSize);\n    const magnitudes = new Array(d1);\n\n    for (let i = 0; i < d1; ++i) {\n        // Populate buffer with waveform data\n        const offset = i * hop_length;\n        for (let j = 0; j < frame_length; ++j) {\n            inputBuffer[j] = waveform[offset + j];\n        }\n\n        if (remove_dc_offset) {\n            let sum = 0;\n            for (let j = 0; j < frame_length; ++j) {\n                sum += inputBuffer[j];\n            }\n            const mean = sum / frame_length;\n            for (let j = 0; j < frame_length; ++j) {\n                inputBuffer[j] -= mean;\n            }\n        }\n\n        if (preemphasis !== null) {\n            // Done in reverse to avoid copies and distructive modification\n            for (let j = frame_length - 1; j >= 1; --j) {\n                inputBuffer[j] -= preemphasis * inputBuffer[j - 1];\n            }\n            inputBuffer[0] *= 1 - preemphasis;\n        }\n\n        for (let j = 0; j < window.length; ++j) {\n            inputBuffer[j] *= window[j];\n        }\n\n        fft.realTransform(outputBuffer, inputBuffer);\n\n        // compute magnitudes\n        const row = new Array(num_frequency_bins);\n        for (let j = 0; j < row.length; ++j) {\n            const j2 = j << 1;\n            row[j] = outputBuffer[j2] ** 2 + outputBuffer[j2 + 1] ** 2;\n        }\n        magnitudes[i] = row;\n    }\n\n    // TODO what should happen if power is None?\n    // https://github.com/huggingface/transformers/issues/27772\n    if (power !== null && power !== 2) {\n        // slight optimization to not sqrt\n        const pow = 2 / power; // we use 2 since we already squared\n        for (let i = 0; i < magnitudes.length; ++i) {\n            const magnitude = magnitudes[i];\n            for (let j = 0; j < magnitude.length; ++j) {\n                magnitude[j] **= pow;\n            }\n        }\n    }\n\n    // TODO: What if `mel_filters` is null?\n    const num_mel_filters = mel_filters.length;\n\n    // Only here do we create Float32Array\n    const mel_spec = new Float32Array(num_mel_filters * d1Max);\n\n    // Perform matrix muliplication:\n    // mel_spec = mel_filters @ magnitudes.T\n    //  - mel_filters.shape=(80, 201)\n    //  - magnitudes.shape=(3000, 201) => - magnitudes.T.shape=(201, 3000)\n    //  - mel_spec.shape=(80, 3000)\n    const dims = transpose ? [d1Max, num_mel_filters] : [num_mel_filters, d1Max];\n    for (let i = 0; i < num_mel_filters; ++i) { // num melfilters (e.g., 80)\n        const filter = mel_filters[i];\n        for (let j = 0; j < d1; ++j) { // num frames (e.g., 3000)\n            const magnitude = magnitudes[j];\n\n            let sum = 0;\n            for (let k = 0; k < num_frequency_bins; ++k) { // num frequency bins (e.g., 201)\n                sum += filter[k] * magnitude[k];\n            }\n\n            mel_spec[\n                transpose\n                    ? j * num_mel_filters + i\n                    : i * d1 + j\n            ] = Math.max(mel_floor, sum);\n        }\n    }\n\n    if (power !== null && log_mel !== null) {\n        const o = Math.min(mel_spec.length, d1 * num_mel_filters);\n        switch (log_mel) {\n            case 'log':\n                for (let i = 0; i < o; ++i) {\n                    mel_spec[i] = Math.log(mel_spec[i]);\n                }\n                break;\n            case 'log10':\n                for (let i = 0; i < o; ++i) {\n                    mel_spec[i] = Math.log10(mel_spec[i]);\n                }\n                break;\n            case 'dB':\n                if (power === 1.0) {\n                    // NOTE: operates in-place\n                    amplitude_to_db(mel_spec, reference, min_value, db_range);\n                } else if (power === 2.0) {\n                    power_to_db(mel_spec, reference, min_value, db_range);\n                } else {\n                    throw new Error(`Cannot use log_mel option '${log_mel}' with power ${power}`)\n                }\n                break;\n            default:\n                throw new Error(`log_mel must be one of null, 'log', 'log10' or 'dB'. Got '${log_mel}'`);\n        }\n    }\n\n    return { data: mel_spec, dims };\n}",
+            "start_line": 434,
+            "symbol_id": "src/utils/audio.js#function:spectrogram:434"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 460,
+            "kind": "declaration",
+            "name": "window_length",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "window_length",
+            "signature": "const window_length = window.length;",
+            "start_line": 460,
+            "symbol_id": "src/utils/audio.js#declaration:window_length:460"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 480,
+            "kind": "declaration",
+            "name": "half_window",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "half_window",
+            "signature": "const half_window = Math.floor((fft_length - 1) / 2) + 1;",
+            "start_line": 480,
+            "symbol_id": "src/utils/audio.js#declaration:half_window:480"
+          },
+          {
+            "children": [],
+            "documentation": "split waveform into frames of frame_length size",
+            "end_line": 485,
+            "kind": "declaration",
+            "name": "num_frames",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "num_frames",
+            "signature": "const num_frames = Math.floor(1 + Math.floor((waveform.length - frame_length) / hop_length))",
+            "start_line": 485,
+            "symbol_id": "src/utils/audio.js#declaration:num_frames:485"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 487,
+            "kind": "declaration",
+            "name": "num_frequency_bins",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "num_frequency_bins",
+            "signature": "const num_frequency_bins = onesided ? Math.floor(fft_length / 2) + 1 : fft_length",
+            "start_line": 487,
+            "symbol_id": "src/utils/audio.js#declaration:num_frequency_bins:487"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 489,
+            "kind": "declaration",
+            "name": "d1",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "d1",
+            "signature": "let d1 = num_frames;",
+            "start_line": 489,
+            "symbol_id": "src/utils/audio.js#declaration:d1:489"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 490,
+            "kind": "declaration",
+            "name": "d1Max",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "d1Max",
+            "signature": "let d1Max = num_frames;",
+            "start_line": 490,
+            "symbol_id": "src/utils/audio.js#declaration:d1Max:490"
+          },
+          {
+            "children": [],
+            "documentation": "Preallocate arrays to store output.",
+            "end_line": 504,
+            "kind": "declaration",
+            "name": "fft",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "fft",
+            "signature": "const fft = new FFT(fft_length);",
+            "start_line": 504,
+            "symbol_id": "src/utils/audio.js#declaration:fft:504"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 505,
+            "kind": "declaration",
+            "name": "inputBuffer",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "inputBuffer",
+            "signature": "const inputBuffer = new Float64Array(fft_length);",
+            "start_line": 505,
+            "symbol_id": "src/utils/audio.js#declaration:inputBuffer:505"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 506,
+            "kind": "declaration",
+            "name": "outputBuffer",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "outputBuffer",
+            "signature": "const outputBuffer = new Float64Array(fft.outputBufferSize);",
+            "start_line": 506,
+            "symbol_id": "src/utils/audio.js#declaration:outputBuffer:506"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 507,
+            "kind": "declaration",
+            "name": "magnitudes",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "magnitudes",
+            "signature": "const magnitudes = new Array(d1);",
+            "start_line": 507,
+            "symbol_id": "src/utils/audio.js#declaration:magnitudes:507"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 509,
+            "kind": "declaration",
+            "name": "i",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "i",
+            "signature": "let i = 0;",
+            "start_line": 509,
+            "symbol_id": "src/utils/audio.js#declaration:i:509"
+          },
+          {
+            "children": [],
+            "documentation": "Populate buffer with waveform data",
+            "end_line": 511,
+            "kind": "declaration",
+            "name": "offset",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "offset",
+            "signature": "const offset = i * hop_length;",
+            "start_line": 511,
+            "symbol_id": "src/utils/audio.js#declaration:offset:511"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 512,
+            "kind": "declaration",
+            "name": "j",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "j",
+            "signature": "let j = 0;",
+            "start_line": 512,
+            "symbol_id": "src/utils/audio.js#declaration:j:512"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 517,
+            "kind": "declaration",
+            "name": "sum",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "sum",
+            "signature": "let sum = 0;",
+            "start_line": 517,
+            "symbol_id": "src/utils/audio.js#declaration:sum:517"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 518,
+            "kind": "declaration",
+            "name": "j",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "j",
+            "signature": "let j = 0;",
+            "start_line": 518,
+            "symbol_id": "src/utils/audio.js#declaration:j:518"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 521,
+            "kind": "declaration",
+            "name": "mean",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "mean",
+            "signature": "const mean = sum / frame_length;",
+            "start_line": 521,
+            "symbol_id": "src/utils/audio.js#declaration:mean:521"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 522,
+            "kind": "declaration",
+            "name": "j",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "j",
+            "signature": "let j = 0;",
+            "start_line": 522,
+            "symbol_id": "src/utils/audio.js#declaration:j:522"
+          },
+          {
+            "children": [],
+            "documentation": "Done in reverse to avoid copies and distructive modification",
+            "end_line": 529,
+            "kind": "declaration",
+            "name": "j",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "j",
+            "signature": "let j = frame_length - 1;",
+            "start_line": 529,
+            "symbol_id": "src/utils/audio.js#declaration:j:529"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 535,
+            "kind": "declaration",
+            "name": "j",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "j",
+            "signature": "let j = 0;",
+            "start_line": 535,
+            "symbol_id": "src/utils/audio.js#declaration:j:535"
+          },
+          {
+            "children": [],
+            "documentation": "compute magnitudes",
+            "end_line": 542,
+            "kind": "declaration",
+            "name": "row",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "row",
+            "signature": "const row = new Array(num_frequency_bins);",
+            "start_line": 542,
+            "symbol_id": "src/utils/audio.js#declaration:row:542"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 543,
+            "kind": "declaration",
+            "name": "j",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "j",
+            "signature": "let j = 0;",
+            "start_line": 543,
+            "symbol_id": "src/utils/audio.js#declaration:j:543"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 544,
+            "kind": "declaration",
+            "name": "j2",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "j2",
+            "signature": "const j2 = j << 1;",
+            "start_line": 544,
+            "symbol_id": "src/utils/audio.js#declaration:j2:544"
+          },
+          {
+            "children": [],
+            "documentation": "slight optimization to not sqrt",
+            "end_line": 554,
+            "kind": "declaration",
+            "name": "pow",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "pow",
+            "signature": "const pow = 2 / power;",
+            "start_line": 554,
+            "symbol_id": "src/utils/audio.js#declaration:pow:554"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 555,
+            "kind": "declaration",
+            "name": "i",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "i",
+            "signature": "let i = 0;",
+            "start_line": 555,
+            "symbol_id": "src/utils/audio.js#declaration:i:555"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 556,
+            "kind": "declaration",
+            "name": "magnitude",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "magnitude",
+            "signature": "const magnitude = magnitudes[i];",
+            "start_line": 556,
+            "symbol_id": "src/utils/audio.js#declaration:magnitude:556"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 557,
+            "kind": "declaration",
+            "name": "j",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "j",
+            "signature": "let j = 0;",
+            "start_line": 557,
+            "symbol_id": "src/utils/audio.js#declaration:j:557"
+          },
+          {
+            "children": [],
+            "documentation": "TODO: What if `mel_filters` is null?",
+            "end_line": 564,
+            "kind": "declaration",
+            "name": "num_mel_filters",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "num_mel_filters",
+            "signature": "const num_mel_filters = mel_filters.length;",
+            "start_line": 564,
+            "symbol_id": "src/utils/audio.js#declaration:num_mel_filters:564"
+          },
+          {
+            "children": [],
+            "documentation": "Only here do we create Float32Array",
+            "end_line": 567,
+            "kind": "declaration",
+            "name": "mel_spec",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "mel_spec",
+            "signature": "const mel_spec = new Float32Array(num_mel_filters * d1Max);",
+            "start_line": 567,
+            "symbol_id": "src/utils/audio.js#declaration:mel_spec:567"
+          },
+          {
+            "children": [],
+            "documentation": "Perform matrix muliplication:\nmel_spec = mel_filters @ magnitudes.T\n- mel_filters.shape=(80, 201)\n- magnitudes.shape=(3000, 201) => - magnitudes.T.shape=(201, 3000)\n- mel_spec.shape=(80, 3000)",
+            "end_line": 574,
+            "kind": "declaration",
+            "name": "dims",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "dims",
+            "signature": "const dims = transpose ? [d1Max, num_mel_filters] : [num_mel_filters, d1Max];",
+            "start_line": 574,
+            "symbol_id": "src/utils/audio.js#declaration:dims:574"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 575,
+            "kind": "declaration",
+            "name": "i",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "i",
+            "signature": "let i = 0;",
+            "start_line": 575,
+            "symbol_id": "src/utils/audio.js#declaration:i:575"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 576,
+            "kind": "declaration",
+            "name": "filter",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "filter",
+            "signature": "const filter = mel_filters[i];",
+            "start_line": 576,
+            "symbol_id": "src/utils/audio.js#declaration:filter:576"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 577,
+            "kind": "declaration",
+            "name": "j",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "j",
+            "signature": "let j = 0;",
+            "start_line": 577,
+            "symbol_id": "src/utils/audio.js#declaration:j:577"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 578,
+            "kind": "declaration",
+            "name": "magnitude",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "magnitude",
+            "signature": "const magnitude = magnitudes[j];",
+            "start_line": 578,
+            "symbol_id": "src/utils/audio.js#declaration:magnitude:578"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 580,
+            "kind": "declaration",
+            "name": "sum",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "sum",
+            "signature": "let sum = 0;",
+            "start_line": 580,
+            "symbol_id": "src/utils/audio.js#declaration:sum:580"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 581,
+            "kind": "declaration",
+            "name": "k",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "k",
+            "signature": "let k = 0;",
+            "start_line": 581,
+            "symbol_id": "src/utils/audio.js#declaration:k:581"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 594,
+            "kind": "declaration",
+            "name": "o",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "o",
+            "signature": "const o = Math.min(mel_spec.length, d1 * num_mel_filters);",
+            "start_line": 594,
+            "symbol_id": "src/utils/audio.js#declaration:o:594"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 597,
+            "kind": "declaration",
+            "name": "i",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "i",
+            "signature": "let i = 0;",
+            "start_line": 597,
+            "symbol_id": "src/utils/audio.js#declaration:i:597"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 602,
+            "kind": "declaration",
+            "name": "i",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "i",
+            "signature": "let i = 0;",
+            "start_line": 602,
+            "symbol_id": "src/utils/audio.js#declaration:i:602"
+          },
+          {
+            "children": [],
+            "documentation": "Returns an array containing the specified window.\n@param {number} window_length The length of the window in samples.\n@param {string} name The name of the window function.\n@param {Object} options Additional options.\n@param {boolean} [options.periodic=true] Whether the window is periodic or symmetric.\n@param {number} [options.frame_length=null] The length of the analysis frames in samples.\nProvide a value for `frame_length` if the window is smaller than the frame length, so that it will be zero-padded.\n@param {boolean} [options.center=true] Whether to center the window inside the FFT buffer. Only used when `frame_length` is provided.\n@returns {Float64Array} The window of shape `(window_length,)` or `(frame_length,)`.",
+            "end_line": 667,
+            "kind": "function",
+            "name": "window_function",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "window_function",
+            "signature": "function window_function(window_length, name, {\n    periodic = true,\n    frame_length = null,\n    center = true,\n} = {}) {\n    const length = periodic ? window_length + 1 : window_length;\n    let window;\n    switch (name) {\n        case 'boxcar':\n            window = new Float64Array(length).fill(1.0);\n            break;\n        case 'hann':\n        case 'hann_window':\n            window = hanning(length);\n            break;\n        case 'povey':\n            window = hanning(length).map(x => Math.pow(x, 0.85));\n            break;\n        default:\n            throw new Error(`Unknown window type ${name}.`);\n    }\n    if (periodic) {\n        window = window.subarray(0, window_length);\n    }\n    if (frame_length === null) {\n        return window;\n    }\n    if (window_length > frame_length) {\n        throw new Error(`Length of the window (${window_length}) may not be larger than frame_length (${frame_length})`);\n    }\n\n    return window;\n}",
+            "start_line": 635,
+            "symbol_id": "src/utils/audio.js#function:window_function:635"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 640,
+            "kind": "declaration",
+            "name": "length",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "length",
+            "signature": "const length = periodic ? window_length + 1 : window_length;",
+            "start_line": 640,
+            "symbol_id": "src/utils/audio.js#declaration:length:640"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 641,
+            "kind": "declaration",
+            "name": "<anonymous>",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "<anonymous>",
+            "signature": "let window;",
+            "start_line": 641,
+            "symbol_id": "src/utils/audio.js#declaration:anonymous:641"
+          }
+        ]
+      }
+    ]
+  },
+  "trialId": "7ae5f0e48b"
+}

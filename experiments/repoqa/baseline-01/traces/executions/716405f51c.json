@@ -1,0 +1,714 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 1184,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-mini",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "",
+              "workspace_id": "ts_004_ctx4k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 1,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "Fetches a JSON file from a given path and file name.\n\n@param {string} modelPath The path to the directory containing the file.\n@param {string} fileName The name of the file to fetch.\n@param {boolean} [fatal=true] Whether to throw an error if the file is not found.\n@param {PretrainedOptions} [options] An object containing optional parameters.\n@returns {Promise<Object>} The JSON data parsed into a JavaScript object.\n@throws Will throw an error if the file is not found and `fatal` is true.",
+                "end_line": 585,
+                "kind": "function",
+                "name": "getModelJSON",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/hub.js",
+                "qualified_name": "getModelJSON",
+                "signature": "async function getModelJSON(modelPath, fileName, fatal = true, options = {}) {\n    let buffer = await getModelFile(modelPath, fileName, fatal, options);\n    if (buffer === null) {\n        // Return empty object\n        return {}\n    }\n\n    let decoder = new TextDecoder('utf-8');\n    let jsonData = decoder.decode(buffer);\n\n    return JSON.parse(jsonData);\n}",
+                "start_line": 574,
+                "symbol_id": "src/utils/hub.js#function:getModelJSON:574"
+              },
+              {
+                "children": [],
+                "documentation": "Read and track progress when reading a Response object\n\n@param {any} response The Response object to read\n@param {function} progress_callback The function to call with progress updates\n@returns {Promise<Uint8Array>} A Promise that resolves with the Uint8Array buffer",
+                "end_line": 641,
+                "kind": "function",
+                "name": "readResponse",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/hub.js",
+                "qualified_name": "readResponse",
+                "signature": "async function readResponse(response, progress_callback) {\n\n    const contentLength = response.headers.get('Content-Length');\n    if (contentLength === null) {\n        console.warn('Unable to determine content-length from response headers. Will expand buffer when needed.')\n    }\n    let total = parseInt(contentLength ?? '0');\n    let buffer = new Uint8Array(total);\n    let loaded = 0;\n\n    const reader = response.body.getReader();\n    async function read() {\n        const { done, value } = await reader.read();\n        if (done) return;\n\n        let newLoaded = loaded + value.length;\n        if (newLoaded > total) {\n            total = newLoaded;\n\n            // Adding the new data will overflow buffer.\n            // In this case, we extend the buffer\n            let newBuffer = new Uint8Array(total);\n\n            // copy contents\n            newBuffer.set(buffer);\n\n            buffer = newBuffer;\n        }\n        buffer.set(value, loaded)\n        loaded = newLoaded;\n\n        const progress = (loaded / total) * 100;\n\n        // Call your function here\n        progress_callback({\n            progress: progress,\n            loaded: loaded,\n            total: total,\n        })\n\n        return read();\n    }\n\n    // Actually read\n    await read();\n\n    return buffer;\n}",
+                "start_line": 594,
+                "symbol_id": "src/utils/hub.js#function:readResponse:594"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 635,
+                "kind": "function",
+                "name": "read",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/hub.js",
+                "qualified_name": "read",
+                "signature": "async function read() {\n        const { done, value } = await reader.read();\n        if (done) return;\n\n        let newLoaded = loaded + value.length;\n        if (newLoaded > total) {\n            total = newLoaded;\n\n            // Adding the new data will overflow buffer.\n            // In this case, we extend the buffer\n            let newBuffer = new Uint8Array(total);\n\n            // copy contents\n            newBuffer.set(buffer);\n\n            buffer = newBuffer;\n        }\n        buffer.set(value, loaded)\n        loaded = newLoaded;\n\n        const progress = (loaded / total) * 100;\n\n        // Call your function here\n        progress_callback({\n            progress: progress,\n            loaded: loaded,\n            total: total,\n        })\n\n        return read();\n    }",
+                "start_line": 605,
+                "symbol_id": "src/utils/hub.js#function:read:605"
+              },
+              {
+                "children": [],
+                "documentation": "Joins multiple parts of a path into a single path, while handling leading and trailing slashes.\n\n@param {...string} parts Multiple parts of a path.\n@returns {string} A string representing the joined path.",
+                "end_line": 661,
+                "kind": "function",
+                "name": "pathJoin",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/hub.js",
+                "qualified_name": "pathJoin",
+                "signature": "function pathJoin(...parts) {\n    // https://stackoverflow.com/a/55142565\n    parts = parts.map((part, index) => {\n        if (index) {\n            part = part.replace(new RegExp('^/'), '');\n        }\n        if (index !== parts.length - 1) {\n            part = part.replace(new RegExp('/$'), '');\n        }\n        return part;\n    })\n    return parts.join('/');\n}",
+                "start_line": 649,
+                "symbol_id": "src/utils/hub.js#function:pathJoin:649"
+              },
+              {
+                "children": [],
+                "documentation": "Loads a config from the specified path.\n@param {string} pretrained_model_name_or_path The path to the config directory.\n@param {PretrainedOptions} options Additional options for loading the config.\n@returns {Promise<Array>} A promise that resolves with information about the loaded config.",
+                "end_line": 48,
+                "kind": "function",
+                "name": "loadConfig",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/configs.js",
+                "qualified_name": "loadConfig",
+                "signature": "async function loadConfig(pretrained_model_name_or_path, options) {\n    let info = await getModelJSON(pretrained_model_name_or_path, 'config.json', true, options);\n    return info;\n}",
+                "start_line": 45,
+                "symbol_id": "src/configs.js#function:loadConfig:45"
+              },
+              {
+                "children": [],
+                "documentation": "Create a new PreTrainedTokenizer instance.\n@param {Object} configJSON The JSON of the config.",
+                "end_line": 66,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/configs.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(configJSON) {\n        this.model_type = null;\n        this.is_encoder_decoder = false;\n\n        Object.assign(this, configJSON);\n    }",
+                "start_line": 61,
+                "symbol_id": "src/configs.js#method:constructor:61"
+              },
+              {
+                "children": [],
+                "documentation": "Loads a pre-trained config from the given `pretrained_model_name_or_path`.\n\n@param {string} pretrained_model_name_or_path The path to the pre-trained config.\n@param {PretrainedOptions} options Additional options for loading the config.\n@throws {Error} Throws an error if the config.json is not found in the `pretrained_model_name_or_path`.\n\n@returns {Promise<PretrainedConfig>} A new instance of the `PretrainedConfig` class.",
+                "end_line": 93,
+                "kind": "method",
+                "name": "from_pretrained",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/configs.js",
+                "qualified_name": "from_pretrained",
+                "signature": "static async from_pretrained(pretrained_model_name_or_path, {\n        progress_callback = null,\n        config = null,\n        cache_dir = null,\n        local_files_only = false,\n        revision = 'main',\n    } = {}) {\n\n        let data = config ?? await loadConfig(pretrained_model_name_or_path, {\n            progress_callback,\n            config,\n            cache_dir,\n            local_files_only,\n            revision,\n        })\n        return new this(data);\n    }",
+                "start_line": 77,
+                "symbol_id": "src/configs.js#method:from_pretrained:77"
+              },
+              {
+                "children": [],
+                "documentation": "@type {PretrainedConfig.from_pretrained}",
+                "end_line": 106,
+                "kind": "method",
+                "name": "from_pretrained",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/configs.js",
+                "qualified_name": "from_pretrained",
+                "signature": "static async from_pretrained(...args) {\n        return PretrainedConfig.from_pretrained(...args);\n    }",
+                "start_line": 104,
+                "symbol_id": "src/configs.js#method:from_pretrained:104"
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "",
+                "workspace_id": "ts_004_ctx4k"
+              },
+              "durationMs": 1,
+              "toolName": "list_symbols",
+              "workspace_id": "ts_004_ctx4k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 57516,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-mini",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 58713,
+          "metadata": {},
+          "name": "strategy.local_function.execute",
+          "type": "strategy.local_function.execute"
+        },
+        {
+          "duration_ms": 58713,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 13,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": 0,
+        "cachedInputTokens": 0,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 1,
+        "inputTokens": 3190,
+        "loopControlDurationMsEstimated": 12,
+        "mcpToolCalls": 1,
+        "modelCalls": 2,
+        "modelDurationMs": 58700,
+        "outputTokens": 139,
+        "promptChars": 1247,
+        "questionTokensEstimated": 185,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 0,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 2,
+        "strategyDurationMs": 58713,
+        "taskStatementChars": 1077,
+        "toolCalls": 1,
+        "toolDurationMs": 1,
+        "totalDurationMs": 58713,
+        "totalTokens": 3329,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779731126.0,
+        "conversation": null,
+        "created_at": 1779731126.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_0fade0ff2f0d9780006a148ab61d2c81a08594ef530c5e894a",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "716405f51c"
+        },
+        "model": "gpt-5.4-mini-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "arguments": "{\"workspace_id\":\"ts_004_ctx4k\",\"path\":\"\",\"kind\":\"function\"}",
+            "call_id": "call_jmN2gDeGlEs2GuSvGML0nhQW",
+            "id": "fc_0fade0ff2f0d9780006a148ab6bff081a0b92140455860751d",
+            "name": "list_symbols",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including its generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 557,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 46,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 603
+        },
+        "user": null
+      },
+      {
+        "background": false,
+        "completed_at": 1779731176.0,
+        "conversation": null,
+        "created_at": 1779731137.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_0fade0ff2f0d9780006a148abb31e881a0b8f02d2cd7ff2ade",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "716405f51c"
+        },
+        "model": "gpt-5.4-mini-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "logprobs": [],
+                "text": "```javascript\nasync function getModelJSON(modelPath, fileName, fatal = true, options = {}) {\n    let buffer = await getModelFile(modelPath, fileName, fatal, options);\n    if (buffer === null) {\n        // Return empty object\n        return {}\n    }\n\n    let decoder = new TextDecoder('utf-8');\n    let jsonData = decoder.decode(buffer);\n\n    return JSON.parse(jsonData);\n}\n```",
+                "type": "output_text"
+              }
+            ],
+            "id": "msg_0fade0ff2f0d9780006a148ac9502881a0ba8eda96ec9b01d8",
+            "phase": "final_answer",
+            "role": "assistant",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including its generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 2633,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 93,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 2726
+        },
+        "user": null
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "",
+          "workspace_id": "ts_004_ctx4k"
+        },
+        "durationMs": 1,
+        "toolName": "list_symbols",
+        "workspace_id": "ts_004_ctx4k"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "",
+          "workspace_id": "ts_004_ctx4k"
+        },
+        "id": "call_jmN2gDeGlEs2GuSvGML0nhQW",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "Fetches a JSON file from a given path and file name.\n\n@param {string} modelPath The path to the directory containing the file.\n@param {string} fileName The name of the file to fetch.\n@param {boolean} [fatal=true] Whether to throw an error if the file is not found.\n@param {PretrainedOptions} [options] An object containing optional parameters.\n@returns {Promise<Object>} The JSON data parsed into a JavaScript object.\n@throws Will throw an error if the file is not found and `fatal` is true.",
+            "end_line": 585,
+            "kind": "function",
+            "name": "getModelJSON",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/hub.js",
+            "qualified_name": "getModelJSON",
+            "signature": "async function getModelJSON(modelPath, fileName, fatal = true, options = {}) {\n    let buffer = await getModelFile(modelPath, fileName, fatal, options);\n    if (buffer === null) {\n        // Return empty object\n        return {}\n    }\n\n    let decoder = new TextDecoder('utf-8');\n    let jsonData = decoder.decode(buffer);\n\n    return JSON.parse(jsonData);\n}",
+            "start_line": 574,
+            "symbol_id": "src/utils/hub.js#function:getModelJSON:574"
+          },
+          {
+            "children": [],
+            "documentation": "Read and track progress when reading a Response object\n\n@param {any} response The Response object to read\n@param {function} progress_callback The function to call with progress updates\n@returns {Promise<Uint8Array>} A Promise that resolves with the Uint8Array buffer",
+            "end_line": 641,
+            "kind": "function",
+            "name": "readResponse",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/hub.js",
+            "qualified_name": "readResponse",
+            "signature": "async function readResponse(response, progress_callback) {\n\n    const contentLength = response.headers.get('Content-Length');\n    if (contentLength === null) {\n        console.warn('Unable to determine content-length from response headers. Will expand buffer when needed.')\n    }\n    let total = parseInt(contentLength ?? '0');\n    let buffer = new Uint8Array(total);\n    let loaded = 0;\n\n    const reader = response.body.getReader();\n    async function read() {\n        const { done, value } = await reader.read();\n        if (done) return;\n\n        let newLoaded = loaded + value.length;\n        if (newLoaded > total) {\n            total = newLoaded;\n\n            // Adding the new data will overflow buffer.\n            // In this case, we extend the buffer\n            let newBuffer = new Uint8Array(total);\n\n            // copy contents\n            newBuffer.set(buffer);\n\n            buffer = newBuffer;\n        }\n        buffer.set(value, loaded)\n        loaded = newLoaded;\n\n        const progress = (loaded / total) * 100;\n\n        // Call your function here\n        progress_callback({\n            progress: progress,\n            loaded: loaded,\n            total: total,\n        })\n\n        return read();\n    }\n\n    // Actually read\n    await read();\n\n    return buffer;\n}",
+            "start_line": 594,
+            "symbol_id": "src/utils/hub.js#function:readResponse:594"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 635,
+            "kind": "function",
+            "name": "read",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/hub.js",
+            "qualified_name": "read",
+            "signature": "async function read() {\n        const { done, value } = await reader.read();\n        if (done) return;\n\n        let newLoaded = loaded + value.length;\n        if (newLoaded > total) {\n            total = newLoaded;\n\n            // Adding the new data will overflow buffer.\n            // In this case, we extend the buffer\n            let newBuffer = new Uint8Array(total);\n\n            // copy contents\n            newBuffer.set(buffer);\n\n            buffer = newBuffer;\n        }\n        buffer.set(value, loaded)\n        loaded = newLoaded;\n\n        const progress = (loaded / total) * 100;\n\n        // Call your function here\n        progress_callback({\n            progress: progress,\n            loaded: loaded,\n            total: total,\n        })\n\n        return read();\n    }",
+            "start_line": 605,
+            "symbol_id": "src/utils/hub.js#function:read:605"
+          },
+          {
+            "children": [],
+            "documentation": "Joins multiple parts of a path into a single path, while handling leading and trailing slashes.\n\n@param {...string} parts Multiple parts of a path.\n@returns {string} A string representing the joined path.",
+            "end_line": 661,
+            "kind": "function",
+            "name": "pathJoin",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/hub.js",
+            "qualified_name": "pathJoin",
+            "signature": "function pathJoin(...parts) {\n    // https://stackoverflow.com/a/55142565\n    parts = parts.map((part, index) => {\n        if (index) {\n            part = part.replace(new RegExp('^/'), '');\n        }\n        if (index !== parts.length - 1) {\n            part = part.replace(new RegExp('/$'), '');\n        }\n        return part;\n    })\n    return parts.join('/');\n}",
+            "start_line": 649,
+            "symbol_id": "src/utils/hub.js#function:pathJoin:649"
+          },
+          {
+            "children": [],
+            "documentation": "Loads a config from the specified path.\n@param {string} pretrained_model_name_or_path The path to the config directory.\n@param {PretrainedOptions} options Additional options for loading the config.\n@returns {Promise<Array>} A promise that resolves with information about the loaded config.",
+            "end_line": 48,
+            "kind": "function",
+            "name": "loadConfig",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/configs.js",
+            "qualified_name": "loadConfig",
+            "signature": "async function loadConfig(pretrained_model_name_or_path, options) {\n    let info = await getModelJSON(pretrained_model_name_or_path, 'config.json', true, options);\n    return info;\n}",
+            "start_line": 45,
+            "symbol_id": "src/configs.js#function:loadConfig:45"
+          },
+          {
+            "children": [],
+            "documentation": "Create a new PreTrainedTokenizer instance.\n@param {Object} configJSON The JSON of the config.",
+            "end_line": 66,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/configs.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(configJSON) {\n        this.model_type = null;\n        this.is_encoder_decoder = false;\n\n        Object.assign(this, configJSON);\n    }",
+            "start_line": 61,
+            "symbol_id": "src/configs.js#method:constructor:61"
+          },
+          {
+            "children": [],
+            "documentation": "Loads a pre-trained config from the given `pretrained_model_name_or_path`.\n\n@param {string} pretrained_model_name_or_path The path to the pre-trained config.\n@param {PretrainedOptions} options Additional options for loading the config.\n@throws {Error} Throws an error if the config.json is not found in the `pretrained_model_name_or_path`.\n\n@returns {Promise<PretrainedConfig>} A new instance of the `PretrainedConfig` class.",
+            "end_line": 93,
+            "kind": "method",
+            "name": "from_pretrained",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/configs.js",
+            "qualified_name": "from_pretrained",
+            "signature": "static async from_pretrained(pretrained_model_name_or_path, {\n        progress_callback = null,\n        config = null,\n        cache_dir = null,\n        local_files_only = false,\n        revision = 'main',\n    } = {}) {\n\n        let data = config ?? await loadConfig(pretrained_model_name_or_path, {\n            progress_callback,\n            config,\n            cache_dir,\n            local_files_only,\n            revision,\n        })\n        return new this(data);\n    }",
+            "start_line": 77,
+            "symbol_id": "src/configs.js#method:from_pretrained:77"
+          },
+          {
+            "children": [],
+            "documentation": "@type {PretrainedConfig.from_pretrained}",
+            "end_line": 106,
+            "kind": "method",
+            "name": "from_pretrained",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/configs.js",
+            "qualified_name": "from_pretrained",
+            "signature": "static async from_pretrained(...args) {\n        return PretrainedConfig.from_pretrained(...args);\n    }",
+            "start_line": 104,
+            "symbol_id": "src/configs.js#method:from_pretrained:104"
+          }
+        ]
+      }
+    ]
+  },
+  "trialId": "716405f51c"
+}

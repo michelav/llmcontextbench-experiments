@@ -1,0 +1,156 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 3803,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-nano",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 3809,
+          "metadata": {},
+          "name": "strategy.inline.execute",
+          "type": "strategy.inline.execute"
+        },
+        {
+          "duration_ms": 3809,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 6,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": 0,
+        "cachedInputTokens": 0,
+        "contextBytes": 10996,
+        "contextChars": 10996,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 0,
+        "inputTokens": 3512,
+        "loopControlDurationMsEstimated": 6,
+        "mcpToolCalls": 0,
+        "modelCalls": 1,
+        "modelDurationMs": 3803,
+        "outputTokens": 399,
+        "promptChars": 12106,
+        "questionTokensEstimated": 176,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 0,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 1,
+        "strategyDurationMs": 3809,
+        "taskStatementChars": 1088,
+        "toolCalls": 0,
+        "toolDurationMs": null,
+        "totalDurationMs": 3809,
+        "totalTokens": 3911,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": {
+      "background": false,
+      "billing": {
+        "payer": "openai"
+      },
+      "completed_at": 1779732142.0,
+      "conversation": null,
+      "created_at": 1779732138.0,
+      "error": null,
+      "frequency_penalty": 0.0,
+      "id": "resp_0bae9239e27bba03006a148eaaf0cc81908a36b40a8f03addd",
+      "incomplete_details": null,
+      "instructions": "You are an assistant that solves benchmark tasks using only the provided context.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nYour goal is to produce accurate, concise, and context-grounded responses.\nGuidelines:\n- Base your response strictly on the provided context.\n- If the provided context is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+      "max_output_tokens": null,
+      "max_tool_calls": null,
+      "metadata": {
+        "experimentId": "datasets/repoqa",
+        "phase": "execution",
+        "taskId": "snf_retrieve_function",
+        "trialId": "40d0238896"
+      },
+      "model": "gpt-5.4-nano-2026-03-17",
+      "moderation": null,
+      "object": "response",
+      "output": [
+        {
+          "content": [
+            {
+              "annotations": [],
+              "logprobs": [],
+              "text": "```rust\n/// Runs the embedded parser, counting the results.\n///\n/// This stops on [`Err::Error`] if there is at least one result. To instead chain an error up,\n/// see [`cut`][crate::combinator::cut].\n///\n/// # Arguments\n/// * `f` The parser to apply.\n///\n/// *Note*: If the parser passed to `many1` accepts empty inputs\n/// (like `alpha0` or `digit0`), `many1` will return an error,\n/// to prevent going into an infinite loop.\n///\n/// ```rust\n/// # use nom::{Err, error::{Error, ErrorKind}, Needed, IResult, Parser};\n/// use nom::multi::many1_count;\n/// use nom::bytes::complete::tag;\n///\n/// fn parser(s: &str) -> IResult<&str, usize> {\n///   many1_count(tag(\"abc\")).parse(s)\n/// }\n///\n/// assert_eq!(parser(\"abcabc\"), Ok((\"\", 2)));\n/// assert_eq!(parser(\"abc123\"), Ok((\"123\", 1)));\n/// assert_eq!(parser(\"123123\"), Err(Err::Error(Error::new(\"123123\", ErrorKind::Many1Count))));\n/// assert_eq!(parser(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::Many1Count))));\n/// ```\n///\n/// pub fn many1_count<I, E, F>(parser: F) -> impl Parser<I, Output = usize, Error = E>\n/// where\n///   I: Clone + InputLength,\n///   F: Parser<I, Error = E>,\n///   E: ParseError<I>,\npub fn many1_count<I, E, F>(parser: F) -> impl Parser<I, Output = usize, Error = E>\nwhere\n  I: Clone + InputLength,\n  F: Parser<I, Error = E>,\n  E: ParseError<I>,\n{\n  Many1Count { parser }\n}\n```",
+              "type": "output_text"
+            }
+          ],
+          "id": "msg_0bae9239e27bba03006a148eab71d48190b175b1c489ffa69e",
+          "phase": "final_answer",
+          "role": "assistant",
+          "status": "completed",
+          "type": "message"
+        }
+      ],
+      "parallel_tool_calls": true,
+      "presence_penalty": 0.0,
+      "previous_response_id": null,
+      "prompt": null,
+      "prompt_cache_key": "inl:code:142a3fa7109157215153252a6ccd573c",
+      "prompt_cache_retention": "in_memory",
+      "reasoning": {
+        "context": "current_turn",
+        "effort": "none",
+        "generate_summary": null,
+        "summary": null
+      },
+      "safety_identifier": null,
+      "service_tier": "default",
+      "status": "completed",
+      "store": true,
+      "temperature": 1.0,
+      "text": {
+        "format": {
+          "type": "text"
+        },
+        "verbosity": "medium"
+      },
+      "tool_choice": "auto",
+      "tools": [],
+      "top_logprobs": 0,
+      "top_p": 0.98,
+      "truncation": "disabled",
+      "usage": {
+        "input_tokens": 3512,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 399,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 3911
+      },
+      "user": null
+    },
+    "serverMcp": [],
+    "toolCalls": []
+  },
+  "trialId": "40d0238896"
+}

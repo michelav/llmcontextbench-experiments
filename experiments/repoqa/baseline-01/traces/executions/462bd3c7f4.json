@@ -1,0 +1,2391 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 1609,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-nano",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "rs_005_ctx8k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 5,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "language": "rust",
+                "parse_status": "ok_filtered",
+                "path": "src/multi/mod.rs",
+                "repository": "rust-bakery/nom",
+                "symbol_count": 29
+              }
+            ],
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "rs_005_ctx8k"
+              },
+              "durationMs": 4,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "list_files",
+              "transport": "in_memory"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1279,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-nano",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "src",
+              "workspace_id": "rs_005_ctx8k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 3,
+          "metadata": {
+            "is_error": false,
+            "result": [],
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "src",
+                "workspace_id": "rs_005_ctx8k"
+              },
+              "durationMs": 3,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "list_symbols",
+              "transport": "in_memory"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1307,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-nano",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "rs_005_ctx8k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 5,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "language": "rust",
+                "parse_status": "ok_filtered",
+                "path": "src/multi/mod.rs",
+                "repository": "rust-bakery/nom",
+                "symbol_count": 29
+              }
+            ],
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "rs_005_ctx8k"
+              },
+              "durationMs": 4,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "list_files",
+              "transport": "in_memory"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1330,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-nano",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": null,
+              "path": "src/multi/mod.rs",
+              "workspace_id": "rs_005_ctx8k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 4,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "Runs the embedded parser `count` times, gathering the results in a `Vec`\n\n# Arguments\n* `f` The parser to apply.\n* `count` How often to apply the parser.\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult, Parser};\nuse nom::multi::count;\nuse nom::bytes::complete::tag;\n\nfn parser(s: &str) -> IResult<&str, Vec<&str>> {\ncount(tag(\"abc\"), 2).parse(s)\n}\n\nassert_eq!(parser(\"abcabc\"), Ok((\"\", vec![\"abc\", \"abc\"])));\nassert_eq!(parser(\"abc123\"), Err(Err::Error(Error::new(\"123\", ErrorKind::Tag))));\nassert_eq!(parser(\"123123\"), Err(Err::Error(Error::new(\"123123\", ErrorKind::Tag))));\nassert_eq!(parser(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::Tag))));\nassert_eq!(parser(\"abcabcabc\"), Ok((\"abc\", vec![\"abc\", \"abc\"])));\n```\n[cfg(feature = \"alloc\")]\n[cfg_attr(feature = \"docsrs\", doc(cfg(feature = \"alloc\")))]",
+                "end_line": 884,
+                "kind": "function",
+                "name": "count",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "count",
+                "signature": "pub fn count<I, F>(\n  parser: F,\n  count: usize,\n) -> impl Parser<I, Output = Vec<<F as Parser<I>>::Output>, Error = <F as Parser<I>>::Error>\nwhere\n  I: Clone,\n  F: Parser<I>,\n{\n  Count { parser, count }\n}",
+                "start_line": 875,
+                "symbol_id": "src/multi/mod.rs#function:count:875"
+              },
+              {
+                "children": [],
+                "documentation": "[cfg(feature = \"alloc\")]\nParser implementation for the [count] combinator",
+                "end_line": 891,
+                "kind": "struct",
+                "name": "Count",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "Count",
+                "signature": "pub struct Count<F>",
+                "start_line": 888,
+                "symbol_id": "src/multi/mod.rs#struct:Count:888"
+              },
+              {
+                "children": [],
+                "documentation": "[cfg(feature = \"alloc\")]",
+                "end_line": 933,
+                "kind": "impl",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "process",
+                "signature": "impl<I, F> Parser<I> for Count<F>\nwhere\n  I: Clone,\n  F: Parser<I>,",
+                "start_line": 894,
+                "symbol_id": "src/multi/mod.rs#impl:process:894"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 932,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let mut input = i.clone();\n    let max_initial_capacity = MAX_INITIAL_CAPACITY_BYTES\n      / crate::lib::std::mem::size_of::<<F as Parser<I>>::Output>().max(1);\n    let mut res = OM::Output::bind(|| {\n      crate::lib::std::vec::Vec::with_capacity(self.count.min(max_initial_capacity))\n    });\n\n    for _ in 0..self.count {\n      let input_ = input.clone();\n      match self.parser.process::<OM>(input_) {\n        Ok((i, o)) => {\n          res = OM::Output::combine(res, o, |mut res, o| {\n            res.push(o);\n            res\n          });\n          input = i;\n        }\n        Err(Err::Error(e)) => {\n          return Err(Err::Error(OM::Error::map(e, |e| {\n            <F as Parser<I>>::Error::append(i, ErrorKind::Count, e)\n          })));\n        }\n        Err(e) => {\n          return Err(e);\n        }\n      }\n    }\n\n    Ok((input, res))\n  }",
+                "start_line": 902,
+                "symbol_id": "src/multi/mod.rs#function:process:902"
+              },
+              {
+                "children": [],
+                "documentation": "Runs the embedded parser repeatedly, filling the given slice with results.\n\nThis parser fails if the input runs out before the given slice is full.\n\n# Arguments\n* `f` The parser to apply.\n* `buf` The slice to fill\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult, Parser};\nuse nom::multi::fill;\nuse nom::bytes::complete::tag;\n\nfn parser(s: &str) -> IResult<&str, [&str; 2]> {\nlet mut buf = [\"\", \"\"];\nlet (rest, ()) = fill(tag(\"abc\"), &mut buf).parse(s)?;\nOk((rest, buf))\n}\n\nassert_eq!(parser(\"abcabc\"), Ok((\"\", [\"abc\", \"abc\"])));\nassert_eq!(parser(\"abc123\"), Err(Err::Error(Error::new(\"123\", ErrorKind::Tag))));\nassert_eq!(parser(\"123123\"), Err(Err::Error(Error::new(\"123123\", ErrorKind::Tag))));\nassert_eq!(parser(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::Tag))));\nassert_eq!(parser(\"abcabcabc\"), Ok((\"abc\", [\"abc\", \"abc\"])));\n```",
+                "end_line": 969,
+                "kind": "function",
+                "name": "fill",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "fill",
+                "signature": "pub fn fill<'a, I, E, F>(\n  parser: F,\n  buf: &'a mut [<F as Parser<I>>::Output],\n) -> impl Parser<I, Output = (), Error = E> + 'a\nwhere\n  I: Clone,\n  F: Parser<I, Error = E> + 'a,\n  E: ParseError<I>,\n{\n  Fill { parser, buf }\n}",
+                "start_line": 959,
+                "symbol_id": "src/multi/mod.rs#function:fill:959"
+              },
+              {
+                "children": [],
+                "documentation": "Parser implementation for the [fill] combinator",
+                "end_line": 975,
+                "kind": "struct",
+                "name": "Fill",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "Fill",
+                "signature": "pub struct Fill<'a, F, O>",
+                "start_line": 972,
+                "symbol_id": "src/multi/mod.rs#struct:Fill:972"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1008,
+                "kind": "impl",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "process",
+                "signature": "impl<'a, I, F, O> Parser<I> for Fill<'a, F, O>\nwhere\n  I: Clone,\n  F: Parser<I, Output = O>,",
+                "start_line": 977,
+                "symbol_id": "src/multi/mod.rs#impl:process:977"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1007,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let mut input = i.clone();\n\n    for elem in self.buf.iter_mut() {\n      let input_ = input.clone();\n      match self.parser.process::<OM>(input_) {\n        Ok((i, o)) => {\n          OM::Output::map(o, |o| *elem = o);\n          input = i;\n        }\n        Err(Err::Error(e)) => {\n          return Err(Err::Error(OM::Error::map(e, |e| {\n            <F as Parser<I>>::Error::append(i, ErrorKind::Count, e)\n          })));\n        }\n        Err(e) => {\n          return Err(e);\n        }\n      }\n    }\n\n    Ok((input, OM::Output::bind(|| ())))\n  }",
+                "start_line": 985,
+                "symbol_id": "src/multi/mod.rs#function:process:985"
+              },
+              {
+                "children": [],
+                "documentation": "Repeats the embedded parser, calling `g` to gather the results.\n\nThis stops on [`Err::Error`]. To instead chain an error up, see\n[`cut`][crate::combinator::cut].\n\n# Arguments\n* `f` The parser to apply.\n* `init` A function returning the initial value.\n* `g` The function that combines a result of `f` with\nthe current accumulator.\n\n*Note*: if the parser passed in accepts empty inputs (like `alpha0` or `digit0`), `many0` will\nreturn an error, to prevent going into an infinite loop\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, IResult, Parser};\nuse nom::multi::fold_many0;\nuse nom::bytes::complete::tag;\n\nfn parser(s: &str) -> IResult<&str, Vec<&str>> {\nfold_many0(\ntag(\"abc\"),\nVec::new,\n|mut acc: Vec<_>, item| {\nacc.push(item);\nacc\n}\n).parse(s)\n}\n\nassert_eq!(parser(\"abcabc\"), Ok((\"\", vec![\"abc\", \"abc\"])));\nassert_eq!(parser(\"abc123\"), Ok((\"123\", vec![\"abc\"])));\nassert_eq!(parser(\"123123\"), Ok((\"123123\", vec![])));\nassert_eq!(parser(\"\"), Ok((\"\", vec![])));\n```",
+                "end_line": 1063,
+                "kind": "function",
+                "name": "fold_many0",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "fold_many0",
+                "signature": "pub fn fold_many0<I, E, F, G, H, R>(\n  parser: F,\n  init: H,\n  g: G,\n) -> impl Parser<I, Output = R, Error = E>\nwhere\n  I: Clone + InputLength,\n  F: Parser<I, Error = E>,\n  G: FnMut(R, <F as Parser<I>>::Output) -> R,\n  H: FnMut() -> R,\n  E: ParseError<I>,\n{\n  FoldMany0 {\n    parser,\n    g,\n    init,\n    r: PhantomData,\n  }\n}",
+                "start_line": 1045,
+                "symbol_id": "src/multi/mod.rs#function:fold_many0:1045"
+              },
+              {
+                "children": [],
+                "documentation": "Parser implementation for the [fold_many0] combinator",
+                "end_line": 1071,
+                "kind": "struct",
+                "name": "FoldMany0",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "FoldMany0",
+                "signature": "pub struct FoldMany0<F, G, Init, R>",
+                "start_line": 1066,
+                "symbol_id": "src/multi/mod.rs#struct:FoldMany0:1066"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1111,
+                "kind": "impl",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "process",
+                "signature": "impl<I, F, G, Init, R> Parser<I> for FoldMany0<F, G, Init, R>\nwhere\n  I: Clone + InputLength,\n  F: Parser<I>,\n  G: FnMut(R, <F as Parser<I>>::Output) -> R,\n  Init: FnMut() -> R,",
+                "start_line": 1073,
+                "symbol_id": "src/multi/mod.rs#impl:process:1073"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1110,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let mut res = OM::Output::bind(|| (self.init)());\n    let mut input = i;\n\n    loop {\n      let i_ = input.clone();\n      let len = input.input_len();\n      match self.parser.process::<OM>(i_) {\n        Ok((i, o)) => {\n          // infinite loop check: the parser must always consume\n          if i.input_len() == len {\n            return Err(Err::Error(OM::Error::bind(|| {\n              <F as Parser<I>>::Error::from_error_kind(input, ErrorKind::Many0)\n            })));\n          }\n\n          res = OM::Output::combine(res, o, |res, o| (self.g)(res, o));\n          input = i;\n        }\n        Err(Err::Error(_)) => {\n          return Ok((input, res));\n        }\n        Err(e) => {\n          return Err(e);\n        }\n      }\n    }\n  }",
+                "start_line": 1083,
+                "symbol_id": "src/multi/mod.rs#function:process:1083"
+              },
+              {
+                "children": [],
+                "documentation": "Repeats the embedded parser, calling `g` to gather the results.\n\nThis stops on [`Err::Error`] if there is at least one result. To instead chain an error up,\nsee [`cut`][crate::combinator::cut].\n\n# Arguments\n* `f` The parser to apply.\n* `init` A function returning the initial value.\n* `g` The function that combines a result of `f` with\nthe current accumulator.\n\n*Note*: If the parser passed to `many1` accepts empty inputs\n(like `alpha0` or `digit0`), `many1` will return an error,\nto prevent going into an infinite loop.\n\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult, Parser};\nuse nom::multi::fold_many1;\nuse nom::bytes::complete::tag;\n\nfn parser(s: &str) -> IResult<&str, Vec<&str>> {\nfold_many1(\ntag(\"abc\"),\nVec::new,\n|mut acc: Vec<_>, item| {\nacc.push(item);\nacc\n}\n).parse(s)\n}\n\nassert_eq!(parser(\"abcabc\"), Ok((\"\", vec![\"abc\", \"abc\"])));\nassert_eq!(parser(\"abc123\"), Ok((\"123\", vec![\"abc\"])));\nassert_eq!(parser(\"123123\"), Err(Err::Error(Error::new(\"123123\", ErrorKind::Many1))));\nassert_eq!(parser(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::Many1))));\n```",
+                "end_line": 1167,
+                "kind": "function",
+                "name": "fold_many1",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "fold_many1",
+                "signature": "pub fn fold_many1<I, E, F, G, H, R>(\n  parser: F,\n  init: H,\n  g: G,\n) -> impl Parser<I, Output = R, Error = E>\nwhere\n  I: Clone + InputLength,\n  F: Parser<I, Error = E>,\n  G: FnMut(R, <F as Parser<I>>::Output) -> R,\n  H: FnMut() -> R,\n  E: ParseError<I>,\n{\n  FoldMany1 {\n    parser,\n    g,\n    init,\n    r: PhantomData,\n  }\n}",
+                "start_line": 1149,
+                "symbol_id": "src/multi/mod.rs#function:fold_many1:1149"
+              },
+              {
+                "children": [],
+                "documentation": "Parser implementation for the [fold_many1] combinator",
+                "end_line": 1175,
+                "kind": "struct",
+                "name": "FoldMany1",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "FoldMany1",
+                "signature": "pub struct FoldMany1<F, G, Init, R>",
+                "start_line": 1170,
+                "symbol_id": "src/multi/mod.rs#struct:FoldMany1:1170"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1226,
+                "kind": "impl",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "process",
+                "signature": "impl<I, F, G, Init, R> Parser<I> for FoldMany1<F, G, Init, R>\nwhere\n  I: Clone + InputLength,\n  F: Parser<I>,\n  G: FnMut(R, <F as Parser<I>>::Output) -> R,\n  Init: FnMut() -> R,",
+                "start_line": 1177,
+                "symbol_id": "src/multi/mod.rs#impl:process:1177"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1225,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let mut res = OM::Output::bind(|| (self.init)());\n    let input = i.clone();\n\n    match self.parser.process::<OM>(input) {\n      Err(Err::Error(_)) => Err(Err::Error(OM::Error::bind(|| {\n        <F as Parser<I>>::Error::from_error_kind(i, ErrorKind::Many1)\n      }))),\n      Err(e) => Err(e),\n      Ok((i1, o1)) => {\n        res = OM::Output::combine(res, o1, |res, o| (self.g)(res, o));\n\n        let mut input = i1;\n        loop {\n          let i_ = input.clone();\n          let len = input.input_len();\n          match self.parser.process::<OM>(i_) {\n            Ok((i, o)) => {\n              // infinite loop check: the parser must always consume\n              if i.input_len() == len {\n                return Err(Err::Error(OM::Error::bind(|| {\n                  <F as Parser<I>>::Error::from_error_kind(input, ErrorKind::Many1)\n                })));\n              }\n\n              res = OM::Output::combine(res, o, |res, o| (self.g)(res, o));\n              input = i;\n            }\n            Err(Err::Error(_)) => {\n              return Ok((input, res));\n            }\n            Err(e) => {\n              return Err(e);\n            }\n          }\n        }\n      }\n    }\n  }",
+                "start_line": 1187,
+                "symbol_id": "src/multi/mod.rs#function:process:1187"
+              },
+              {
+                "children": [],
+                "documentation": "Repeats the embedded parser `m..=n` times, calling `g` to gather the results\n\nThis stops before `n` when the parser returns [`Err::Error`]. To instead chain an error up, see\n[`cut`][crate::combinator::cut].\n\n# Arguments\n* `m` The minimum number of iterations.\n* `n` The maximum number of iterations.\n* `f` The parser to apply.\n* `init` A function returning the initial value.\n* `g` The function that combines a result of `f` with\nthe current accumulator.\n\n*Note*: If the parser passed to `many1` accepts empty inputs\n(like `alpha0` or `digit0`), `many1` will return an error,\nto prevent going into an infinite loop.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, IResult, Parser};\nuse nom::multi::fold_many_m_n;\nuse nom::bytes::complete::tag;\n\nfn parser(s: &str) -> IResult<&str, Vec<&str>> {\nfold_many_m_n(\n0,\n2,\ntag(\"abc\"),\nVec::new,\n|mut acc: Vec<_>, item| {\nacc.push(item);\nacc\n}\n).parse(s)\n}\n\nassert_eq!(parser(\"abcabc\"), Ok((\"\", vec![\"abc\", \"abc\"])));\nassert_eq!(parser(\"abc123\"), Ok((\"123\", vec![\"abc\"])));\nassert_eq!(parser(\"123123\"), Ok((\"123123\", vec![])));\nassert_eq!(parser(\"\"), Ok((\"\", vec![])));\nassert_eq!(parser(\"abcabcabc\"), Ok((\"abc\", vec![\"abc\", \"abc\"])));\n```",
+                "end_line": 1291,
+                "kind": "function",
+                "name": "fold_many_m_n",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "fold_many_m_n",
+                "signature": "pub fn fold_many_m_n<I, E, F, G, H, R>(\n  min: usize,\n  max: usize,\n  parser: F,\n  init: H,\n  g: G,\n) -> impl Parser<I, Output = R, Error = E>\nwhere\n  I: Clone + InputLength,\n  F: Parser<I, Error = E>,\n  G: FnMut(R, <F as Parser<I>>::Output) -> R,\n  H: FnMut() -> R,\n  E: ParseError<I>,\n{\n  FoldManyMN {\n    parser,\n    g,\n    init,\n    min,\n    max,\n    r: PhantomData,\n  }\n}",
+                "start_line": 1269,
+                "symbol_id": "src/multi/mod.rs#function:fold_many_m_n:1269"
+              },
+              {
+                "children": [],
+                "documentation": "Parser implementation for the [fold_many_m_n] combinator",
+                "end_line": 1301,
+                "kind": "struct",
+                "name": "FoldManyMN",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "FoldManyMN",
+                "signature": "pub struct FoldManyMN<F, G, Init, R>",
+                "start_line": 1294,
+                "symbol_id": "src/multi/mod.rs#struct:FoldManyMN:1294"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1353,
+                "kind": "impl",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "process",
+                "signature": "impl<I, F, G, Init, R> Parser<I> for FoldManyMN<F, G, Init, R>\nwhere\n  I: Clone + InputLength,\n  F: Parser<I>,\n  G: FnMut(R, <F as Parser<I>>::Output) -> R,\n  Init: FnMut() -> R,",
+                "start_line": 1303,
+                "symbol_id": "src/multi/mod.rs#impl:process:1303"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1352,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(\n    &mut self,\n    mut input: I,\n  ) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    if self.min > self.max {\n      return Err(Err::Error(OM::Error::bind(|| {\n        <F as Parser<I>>::Error::from_error_kind(input, ErrorKind::ManyMN)\n      })));\n    }\n\n    let mut res = OM::Output::bind(|| (self.init)());\n    for count in 0..self.max {\n      let len = input.input_len();\n      match self.parser.process::<OM>(input.clone()) {\n        Ok((tail, value)) => {\n          // infinite loop check: the parser must always consume\n          if tail.input_len() == len {\n            return Err(Err::Error(OM::Error::bind(|| {\n              <F as Parser<I>>::Error::from_error_kind(tail, ErrorKind::ManyMN)\n            })));\n          }\n\n          res = OM::Output::combine(res, value, |res, o| (self.g)(res, o));\n          input = tail;\n        }\n        Err(Err::Error(err)) => {\n          if count < self.min {\n            return Err(Err::Error(OM::Error::map(err, |err| {\n              <F as Parser<I>>::Error::append(input, ErrorKind::ManyMN, err)\n            })));\n          } else {\n            break;\n          }\n        }\n        Err(e) => return Err(e),\n      }\n    }\n\n    Ok((input, res))\n  }",
+                "start_line": 1313,
+                "symbol_id": "src/multi/mod.rs#function:process:1313"
+              },
+              {
+                "children": [],
+                "documentation": "Gets a number from the parser and returns a\nsubslice of the input of that size.\nIf the parser returns `Incomplete`,\n`length_data` will return an error.\n# Arguments\n* `f` The parser to apply.\n```rust\n# use nom::{Err, error::ErrorKind, Needed, IResult, Parser};\nuse nom::number::complete::be_u16;\nuse nom::multi::length_data;\nuse nom::bytes::complete::tag;\n\nfn parser(s: &[u8]) -> IResult<&[u8], &[u8]> {\nlength_data(be_u16).parse(s)\n}\n\nassert_eq!(parser(b\"\\x00\\x03abcefg\"), Ok((&b\"efg\"[..], &b\"abc\"[..])));\nassert_eq!(parser(b\"\\x00\\x03a\"), Err(Err::Incomplete(Needed::new(2))));\n```",
+                "end_line": 1382,
+                "kind": "function",
+                "name": "length_data",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "length_data",
+                "signature": "pub fn length_data<I, E, F>(f: F) -> impl Parser<I, Output = I, Error = E>\nwhere\n  I: Input,\n  <F as Parser<I>>::Output: ToUsize,\n  F: Parser<I, Error = E>,\n  E: ParseError<I>,\n{\n  f.flat_map(|size| take(size))\n}",
+                "start_line": 1374,
+                "symbol_id": "src/multi/mod.rs#function:length_data:1374"
+              },
+              {
+                "children": [],
+                "documentation": "Gets a number from the first parser,\ntakes a subslice of the input of that size,\nthen applies the second parser on that subslice.\nIf the second parser returns `Incomplete`,\n`length_value` will return an error.\n# Arguments\n* `f` The parser to apply.\n* `g` The parser to apply on the subslice.\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult, Parser};\nuse nom::number::complete::be_u16;\nuse nom::multi::length_value;\nuse nom::bytes::complete::tag;\n\nfn parser(s: &[u8]) -> IResult<&[u8], &[u8]> {\nlength_value(be_u16, tag(\"abc\")).parse(s)\n}\n\nassert_eq!(parser(b\"\\x00\\x03abcefg\"), Ok((&b\"efg\"[..], &b\"abc\"[..])));\nassert_eq!(parser(b\"\\x00\\x03123123\"), Err(Err::Error(Error::new(&b\"123\"[..], ErrorKind::Tag))));\nassert_eq!(parser(b\"\\x00\\x03a\"), Err(Err::Incomplete(Needed::new(2))));\n```",
+                "end_line": 1427,
+                "kind": "function",
+                "name": "length_value",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "length_value",
+                "signature": "pub fn length_value<I, E, F, G>(\n  f: F,\n  g: G,\n) -> impl Parser<I, Output = <G as Parser<I>>::Output, Error = E>\nwhere\n  I: Clone + Input,\n  <F as Parser<I>>::Output: ToUsize,\n  F: Parser<I, Error = E>,\n  G: Parser<I, Error = E>,\n  E: ParseError<I>,\n{\n  /*f.flat_map(|size| {\n    println!(\"got size: {size}\");\n    take(size)\n  })\n  .and_then(g)*/\n  LengthValue {\n    length: f,\n    parser: g,\n    e: PhantomData,\n  }\n}",
+                "start_line": 1406,
+                "symbol_id": "src/multi/mod.rs#function:length_value:1406"
+              },
+              {
+                "children": [],
+                "documentation": "Parser implementation for the [length_value] combinator",
+                "end_line": 1434,
+                "kind": "struct",
+                "name": "LengthValue",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "LengthValue",
+                "signature": "pub struct LengthValue<F, G, E>",
+                "start_line": 1430,
+                "symbol_id": "src/multi/mod.rs#struct:LengthValue:1430"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1473,
+                "kind": "impl",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "process",
+                "signature": "impl<I, F, G, E> Parser<I> for LengthValue<F, G, E>\nwhere\n  I: Clone + Input,\n  F: Parser<I, Error = E>,\n  G: Parser<I, Error = E>,\n  <F as Parser<I>>::Output: ToUsize,\n  E: ParseError<I>,",
+                "start_line": 1436,
+                "symbol_id": "src/multi/mod.rs#impl:process:1436"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1472,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(\n    &mut self,\n    input: I,\n  ) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let (i, length) = self\n      .length\n      .process::<OutputM<Emit, OM::Error, OM::Incomplete>>(input)?;\n\n    let length: usize = length.to_usize();\n\n    if let Some(needed) = length\n      .checked_sub(i.input_len())\n      .and_then(NonZeroUsize::new)\n    {\n      Err(Err::Incomplete(Needed::Size(needed)))\n    } else {\n      let (rest, i) = i.take_split(length);\n      match self.parser.process::<OM>(i.clone()) {\n        Err(Err::Incomplete(_)) => Err(Err::Error(OM::Error::bind(|| {\n          E::from_error_kind(i, ErrorKind::Complete)\n        }))),\n        Err(e) => Err(e),\n        Ok((_, o)) => Ok((rest, o)),\n      }\n    }\n  }",
+                "start_line": 1447,
+                "symbol_id": "src/multi/mod.rs#function:process:1447"
+              },
+              {
+                "children": [],
+                "documentation": "Gets a number from the first parser,\nthen applies the second parser that many times.\n# Arguments\n* `f` The parser to apply to obtain the count.\n* `g` The parser to apply repeatedly.\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult, Parser};\nuse nom::number::complete::u8;\nuse nom::multi::length_count;\nuse nom::bytes::complete::tag;\nuse nom::combinator::map;\n\nfn parser(s: &[u8]) -> IResult<&[u8], Vec<&[u8]>> {\nlength_count(map(u8, |i| {\nprintln!(\"got number: {}\", i);\ni\n}), tag(\"abc\")).parse(s)\n}\n\nassert_eq!(parser(&b\"\\x02abcabcabc\"[..]), Ok(((&b\"abc\"[..], vec![&b\"abc\"[..], &b\"abc\"[..]]))));\nassert_eq!(parser(b\"\\x03123123123\"), Err(Err::Error(Error::new(&b\"123123123\"[..], ErrorKind::Tag))));\n```\n[cfg(feature = \"alloc\")]",
+                "end_line": 1514,
+                "kind": "function",
+                "name": "length_count",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "length_count",
+                "signature": "pub fn length_count<I, E, F, G>(\n  f: F,\n  g: G,\n) -> impl Parser<I, Output = Vec<<G as Parser<I>>::Output>, Error = E>\nwhere\n  I: Clone,\n  <F as Parser<I>>::Output: ToUsize,\n  F: Parser<I, Error = E>,\n  G: Parser<I, Error = E>,\n  E: ParseError<I>,\n{\n  LengthCount {\n    length: f,\n    parser: g,\n    e: PhantomData,\n  }\n}",
+                "start_line": 1498,
+                "symbol_id": "src/multi/mod.rs#function:length_count:1498"
+              },
+              {
+                "children": [],
+                "documentation": "[cfg(feature = \"alloc\")]\nParser implementation for the [length_count] combinator",
+                "end_line": 1522,
+                "kind": "struct",
+                "name": "LengthCount",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "LengthCount",
+                "signature": "pub struct LengthCount<F, G, E>",
+                "start_line": 1518,
+                "symbol_id": "src/multi/mod.rs#struct:LengthCount:1518"
+              },
+              {
+                "children": [],
+                "documentation": "[cfg(feature = \"alloc\")]",
+                "end_line": 1579,
+                "kind": "impl",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "process",
+                "signature": "impl<I, F, G, E> Parser<I> for LengthCount<F, G, E>\nwhere\n  I: Clone,\n  F: Parser<I, Error = E>,\n  G: Parser<I, Error = E>,\n  <F as Parser<I>>::Output: ToUsize,\n  E: ParseError<I>,",
+                "start_line": 1525,
+                "symbol_id": "src/multi/mod.rs#impl:process:1525"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1578,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/multi/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(\n    &mut self,\n    input: I,\n  ) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    match self\n      .length\n      .process::<OutputM<Emit, OM::Error, OM::Incomplete>>(input)\n    {\n      Err(e) => Err(e),\n      Ok((i, count)) => {\n        let count = count.to_usize();\n        let mut input = i.clone();\n        let max_initial_capacity = MAX_INITIAL_CAPACITY_BYTES\n          / crate::lib::std::mem::size_of::<<F as Parser<I>>::Output>().max(1);\n        let mut res = OM::Output::bind(|| {\n          crate::lib::std::vec::Vec::with_capacity(count.min(max_initial_capacity))\n        });\n\n        for _ in 0..count {\n          let input_ = input.clone();\n          match self.parser.process::<OM>(input_) {\n            Ok((i, o)) => {\n              res = OM::Output::combine(res, o, |mut res, o| {\n                res.push(o);\n                res\n              });\n              input = i;\n            }\n            Err(Err::Error(e)) => {\n              return Err(Err::Error(OM::Error::map(e, |e| {\n                <F as Parser<I>>::Error::append(i, ErrorKind::Count, e)\n              })));\n            }\n            Err(e) => {\n              return Err(e);\n            }\n          }\n        }\n\n        Ok((input, res))\n      }\n    }\n  }",
+                "start_line": 1536,
+                "symbol_id": "src/multi/mod.rs#function:process:1536"
+              }
+            ],
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "kind": null,
+                "path": "src/multi/mod.rs",
+                "workspace_id": "rs_005_ctx8k"
+              },
+              "durationMs": 4,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "list_symbols",
+              "transport": "in_memory"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1372,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-nano",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "symbol_id": "src/multi/mod.rs#function:process:1187",
+              "workspace_id": "rs_005_ctx8k"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 3,
+          "metadata": {
+            "is_error": false,
+            "result": {
+              "children": [],
+              "code": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let mut res = OM::Output::bind(|| (self.init)());\n    let input = i.clone();\n\n    match self.parser.process::<OM>(input) {\n      Err(Err::Error(_)) => Err(Err::Error(OM::Error::bind(|| {\n        <F as Parser<I>>::Error::from_error_kind(i, ErrorKind::Many1)\n      }))),\n      Err(e) => Err(e),\n      Ok((i1, o1)) => {\n        res = OM::Output::combine(res, o1, |res, o| (self.g)(res, o));\n\n        let mut input = i1;\n        loop {\n          let i_ = input.clone();\n          let len = input.input_len();\n          match self.parser.process::<OM>(i_) {\n            Ok((i, o)) => {\n              // infinite loop check: the parser must always consume\n              if i.input_len() == len {\n                return Err(Err::Error(OM::Error::bind(|| {\n                  <F as Parser<I>>::Error::from_error_kind(input, ErrorKind::Many1)\n                })));\n              }\n\n              res = OM::Output::combine(res, o, |res, o| (self.g)(res, o));\n              input = i;\n            }\n            Err(Err::Error(_)) => {\n              return Ok((input, res));\n            }\n            Err(e) => {\n              return Err(e);\n            }\n          }\n        }\n      }\n    }\n  }",
+              "documentation": null,
+              "end_line": 1225,
+              "kind": "function",
+              "name": "process",
+              "parent_id": null,
+              "parent_name": null,
+              "path": "src/multi/mod.rs",
+              "qualified_name": "process",
+              "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let mut res = OM::Output::bind(|| (self.init)());\n    let input = i.clone();\n\n    match self.parser.process::<OM>(input) {\n      Err(Err::Error(_)) => Err(Err::Error(OM::Error::bind(|| {\n        <F as Parser<I>>::Error::from_error_kind(i, ErrorKind::Many1)\n      }))),\n      Err(e) => Err(e),\n      Ok((i1, o1)) => {\n        res = OM::Output::combine(res, o1, |res, o| (self.g)(res, o));\n\n        let mut input = i1;\n        loop {\n          let i_ = input.clone();\n          let len = input.input_len();\n          match self.parser.process::<OM>(i_) {\n            Ok((i, o)) => {\n              // infinite loop check: the parser must always consume\n              if i.input_len() == len {\n                return Err(Err::Error(OM::Error::bind(|| {\n                  <F as Parser<I>>::Error::from_error_kind(input, ErrorKind::Many1)\n                })));\n              }\n\n              res = OM::Output::combine(res, o, |res, o| (self.g)(res, o));\n              input = i;\n            }\n            Err(Err::Error(_)) => {\n              return Ok((input, res));\n            }\n            Err(e) => {\n              return Err(e);\n            }\n          }\n        }\n      }\n    }\n  }",
+              "start_line": 1187,
+              "symbol_id": "src/multi/mod.rs#function:process:1187"
+            },
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "symbol_id": "src/multi/mod.rs#function:process:1187",
+                "workspace_id": "rs_005_ctx8k"
+              },
+              "durationMs": 3,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "get_symbol",
+              "transport": "in_memory"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 3530,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-nano",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 10487,
+          "metadata": {},
+          "name": "strategy.local_mcp.execute",
+          "type": "strategy.local_mcp.execute"
+        },
+        {
+          "duration_ms": 10487,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 60,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": 0,
+        "cachedInputTokens": 0,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 5,
+        "inputTokens": 13326,
+        "loopControlDurationMsEstimated": 40,
+        "mcpToolCalls": 5,
+        "modelCalls": 6,
+        "modelDurationMs": 10427,
+        "outputTokens": 505,
+        "promptChars": 1412,
+        "questionTokensEstimated": 199,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 0,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 6,
+        "strategyDurationMs": 10487,
+        "taskStatementChars": 1242,
+        "toolCalls": 5,
+        "toolDurationMs": 20,
+        "totalDurationMs": 10487,
+        "totalTokens": 13831,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779732724.0,
+        "conversation": null,
+        "created_at": 1779732723.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_09df14be2176b003006a1490f306c081a1a76cf76d983c604f",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "462bd3c7f4"
+        },
+        "model": "gpt-5.4-nano-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "arguments": "{\"workspace_id\":\"rs_005_ctx8k\"}",
+            "call_id": "call_L7ldseTfRe1PRfTAVrLPAdvk",
+            "id": "fc_09df14be2176b003006a1490f411bc81a196a541a3101cf4ee",
+            "name": "list_files",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 555,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 24,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 579
+        },
+        "user": null
+      },
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779732725.0,
+        "conversation": null,
+        "created_at": 1779732724.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_09df14be2176b003006a1490f4a59c81a191bccc3c7add6299",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "462bd3c7f4"
+        },
+        "model": "gpt-5.4-nano-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "arguments": "{\"workspace_id\":\"rs_005_ctx8k\",\"path\":\"src\",\"kind\":\"function\"}",
+            "call_id": "call_2o4A5RCJYQLZ24xe5snd7a1h",
+            "id": "fc_09df14be2176b003006a1490f556e481a188636ca7f387f6a8",
+            "name": "list_symbols",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 634,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 32,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 666
+        },
+        "user": null
+      },
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779732726.0,
+        "conversation": null,
+        "created_at": 1779732725.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_09df14be2176b003006a1490f5f74081a1b515eda05c5af128",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "462bd3c7f4"
+        },
+        "model": "gpt-5.4-nano-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "arguments": "{\"workspace_id\":\"rs_005_ctx8k\"}",
+            "call_id": "call_JItEgjmEFZqXulJD3t9Cuca0",
+            "id": "fc_09df14be2176b003006a1490f6bbe481a1929dbe1687f9cdf8",
+            "name": "list_files",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 599,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 24,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 623
+        },
+        "user": null
+      },
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779732728.0,
+        "conversation": null,
+        "created_at": 1779732727.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_09df14be2176b003006a1490f7426c81a1925c81d236431590",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "462bd3c7f4"
+        },
+        "model": "gpt-5.4-nano-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "arguments": "{\"workspace_id\":\"rs_005_ctx8k\",\"path\":\"src/multi/mod.rs\",\"kind\":null}",
+            "call_id": "call_4MyDiRGqw9neutwlf3HGByz0",
+            "id": "fc_09df14be2176b003006a1490f7f9ec81a1a51277eabaf8703e",
+            "name": "list_symbols",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 634,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 36,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 670
+        },
+        "user": null
+      },
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779732729.0,
+        "conversation": null,
+        "created_at": 1779732728.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_09df14be2176b003006a1490f89ca481a18158dd5fe77aa2e0",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "462bd3c7f4"
+        },
+        "model": "gpt-5.4-nano-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "arguments": "{\"workspace_id\":\"rs_005_ctx8k\",\"symbol_id\":\"src/multi/mod.rs#function:process:1187\"}",
+            "call_id": "call_Jxuf6hdubqXBIogwQo6RDgKd",
+            "id": "fc_09df14be2176b003006a1490f9579081a1a08f98b52f6373f7",
+            "name": "get_symbol",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 9430,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 40,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 9470
+        },
+        "user": null
+      },
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779732732.0,
+        "conversation": null,
+        "created_at": 1779732730.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_09df14be2176b003006a1490f9fc6c81a1b0eed39f792a7cd0",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "462bd3c7f4"
+        },
+        "model": "gpt-5.4-nano-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "logprobs": [],
+                "text": "```rust\nfn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let mut res = OM::Output::bind(|| (self.init)());\n    let input = i.clone();\n\n    match self.parser.process::<OM>(input) {\n      Err(Err::Error(_)) => Err(Err::Error(OM::Error::bind(|| {\n        <F as Parser<I>>::Error::from_error_kind(i, ErrorKind::Many1)\n      }))),\n      Err(e) => Err(e),\n      Ok((i1, o1)) => {\n        res = OM::Output::combine(res, o1, |res, o| (self.g)(res, o));\n\n        let mut input = i1;\n        loop {\n          let i_ = input.clone();\n          let len = input.input_len();\n          match self.parser.process::<OM>(i_) {\n            Ok((i, o)) => {\n              // infinite loop check: the parser must always consume\n              if i.input_len() == len {\n                return Err(Err::Error(OM::Error::bind(|| {\n                  <F as Parser<I>>::Error::from_error_kind(input, ErrorKind::Many1)\n                })));\n              }\n\n              res = OM::Output::combine(res, o, |res, o| (self.g)(res, o));\n              input = i;\n            }\n            Err(Err::Error(_)) => {\n              return Ok((input, res));\n            }\n            Err(e) => {\n              return Err(e);\n            }\n          }\n        }\n      }\n    }\n  }\n```",
+                "type": "output_text"
+              }
+            ],
+            "id": "msg_09df14be2176b003006a1490fa84a881a192e007cbf4fea784",
+            "phase": "final_answer",
+            "role": "assistant",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 1474,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 349,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 1823
+        },
+        "user": null
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "workspace_id": "rs_005_ctx8k"
+        },
+        "durationMs": 4,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "list_files",
+        "transport": "in_memory"
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src",
+          "workspace_id": "rs_005_ctx8k"
+        },
+        "durationMs": 3,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "list_symbols",
+        "transport": "in_memory"
+      },
+      {
+        "arguments": {
+          "workspace_id": "rs_005_ctx8k"
+        },
+        "durationMs": 4,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "list_files",
+        "transport": "in_memory"
+      },
+      {
+        "arguments": {
+          "kind": null,
+          "path": "src/multi/mod.rs",
+          "workspace_id": "rs_005_ctx8k"
+        },
+        "durationMs": 4,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "list_symbols",
+        "transport": "in_memory"
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/multi/mod.rs#function:process:1187",
+          "workspace_id": "rs_005_ctx8k"
+        },
+        "durationMs": 3,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "get_symbol",
+        "transport": "in_memory"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "workspace_id": "rs_005_ctx8k"
+        },
+        "id": "call_L7ldseTfRe1PRfTAVrLPAdvk",
+        "isError": false,
+        "name": "list_files",
+        "result": [
+          {
+            "language": "rust",
+            "parse_status": "ok_filtered",
+            "path": "src/multi/mod.rs",
+            "repository": "rust-bakery/nom",
+            "symbol_count": 29
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src",
+          "workspace_id": "rs_005_ctx8k"
+        },
+        "id": "call_2o4A5RCJYQLZ24xe5snd7a1h",
+        "isError": false,
+        "name": "list_symbols",
+        "result": []
+      },
+      {
+        "arguments": {
+          "workspace_id": "rs_005_ctx8k"
+        },
+        "id": "call_JItEgjmEFZqXulJD3t9Cuca0",
+        "isError": false,
+        "name": "list_files",
+        "result": [
+          {
+            "language": "rust",
+            "parse_status": "ok_filtered",
+            "path": "src/multi/mod.rs",
+            "repository": "rust-bakery/nom",
+            "symbol_count": 29
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": null,
+          "path": "src/multi/mod.rs",
+          "workspace_id": "rs_005_ctx8k"
+        },
+        "id": "call_4MyDiRGqw9neutwlf3HGByz0",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "Runs the embedded parser `count` times, gathering the results in a `Vec`\n\n# Arguments\n* `f` The parser to apply.\n* `count` How often to apply the parser.\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult, Parser};\nuse nom::multi::count;\nuse nom::bytes::complete::tag;\n\nfn parser(s: &str) -> IResult<&str, Vec<&str>> {\ncount(tag(\"abc\"), 2).parse(s)\n}\n\nassert_eq!(parser(\"abcabc\"), Ok((\"\", vec![\"abc\", \"abc\"])));\nassert_eq!(parser(\"abc123\"), Err(Err::Error(Error::new(\"123\", ErrorKind::Tag))));\nassert_eq!(parser(\"123123\"), Err(Err::Error(Error::new(\"123123\", ErrorKind::Tag))));\nassert_eq!(parser(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::Tag))));\nassert_eq!(parser(\"abcabcabc\"), Ok((\"abc\", vec![\"abc\", \"abc\"])));\n```\n[cfg(feature = \"alloc\")]\n[cfg_attr(feature = \"docsrs\", doc(cfg(feature = \"alloc\")))]",
+            "end_line": 884,
+            "kind": "function",
+            "name": "count",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "count",
+            "signature": "pub fn count<I, F>(\n  parser: F,\n  count: usize,\n) -> impl Parser<I, Output = Vec<<F as Parser<I>>::Output>, Error = <F as Parser<I>>::Error>\nwhere\n  I: Clone,\n  F: Parser<I>,\n{\n  Count { parser, count }\n}",
+            "start_line": 875,
+            "symbol_id": "src/multi/mod.rs#function:count:875"
+          },
+          {
+            "children": [],
+            "documentation": "[cfg(feature = \"alloc\")]\nParser implementation for the [count] combinator",
+            "end_line": 891,
+            "kind": "struct",
+            "name": "Count",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "Count",
+            "signature": "pub struct Count<F>",
+            "start_line": 888,
+            "symbol_id": "src/multi/mod.rs#struct:Count:888"
+          },
+          {
+            "children": [],
+            "documentation": "[cfg(feature = \"alloc\")]",
+            "end_line": 933,
+            "kind": "impl",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "process",
+            "signature": "impl<I, F> Parser<I> for Count<F>\nwhere\n  I: Clone,\n  F: Parser<I>,",
+            "start_line": 894,
+            "symbol_id": "src/multi/mod.rs#impl:process:894"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 932,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let mut input = i.clone();\n    let max_initial_capacity = MAX_INITIAL_CAPACITY_BYTES\n      / crate::lib::std::mem::size_of::<<F as Parser<I>>::Output>().max(1);\n    let mut res = OM::Output::bind(|| {\n      crate::lib::std::vec::Vec::with_capacity(self.count.min(max_initial_capacity))\n    });\n\n    for _ in 0..self.count {\n      let input_ = input.clone();\n      match self.parser.process::<OM>(input_) {\n        Ok((i, o)) => {\n          res = OM::Output::combine(res, o, |mut res, o| {\n            res.push(o);\n            res\n          });\n          input = i;\n        }\n        Err(Err::Error(e)) => {\n          return Err(Err::Error(OM::Error::map(e, |e| {\n            <F as Parser<I>>::Error::append(i, ErrorKind::Count, e)\n          })));\n        }\n        Err(e) => {\n          return Err(e);\n        }\n      }\n    }\n\n    Ok((input, res))\n  }",
+            "start_line": 902,
+            "symbol_id": "src/multi/mod.rs#function:process:902"
+          },
+          {
+            "children": [],
+            "documentation": "Runs the embedded parser repeatedly, filling the given slice with results.\n\nThis parser fails if the input runs out before the given slice is full.\n\n# Arguments\n* `f` The parser to apply.\n* `buf` The slice to fill\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult, Parser};\nuse nom::multi::fill;\nuse nom::bytes::complete::tag;\n\nfn parser(s: &str) -> IResult<&str, [&str; 2]> {\nlet mut buf = [\"\", \"\"];\nlet (rest, ()) = fill(tag(\"abc\"), &mut buf).parse(s)?;\nOk((rest, buf))\n}\n\nassert_eq!(parser(\"abcabc\"), Ok((\"\", [\"abc\", \"abc\"])));\nassert_eq!(parser(\"abc123\"), Err(Err::Error(Error::new(\"123\", ErrorKind::Tag))));\nassert_eq!(parser(\"123123\"), Err(Err::Error(Error::new(\"123123\", ErrorKind::Tag))));\nassert_eq!(parser(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::Tag))));\nassert_eq!(parser(\"abcabcabc\"), Ok((\"abc\", [\"abc\", \"abc\"])));\n```",
+            "end_line": 969,
+            "kind": "function",
+            "name": "fill",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "fill",
+            "signature": "pub fn fill<'a, I, E, F>(\n  parser: F,\n  buf: &'a mut [<F as Parser<I>>::Output],\n) -> impl Parser<I, Output = (), Error = E> + 'a\nwhere\n  I: Clone,\n  F: Parser<I, Error = E> + 'a,\n  E: ParseError<I>,\n{\n  Fill { parser, buf }\n}",
+            "start_line": 959,
+            "symbol_id": "src/multi/mod.rs#function:fill:959"
+          },
+          {
+            "children": [],
+            "documentation": "Parser implementation for the [fill] combinator",
+            "end_line": 975,
+            "kind": "struct",
+            "name": "Fill",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "Fill",
+            "signature": "pub struct Fill<'a, F, O>",
+            "start_line": 972,
+            "symbol_id": "src/multi/mod.rs#struct:Fill:972"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 1008,
+            "kind": "impl",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "process",
+            "signature": "impl<'a, I, F, O> Parser<I> for Fill<'a, F, O>\nwhere\n  I: Clone,\n  F: Parser<I, Output = O>,",
+            "start_line": 977,
+            "symbol_id": "src/multi/mod.rs#impl:process:977"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 1007,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let mut input = i.clone();\n\n    for elem in self.buf.iter_mut() {\n      let input_ = input.clone();\n      match self.parser.process::<OM>(input_) {\n        Ok((i, o)) => {\n          OM::Output::map(o, |o| *elem = o);\n          input = i;\n        }\n        Err(Err::Error(e)) => {\n          return Err(Err::Error(OM::Error::map(e, |e| {\n            <F as Parser<I>>::Error::append(i, ErrorKind::Count, e)\n          })));\n        }\n        Err(e) => {\n          return Err(e);\n        }\n      }\n    }\n\n    Ok((input, OM::Output::bind(|| ())))\n  }",
+            "start_line": 985,
+            "symbol_id": "src/multi/mod.rs#function:process:985"
+          },
+          {
+            "children": [],
+            "documentation": "Repeats the embedded parser, calling `g` to gather the results.\n\nThis stops on [`Err::Error`]. To instead chain an error up, see\n[`cut`][crate::combinator::cut].\n\n# Arguments\n* `f` The parser to apply.\n* `init` A function returning the initial value.\n* `g` The function that combines a result of `f` with\nthe current accumulator.\n\n*Note*: if the parser passed in accepts empty inputs (like `alpha0` or `digit0`), `many0` will\nreturn an error, to prevent going into an infinite loop\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, IResult, Parser};\nuse nom::multi::fold_many0;\nuse nom::bytes::complete::tag;\n\nfn parser(s: &str) -> IResult<&str, Vec<&str>> {\nfold_many0(\ntag(\"abc\"),\nVec::new,\n|mut acc: Vec<_>, item| {\nacc.push(item);\nacc\n}\n).parse(s)\n}\n\nassert_eq!(parser(\"abcabc\"), Ok((\"\", vec![\"abc\", \"abc\"])));\nassert_eq!(parser(\"abc123\"), Ok((\"123\", vec![\"abc\"])));\nassert_eq!(parser(\"123123\"), Ok((\"123123\", vec![])));\nassert_eq!(parser(\"\"), Ok((\"\", vec![])));\n```",
+            "end_line": 1063,
+            "kind": "function",
+            "name": "fold_many0",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "fold_many0",
+            "signature": "pub fn fold_many0<I, E, F, G, H, R>(\n  parser: F,\n  init: H,\n  g: G,\n) -> impl Parser<I, Output = R, Error = E>\nwhere\n  I: Clone + InputLength,\n  F: Parser<I, Error = E>,\n  G: FnMut(R, <F as Parser<I>>::Output) -> R,\n  H: FnMut() -> R,\n  E: ParseError<I>,\n{\n  FoldMany0 {\n    parser,\n    g,\n    init,\n    r: PhantomData,\n  }\n}",
+            "start_line": 1045,
+            "symbol_id": "src/multi/mod.rs#function:fold_many0:1045"
+          },
+          {
+            "children": [],
+            "documentation": "Parser implementation for the [fold_many0] combinator",
+            "end_line": 1071,
+            "kind": "struct",
+            "name": "FoldMany0",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "FoldMany0",
+            "signature": "pub struct FoldMany0<F, G, Init, R>",
+            "start_line": 1066,
+            "symbol_id": "src/multi/mod.rs#struct:FoldMany0:1066"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 1111,
+            "kind": "impl",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "process",
+            "signature": "impl<I, F, G, Init, R> Parser<I> for FoldMany0<F, G, Init, R>\nwhere\n  I: Clone + InputLength,\n  F: Parser<I>,\n  G: FnMut(R, <F as Parser<I>>::Output) -> R,\n  Init: FnMut() -> R,",
+            "start_line": 1073,
+            "symbol_id": "src/multi/mod.rs#impl:process:1073"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 1110,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let mut res = OM::Output::bind(|| (self.init)());\n    let mut input = i;\n\n    loop {\n      let i_ = input.clone();\n      let len = input.input_len();\n      match self.parser.process::<OM>(i_) {\n        Ok((i, o)) => {\n          // infinite loop check: the parser must always consume\n          if i.input_len() == len {\n            return Err(Err::Error(OM::Error::bind(|| {\n              <F as Parser<I>>::Error::from_error_kind(input, ErrorKind::Many0)\n            })));\n          }\n\n          res = OM::Output::combine(res, o, |res, o| (self.g)(res, o));\n          input = i;\n        }\n        Err(Err::Error(_)) => {\n          return Ok((input, res));\n        }\n        Err(e) => {\n          return Err(e);\n        }\n      }\n    }\n  }",
+            "start_line": 1083,
+            "symbol_id": "src/multi/mod.rs#function:process:1083"
+          },
+          {
+            "children": [],
+            "documentation": "Repeats the embedded parser, calling `g` to gather the results.\n\nThis stops on [`Err::Error`] if there is at least one result. To instead chain an error up,\nsee [`cut`][crate::combinator::cut].\n\n# Arguments\n* `f` The parser to apply.\n* `init` A function returning the initial value.\n* `g` The function that combines a result of `f` with\nthe current accumulator.\n\n*Note*: If the parser passed to `many1` accepts empty inputs\n(like `alpha0` or `digit0`), `many1` will return an error,\nto prevent going into an infinite loop.\n\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult, Parser};\nuse nom::multi::fold_many1;\nuse nom::bytes::complete::tag;\n\nfn parser(s: &str) -> IResult<&str, Vec<&str>> {\nfold_many1(\ntag(\"abc\"),\nVec::new,\n|mut acc: Vec<_>, item| {\nacc.push(item);\nacc\n}\n).parse(s)\n}\n\nassert_eq!(parser(\"abcabc\"), Ok((\"\", vec![\"abc\", \"abc\"])));\nassert_eq!(parser(\"abc123\"), Ok((\"123\", vec![\"abc\"])));\nassert_eq!(parser(\"123123\"), Err(Err::Error(Error::new(\"123123\", ErrorKind::Many1))));\nassert_eq!(parser(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::Many1))));\n```",
+            "end_line": 1167,
+            "kind": "function",
+            "name": "fold_many1",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "fold_many1",
+            "signature": "pub fn fold_many1<I, E, F, G, H, R>(\n  parser: F,\n  init: H,\n  g: G,\n) -> impl Parser<I, Output = R, Error = E>\nwhere\n  I: Clone + InputLength,\n  F: Parser<I, Error = E>,\n  G: FnMut(R, <F as Parser<I>>::Output) -> R,\n  H: FnMut() -> R,\n  E: ParseError<I>,\n{\n  FoldMany1 {\n    parser,\n    g,\n    init,\n    r: PhantomData,\n  }\n}",
+            "start_line": 1149,
+            "symbol_id": "src/multi/mod.rs#function:fold_many1:1149"
+          },
+          {
+            "children": [],
+            "documentation": "Parser implementation for the [fold_many1] combinator",
+            "end_line": 1175,
+            "kind": "struct",
+            "name": "FoldMany1",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "FoldMany1",
+            "signature": "pub struct FoldMany1<F, G, Init, R>",
+            "start_line": 1170,
+            "symbol_id": "src/multi/mod.rs#struct:FoldMany1:1170"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 1226,
+            "kind": "impl",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "process",
+            "signature": "impl<I, F, G, Init, R> Parser<I> for FoldMany1<F, G, Init, R>\nwhere\n  I: Clone + InputLength,\n  F: Parser<I>,\n  G: FnMut(R, <F as Parser<I>>::Output) -> R,\n  Init: FnMut() -> R,",
+            "start_line": 1177,
+            "symbol_id": "src/multi/mod.rs#impl:process:1177"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 1225,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let mut res = OM::Output::bind(|| (self.init)());\n    let input = i.clone();\n\n    match self.parser.process::<OM>(input) {\n      Err(Err::Error(_)) => Err(Err::Error(OM::Error::bind(|| {\n        <F as Parser<I>>::Error::from_error_kind(i, ErrorKind::Many1)\n      }))),\n      Err(e) => Err(e),\n      Ok((i1, o1)) => {\n        res = OM::Output::combine(res, o1, |res, o| (self.g)(res, o));\n\n        let mut input = i1;\n        loop {\n          let i_ = input.clone();\n          let len = input.input_len();\n          match self.parser.process::<OM>(i_) {\n            Ok((i, o)) => {\n              // infinite loop check: the parser must always consume\n              if i.input_len() == len {\n                return Err(Err::Error(OM::Error::bind(|| {\n                  <F as Parser<I>>::Error::from_error_kind(input, ErrorKind::Many1)\n                })));\n              }\n\n              res = OM::Output::combine(res, o, |res, o| (self.g)(res, o));\n              input = i;\n            }\n            Err(Err::Error(_)) => {\n              return Ok((input, res));\n            }\n            Err(e) => {\n              return Err(e);\n            }\n          }\n        }\n      }\n    }\n  }",
+            "start_line": 1187,
+            "symbol_id": "src/multi/mod.rs#function:process:1187"
+          },
+          {
+            "children": [],
+            "documentation": "Repeats the embedded parser `m..=n` times, calling `g` to gather the results\n\nThis stops before `n` when the parser returns [`Err::Error`]. To instead chain an error up, see\n[`cut`][crate::combinator::cut].\n\n# Arguments\n* `m` The minimum number of iterations.\n* `n` The maximum number of iterations.\n* `f` The parser to apply.\n* `init` A function returning the initial value.\n* `g` The function that combines a result of `f` with\nthe current accumulator.\n\n*Note*: If the parser passed to `many1` accepts empty inputs\n(like `alpha0` or `digit0`), `many1` will return an error,\nto prevent going into an infinite loop.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed, IResult, Parser};\nuse nom::multi::fold_many_m_n;\nuse nom::bytes::complete::tag;\n\nfn parser(s: &str) -> IResult<&str, Vec<&str>> {\nfold_many_m_n(\n0,\n2,\ntag(\"abc\"),\nVec::new,\n|mut acc: Vec<_>, item| {\nacc.push(item);\nacc\n}\n).parse(s)\n}\n\nassert_eq!(parser(\"abcabc\"), Ok((\"\", vec![\"abc\", \"abc\"])));\nassert_eq!(parser(\"abc123\"), Ok((\"123\", vec![\"abc\"])));\nassert_eq!(parser(\"123123\"), Ok((\"123123\", vec![])));\nassert_eq!(parser(\"\"), Ok((\"\", vec![])));\nassert_eq!(parser(\"abcabcabc\"), Ok((\"abc\", vec![\"abc\", \"abc\"])));\n```",
+            "end_line": 1291,
+            "kind": "function",
+            "name": "fold_many_m_n",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "fold_many_m_n",
+            "signature": "pub fn fold_many_m_n<I, E, F, G, H, R>(\n  min: usize,\n  max: usize,\n  parser: F,\n  init: H,\n  g: G,\n) -> impl Parser<I, Output = R, Error = E>\nwhere\n  I: Clone + InputLength,\n  F: Parser<I, Error = E>,\n  G: FnMut(R, <F as Parser<I>>::Output) -> R,\n  H: FnMut() -> R,\n  E: ParseError<I>,\n{\n  FoldManyMN {\n    parser,\n    g,\n    init,\n    min,\n    max,\n    r: PhantomData,\n  }\n}",
+            "start_line": 1269,
+            "symbol_id": "src/multi/mod.rs#function:fold_many_m_n:1269"
+          },
+          {
+            "children": [],
+            "documentation": "Parser implementation for the [fold_many_m_n] combinator",
+            "end_line": 1301,
+            "kind": "struct",
+            "name": "FoldManyMN",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "FoldManyMN",
+            "signature": "pub struct FoldManyMN<F, G, Init, R>",
+            "start_line": 1294,
+            "symbol_id": "src/multi/mod.rs#struct:FoldManyMN:1294"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 1353,
+            "kind": "impl",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "process",
+            "signature": "impl<I, F, G, Init, R> Parser<I> for FoldManyMN<F, G, Init, R>\nwhere\n  I: Clone + InputLength,\n  F: Parser<I>,\n  G: FnMut(R, <F as Parser<I>>::Output) -> R,\n  Init: FnMut() -> R,",
+            "start_line": 1303,
+            "symbol_id": "src/multi/mod.rs#impl:process:1303"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 1352,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(\n    &mut self,\n    mut input: I,\n  ) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    if self.min > self.max {\n      return Err(Err::Error(OM::Error::bind(|| {\n        <F as Parser<I>>::Error::from_error_kind(input, ErrorKind::ManyMN)\n      })));\n    }\n\n    let mut res = OM::Output::bind(|| (self.init)());\n    for count in 0..self.max {\n      let len = input.input_len();\n      match self.parser.process::<OM>(input.clone()) {\n        Ok((tail, value)) => {\n          // infinite loop check: the parser must always consume\n          if tail.input_len() == len {\n            return Err(Err::Error(OM::Error::bind(|| {\n              <F as Parser<I>>::Error::from_error_kind(tail, ErrorKind::ManyMN)\n            })));\n          }\n\n          res = OM::Output::combine(res, value, |res, o| (self.g)(res, o));\n          input = tail;\n        }\n        Err(Err::Error(err)) => {\n          if count < self.min {\n            return Err(Err::Error(OM::Error::map(err, |err| {\n              <F as Parser<I>>::Error::append(input, ErrorKind::ManyMN, err)\n            })));\n          } else {\n            break;\n          }\n        }\n        Err(e) => return Err(e),\n      }\n    }\n\n    Ok((input, res))\n  }",
+            "start_line": 1313,
+            "symbol_id": "src/multi/mod.rs#function:process:1313"
+          },
+          {
+            "children": [],
+            "documentation": "Gets a number from the parser and returns a\nsubslice of the input of that size.\nIf the parser returns `Incomplete`,\n`length_data` will return an error.\n# Arguments\n* `f` The parser to apply.\n```rust\n# use nom::{Err, error::ErrorKind, Needed, IResult, Parser};\nuse nom::number::complete::be_u16;\nuse nom::multi::length_data;\nuse nom::bytes::complete::tag;\n\nfn parser(s: &[u8]) -> IResult<&[u8], &[u8]> {\nlength_data(be_u16).parse(s)\n}\n\nassert_eq!(parser(b\"\\x00\\x03abcefg\"), Ok((&b\"efg\"[..], &b\"abc\"[..])));\nassert_eq!(parser(b\"\\x00\\x03a\"), Err(Err::Incomplete(Needed::new(2))));\n```",
+            "end_line": 1382,
+            "kind": "function",
+            "name": "length_data",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "length_data",
+            "signature": "pub fn length_data<I, E, F>(f: F) -> impl Parser<I, Output = I, Error = E>\nwhere\n  I: Input,\n  <F as Parser<I>>::Output: ToUsize,\n  F: Parser<I, Error = E>,\n  E: ParseError<I>,\n{\n  f.flat_map(|size| take(size))\n}",
+            "start_line": 1374,
+            "symbol_id": "src/multi/mod.rs#function:length_data:1374"
+          },
+          {
+            "children": [],
+            "documentation": "Gets a number from the first parser,\ntakes a subslice of the input of that size,\nthen applies the second parser on that subslice.\nIf the second parser returns `Incomplete`,\n`length_value` will return an error.\n# Arguments\n* `f` The parser to apply.\n* `g` The parser to apply on the subslice.\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult, Parser};\nuse nom::number::complete::be_u16;\nuse nom::multi::length_value;\nuse nom::bytes::complete::tag;\n\nfn parser(s: &[u8]) -> IResult<&[u8], &[u8]> {\nlength_value(be_u16, tag(\"abc\")).parse(s)\n}\n\nassert_eq!(parser(b\"\\x00\\x03abcefg\"), Ok((&b\"efg\"[..], &b\"abc\"[..])));\nassert_eq!(parser(b\"\\x00\\x03123123\"), Err(Err::Error(Error::new(&b\"123\"[..], ErrorKind::Tag))));\nassert_eq!(parser(b\"\\x00\\x03a\"), Err(Err::Incomplete(Needed::new(2))));\n```",
+            "end_line": 1427,
+            "kind": "function",
+            "name": "length_value",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "length_value",
+            "signature": "pub fn length_value<I, E, F, G>(\n  f: F,\n  g: G,\n) -> impl Parser<I, Output = <G as Parser<I>>::Output, Error = E>\nwhere\n  I: Clone + Input,\n  <F as Parser<I>>::Output: ToUsize,\n  F: Parser<I, Error = E>,\n  G: Parser<I, Error = E>,\n  E: ParseError<I>,\n{\n  /*f.flat_map(|size| {\n    println!(\"got size: {size}\");\n    take(size)\n  })\n  .and_then(g)*/\n  LengthValue {\n    length: f,\n    parser: g,\n    e: PhantomData,\n  }\n}",
+            "start_line": 1406,
+            "symbol_id": "src/multi/mod.rs#function:length_value:1406"
+          },
+          {
+            "children": [],
+            "documentation": "Parser implementation for the [length_value] combinator",
+            "end_line": 1434,
+            "kind": "struct",
+            "name": "LengthValue",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "LengthValue",
+            "signature": "pub struct LengthValue<F, G, E>",
+            "start_line": 1430,
+            "symbol_id": "src/multi/mod.rs#struct:LengthValue:1430"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 1473,
+            "kind": "impl",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "process",
+            "signature": "impl<I, F, G, E> Parser<I> for LengthValue<F, G, E>\nwhere\n  I: Clone + Input,\n  F: Parser<I, Error = E>,\n  G: Parser<I, Error = E>,\n  <F as Parser<I>>::Output: ToUsize,\n  E: ParseError<I>,",
+            "start_line": 1436,
+            "symbol_id": "src/multi/mod.rs#impl:process:1436"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 1472,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(\n    &mut self,\n    input: I,\n  ) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let (i, length) = self\n      .length\n      .process::<OutputM<Emit, OM::Error, OM::Incomplete>>(input)?;\n\n    let length: usize = length.to_usize();\n\n    if let Some(needed) = length\n      .checked_sub(i.input_len())\n      .and_then(NonZeroUsize::new)\n    {\n      Err(Err::Incomplete(Needed::Size(needed)))\n    } else {\n      let (rest, i) = i.take_split(length);\n      match self.parser.process::<OM>(i.clone()) {\n        Err(Err::Incomplete(_)) => Err(Err::Error(OM::Error::bind(|| {\n          E::from_error_kind(i, ErrorKind::Complete)\n        }))),\n        Err(e) => Err(e),\n        Ok((_, o)) => Ok((rest, o)),\n      }\n    }\n  }",
+            "start_line": 1447,
+            "symbol_id": "src/multi/mod.rs#function:process:1447"
+          },
+          {
+            "children": [],
+            "documentation": "Gets a number from the first parser,\nthen applies the second parser that many times.\n# Arguments\n* `f` The parser to apply to obtain the count.\n* `g` The parser to apply repeatedly.\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult, Parser};\nuse nom::number::complete::u8;\nuse nom::multi::length_count;\nuse nom::bytes::complete::tag;\nuse nom::combinator::map;\n\nfn parser(s: &[u8]) -> IResult<&[u8], Vec<&[u8]>> {\nlength_count(map(u8, |i| {\nprintln!(\"got number: {}\", i);\ni\n}), tag(\"abc\")).parse(s)\n}\n\nassert_eq!(parser(&b\"\\x02abcabcabc\"[..]), Ok(((&b\"abc\"[..], vec![&b\"abc\"[..], &b\"abc\"[..]]))));\nassert_eq!(parser(b\"\\x03123123123\"), Err(Err::Error(Error::new(&b\"123123123\"[..], ErrorKind::Tag))));\n```\n[cfg(feature = \"alloc\")]",
+            "end_line": 1514,
+            "kind": "function",
+            "name": "length_count",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "length_count",
+            "signature": "pub fn length_count<I, E, F, G>(\n  f: F,\n  g: G,\n) -> impl Parser<I, Output = Vec<<G as Parser<I>>::Output>, Error = E>\nwhere\n  I: Clone,\n  <F as Parser<I>>::Output: ToUsize,\n  F: Parser<I, Error = E>,\n  G: Parser<I, Error = E>,\n  E: ParseError<I>,\n{\n  LengthCount {\n    length: f,\n    parser: g,\n    e: PhantomData,\n  }\n}",
+            "start_line": 1498,
+            "symbol_id": "src/multi/mod.rs#function:length_count:1498"
+          },
+          {
+            "children": [],
+            "documentation": "[cfg(feature = \"alloc\")]\nParser implementation for the [length_count] combinator",
+            "end_line": 1522,
+            "kind": "struct",
+            "name": "LengthCount",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "LengthCount",
+            "signature": "pub struct LengthCount<F, G, E>",
+            "start_line": 1518,
+            "symbol_id": "src/multi/mod.rs#struct:LengthCount:1518"
+          },
+          {
+            "children": [],
+            "documentation": "[cfg(feature = \"alloc\")]",
+            "end_line": 1579,
+            "kind": "impl",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "process",
+            "signature": "impl<I, F, G, E> Parser<I> for LengthCount<F, G, E>\nwhere\n  I: Clone,\n  F: Parser<I, Error = E>,\n  G: Parser<I, Error = E>,\n  <F as Parser<I>>::Output: ToUsize,\n  E: ParseError<I>,",
+            "start_line": 1525,
+            "symbol_id": "src/multi/mod.rs#impl:process:1525"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 1578,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/multi/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(\n    &mut self,\n    input: I,\n  ) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    match self\n      .length\n      .process::<OutputM<Emit, OM::Error, OM::Incomplete>>(input)\n    {\n      Err(e) => Err(e),\n      Ok((i, count)) => {\n        let count = count.to_usize();\n        let mut input = i.clone();\n        let max_initial_capacity = MAX_INITIAL_CAPACITY_BYTES\n          / crate::lib::std::mem::size_of::<<F as Parser<I>>::Output>().max(1);\n        let mut res = OM::Output::bind(|| {\n          crate::lib::std::vec::Vec::with_capacity(count.min(max_initial_capacity))\n        });\n\n        for _ in 0..count {\n          let input_ = input.clone();\n          match self.parser.process::<OM>(input_) {\n            Ok((i, o)) => {\n              res = OM::Output::combine(res, o, |mut res, o| {\n                res.push(o);\n                res\n              });\n              input = i;\n            }\n            Err(Err::Error(e)) => {\n              return Err(Err::Error(OM::Error::map(e, |e| {\n                <F as Parser<I>>::Error::append(i, ErrorKind::Count, e)\n              })));\n            }\n            Err(e) => {\n              return Err(e);\n            }\n          }\n        }\n\n        Ok((input, res))\n      }\n    }\n  }",
+            "start_line": 1536,
+            "symbol_id": "src/multi/mod.rs#function:process:1536"
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/multi/mod.rs#function:process:1187",
+          "workspace_id": "rs_005_ctx8k"
+        },
+        "id": "call_Jxuf6hdubqXBIogwQo6RDgKd",
+        "isError": false,
+        "name": "get_symbol",
+        "result": {
+          "children": [],
+          "code": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let mut res = OM::Output::bind(|| (self.init)());\n    let input = i.clone();\n\n    match self.parser.process::<OM>(input) {\n      Err(Err::Error(_)) => Err(Err::Error(OM::Error::bind(|| {\n        <F as Parser<I>>::Error::from_error_kind(i, ErrorKind::Many1)\n      }))),\n      Err(e) => Err(e),\n      Ok((i1, o1)) => {\n        res = OM::Output::combine(res, o1, |res, o| (self.g)(res, o));\n\n        let mut input = i1;\n        loop {\n          let i_ = input.clone();\n          let len = input.input_len();\n          match self.parser.process::<OM>(i_) {\n            Ok((i, o)) => {\n              // infinite loop check: the parser must always consume\n              if i.input_len() == len {\n                return Err(Err::Error(OM::Error::bind(|| {\n                  <F as Parser<I>>::Error::from_error_kind(input, ErrorKind::Many1)\n                })));\n              }\n\n              res = OM::Output::combine(res, o, |res, o| (self.g)(res, o));\n              input = i;\n            }\n            Err(Err::Error(_)) => {\n              return Ok((input, res));\n            }\n            Err(e) => {\n              return Err(e);\n            }\n          }\n        }\n      }\n    }\n  }",
+          "documentation": null,
+          "end_line": 1225,
+          "kind": "function",
+          "name": "process",
+          "parent_id": null,
+          "parent_name": null,
+          "path": "src/multi/mod.rs",
+          "qualified_name": "process",
+          "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let mut res = OM::Output::bind(|| (self.init)());\n    let input = i.clone();\n\n    match self.parser.process::<OM>(input) {\n      Err(Err::Error(_)) => Err(Err::Error(OM::Error::bind(|| {\n        <F as Parser<I>>::Error::from_error_kind(i, ErrorKind::Many1)\n      }))),\n      Err(e) => Err(e),\n      Ok((i1, o1)) => {\n        res = OM::Output::combine(res, o1, |res, o| (self.g)(res, o));\n\n        let mut input = i1;\n        loop {\n          let i_ = input.clone();\n          let len = input.input_len();\n          match self.parser.process::<OM>(i_) {\n            Ok((i, o)) => {\n              // infinite loop check: the parser must always consume\n              if i.input_len() == len {\n                return Err(Err::Error(OM::Error::bind(|| {\n                  <F as Parser<I>>::Error::from_error_kind(input, ErrorKind::Many1)\n                })));\n              }\n\n              res = OM::Output::combine(res, o, |res, o| (self.g)(res, o));\n              input = i;\n            }\n            Err(Err::Error(_)) => {\n              return Ok((input, res));\n            }\n            Err(e) => {\n              return Err(e);\n            }\n          }\n        }\n      }\n    }\n  }",
+          "start_line": 1187,
+          "symbol_id": "src/multi/mod.rs#function:process:1187"
+        }
+      }
+    ]
+  },
+  "trialId": "462bd3c7f4"
+}

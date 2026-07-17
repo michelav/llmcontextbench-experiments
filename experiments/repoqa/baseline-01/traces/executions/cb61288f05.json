@@ -1,0 +1,1385 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 1088,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-nano",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "rs_001_ctx8k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 5,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "language": "rust",
+                "parse_status": "ok_filtered",
+                "path": "src/bytes/tests.rs",
+                "repository": "rust-bakery/nom",
+                "symbol_count": 45
+              },
+              {
+                "language": "rust",
+                "parse_status": "ok_filtered",
+                "path": "src/bytes/mod.rs",
+                "repository": "rust-bakery/nom",
+                "symbol_count": 16
+              }
+            ],
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "rs_001_ctx8k"
+              },
+              "durationMs": 5,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "list_files",
+              "transport": "in_memory"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 2202,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-nano",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": null,
+              "path": "src/bytes/mod.rs",
+              "workspace_id": "rs_001_ctx8k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 3,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "Recognizes a pattern.\n\nThe input data will be compared to the tag combinator's argument and will return the part of\nthe input that matches the argument.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::streaming::tag;\n\nfn parser(s: &str) -> IResult<&str, &str> {\ntag(\"Hello\")(s)\n}\n\nassert_eq!(parser(\"Hello, World!\"), Ok((\", World!\", \"Hello\")));\nassert_eq!(parser(\"Something\"), Err(Err::Error(Error::new(\"Something\", ErrorKind::Tag))));\nassert_eq!(parser(\"S\"), Err(Err::Error(Error::new(\"S\", ErrorKind::Tag))));\nassert_eq!(parser(\"H\"), Err(Err::Incomplete(Needed::new(4))));\n```",
+                "end_line": 54,
+                "kind": "function",
+                "name": "tag",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "tag",
+                "signature": "pub fn tag<T, I, Error: ParseError<I>>(tag: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,\n{\n  Tag {\n    tag,\n    e: PhantomData,\n  }\n}",
+                "start_line": 45,
+                "symbol_id": "src/bytes/mod.rs#function:tag:45"
+              },
+              {
+                "children": [],
+                "documentation": "Tag implementation",
+                "end_line": 60,
+                "kind": "struct",
+                "name": "Tag",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "Tag",
+                "signature": "pub struct Tag<T, E>",
+                "start_line": 57,
+                "symbol_id": "src/bytes/mod.rs#struct:Tag:57"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 93,
+                "kind": "impl",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "process",
+                "signature": "impl<I, Error: ParseError<I>, T> Parser<I> for Tag<T, Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,",
+                "start_line": 62,
+                "symbol_id": "src/bytes/mod.rs#impl:process:62"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 92,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let tag_len = self.tag.input_len();\n    let t = self.tag.clone();\n\n    match i.compare(t) {\n      CompareResult::Ok => Ok((i.take_from(tag_len), OM::Output::bind(|| i.take(tag_len)))),\n      CompareResult::Incomplete => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(Needed::new(tag_len - i.input_len())))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::Tag;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      CompareResult::Error => Err(Err::Error(OM::Error::bind(|| {\n        let e: ErrorKind = ErrorKind::Tag;\n        Error::from_error_kind(i, e)\n      }))),\n    }\n  }",
+                "start_line": 71,
+                "symbol_id": "src/bytes/mod.rs#function:process:71"
+              },
+              {
+                "children": [],
+                "documentation": "Recognizes a case insensitive pattern.\n\nThe input data will be compared to the tag combinator's argument and will return the part of\nthe input that matches the argument with no regard to case.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::streaming::tag_no_case;\n\nfn parser(s: &str) -> IResult<&str, &str> {\ntag_no_case(\"hello\")(s)\n}\n\nassert_eq!(parser(\"Hello, World!\"), Ok((\", World!\", \"Hello\")));\nassert_eq!(parser(\"hello, World!\"), Ok((\", World!\", \"hello\")));\nassert_eq!(parser(\"HeLlO, World!\"), Ok((\", World!\", \"HeLlO\")));\nassert_eq!(parser(\"Something\"), Err(Err::Error(Error::new(\"Something\", ErrorKind::Tag))));\nassert_eq!(parser(\"\"), Err(Err::Incomplete(Needed::new(5))));\n```",
+                "end_line": 123,
+                "kind": "function",
+                "name": "tag_no_case",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "tag_no_case",
+                "signature": "pub fn tag_no_case<T, I, Error: ParseError<I>>(tag: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,\n{\n  TagNoCase {\n    tag,\n    e: PhantomData,\n  }\n}",
+                "start_line": 114,
+                "symbol_id": "src/bytes/mod.rs#function:tag_no_case:114"
+              },
+              {
+                "children": [],
+                "documentation": "Case insensitive Tag implementation",
+                "end_line": 129,
+                "kind": "struct",
+                "name": "TagNoCase",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "TagNoCase",
+                "signature": "pub struct TagNoCase<T, E>",
+                "start_line": 126,
+                "symbol_id": "src/bytes/mod.rs#struct:TagNoCase:126"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 162,
+                "kind": "impl",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "process",
+                "signature": "impl<I, Error: ParseError<I>, T> Parser<I> for TagNoCase<T, Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,",
+                "start_line": 131,
+                "symbol_id": "src/bytes/mod.rs#impl:process:131"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 161,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let tag_len = self.tag.input_len();\n    let t = self.tag.clone();\n\n    match i.compare_no_case(t) {\n      CompareResult::Ok => Ok((i.take_from(tag_len), OM::Output::bind(|| i.take(tag_len)))),\n      CompareResult::Incomplete => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(Needed::new(tag_len - i.input_len())))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::Tag;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      CompareResult::Error => Err(Err::Error(OM::Error::bind(|| {\n        let e: ErrorKind = ErrorKind::Tag;\n        Error::from_error_kind(i, e)\n      }))),\n    }\n  }",
+                "start_line": 140,
+                "symbol_id": "src/bytes/mod.rs#function:process:140"
+              },
+              {
+                "children": [],
+                "documentation": "Parser wrapper for `split_at_position`",
+                "end_line": 168,
+                "kind": "struct",
+                "name": "SplitPosition",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "SplitPosition",
+                "signature": "pub struct SplitPosition<F, E>",
+                "start_line": 165,
+                "symbol_id": "src/bytes/mod.rs#struct:SplitPosition:165"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 183,
+                "kind": "impl",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "process",
+                "signature": "impl<I, Error: ParseError<I>, F> Parser<I> for SplitPosition<F, Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,",
+                "start_line": 170,
+                "symbol_id": "src/bytes/mod.rs#impl:process:170"
+              },
+              {
+                "children": [],
+                "documentation": "[inline(always)]",
+                "end_line": 182,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    i.split_at_position_mode::<OM, _, _>(|c| (self.predicate)(c))\n  }",
+                "start_line": 180,
+                "symbol_id": "src/bytes/mod.rs#function:process:180"
+              },
+              {
+                "children": [],
+                "documentation": "Parser wrapper for `split_at_position1`",
+                "end_line": 190,
+                "kind": "struct",
+                "name": "SplitPosition1",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "SplitPosition1",
+                "signature": "pub struct SplitPosition1<F, E>",
+                "start_line": 186,
+                "symbol_id": "src/bytes/mod.rs#struct:SplitPosition1:186"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 205,
+                "kind": "impl",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "process",
+                "signature": "impl<I, Error: ParseError<I>, F> Parser<I> for SplitPosition1<F, Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,",
+                "start_line": 192,
+                "symbol_id": "src/bytes/mod.rs#impl:process:192"
+              },
+              {
+                "children": [],
+                "documentation": "[inline(always)]",
+                "end_line": 204,
+                "kind": "function",
+                "name": "process",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "process",
+                "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    i.split_at_position_mode1::<OM, _, _>(|c| (self.predicate)(c), self.e)\n  }",
+                "start_line": 202,
+                "symbol_id": "src/bytes/mod.rs#function:process:202"
+              },
+              {
+                "children": [],
+                "documentation": "Parse till certain characters are met.\n\nThe parser will return the longest slice till one of the characters of the combinator's argument are met.\n\nIt doesn't consume the matched character.\n\nIt will return a `Err::Error((\"\", ErrorKind::IsNot))` if the pattern wasn't met.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::complete::is_not;\n\nfn not_space(s: &str) -> IResult<&str, &str> {\nis_not(\" \\t\\r\\n\")(s)\n}\n\nassert_eq!(not_space(\"Hello, World!\"), Ok((\" World!\", \"Hello,\")));\nassert_eq!(not_space(\"Sometimes\\t\"), Ok((\"\\t\", \"Sometimes\")));\nassert_eq!(not_space(\"Nospace\"), Ok((\"\", \"Nospace\")));\nassert_eq!(not_space(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::IsNot))));\n```",
+                "end_line": 238,
+                "kind": "function",
+                "name": "is_not",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "is_not",
+                "signature": "pub fn is_not<T, I, Error: ParseError<I>>(arr: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  T: FindToken<<I as Input>::Item>,\n{\n  SplitPosition1 {\n    e: ErrorKind::IsNot,\n    predicate: move |c| arr.find_token(c),\n    error: PhantomData,\n  }\n}",
+                "start_line": 228,
+                "symbol_id": "src/bytes/mod.rs#function:is_not:228"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the longest slice of the matches the pattern.\n\nThe parser will return the longest slice consisting of the characters in provided in the\ncombinator's argument.\n\nIt will return a `Err(Err::Error((_, ErrorKind::IsA)))` if the pattern wasn't met.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::complete::is_a;\n\nfn hex(s: &str) -> IResult<&str, &str> {\nis_a(\"1234567890ABCDEF\")(s)\n}\n\nassert_eq!(hex(\"123 and voila\"), Ok((\" and voila\", \"123\")));\nassert_eq!(hex(\"DEADBEEF and others\"), Ok((\" and others\", \"DEADBEEF\")));\nassert_eq!(hex(\"BADBABEsomething\"), Ok((\"something\", \"BADBABE\")));\nassert_eq!(hex(\"D15EA5E\"), Ok((\"\", \"D15EA5E\")));\nassert_eq!(hex(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::IsA))));\n```",
+                "end_line": 271,
+                "kind": "function",
+                "name": "is_a",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/bytes/mod.rs",
+                "qualified_name": "is_a",
+                "signature": "pub fn is_a<T, I, Error: ParseError<I>>(arr: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  T: FindToken<<I as Input>::Item>,\n{\n  SplitPosition1 {\n    e: ErrorKind::IsA,\n    predicate: move |c| !arr.find_token(c),\n    error: PhantomData,\n  }\n}",
+                "start_line": 261,
+                "symbol_id": "src/bytes/mod.rs#function:is_a:261"
+              }
+            ],
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "kind": null,
+                "path": "src/bytes/mod.rs",
+                "workspace_id": "rs_001_ctx8k"
+              },
+              "durationMs": 3,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "list_symbols",
+              "transport": "in_memory"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "path": "src/bytes/mod.rs",
+              "workspace_id": "rs_001_ctx8k"
+            },
+            "tool_name": "read_file"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 4,
+          "metadata": {
+            "is_error": false,
+            "result": {
+              "content": "//! Parsers recognizing bytes streams\n\npub mod complete;\npub mod streaming;\n#[cfg(test)]\nmod tests;\n\nuse core::marker::PhantomData;\n\nuse crate::error::ErrorKind;\nuse crate::error::ParseError;\nuse crate::internal::{Err, Needed, Parser};\nuse crate::lib::std::result::Result::*;\nuse crate::traits::{Compare, CompareResult, InputLength};\nuse crate::AsChar;\nuse crate::Check;\nuse crate::ExtendInto;\nuse crate::FindSubstring;\nuse crate::FindToken;\nuse crate::Input;\nuse crate::IsStreaming;\nuse crate::Mode;\nuse crate::OutputM;\nuse crate::OutputMode;\nuse crate::ToUsize;\n\n/// Recognizes a pattern.\n///\n/// The input data will be compared to the tag combinator's argument and will return the part of\n/// the input that matches the argument.\n/// # Example\n/// ```rust\n/// # use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\n/// use nom::bytes::streaming::tag;\n///\n/// fn parser(s: &str) -> IResult<&str, &str> {\n///   tag(\"Hello\")(s)\n/// }\n///\n/// assert_eq!(parser(\"Hello, World!\"), Ok((\", World!\", \"Hello\")));\n/// assert_eq!(parser(\"Something\"), Err(Err::Error(Error::new(\"Something\", ErrorKind::Tag))));\n/// assert_eq!(parser(\"S\"), Err(Err::Error(Error::new(\"S\", ErrorKind::Tag))));\n/// assert_eq!(parser(\"H\"), Err(Err::Incomplete(Needed::new(4))));\n/// ```\npub fn tag<T, I, Error: ParseError<I>>(tag: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,\n{\n  Tag {\n    tag,\n    e: PhantomData,\n  }\n}\n\n/// Tag implementation\npub struct Tag<T, E> {\n  tag: T,\n  e: PhantomData<E>,\n}\n\nimpl<I, Error: ParseError<I>, T> Parser<I> for Tag<T, Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,\n{\n  type Output = I;\n\n  type Error = Error;\n\n  fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let tag_len = self.tag.input_len();\n    let t = self.tag.clone();\n\n    match i.compare(t) {\n      CompareResult::Ok => Ok((i.take_from(tag_len), OM::Output::bind(|| i.take(tag_len)))),\n      CompareResult::Incomplete => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(Needed::new(tag_len - i.input_len())))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::Tag;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      CompareResult::Error => Err(Err::Error(OM::Error::bind(|| {\n        let e: ErrorKind = ErrorKind::Tag;\n        Error::from_error_kind(i, e)\n      }))),\n    }\n  }\n}\n\n/// Recognizes a case insensitive pattern.\n///\n/// The input data will be compared to the tag combinator's argument and will return the part of\n/// the input that matches the argument with no regard to case.\n/// # Example\n/// ```rust\n/// # use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\n/// use nom::bytes::streaming::tag_no_case;\n///\n/// fn parser(s: &str) -> IResult<&str, &str> {\n///   tag_no_case(\"hello\")(s)\n/// }\n///\n/// assert_eq!(parser(\"Hello, World!\"), Ok((\", World!\", \"Hello\")));\n/// assert_eq!(parser(\"hello, World!\"), Ok((\", World!\", \"hello\")));\n/// assert_eq!(parser(\"HeLlO, World!\"), Ok((\", World!\", \"HeLlO\")));\n/// assert_eq!(parser(\"Something\"), Err(Err::Error(Error::new(\"Something\", ErrorKind::Tag))));\n/// assert_eq!(parser(\"\"), Err(Err::Incomplete(Needed::new(5))));\n/// ```\npub fn tag_no_case<T, I, Error: ParseError<I>>(tag: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,\n{\n  TagNoCase {\n    tag,\n    e: PhantomData,\n  }\n}\n\n/// Case insensitive Tag implementation\npub struct TagNoCase<T, E> {\n  tag: T,\n  e: PhantomData<E>,\n}\n\nimpl<I, Error: ParseError<I>, T> Parser<I> for TagNoCase<T, Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,\n{\n  type Output = I;\n\n  type Error = Error;\n\n  fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let tag_len = self.tag.input_len();\n    let t = self.tag.clone();\n\n    match i.compare_no_case(t) {\n      CompareResult::Ok => Ok((i.take_from(tag_len), OM::Output::bind(|| i.take(tag_len)))),\n      CompareResult::Incomplete => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(Needed::new(tag_len - i.input_len())))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::Tag;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      CompareResult::Error => Err(Err::Error(OM::Error::bind(|| {\n        let e: ErrorKind = ErrorKind::Tag;\n        Error::from_error_kind(i, e)\n      }))),\n    }\n  }\n}\n\n/// Parser wrapper for `split_at_position`\npub struct SplitPosition<F, E> {\n  predicate: F,\n  error: PhantomData<E>,\n}\n\nimpl<I, Error: ParseError<I>, F> Parser<I> for SplitPosition<F, Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,\n{\n  type Output = I;\n\n  type Error = Error;\n\n  #[inline(always)]\n  fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    i.split_at_position_mode::<OM, _, _>(|c| (self.predicate)(c))\n  }\n}\n\n/// Parser wrapper for `split_at_position1`\npub struct SplitPosition1<F, E> {\n  e: ErrorKind,\n  predicate: F,\n  error: PhantomData<E>,\n}\n\nimpl<I, Error: ParseError<I>, F> Parser<I> for SplitPosition1<F, Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,\n{\n  type Output = I;\n\n  type Error = Error;\n\n  #[inline(always)]\n  fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    i.split_at_position_mode1::<OM, _, _>(|c| (self.predicate)(c), self.e)\n  }\n}\n\n/// Parse till certain characters are met.\n///\n/// The parser will return the longest slice till one of the characters of the combinator's argument are met.\n///\n/// It doesn't consume the matched character.\n///\n/// It will return a `Err::Error((\"\", ErrorKind::IsNot))` if the pattern wasn't met.\n/// # Example\n/// ```rust\n/// # use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\n/// use nom::bytes::complete::is_not;\n///\n/// fn not_space(s: &str) -> IResult<&str, &str> {\n///   is_not(\" \\t\\r\\n\")(s)\n/// }\n///\n/// assert_eq!(not_space(\"Hello, World!\"), Ok((\" World!\", \"Hello,\")));\n/// assert_eq!(not_space(\"Sometimes\\t\"), Ok((\"\\t\", \"Sometimes\")));\n/// assert_eq!(not_space(\"Nospace\"), Ok((\"\", \"Nospace\")));\n/// assert_eq!(not_space(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::IsNot))));\n/// ```\npub fn is_not<T, I, Error: ParseError<I>>(arr: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  T: FindToken<<I as Input>::Item>,\n{\n  SplitPosition1 {\n    e: ErrorKind::IsNot,\n    predicate: move |c| arr.find_token(c),\n    error: PhantomData,\n  }\n}\n\n/// Returns the longest slice of the matches the pattern.\n///\n/// The parser will return the longest slice consisting of the characters in provided in the\n/// combinator's argument.\n///\n/// It will return a `Err(Err::Error((_, ErrorKind::IsA)))` if the pattern wasn't met.\n/// # Example\n/// ```rust\n/// # use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\n/// use nom::bytes::complete::is_a;\n///\n/// fn hex(s: &str) -> IResult<&str, &str> {\n///   is_a(\"1234567890ABCDEF\")(s)\n/// }\n///\n/// assert_eq!(hex(\"123 and voila\"), Ok((\" and voila\", \"123\")));\n/// assert_eq!(hex(\"DEADBEEF and others\"), Ok((\" and others\", \"DEADBEEF\")));\n/// assert_eq!(hex(\"BADBABEsomething\"), Ok((\"something\", \"BADBABE\")));\n/// assert_eq!(hex(\"D15EA5E\"), Ok((\"\", \"D15EA5E\")));\n/// assert_eq!(hex(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::IsA))));\n/// ```\npub fn is_a<T, I, Error: ParseError<I>>(arr: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  T: FindToken<<I as Input>::Item>,\n{\n  SplitPosition1 {\n    e: ErrorKind::IsA,\n    predicate: move |c| !arr.find_token(c),\n    error: PhantomData,\n  }\n}\n\n/// Returns the longest input slice (if any) that matches the predicate.\n///\n/// The parser will return the longest slice that matches the given predicate *(a function that\n/// takes the input and returns a bool)*.\n/// # Example\n/// ```rust\n/// # use nom::{Err, error::ErrorKind, Needed, IResult};\n/// use nom::bytes::complete::take_while;\n/// use nom::character::is_alphabetic;\n///\n/// fn alpha(s: &[u8]) -> IResult<&[u8], &[u8]> {\n///   take_while(is_alphabetic)(s)\n/// }\n///\n/// assert_eq!(alpha(b\"latin123\"), Ok((&b\"123\"[..], &b\"latin\"[..])));\n/// assert_eq!(alpha(b\"12345\"), Ok((&b\"12345\"[..], &b\"\"[..])));\n/// assert_eq!(alpha(b\"latin\"), Ok((&b\"\"[..], &b\"latin\"[..])));\n/// assert_eq!(alpha(b\"\"), Ok((&b\"\"[..], &b\"\"[..])));\n/// ```\n...\n",
+              "language": "rust",
+              "path": "src/bytes/mod.rs",
+              "repository": "rust-bakery/nom"
+            },
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "path": "src/bytes/mod.rs",
+                "workspace_id": "rs_001_ctx8k"
+              },
+              "durationMs": 4,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "read_file",
+              "transport": "in_memory"
+            },
+            "tool_name": "read_file"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "path": "src/bytes/tests.rs",
+              "workspace_id": "rs_001_ctx8k"
+            },
+            "tool_name": "read_file"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 3,
+          "metadata": {
+            "is_error": false,
+            "result": {
+              "error": "Visible generated context for path='src/bytes/tests.rs' is not available in workspace_id=rs_001_ctx8k."
+            },
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "path": "src/bytes/tests.rs",
+                "workspace_id": "rs_001_ctx8k"
+              },
+              "durationMs": 2,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "read_file",
+              "transport": "in_memory"
+            },
+            "tool_name": "read_file"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1365,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-nano",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 4692,
+          "metadata": {},
+          "name": "strategy.local_mcp.execute",
+          "type": "strategy.local_mcp.execute"
+        },
+        {
+          "duration_ms": 4692,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 37,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": 0,
+        "cachedInputTokens": 0,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 4,
+        "inputTokens": 8097,
+        "loopControlDurationMsEstimated": 22,
+        "mcpToolCalls": 4,
+        "modelCalls": 3,
+        "modelDurationMs": 4655,
+        "outputTokens": 173,
+        "promptChars": 901,
+        "questionTokensEstimated": 117,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 0,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 3,
+        "strategyDurationMs": 4692,
+        "taskStatementChars": 731,
+        "toolCalls": 4,
+        "toolDurationMs": 15,
+        "totalDurationMs": 4692,
+        "totalTokens": 8270,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779731713.0,
+        "conversation": null,
+        "created_at": 1779731712.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_08fdb5a722399ce0006a148d00a8148194859f83005d17582a",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "cb61288f05"
+        },
+        "model": "gpt-5.4-nano-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "arguments": "{\"workspace_id\":\"rs_001_ctx8k\"}",
+            "call_id": "call_e3jYkkeQOryAmDMlsBQC7sBW",
+            "id": "fc_08fdb5a722399ce0006a148d01400c8194b98706d293b3c285",
+            "name": "list_files",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 465,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 24,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 489
+        },
+        "user": null
+      },
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779731715.0,
+        "conversation": null,
+        "created_at": 1779731713.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_08fdb5a722399ce0006a148d01bf508194903f638979086af3",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "cb61288f05"
+        },
+        "model": "gpt-5.4-nano-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "arguments": "{\"workspace_id\":\"rs_001_ctx8k\",\"path\":\"src/bytes/mod.rs\",\"kind\":null}",
+            "call_id": "call_jfdd1dBxpB6byDlXJnkGh9J6",
+            "id": "fc_08fdb5a722399ce0006a148d02fd488194862eb3dd1c4dd5ec",
+            "name": "list_symbols",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          },
+          {
+            "arguments": "{\"workspace_id\":\"rs_001_ctx8k\",\"path\":\"src/bytes/mod.rs\"}",
+            "call_id": "call_lGyMaJdeRBXep2hgH2G03eJl",
+            "id": "fc_08fdb5a722399ce0006a148d02fd588194a7b7703c95052cb5",
+            "name": "read_file",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          },
+          {
+            "arguments": "{\"workspace_id\":\"rs_001_ctx8k\",\"path\":\"src/bytes/tests.rs\"}",
+            "call_id": "call_1MFS4xK3yJX4Y3Lenz9oVHpP",
+            "id": "fc_08fdb5a722399ce0006a148d02fd60819483e130f88969bfd0",
+            "name": "read_file",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 586,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 108,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 694
+        },
+        "user": null
+      },
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779731716.0,
+        "conversation": null,
+        "created_at": 1779731716.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_08fdb5a722399ce0006a148d03f8288194a6b0c5e99689c350",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "cb61288f05"
+        },
+        "model": "gpt-5.4-nano-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "logprobs": [],
+                "text": "```rust\nfn alpha(s: &[u8]) -> IResult<&[u8], &[u8]> {\n  take_while(is_alphabetic)(s)\n}\n```",
+                "type": "output_text"
+              }
+            ],
+            "id": "msg_08fdb5a722399ce0006a148d047c748194861b5e2b1af03f17",
+            "phase": "final_answer",
+            "role": "assistant",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 7046,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 41,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 7087
+        },
+        "user": null
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "workspace_id": "rs_001_ctx8k"
+        },
+        "durationMs": 5,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "list_files",
+        "transport": "in_memory"
+      },
+      {
+        "arguments": {
+          "kind": null,
+          "path": "src/bytes/mod.rs",
+          "workspace_id": "rs_001_ctx8k"
+        },
+        "durationMs": 3,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "list_symbols",
+        "transport": "in_memory"
+      },
+      {
+        "arguments": {
+          "path": "src/bytes/mod.rs",
+          "workspace_id": "rs_001_ctx8k"
+        },
+        "durationMs": 4,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "read_file",
+        "transport": "in_memory"
+      },
+      {
+        "arguments": {
+          "path": "src/bytes/tests.rs",
+          "workspace_id": "rs_001_ctx8k"
+        },
+        "durationMs": 2,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "read_file",
+        "transport": "in_memory"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "workspace_id": "rs_001_ctx8k"
+        },
+        "id": "call_e3jYkkeQOryAmDMlsBQC7sBW",
+        "isError": false,
+        "name": "list_files",
+        "result": [
+          {
+            "language": "rust",
+            "parse_status": "ok_filtered",
+            "path": "src/bytes/tests.rs",
+            "repository": "rust-bakery/nom",
+            "symbol_count": 45
+          },
+          {
+            "language": "rust",
+            "parse_status": "ok_filtered",
+            "path": "src/bytes/mod.rs",
+            "repository": "rust-bakery/nom",
+            "symbol_count": 16
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": null,
+          "path": "src/bytes/mod.rs",
+          "workspace_id": "rs_001_ctx8k"
+        },
+        "id": "call_jfdd1dBxpB6byDlXJnkGh9J6",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "Recognizes a pattern.\n\nThe input data will be compared to the tag combinator's argument and will return the part of\nthe input that matches the argument.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::streaming::tag;\n\nfn parser(s: &str) -> IResult<&str, &str> {\ntag(\"Hello\")(s)\n}\n\nassert_eq!(parser(\"Hello, World!\"), Ok((\", World!\", \"Hello\")));\nassert_eq!(parser(\"Something\"), Err(Err::Error(Error::new(\"Something\", ErrorKind::Tag))));\nassert_eq!(parser(\"S\"), Err(Err::Error(Error::new(\"S\", ErrorKind::Tag))));\nassert_eq!(parser(\"H\"), Err(Err::Incomplete(Needed::new(4))));\n```",
+            "end_line": 54,
+            "kind": "function",
+            "name": "tag",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "tag",
+            "signature": "pub fn tag<T, I, Error: ParseError<I>>(tag: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,\n{\n  Tag {\n    tag,\n    e: PhantomData,\n  }\n}",
+            "start_line": 45,
+            "symbol_id": "src/bytes/mod.rs#function:tag:45"
+          },
+          {
+            "children": [],
+            "documentation": "Tag implementation",
+            "end_line": 60,
+            "kind": "struct",
+            "name": "Tag",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "Tag",
+            "signature": "pub struct Tag<T, E>",
+            "start_line": 57,
+            "symbol_id": "src/bytes/mod.rs#struct:Tag:57"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 93,
+            "kind": "impl",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "process",
+            "signature": "impl<I, Error: ParseError<I>, T> Parser<I> for Tag<T, Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,",
+            "start_line": 62,
+            "symbol_id": "src/bytes/mod.rs#impl:process:62"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 92,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let tag_len = self.tag.input_len();\n    let t = self.tag.clone();\n\n    match i.compare(t) {\n      CompareResult::Ok => Ok((i.take_from(tag_len), OM::Output::bind(|| i.take(tag_len)))),\n      CompareResult::Incomplete => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(Needed::new(tag_len - i.input_len())))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::Tag;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      CompareResult::Error => Err(Err::Error(OM::Error::bind(|| {\n        let e: ErrorKind = ErrorKind::Tag;\n        Error::from_error_kind(i, e)\n      }))),\n    }\n  }",
+            "start_line": 71,
+            "symbol_id": "src/bytes/mod.rs#function:process:71"
+          },
+          {
+            "children": [],
+            "documentation": "Recognizes a case insensitive pattern.\n\nThe input data will be compared to the tag combinator's argument and will return the part of\nthe input that matches the argument with no regard to case.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::streaming::tag_no_case;\n\nfn parser(s: &str) -> IResult<&str, &str> {\ntag_no_case(\"hello\")(s)\n}\n\nassert_eq!(parser(\"Hello, World!\"), Ok((\", World!\", \"Hello\")));\nassert_eq!(parser(\"hello, World!\"), Ok((\", World!\", \"hello\")));\nassert_eq!(parser(\"HeLlO, World!\"), Ok((\", World!\", \"HeLlO\")));\nassert_eq!(parser(\"Something\"), Err(Err::Error(Error::new(\"Something\", ErrorKind::Tag))));\nassert_eq!(parser(\"\"), Err(Err::Incomplete(Needed::new(5))));\n```",
+            "end_line": 123,
+            "kind": "function",
+            "name": "tag_no_case",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "tag_no_case",
+            "signature": "pub fn tag_no_case<T, I, Error: ParseError<I>>(tag: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,\n{\n  TagNoCase {\n    tag,\n    e: PhantomData,\n  }\n}",
+            "start_line": 114,
+            "symbol_id": "src/bytes/mod.rs#function:tag_no_case:114"
+          },
+          {
+            "children": [],
+            "documentation": "Case insensitive Tag implementation",
+            "end_line": 129,
+            "kind": "struct",
+            "name": "TagNoCase",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "TagNoCase",
+            "signature": "pub struct TagNoCase<T, E>",
+            "start_line": 126,
+            "symbol_id": "src/bytes/mod.rs#struct:TagNoCase:126"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 162,
+            "kind": "impl",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "process",
+            "signature": "impl<I, Error: ParseError<I>, T> Parser<I> for TagNoCase<T, Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,",
+            "start_line": 131,
+            "symbol_id": "src/bytes/mod.rs#impl:process:131"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 161,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let tag_len = self.tag.input_len();\n    let t = self.tag.clone();\n\n    match i.compare_no_case(t) {\n      CompareResult::Ok => Ok((i.take_from(tag_len), OM::Output::bind(|| i.take(tag_len)))),\n      CompareResult::Incomplete => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(Needed::new(tag_len - i.input_len())))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::Tag;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      CompareResult::Error => Err(Err::Error(OM::Error::bind(|| {\n        let e: ErrorKind = ErrorKind::Tag;\n        Error::from_error_kind(i, e)\n      }))),\n    }\n  }",
+            "start_line": 140,
+            "symbol_id": "src/bytes/mod.rs#function:process:140"
+          },
+          {
+            "children": [],
+            "documentation": "Parser wrapper for `split_at_position`",
+            "end_line": 168,
+            "kind": "struct",
+            "name": "SplitPosition",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "SplitPosition",
+            "signature": "pub struct SplitPosition<F, E>",
+            "start_line": 165,
+            "symbol_id": "src/bytes/mod.rs#struct:SplitPosition:165"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 183,
+            "kind": "impl",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "process",
+            "signature": "impl<I, Error: ParseError<I>, F> Parser<I> for SplitPosition<F, Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,",
+            "start_line": 170,
+            "symbol_id": "src/bytes/mod.rs#impl:process:170"
+          },
+          {
+            "children": [],
+            "documentation": "[inline(always)]",
+            "end_line": 182,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    i.split_at_position_mode::<OM, _, _>(|c| (self.predicate)(c))\n  }",
+            "start_line": 180,
+            "symbol_id": "src/bytes/mod.rs#function:process:180"
+          },
+          {
+            "children": [],
+            "documentation": "Parser wrapper for `split_at_position1`",
+            "end_line": 190,
+            "kind": "struct",
+            "name": "SplitPosition1",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "SplitPosition1",
+            "signature": "pub struct SplitPosition1<F, E>",
+            "start_line": 186,
+            "symbol_id": "src/bytes/mod.rs#struct:SplitPosition1:186"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 205,
+            "kind": "impl",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "process",
+            "signature": "impl<I, Error: ParseError<I>, F> Parser<I> for SplitPosition1<F, Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,",
+            "start_line": 192,
+            "symbol_id": "src/bytes/mod.rs#impl:process:192"
+          },
+          {
+            "children": [],
+            "documentation": "[inline(always)]",
+            "end_line": 204,
+            "kind": "function",
+            "name": "process",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "process",
+            "signature": "fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    i.split_at_position_mode1::<OM, _, _>(|c| (self.predicate)(c), self.e)\n  }",
+            "start_line": 202,
+            "symbol_id": "src/bytes/mod.rs#function:process:202"
+          },
+          {
+            "children": [],
+            "documentation": "Parse till certain characters are met.\n\nThe parser will return the longest slice till one of the characters of the combinator's argument are met.\n\nIt doesn't consume the matched character.\n\nIt will return a `Err::Error((\"\", ErrorKind::IsNot))` if the pattern wasn't met.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::complete::is_not;\n\nfn not_space(s: &str) -> IResult<&str, &str> {\nis_not(\" \\t\\r\\n\")(s)\n}\n\nassert_eq!(not_space(\"Hello, World!\"), Ok((\" World!\", \"Hello,\")));\nassert_eq!(not_space(\"Sometimes\\t\"), Ok((\"\\t\", \"Sometimes\")));\nassert_eq!(not_space(\"Nospace\"), Ok((\"\", \"Nospace\")));\nassert_eq!(not_space(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::IsNot))));\n```",
+            "end_line": 238,
+            "kind": "function",
+            "name": "is_not",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "is_not",
+            "signature": "pub fn is_not<T, I, Error: ParseError<I>>(arr: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  T: FindToken<<I as Input>::Item>,\n{\n  SplitPosition1 {\n    e: ErrorKind::IsNot,\n    predicate: move |c| arr.find_token(c),\n    error: PhantomData,\n  }\n}",
+            "start_line": 228,
+            "symbol_id": "src/bytes/mod.rs#function:is_not:228"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the longest slice of the matches the pattern.\n\nThe parser will return the longest slice consisting of the characters in provided in the\ncombinator's argument.\n\nIt will return a `Err(Err::Error((_, ErrorKind::IsA)))` if the pattern wasn't met.\n# Example\n```rust\n# use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\nuse nom::bytes::complete::is_a;\n\nfn hex(s: &str) -> IResult<&str, &str> {\nis_a(\"1234567890ABCDEF\")(s)\n}\n\nassert_eq!(hex(\"123 and voila\"), Ok((\" and voila\", \"123\")));\nassert_eq!(hex(\"DEADBEEF and others\"), Ok((\" and others\", \"DEADBEEF\")));\nassert_eq!(hex(\"BADBABEsomething\"), Ok((\"something\", \"BADBABE\")));\nassert_eq!(hex(\"D15EA5E\"), Ok((\"\", \"D15EA5E\")));\nassert_eq!(hex(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::IsA))));\n```",
+            "end_line": 271,
+            "kind": "function",
+            "name": "is_a",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/bytes/mod.rs",
+            "qualified_name": "is_a",
+            "signature": "pub fn is_a<T, I, Error: ParseError<I>>(arr: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  T: FindToken<<I as Input>::Item>,\n{\n  SplitPosition1 {\n    e: ErrorKind::IsA,\n    predicate: move |c| !arr.find_token(c),\n    error: PhantomData,\n  }\n}",
+            "start_line": 261,
+            "symbol_id": "src/bytes/mod.rs#function:is_a:261"
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "path": "src/bytes/mod.rs",
+          "workspace_id": "rs_001_ctx8k"
+        },
+        "id": "call_lGyMaJdeRBXep2hgH2G03eJl",
+        "isError": false,
+        "name": "read_file",
+        "result": {
+          "content": "//! Parsers recognizing bytes streams\n\npub mod complete;\npub mod streaming;\n#[cfg(test)]\nmod tests;\n\nuse core::marker::PhantomData;\n\nuse crate::error::ErrorKind;\nuse crate::error::ParseError;\nuse crate::internal::{Err, Needed, Parser};\nuse crate::lib::std::result::Result::*;\nuse crate::traits::{Compare, CompareResult, InputLength};\nuse crate::AsChar;\nuse crate::Check;\nuse crate::ExtendInto;\nuse crate::FindSubstring;\nuse crate::FindToken;\nuse crate::Input;\nuse crate::IsStreaming;\nuse crate::Mode;\nuse crate::OutputM;\nuse crate::OutputMode;\nuse crate::ToUsize;\n\n/// Recognizes a pattern.\n///\n/// The input data will be compared to the tag combinator's argument and will return the part of\n/// the input that matches the argument.\n/// # Example\n/// ```rust\n/// # use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\n/// use nom::bytes::streaming::tag;\n///\n/// fn parser(s: &str) -> IResult<&str, &str> {\n///   tag(\"Hello\")(s)\n/// }\n///\n/// assert_eq!(parser(\"Hello, World!\"), Ok((\", World!\", \"Hello\")));\n/// assert_eq!(parser(\"Something\"), Err(Err::Error(Error::new(\"Something\", ErrorKind::Tag))));\n/// assert_eq!(parser(\"S\"), Err(Err::Error(Error::new(\"S\", ErrorKind::Tag))));\n/// assert_eq!(parser(\"H\"), Err(Err::Incomplete(Needed::new(4))));\n/// ```\npub fn tag<T, I, Error: ParseError<I>>(tag: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,\n{\n  Tag {\n    tag,\n    e: PhantomData,\n  }\n}\n\n/// Tag implementation\npub struct Tag<T, E> {\n  tag: T,\n  e: PhantomData<E>,\n}\n\nimpl<I, Error: ParseError<I>, T> Parser<I> for Tag<T, Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,\n{\n  type Output = I;\n\n  type Error = Error;\n\n  fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let tag_len = self.tag.input_len();\n    let t = self.tag.clone();\n\n    match i.compare(t) {\n      CompareResult::Ok => Ok((i.take_from(tag_len), OM::Output::bind(|| i.take(tag_len)))),\n      CompareResult::Incomplete => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(Needed::new(tag_len - i.input_len())))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::Tag;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      CompareResult::Error => Err(Err::Error(OM::Error::bind(|| {\n        let e: ErrorKind = ErrorKind::Tag;\n        Error::from_error_kind(i, e)\n      }))),\n    }\n  }\n}\n\n/// Recognizes a case insensitive pattern.\n///\n/// The input data will be compared to the tag combinator's argument and will return the part of\n/// the input that matches the argument with no regard to case.\n/// # Example\n/// ```rust\n/// # use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\n/// use nom::bytes::streaming::tag_no_case;\n///\n/// fn parser(s: &str) -> IResult<&str, &str> {\n///   tag_no_case(\"hello\")(s)\n/// }\n///\n/// assert_eq!(parser(\"Hello, World!\"), Ok((\", World!\", \"Hello\")));\n/// assert_eq!(parser(\"hello, World!\"), Ok((\", World!\", \"hello\")));\n/// assert_eq!(parser(\"HeLlO, World!\"), Ok((\", World!\", \"HeLlO\")));\n/// assert_eq!(parser(\"Something\"), Err(Err::Error(Error::new(\"Something\", ErrorKind::Tag))));\n/// assert_eq!(parser(\"\"), Err(Err::Incomplete(Needed::new(5))));\n/// ```\npub fn tag_no_case<T, I, Error: ParseError<I>>(tag: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,\n{\n  TagNoCase {\n    tag,\n    e: PhantomData,\n  }\n}\n\n/// Case insensitive Tag implementation\npub struct TagNoCase<T, E> {\n  tag: T,\n  e: PhantomData<E>,\n}\n\nimpl<I, Error: ParseError<I>, T> Parser<I> for TagNoCase<T, Error>\nwhere\n  I: Input + Compare<T>,\n  T: InputLength + Clone,\n{\n  type Output = I;\n\n  type Error = Error;\n\n  fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let tag_len = self.tag.input_len();\n    let t = self.tag.clone();\n\n    match i.compare_no_case(t) {\n      CompareResult::Ok => Ok((i.take_from(tag_len), OM::Output::bind(|| i.take(tag_len)))),\n      CompareResult::Incomplete => {\n        if OM::Incomplete::is_streaming() {\n          Err(Err::Incomplete(Needed::new(tag_len - i.input_len())))\n        } else {\n          Err(Err::Error(OM::Error::bind(|| {\n            let e: ErrorKind = ErrorKind::Tag;\n            Error::from_error_kind(i, e)\n          })))\n        }\n      }\n      CompareResult::Error => Err(Err::Error(OM::Error::bind(|| {\n        let e: ErrorKind = ErrorKind::Tag;\n        Error::from_error_kind(i, e)\n      }))),\n    }\n  }\n}\n\n/// Parser wrapper for `split_at_position`\npub struct SplitPosition<F, E> {\n  predicate: F,\n  error: PhantomData<E>,\n}\n\nimpl<I, Error: ParseError<I>, F> Parser<I> for SplitPosition<F, Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,\n{\n  type Output = I;\n\n  type Error = Error;\n\n  #[inline(always)]\n  fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    i.split_at_position_mode::<OM, _, _>(|c| (self.predicate)(c))\n  }\n}\n\n/// Parser wrapper for `split_at_position1`\npub struct SplitPosition1<F, E> {\n  e: ErrorKind,\n  predicate: F,\n  error: PhantomData<E>,\n}\n\nimpl<I, Error: ParseError<I>, F> Parser<I> for SplitPosition1<F, Error>\nwhere\n  I: Input,\n  F: Fn(<I as Input>::Item) -> bool,\n{\n  type Output = I;\n\n  type Error = Error;\n\n  #[inline(always)]\n  fn process<OM: OutputMode>(&mut self, i: I) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    i.split_at_position_mode1::<OM, _, _>(|c| (self.predicate)(c), self.e)\n  }\n}\n\n/// Parse till certain characters are met.\n///\n/// The parser will return the longest slice till one of the characters of the combinator's argument are met.\n///\n/// It doesn't consume the matched character.\n///\n/// It will return a `Err::Error((\"\", ErrorKind::IsNot))` if the pattern wasn't met.\n/// # Example\n/// ```rust\n/// # use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\n/// use nom::bytes::complete::is_not;\n///\n/// fn not_space(s: &str) -> IResult<&str, &str> {\n///   is_not(\" \\t\\r\\n\")(s)\n/// }\n///\n/// assert_eq!(not_space(\"Hello, World!\"), Ok((\" World!\", \"Hello,\")));\n/// assert_eq!(not_space(\"Sometimes\\t\"), Ok((\"\\t\", \"Sometimes\")));\n/// assert_eq!(not_space(\"Nospace\"), Ok((\"\", \"Nospace\")));\n/// assert_eq!(not_space(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::IsNot))));\n/// ```\npub fn is_not<T, I, Error: ParseError<I>>(arr: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  T: FindToken<<I as Input>::Item>,\n{\n  SplitPosition1 {\n    e: ErrorKind::IsNot,\n    predicate: move |c| arr.find_token(c),\n    error: PhantomData,\n  }\n}\n\n/// Returns the longest slice of the matches the pattern.\n///\n/// The parser will return the longest slice consisting of the characters in provided in the\n/// combinator's argument.\n///\n/// It will return a `Err(Err::Error((_, ErrorKind::IsA)))` if the pattern wasn't met.\n/// # Example\n/// ```rust\n/// # use nom::{Err, error::{Error, ErrorKind}, Needed, IResult};\n/// use nom::bytes::complete::is_a;\n///\n/// fn hex(s: &str) -> IResult<&str, &str> {\n///   is_a(\"1234567890ABCDEF\")(s)\n/// }\n///\n/// assert_eq!(hex(\"123 and voila\"), Ok((\" and voila\", \"123\")));\n/// assert_eq!(hex(\"DEADBEEF and others\"), Ok((\" and others\", \"DEADBEEF\")));\n/// assert_eq!(hex(\"BADBABEsomething\"), Ok((\"something\", \"BADBABE\")));\n/// assert_eq!(hex(\"D15EA5E\"), Ok((\"\", \"D15EA5E\")));\n/// assert_eq!(hex(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::IsA))));\n/// ```\npub fn is_a<T, I, Error: ParseError<I>>(arr: T) -> impl Parser<I, Output = I, Error = Error>\nwhere\n  I: Input,\n  T: FindToken<<I as Input>::Item>,\n{\n  SplitPosition1 {\n    e: ErrorKind::IsA,\n    predicate: move |c| !arr.find_token(c),\n    error: PhantomData,\n  }\n}\n\n/// Returns the longest input slice (if any) that matches the predicate.\n///\n/// The parser will return the longest slice that matches the given predicate *(a function that\n/// takes the input and returns a bool)*.\n/// # Example\n/// ```rust\n/// # use nom::{Err, error::ErrorKind, Needed, IResult};\n/// use nom::bytes::complete::take_while;\n/// use nom::character::is_alphabetic;\n///\n/// fn alpha(s: &[u8]) -> IResult<&[u8], &[u8]> {\n///   take_while(is_alphabetic)(s)\n/// }\n///\n/// assert_eq!(alpha(b\"latin123\"), Ok((&b\"123\"[..], &b\"latin\"[..])));\n/// assert_eq!(alpha(b\"12345\"), Ok((&b\"12345\"[..], &b\"\"[..])));\n/// assert_eq!(alpha(b\"latin\"), Ok((&b\"\"[..], &b\"latin\"[..])));\n/// assert_eq!(alpha(b\"\"), Ok((&b\"\"[..], &b\"\"[..])));\n/// ```\n...\n",
+          "language": "rust",
+          "path": "src/bytes/mod.rs",
+          "repository": "rust-bakery/nom"
+        }
+      },
+      {
+        "arguments": {
+          "path": "src/bytes/tests.rs",
+          "workspace_id": "rs_001_ctx8k"
+        },
+        "id": "call_1MFS4xK3yJX4Y3Lenz9oVHpP",
+        "isError": false,
+        "name": "read_file",
+        "result": {
+          "error": "Visible generated context for path='src/bytes/tests.rs' is not available in workspace_id=rs_001_ctx8k."
+        }
+      }
+    ]
+  },
+  "trialId": "cb61288f05"
+}

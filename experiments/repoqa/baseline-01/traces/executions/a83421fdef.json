@@ -1,0 +1,1146 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 1998,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "rs_004_ctx16k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 3,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "language": "rust",
+                "parse_status": "ok_filtered",
+                "path": "src/traits.rs",
+                "repository": "rust-bakery/nom",
+                "symbol_count": 130
+              },
+              {
+                "language": "rust",
+                "parse_status": "ok_filtered",
+                "path": "src/bytes/complete.rs",
+                "repository": "rust-bakery/nom",
+                "symbol_count": 22
+              },
+              {
+                "language": "rust",
+                "parse_status": "ok_filtered",
+                "path": "src/sequence/tests.rs",
+                "repository": "rust-bakery/nom",
+                "symbol_count": 14
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "rs_004_ctx16k"
+              },
+              "durationMs": 3,
+              "toolName": "list_files",
+              "workspace_id": "rs_004_ctx16k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1276,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "src/sequence/tests.rs",
+              "workspace_id": "rs_004_ctx16k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "[test]",
+                "end_line": 21,
+                "kind": "function",
+                "name": "single_element_tuples",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/sequence/tests.rs",
+                "qualified_name": "single_element_tuples",
+                "signature": "fn single_element_tuples() {\n  use crate::character::complete::alpha1;\n  use crate::{error::ErrorKind, Err};\n\n  let mut parser = (alpha1,);\n  assert_eq!(\n    crate::Parser::parse(&mut parser, \"abc123def\"),\n    Ok((\"123def\", (\"abc\",)))\n  );\n  assert_eq!(\n    crate::Parser::parse(&mut parser, \"123def\"),\n    Err(Err::Error((\"123def\", ErrorKind::Alpha)))\n  );\n}",
+                "start_line": 8,
+                "symbol_id": "src/sequence/tests.rs#function:single_element_tuples:8"
+              },
+              {
+                "children": [],
+                "documentation": "[test]",
+                "end_line": 88,
+                "kind": "function",
+                "name": "complete",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/sequence/tests.rs",
+                "qualified_name": "complete",
+                "signature": "fn complete() {\n  use crate::bytes::complete::tag;\n  fn err_test(i: &[u8]) -> IResult<&[u8], &[u8]> {\n    let (i, _) = tag(\"ijkl\")(i)?;\n    tag(\"mnop\")(i)\n  }\n  let a = &b\"ijklmn\"[..];\n\n  let res_a = err_test(a);\n  assert_eq!(\n    res_a,\n    Err(Err::Error(error_position!(&b\"mn\"[..], ErrorKind::Tag)))\n  );\n}",
+                "start_line": 75,
+                "symbol_id": "src/sequence/tests.rs#function:complete:75"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 80,
+                "kind": "function",
+                "name": "err_test",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/sequence/tests.rs",
+                "qualified_name": "err_test",
+                "signature": "fn err_test(i: &[u8]) -> IResult<&[u8], &[u8]> {\n    let (i, _) = tag(\"ijkl\")(i)?;\n    tag(\"mnop\")(i)\n  }",
+                "start_line": 77,
+                "symbol_id": "src/sequence/tests.rs#function:err_test:77"
+              },
+              {
+                "children": [],
+                "documentation": "[test]",
+                "end_line": 120,
+                "kind": "function",
+                "name": "pair_test",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/sequence/tests.rs",
+                "qualified_name": "pair_test",
+                "signature": "fn pair_test() {\n  fn pair_abc_def(i: &[u8]) -> IResult<&[u8], (&[u8], &[u8])> {\n    pair(tag(\"abc\"), tag(\"def\")).parse(i)\n  }\n\n  assert_eq!(\n    pair_abc_def(&b\"abcdefghijkl\"[..]),\n    Ok((&b\"ghijkl\"[..], (&b\"abc\"[..], &b\"def\"[..])))\n  );\n  assert_eq!(\n    pair_abc_def(&b\"ab\"[..]),\n    Err(Err::Incomplete(Needed::new(1)))\n  );\n  assert_eq!(\n    pair_abc_def(&b\"abcd\"[..]),\n    Err(Err::Incomplete(Needed::new(2)))\n  );\n  assert_eq!(\n    pair_abc_def(&b\"xxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    pair_abc_def(&b\"xxxdef\"[..]),\n    Err(Err::Error(error_position!(&b\"xxxdef\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    pair_abc_def(&b\"abcxxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n}",
+                "start_line": 91,
+                "symbol_id": "src/sequence/tests.rs#function:pair_test:91"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 94,
+                "kind": "function",
+                "name": "pair_abc_def",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/sequence/tests.rs",
+                "qualified_name": "pair_abc_def",
+                "signature": "fn pair_abc_def(i: &[u8]) -> IResult<&[u8], (&[u8], &[u8])> {\n    pair(tag(\"abc\"), tag(\"def\")).parse(i)\n  }",
+                "start_line": 92,
+                "symbol_id": "src/sequence/tests.rs#function:pair_abc_def:92"
+              },
+              {
+                "children": [],
+                "documentation": "[test]",
+                "end_line": 152,
+                "kind": "function",
+                "name": "separated_pair_test",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/sequence/tests.rs",
+                "qualified_name": "separated_pair_test",
+                "signature": "fn separated_pair_test() {\n  fn sep_pair_abc_def(i: &[u8]) -> IResult<&[u8], (&[u8], &[u8])> {\n    separated_pair(tag(\"abc\"), tag(\",\"), tag(\"def\")).parse(i)\n  }\n\n  assert_eq!(\n    sep_pair_abc_def(&b\"abc,defghijkl\"[..]),\n    Ok((&b\"ghijkl\"[..], (&b\"abc\"[..], &b\"def\"[..])))\n  );\n  assert_eq!(\n    sep_pair_abc_def(&b\"ab\"[..]),\n    Err(Err::Incomplete(Needed::new(1)))\n  );\n  assert_eq!(\n    sep_pair_abc_def(&b\"abc,d\"[..]),\n    Err(Err::Incomplete(Needed::new(2)))\n  );\n  assert_eq!(\n    sep_pair_abc_def(&b\"xxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    sep_pair_abc_def(&b\"xxx,def\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx,def\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    sep_pair_abc_def(&b\"abc,xxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n}",
+                "start_line": 123,
+                "symbol_id": "src/sequence/tests.rs#function:separated_pair_test:123"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 126,
+                "kind": "function",
+                "name": "sep_pair_abc_def",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/sequence/tests.rs",
+                "qualified_name": "sep_pair_abc_def",
+                "signature": "fn sep_pair_abc_def(i: &[u8]) -> IResult<&[u8], (&[u8], &[u8])> {\n    separated_pair(tag(\"abc\"), tag(\",\"), tag(\"def\")).parse(i)\n  }",
+                "start_line": 124,
+                "symbol_id": "src/sequence/tests.rs#function:sep_pair_abc_def:124"
+              },
+              {
+                "children": [],
+                "documentation": "[test]",
+                "end_line": 184,
+                "kind": "function",
+                "name": "preceded_test",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/sequence/tests.rs",
+                "qualified_name": "preceded_test",
+                "signature": "fn preceded_test() {\n  fn preceded_abcd_efgh(i: &[u8]) -> IResult<&[u8], &[u8]> {\n    preceded(tag(\"abcd\"), tag(\"efgh\")).parse(i)\n  }\n\n  assert_eq!(\n    preceded_abcd_efgh(&b\"abcdefghijkl\"[..]),\n    Ok((&b\"ijkl\"[..], &b\"efgh\"[..]))\n  );\n  assert_eq!(\n    preceded_abcd_efgh(&b\"ab\"[..]),\n    Err(Err::Incomplete(Needed::new(2)))\n  );\n  assert_eq!(\n    preceded_abcd_efgh(&b\"abcde\"[..]),\n    Err(Err::Incomplete(Needed::new(3)))\n  );\n  assert_eq!(\n    preceded_abcd_efgh(&b\"xxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    preceded_abcd_efgh(&b\"xxxxdef\"[..]),\n    Err(Err::Error(error_position!(&b\"xxxxdef\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    preceded_abcd_efgh(&b\"abcdxxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n}",
+                "start_line": 155,
+                "symbol_id": "src/sequence/tests.rs#function:preceded_test:155"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 158,
+                "kind": "function",
+                "name": "preceded_abcd_efgh",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/sequence/tests.rs",
+                "qualified_name": "preceded_abcd_efgh",
+                "signature": "fn preceded_abcd_efgh(i: &[u8]) -> IResult<&[u8], &[u8]> {\n    preceded(tag(\"abcd\"), tag(\"efgh\")).parse(i)\n  }",
+                "start_line": 156,
+                "symbol_id": "src/sequence/tests.rs#function:preceded_abcd_efgh:156"
+              },
+              {
+                "children": [],
+                "documentation": "[test]",
+                "end_line": 216,
+                "kind": "function",
+                "name": "terminated_test",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/sequence/tests.rs",
+                "qualified_name": "terminated_test",
+                "signature": "fn terminated_test() {\n  fn terminated_abcd_efgh(i: &[u8]) -> IResult<&[u8], &[u8]> {\n    terminated(tag(\"abcd\"), tag(\"efgh\")).parse(i)\n  }\n\n  assert_eq!(\n    terminated_abcd_efgh(&b\"abcdefghijkl\"[..]),\n    Ok((&b\"ijkl\"[..], &b\"abcd\"[..]))\n  );\n  assert_eq!(\n    terminated_abcd_efgh(&b\"ab\"[..]),\n    Err(Err::Incomplete(Needed::new(2)))\n  );\n  assert_eq!(\n    terminated_abcd_efgh(&b\"abcde\"[..]),\n    Err(Err::Incomplete(Needed::new(3)))\n  );\n  assert_eq!(\n    terminated_abcd_efgh(&b\"xxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    terminated_abcd_efgh(&b\"xxxxdef\"[..]),\n    Err(Err::Error(error_position!(&b\"xxxxdef\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    terminated_abcd_efgh(&b\"abcdxxxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxxx\"[..], ErrorKind::Tag)))\n  );\n}",
+                "start_line": 187,
+                "symbol_id": "src/sequence/tests.rs#function:terminated_test:187"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 190,
+                "kind": "function",
+                "name": "terminated_abcd_efgh",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/sequence/tests.rs",
+                "qualified_name": "terminated_abcd_efgh",
+                "signature": "fn terminated_abcd_efgh(i: &[u8]) -> IResult<&[u8], &[u8]> {\n    terminated(tag(\"abcd\"), tag(\"efgh\")).parse(i)\n  }",
+                "start_line": 188,
+                "symbol_id": "src/sequence/tests.rs#function:terminated_abcd_efgh:188"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 222,
+                "kind": "function",
+                "name": "delimited_abc_def_ghi",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/sequence/tests.rs",
+                "qualified_name": "delimited_abc_def_ghi",
+                "signature": "fn delimited_abc_def_ghi(i: &[u8]) -> IResult<&[u8], &[u8]> {\n    delimited(tag(\"abc\"), tag(\"def\"), tag(\"ghi\")).parse(i)\n  }",
+                "start_line": 220,
+                "symbol_id": "src/sequence/tests.rs#function:delimited_abc_def_ghi:220"
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "src/sequence/tests.rs",
+                "workspace_id": "rs_004_ctx16k"
+              },
+              "durationMs": 0,
+              "toolName": "list_symbols",
+              "workspace_id": "rs_004_ctx16k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 2409,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "path": "src/sequence/tests.rs",
+              "workspace_id": "rs_004_ctx16k"
+            },
+            "tool_name": "read_file"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 1,
+          "metadata": {
+            "is_error": false,
+            "result": {
+              "content": "use super::*;\nuse crate::bytes::streaming::{tag, take};\nuse crate::error::{Error, ErrorKind};\nuse crate::internal::{Err, IResult, Needed};\nuse crate::number::streaming::be_u16;\n\n#[test]\nfn single_element_tuples() {\n  use crate::character::complete::alpha1;\n  use crate::{error::ErrorKind, Err};\n\n  let mut parser = (alpha1,);\n  assert_eq!(\n    crate::Parser::parse(&mut parser, \"abc123def\"),\n    Ok((\"123def\", (\"abc\",)))\n  );\n  assert_eq!(\n    crate::Parser::parse(&mut parser, \"123def\"),\n    Err(Err::Error((\"123def\", ErrorKind::Alpha)))\n  );\n}\n\n#[derive(PartialEq, Eq, Debug)]\nstruct B {\n  a: u8,\n  b: u8,\n}\n\n#[derive(PartialEq, Eq, Debug)]\nstruct C {\n  a: u8,\n  b: Option<u8>,\n}\n\n/*FIXME: convert code examples to new error management\nuse util::{add_error_pattern, error_to_list, print_error};\n\n#[cfg(feature = \"std\")]\n#[rustfmt::skip]\nfn error_to_string<P: Clone + PartialEq>(e: &Context<P, u32>) -> &'static str {\n  let v: Vec<(P, ErrorKind<u32>)> = error_to_list(e);\n  // do it this way if you can use slice patterns\n  //match &v[..] {\n  //  [ErrorKind::Custom(42), ErrorKind::Tag]                         => \"missing `ijkl` tag\",\n  //  [ErrorKind::Custom(42), ErrorKind::Custom(128), ErrorKind::Tag] => \"missing `mnop` tag after `ijkl`\",\n  //  _            => \"unrecognized error\"\n  //}\n\n  let collected: Vec<ErrorKind<u32>> = v.iter().map(|&(_, ref e)| e.clone()).collect();\n  if &collected[..] == [ErrorKind::Custom(42), ErrorKind::Tag] {\n    \"missing `ijkl` tag\"\n  } else if &collected[..] == [ErrorKind::Custom(42), ErrorKind::Custom(128), ErrorKind::Tag] {\n    \"missing `mnop` tag after `ijkl`\"\n  } else {\n    \"unrecognized error\"\n  }\n}\n\n// do it this way if you can use box patterns\n//use $crate::lib::std::str;\n//fn error_to_string(e:Err) -> String\n//  match e {\n//    NodePosition(ErrorKind::Custom(42), i1, box Position(ErrorKind::Tag, i2)) => {\n//      format!(\"missing `ijkl` tag, found '{}' instead\", str::from_utf8(i2).unwrap())\n//    },\n//    NodePosition(ErrorKind::Custom(42), i1, box NodePosition(ErrorKind::Custom(128), i2,  box Position(ErrorKind::Tag, i3))) => {\n//      format!(\"missing `mnop` tag after `ijkl`, found '{}' instead\", str::from_utf8(i3).unwrap())\n//    },\n//    _ => \"unrecognized error\".to_string()\n//  }\n//}\n*/\n\n#[test]\nfn complete() {\n  use crate::bytes::complete::tag;\n  fn err_test(i: &[u8]) -> IResult<&[u8], &[u8]> {\n    let (i, _) = tag(\"ijkl\")(i)?;\n    tag(\"mnop\")(i)\n  }\n  let a = &b\"ijklmn\"[..];\n\n  let res_a = err_test(a);\n  assert_eq!(\n    res_a,\n    Err(Err::Error(error_position!(&b\"mn\"[..], ErrorKind::Tag)))\n  );\n}\n\n#[test]\nfn pair_test() {\n  fn pair_abc_def(i: &[u8]) -> IResult<&[u8], (&[u8], &[u8])> {\n    pair(tag(\"abc\"), tag(\"def\")).parse(i)\n  }\n\n  assert_eq!(\n    pair_abc_def(&b\"abcdefghijkl\"[..]),\n    Ok((&b\"ghijkl\"[..], (&b\"abc\"[..], &b\"def\"[..])))\n  );\n  assert_eq!(\n    pair_abc_def(&b\"ab\"[..]),\n    Err(Err::Incomplete(Needed::new(1)))\n  );\n  assert_eq!(\n    pair_abc_def(&b\"abcd\"[..]),\n    Err(Err::Incomplete(Needed::new(2)))\n  );\n  assert_eq!(\n    pair_abc_def(&b\"xxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    pair_abc_def(&b\"xxxdef\"[..]),\n    Err(Err::Error(error_position!(&b\"xxxdef\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    pair_abc_def(&b\"abcxxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n}\n\n#[test]\nfn separated_pair_test() {\n  fn sep_pair_abc_def(i: &[u8]) -> IResult<&[u8], (&[u8], &[u8])> {\n    separated_pair(tag(\"abc\"), tag(\",\"), tag(\"def\")).parse(i)\n  }\n\n  assert_eq!(\n    sep_pair_abc_def(&b\"abc,defghijkl\"[..]),\n    Ok((&b\"ghijkl\"[..], (&b\"abc\"[..], &b\"def\"[..])))\n  );\n  assert_eq!(\n    sep_pair_abc_def(&b\"ab\"[..]),\n    Err(Err::Incomplete(Needed::new(1)))\n  );\n  assert_eq!(\n    sep_pair_abc_def(&b\"abc,d\"[..]),\n    Err(Err::Incomplete(Needed::new(2)))\n  );\n  assert_eq!(\n    sep_pair_abc_def(&b\"xxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    sep_pair_abc_def(&b\"xxx,def\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx,def\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    sep_pair_abc_def(&b\"abc,xxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n}\n\n#[test]\nfn preceded_test() {\n  fn preceded_abcd_efgh(i: &[u8]) -> IResult<&[u8], &[u8]> {\n    preceded(tag(\"abcd\"), tag(\"efgh\")).parse(i)\n  }\n\n  assert_eq!(\n    preceded_abcd_efgh(&b\"abcdefghijkl\"[..]),\n    Ok((&b\"ijkl\"[..], &b\"efgh\"[..]))\n  );\n  assert_eq!(\n    preceded_abcd_efgh(&b\"ab\"[..]),\n    Err(Err::Incomplete(Needed::new(2)))\n  );\n  assert_eq!(\n    preceded_abcd_efgh(&b\"abcde\"[..]),\n    Err(Err::Incomplete(Needed::new(3)))\n  );\n  assert_eq!(\n    preceded_abcd_efgh(&b\"xxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    preceded_abcd_efgh(&b\"xxxxdef\"[..]),\n    Err(Err::Error(error_position!(&b\"xxxxdef\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    preceded_abcd_efgh(&b\"abcdxxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n}\n\n#[test]\nfn terminated_test() {\n  fn terminated_abcd_efgh(i: &[u8]) -> IResult<&[u8], &[u8]> {\n    terminated(tag(\"abcd\"), tag(\"efgh\")).parse(i)\n  }\n\n  assert_eq!(\n    terminated_abcd_efgh(&b\"abcdefghijkl\"[..]),\n    Ok((&b\"ijkl\"[..], &b\"abcd\"[..]))\n  );\n  assert_eq!(\n    terminated_abcd_efgh(&b\"ab\"[..]),\n    Err(Err::Incomplete(Needed::new(2)))\n  );\n  assert_eq!(\n    terminated_abcd_efgh(&b\"abcde\"[..]),\n    Err(Err::Incomplete(Needed::new(3)))\n  );\n  assert_eq!(\n    terminated_abcd_efgh(&b\"xxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    terminated_abcd_efgh(&b\"xxxxdef\"[..]),\n    Err(Err::Error(error_position!(&b\"xxxxdef\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    terminated_abcd_efgh(&b\"abcdxxxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxxx\"[..], ErrorKind::Tag)))\n  );\n}\n\n#[test]\nfn delimited_test() {\n  fn delimited_abc_def_ghi(i: &[u8]) -> IResult<&[u8], &[u8]> {\n    delimited(tag(\"abc\"), tag(\"def\"), tag(\"ghi\")).parse(i)\n  }\n\n  assert_eq!(\n    delimited_abc_def_ghi(&b\"abcdefghijkl\"[..]),\n    Ok((&b\"jkl\"[..], &b\"def\"[..]))\n  );\n  assert_eq!(\n    delimited_abc_def_ghi(&b\"ab\"[..]),\n...\n",
+              "language": "rust",
+              "path": "src/sequence/tests.rs",
+              "repository": "rust-bakery/nom"
+            },
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "path": "src/sequence/tests.rs",
+                "workspace_id": "rs_004_ctx16k"
+              },
+              "durationMs": 1,
+              "toolName": "read_file",
+              "workspace_id": "rs_004_ctx16k"
+            },
+            "tool_name": "read_file"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 2611,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "path": "src/sequence/tests.rs",
+              "workspace_id": "rs_004_ctx16k"
+            },
+            "tool_name": "read_file"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": {
+              "content": "use super::*;\nuse crate::bytes::streaming::{tag, take};\nuse crate::error::{Error, ErrorKind};\nuse crate::internal::{Err, IResult, Needed};\nuse crate::number::streaming::be_u16;\n\n#[test]\nfn single_element_tuples() {\n  use crate::character::complete::alpha1;\n  use crate::{error::ErrorKind, Err};\n\n  let mut parser = (alpha1,);\n  assert_eq!(\n    crate::Parser::parse(&mut parser, \"abc123def\"),\n    Ok((\"123def\", (\"abc\",)))\n  );\n  assert_eq!(\n    crate::Parser::parse(&mut parser, \"123def\"),\n    Err(Err::Error((\"123def\", ErrorKind::Alpha)))\n  );\n}\n\n#[derive(PartialEq, Eq, Debug)]\nstruct B {\n  a: u8,\n  b: u8,\n}\n\n#[derive(PartialEq, Eq, Debug)]\nstruct C {\n  a: u8,\n  b: Option<u8>,\n}\n\n/*FIXME: convert code examples to new error management\nuse util::{add_error_pattern, error_to_list, print_error};\n\n#[cfg(feature = \"std\")]\n#[rustfmt::skip]\nfn error_to_string<P: Clone + PartialEq>(e: &Context<P, u32>) -> &'static str {\n  let v: Vec<(P, ErrorKind<u32>)> = error_to_list(e);\n  // do it this way if you can use slice patterns\n  //match &v[..] {\n  //  [ErrorKind::Custom(42), ErrorKind::Tag]                         => \"missing `ijkl` tag\",\n  //  [ErrorKind::Custom(42), ErrorKind::Custom(128), ErrorKind::Tag] => \"missing `mnop` tag after `ijkl`\",\n  //  _            => \"unrecognized error\"\n  //}\n\n  let collected: Vec<ErrorKind<u32>> = v.iter().map(|&(_, ref e)| e.clone()).collect();\n  if &collected[..] == [ErrorKind::Custom(42), ErrorKind::Tag] {\n    \"missing `ijkl` tag\"\n  } else if &collected[..] == [ErrorKind::Custom(42), ErrorKind::Custom(128), ErrorKind::Tag] {\n    \"missing `mnop` tag after `ijkl`\"\n  } else {\n    \"unrecognized error\"\n  }\n}\n\n// do it this way if you can use box patterns\n//use $crate::lib::std::str;\n//fn error_to_string(e:Err) -> String\n//  match e {\n//    NodePosition(ErrorKind::Custom(42), i1, box Position(ErrorKind::Tag, i2)) => {\n//      format!(\"missing `ijkl` tag, found '{}' instead\", str::from_utf8(i2).unwrap())\n//    },\n//    NodePosition(ErrorKind::Custom(42), i1, box NodePosition(ErrorKind::Custom(128), i2,  box Position(ErrorKind::Tag, i3))) => {\n//      format!(\"missing `mnop` tag after `ijkl`, found '{}' instead\", str::from_utf8(i3).unwrap())\n//    },\n//    _ => \"unrecognized error\".to_string()\n//  }\n//}\n*/\n\n#[test]\nfn complete() {\n  use crate::bytes::complete::tag;\n  fn err_test(i: &[u8]) -> IResult<&[u8], &[u8]> {\n    let (i, _) = tag(\"ijkl\")(i)?;\n    tag(\"mnop\")(i)\n  }\n  let a = &b\"ijklmn\"[..];\n\n  let res_a = err_test(a);\n  assert_eq!(\n    res_a,\n    Err(Err::Error(error_position!(&b\"mn\"[..], ErrorKind::Tag)))\n  );\n}\n\n#[test]\nfn pair_test() {\n  fn pair_abc_def(i: &[u8]) -> IResult<&[u8], (&[u8], &[u8])> {\n    pair(tag(\"abc\"), tag(\"def\")).parse(i)\n  }\n\n  assert_eq!(\n    pair_abc_def(&b\"abcdefghijkl\"[..]),\n    Ok((&b\"ghijkl\"[..], (&b\"abc\"[..], &b\"def\"[..])))\n  );\n  assert_eq!(\n    pair_abc_def(&b\"ab\"[..]),\n    Err(Err::Incomplete(Needed::new(1)))\n  );\n  assert_eq!(\n    pair_abc_def(&b\"abcd\"[..]),\n    Err(Err::Incomplete(Needed::new(2)))\n  );\n  assert_eq!(\n    pair_abc_def(&b\"xxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    pair_abc_def(&b\"xxxdef\"[..]),\n    Err(Err::Error(error_position!(&b\"xxxdef\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    pair_abc_def(&b\"abcxxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n}\n\n#[test]\nfn separated_pair_test() {\n  fn sep_pair_abc_def(i: &[u8]) -> IResult<&[u8], (&[u8], &[u8])> {\n    separated_pair(tag(\"abc\"), tag(\",\"), tag(\"def\")).parse(i)\n  }\n\n  assert_eq!(\n    sep_pair_abc_def(&b\"abc,defghijkl\"[..]),\n    Ok((&b\"ghijkl\"[..], (&b\"abc\"[..], &b\"def\"[..])))\n  );\n  assert_eq!(\n    sep_pair_abc_def(&b\"ab\"[..]),\n    Err(Err::Incomplete(Needed::new(1)))\n  );\n  assert_eq!(\n    sep_pair_abc_def(&b\"abc,d\"[..]),\n    Err(Err::Incomplete(Needed::new(2)))\n  );\n  assert_eq!(\n    sep_pair_abc_def(&b\"xxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    sep_pair_abc_def(&b\"xxx,def\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx,def\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    sep_pair_abc_def(&b\"abc,xxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n}\n\n#[test]\nfn preceded_test() {\n  fn preceded_abcd_efgh(i: &[u8]) -> IResult<&[u8], &[u8]> {\n    preceded(tag(\"abcd\"), tag(\"efgh\")).parse(i)\n  }\n\n  assert_eq!(\n    preceded_abcd_efgh(&b\"abcdefghijkl\"[..]),\n    Ok((&b\"ijkl\"[..], &b\"efgh\"[..]))\n  );\n  assert_eq!(\n    preceded_abcd_efgh(&b\"ab\"[..]),\n    Err(Err::Incomplete(Needed::new(2)))\n  );\n  assert_eq!(\n    preceded_abcd_efgh(&b\"abcde\"[..]),\n    Err(Err::Incomplete(Needed::new(3)))\n  );\n  assert_eq!(\n    preceded_abcd_efgh(&b\"xxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    preceded_abcd_efgh(&b\"xxxxdef\"[..]),\n    Err(Err::Error(error_position!(&b\"xxxxdef\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    preceded_abcd_efgh(&b\"abcdxxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n}\n\n#[test]\nfn terminated_test() {\n  fn terminated_abcd_efgh(i: &[u8]) -> IResult<&[u8], &[u8]> {\n    terminated(tag(\"abcd\"), tag(\"efgh\")).parse(i)\n  }\n\n  assert_eq!(\n    terminated_abcd_efgh(&b\"abcdefghijkl\"[..]),\n    Ok((&b\"ijkl\"[..], &b\"abcd\"[..]))\n  );\n  assert_eq!(\n    terminated_abcd_efgh(&b\"ab\"[..]),\n    Err(Err::Incomplete(Needed::new(2)))\n  );\n  assert_eq!(\n    terminated_abcd_efgh(&b\"abcde\"[..]),\n    Err(Err::Incomplete(Needed::new(3)))\n  );\n  assert_eq!(\n    terminated_abcd_efgh(&b\"xxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    terminated_abcd_efgh(&b\"xxxxdef\"[..]),\n    Err(Err::Error(error_position!(&b\"xxxxdef\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    terminated_abcd_efgh(&b\"abcdxxxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxxx\"[..], ErrorKind::Tag)))\n  );\n}\n\n#[test]\nfn delimited_test() {\n  fn delimited_abc_def_ghi(i: &[u8]) -> IResult<&[u8], &[u8]> {\n    delimited(tag(\"abc\"), tag(\"def\"), tag(\"ghi\")).parse(i)\n  }\n\n  assert_eq!(\n    delimited_abc_def_ghi(&b\"abcdefghijkl\"[..]),\n    Ok((&b\"jkl\"[..], &b\"def\"[..]))\n  );\n  assert_eq!(\n    delimited_abc_def_ghi(&b\"ab\"[..]),\n...\n",
+              "language": "rust",
+              "path": "src/sequence/tests.rs",
+              "repository": "rust-bakery/nom"
+            },
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "path": "src/sequence/tests.rs",
+                "workspace_id": "rs_004_ctx16k"
+              },
+              "durationMs": 0,
+              "toolName": "read_file",
+              "workspace_id": "rs_004_ctx16k"
+            },
+            "tool_name": "read_file"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1919,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 10275,
+          "metadata": {},
+          "name": "strategy.local_function.execute",
+          "type": "strategy.local_function.execute"
+        },
+        {
+          "duration_ms": 10275,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 62,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": null,
+        "cachedInputTokens": null,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 4,
+        "inputTokens": 12116,
+        "loopControlDurationMsEstimated": 58,
+        "mcpToolCalls": 4,
+        "modelCalls": 5,
+        "modelDurationMs": 10213,
+        "outputTokens": 164,
+        "promptChars": 910,
+        "questionTokensEstimated": 115,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 818,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 5,
+        "strategyDurationMs": 10275,
+        "taskStatementChars": 739,
+        "toolCalls": 4,
+        "toolDurationMs": 4,
+        "totalDurationMs": 10275,
+        "totalTokens": 13098,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "workspace_id": "rs_004_ctx16k"
+                    },
+                    "id": null,
+                    "name": "list_files",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "Co8GAQw51scvBW1sh6Lzf6kzFvdCHrI4DNo2-1wQBML7nguQdEmXhY6kXm4zHPH_iSJKL2rYIGNuhCDzQrqLYneCws57Tf_eCscb8e88IFqjX-bGg3ggQgzRDjh65owk8vLrjSQ3cteFcgM0FsxPsDlZnZjZJwnnt76nHPvjAif34rD0Z7Smid8AXwdrLniHkMfYEflNxrRzE-ewLlmXzhRBuK1DPULnvguxzbHfe7JSFbltUnYlLOI4dkET9nlZMykGi3z-gy9fgpegJUap6KBkTZ0jnKLP3_1KjivZWxILEGm2xtjBOHnVKCwBD7TABRAaQ9lACsBm0aFdDccFO4Ly_0it08kCnc3BX41vW8a3PvFX7UrKGLY_8uGLrFyuboBPjCLIkvX7JXPbrSJ7119VRACYp38NrAKJVHmJwzHp-OyWMVliqqknmLYznH26MeO8urtCnnN7SAE0_iIxHzfqQll1f1u3l9RN6vT-T8jgfz3AfvoRVsAiLQLbn05WcKGz4tvU8KJiL0QYUC1qPLg2dFdzX0gBhQMfZSjRghTYPIbU000zIXKT1ej6MT6hGzdPrJOWesQWl1gFh1WhM-mw2aSr-BuYJ8TPOheiVHj6cN4QZ7dvKW8TXGne9oKCiD-_cHEPQbG9wAcsSdzALHG_oi2rQK7II-VTc7ZvlSeW6-1LzV41vmxPbLnorXeIStlaCSi0PR444rolXP3NmY-iI2rAGFJjqo7CvNjHOYIwn8X8Ue1pVK-L5cyhh_Rplx9pDz5Mjk0b6Ghmv1HdaGKwahQhbn6wk_UHgwPq07SWOBOnpVjVxRsam7uJzZfaBS-ycikt6twY2PzYq53zHChE4QlsflnVuqYV_u-NUJYDZSSGq1oys4v7_w7BuJwyFfFyT9mllTBo9sXtnzGvz7yeNK2o74KlV2CxwuZ-Pvg-TVWr9QtnSZsPKVIzA_nrNb4zi3GoneOIQOz6prHLQBefxs5V5ebDD01Gw9njkpVrEP4R1F1hCN3VVxSFZkvPidsaPDWRq1s-GS1Ae2-Ck0Bp",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "WpAUaoXgHufQz7IP0sLvgAE",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 18:09:32 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1758",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 26,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 584,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 584
+            }
+          ],
+          "thoughts_token_count": 159,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 769,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "kind": "function",
+                      "path": "src/sequence/tests.rs",
+                      "workspace_id": "rs_004_ctx16k"
+                    },
+                    "id": null,
+                    "name": "list_symbols",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CoECAQw51sftci3YIVlS0t0p64tjvCzGB673V36zYJ-DAUlNi9onP4zGJgAzSkaW7G8qxpDNK4wQjTmipZWtE-6ifASz59vRyRT8D8GBGpXxK5G1F-yhbS03kDExjkbFrKsIG0Aolrs66lIYBYDsU4-cQP1rQklEPFxKw9BMopIFoG9Sh29McPyW-Y3cef3wRnZMxAhSzzKttjQ_5CLU0vRwo08QVVKCiv1Yp5eC9CGgf9e8csuSw1YikQZArxlb_kVGA9DSXcHzQLoU6XeLwRI8qE8UtBZdAimlC_QipFEcB2S0dbywGVBwJjQEqz-FtmO-0Pft8Jz1OXKK-lnJFTVcYUE=",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "XJAUaq-UIKS3qtsPnPuUqAk",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 18:09:33 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1053",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 42,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 766,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 766
+            }
+          ],
+          "thoughts_token_count": 50,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 858,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "path": "src/sequence/tests.rs",
+                      "workspace_id": "rs_004_ctx16k"
+                    },
+                    "id": null,
+                    "name": "read_file",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CuYFAQw51sfBLYvXky5VRlUD9ttOIsk7jbfevX0vUo0wILKUpPnkh4K5c6HbsK5V0KyUk6AL__CU4pKNEu7N_BIdWI3_hMQ6lfr0RakukpNRiVhKYrarB8mzOf0iPDV-p3mQp4suwSlOkYd6Nh5C1ljjHEc_eajQ3ExP-XlABvFEkeseJURiOcyzSIjRSsKB8GKX_w8w-B6h-yKs1SN2rx4h4fmXA8CMWma2qGneTO2RrplaSRm8ZzycHuMGTRRiWnmtECgCPZPQTlPe1PfbgOhFcK99T3Tz28eOS_gA9V5W4e4BjJowvahahlhLuaidlNudEaugAF0gON36DhBVV6DPgEqU-Bh_S6qf8Kpq55mtl2jlUjdkxXAVwHS6-SOLQFIHKe7JD3rg6XszVQwIZ-NDG90Sk_Xz5xJXIhbBdNnc9OoqJB3wIB0j5svSv6jxBamkY6ABqkgNjEjV-2Q_SnENr5yN0KGjLSVBnGtsEcIdADAaTXqGXCcuQJgZDpk5iPBDFMmK-QGxuiDe_azFmew33prjduRmP9_5wBPM95_PtDxNUtZ3ygVFC7-vesGeZAzKBh_sHRxA4Sh7qYlc0-CE53_V-NlfhShnhR-8bGtSrOiWV1DMxfXEw-ecfMAFmfc4ldjd9L26YfpfYW40edvUCcSVgZKYe6HVkN1DDVTzgv9rYFoWrNsXtVM75gX_wgWS74dXQLltzQAcYR-YxGfIhOaXltjh7av47b-HQvInM_74xOR6g_CXFMO_gqjwKbK4pG1OeM111bPssAf2jwUEdx96voOaatXbFjigioJvKKeYSmC6sJaYZ1x5pb1rWsmVYxep0w30LPDVVAI0dwOYcd-aKJRfMXTyd76RaKkL-NZsebi0DGvihALaDLAtW5lzP8XYaT2qR2ip0vI_56V4p7WgU5dWgWgbD4lzJTJF0i1Qas1sd9fc0vSXOK3-eBRWYYEKXXYiPTLOQAyOHbQ9Q3lgCzwazQ==",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "XZAUavzdNZfUz7IP84DZsA4",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 18:09:35 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=2196",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 37,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 4088,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 4088
+            }
+          ],
+          "thoughts_token_count": 153,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 4278,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "path": "src/sequence/tests.rs",
+                      "workspace_id": "rs_004_ctx16k"
+                    },
+                    "id": null,
+                    "name": "read_file",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "Co8LAQw51sc8zKBkUFcOtUdvXc4uFPwh8hPW9klRh4WvJ5y3tQ8aAMF4IrmLnS2lkPAtjC5ND7avZMOKKuBENBAOnMzX2sguWzetsIQfhFcrQczLUGNIlmgQ3L7ENM8rgrNsq4XoZyG341YnpNhmiWuLLJ5anJ65vVFhW2SGCl1UxfNij7b1QkE2GAXGzix9GWFrK5PmuRtJbWm7j4Piu6j2SaTgwqeJzcpUm2qoXpIg7CE9d4CErkhsT0FbocaDK0fd1omg23PHY851qxkJSruW41xbfxuOJPUOeDgtgikbxvUl_cOGD0hiQ-1P30IJ5_la1leSOXCaKlaJKofHSX7jgypqQVV-z62pWAM2gfmKHNHluVyV8SP81e_sv8sqfCP5-xRa5aGlLQanEKzX0KxQbYACn3VYtKHwdpKfqcrShLac73wt8e_VMvMGaDriASrWXOxXU68scO4ncp3IhhqnDrA_gn3QeR4IhiuKPN_PtdOXG2fM0H9MMeuMMnPRXtshCBF_Ct62qrs_4t0pS709kJYPRsD5uJPaTLqB-MqkHl7W705O-ZPHlDZEXFLWIWf7v896M2OHG80BrvziYFVXJ33Lyupo9jNtw-9K0-sMXb33_LIPhUp_CqZFPQpbgxN6NlBQV5BRSLU5mouVxueANeBF_jb-c9u43P9gH2-rmjP24apCw214OeVLTpA_8lXeL8Cob1qfrLMXU2jo-Tlshwhn5aIIQLthw4cox76leLeOH3D-hz7q6Ixkne08f1H5-63Zo9hBr10Yn3OGLQqlDh8xmkBv1M1Bnm-IHrZuyoeJwNPAgo_DRlPy-9mA6K9xdeX8r4T4KvMDyfMeBTS_dzkNyxKXKdjYarHMHkoTM7VsFcvM9PwoxZjzgvYnl1WpNDWd8HpbzFkFq60jPOmiS_dvKJWvNIYwjB1vChcW__avwda3TuBv3sIFiFJ6_N5UUlApxl7ynl9yF3St3OmTetIU2FpTXpKcyezRCn-3kvk-AMBguc7BDYIU9fAFKefXuYelwZSMy0JhbQ2qc1-kblVZAzrMuvyTmhNSrc75Z6NiAtPY_RW90s9crByYXSoFGhX8alkVNiXJXaDWkI0y4Q61dhXAyQc5nyx5VFRTlbpAQ0UJX9xYP-kF9ew-jiOWxMjP7f1GOxLzygGg5j0Tt8meN8aPMnI82L_DHP08eFO8zd1h0HsKlQt3eNuLE7c0B0n5f_4mp5jz2EkpIPUTVkHVZxoVmCtDfOxDHWyOqe7g0tiwwIwkGwwGDvKBn5x4VfMGUvMaB7qL-LQlsLd2TvAgv0GzmjmKerjvMS7rP83XWsvWWwaBIwzZ-dn_TGnDIhNaV4xNwuE2VBv8aGEmgUhzRhumRgWCMaWLgV0kw5Gs4qt8Q4-IyzLVD71tj6ffC562f1MQdZIOKy9-446fmcXZ4Tf6kKQxxL-2G30JZyc30oYAOUans_hZL_Y_ru7vC4rP12hmRS7i-QngvXp98QXGQmKkZNT1NBWOONQAyqlB6uM18A-TKqM6dWdLMBKGz_zOsXGCqHcXL-EIzcc0oM2R9HLREJ9jVNDPTZP6VcS0_V7ZPan9G_VubEEks6ZGlw5SfQwdsOk5F-qz0qPJdk_ewqdP6TqtDNHq-_kRGdPyKjHLg_nScyeAPXNXYMPUGWDYgR8p7mArPCbIlYLTY4veaOqI4oD0izSG8xppXHvq5VWwIcXrUdpKVhX5ZBRvKLZjXgXXWk-toQarpskAI7oGrdpZKjLodySfo8O7LeChn5Ff6Eh0ZRCheRYulyL-7mCiwF7bZLVg7_bOGKUXK7z0jIJDKMhzLkTskHrRtUW21q0ZrqlAYU0rM-jkCQR3jhoamvHj92mlt-PLdqZ6MYZGM4FVfirjqHi_NoZpWw==",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "YJAUauDoDv2dz7IPsrDeqAI",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 18:09:38 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=2396",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 37,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 3339,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 3339
+            }
+          ],
+          "thoughts_token_count": 312,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 3688,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": null,
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": "The information is insufficient to retrieve the exact described function from the code context. The provided file content is truncated.",
+                  "thought": null,
+                  "thought_signature": "Cu4FAQw51scRpF5o8IoPcV3spWeU-RjeqcdISKZq_q23lohi4wEIYM2yrbngEheLCKn8Xnf47poyK3RwIQyoJOlgjN21sSx4Lm8Pp_-pEFbzAHH7fOdXeyBto97VFXEXCe9FURtI5Y8lOspm93df2jhEqrwFVRRQ2ZkmZJJUO46uiHfT6tbRfmhg9277Edg39i842jGJqawpR-hhfIuNcc-HqbZ3wghFkA6--ofAAB5RA6ubnydfW7bAxv6iOcoJNF0TSqOez6sXRoTGeQKx0jNUfsbDUKE3KBggkCXoALlVlnISzayLAiZNKAeFp-3N6fu_8VNx1JHzuDmRNbQan11AAYhZ2loavXTiaUYsPKUXY-X1nkEBPel4pYM5t0SfBEaidyFlS-1rZVCk083LCEg9Vb3gJIPO3833YQN5-0kE5g7MPx2CDlqZFTcl6lNESB0mbpbGr_tUnv7e6XevRPdovQCYauSKTnZgSPhFEr2-SCa-1cF-Hocaie9gQH0Tsunc7cB3vYhoaie8h1d7x_0eU3G6vLUmz52W2Z0bxk5fJ-7mv-hwZKPYzSD2YxdHPFuX2RHeHaAZJFzWeqwlqNADz1dmvuFKQKQm6ekvM4hJlJPLmq2z3k8bnCCdqnp6vuuvAKZ8Ry49ylvPcNaIS-lAmF2gNHHaG_jjaTcay1yO21d9xPf8z-cXWnSgHEd2PfOhCRLk_TBJV4CvpvulmoM7JeU_34mm9Dk6eueYNDOileq2LQ2_uWtgBFD6MRFadGdSOuVW_PWNnYNZ3yydqw707RIvA0y6X9YzAVgQV-ow5KlKyvTVlDAadAEbtEvgWBEk1l3FUxPQrkdQS9H5ZZvuYWSg608LxRyD-IgTAXrN4t7m6arjf8rYUHGll6fq413Dm0IRCtjzvnRgb_APheSudOpG8sikPD_zV26t6f5w8roIwgkmaNM2pBHMCZ4zA3hRqNK5giERs3npaw-Mc-ERK3PnXrYesys1Bg9U1R_V",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "YpAUasajN9Thz7IP6vWNkQE",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 18:09:40 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1707",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 22,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 3339,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 3339
+            }
+          ],
+          "thoughts_token_count": 144,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 3505,
+          "traffic_type": null
+        }
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "workspace_id": "rs_004_ctx16k"
+        },
+        "durationMs": 3,
+        "toolName": "list_files",
+        "workspace_id": "rs_004_ctx16k"
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/sequence/tests.rs",
+          "workspace_id": "rs_004_ctx16k"
+        },
+        "durationMs": 0,
+        "toolName": "list_symbols",
+        "workspace_id": "rs_004_ctx16k"
+      },
+      {
+        "arguments": {
+          "path": "src/sequence/tests.rs",
+          "workspace_id": "rs_004_ctx16k"
+        },
+        "durationMs": 1,
+        "toolName": "read_file",
+        "workspace_id": "rs_004_ctx16k"
+      },
+      {
+        "arguments": {
+          "path": "src/sequence/tests.rs",
+          "workspace_id": "rs_004_ctx16k"
+        },
+        "durationMs": 0,
+        "toolName": "read_file",
+        "workspace_id": "rs_004_ctx16k"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "workspace_id": "rs_004_ctx16k"
+        },
+        "id": "step-1-tool-1",
+        "isError": false,
+        "name": "list_files",
+        "result": [
+          {
+            "language": "rust",
+            "parse_status": "ok_filtered",
+            "path": "src/traits.rs",
+            "repository": "rust-bakery/nom",
+            "symbol_count": 130
+          },
+          {
+            "language": "rust",
+            "parse_status": "ok_filtered",
+            "path": "src/bytes/complete.rs",
+            "repository": "rust-bakery/nom",
+            "symbol_count": 22
+          },
+          {
+            "language": "rust",
+            "parse_status": "ok_filtered",
+            "path": "src/sequence/tests.rs",
+            "repository": "rust-bakery/nom",
+            "symbol_count": 14
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/sequence/tests.rs",
+          "workspace_id": "rs_004_ctx16k"
+        },
+        "id": "step-2-tool-1",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "[test]",
+            "end_line": 21,
+            "kind": "function",
+            "name": "single_element_tuples",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/sequence/tests.rs",
+            "qualified_name": "single_element_tuples",
+            "signature": "fn single_element_tuples() {\n  use crate::character::complete::alpha1;\n  use crate::{error::ErrorKind, Err};\n\n  let mut parser = (alpha1,);\n  assert_eq!(\n    crate::Parser::parse(&mut parser, \"abc123def\"),\n    Ok((\"123def\", (\"abc\",)))\n  );\n  assert_eq!(\n    crate::Parser::parse(&mut parser, \"123def\"),\n    Err(Err::Error((\"123def\", ErrorKind::Alpha)))\n  );\n}",
+            "start_line": 8,
+            "symbol_id": "src/sequence/tests.rs#function:single_element_tuples:8"
+          },
+          {
+            "children": [],
+            "documentation": "[test]",
+            "end_line": 88,
+            "kind": "function",
+            "name": "complete",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/sequence/tests.rs",
+            "qualified_name": "complete",
+            "signature": "fn complete() {\n  use crate::bytes::complete::tag;\n  fn err_test(i: &[u8]) -> IResult<&[u8], &[u8]> {\n    let (i, _) = tag(\"ijkl\")(i)?;\n    tag(\"mnop\")(i)\n  }\n  let a = &b\"ijklmn\"[..];\n\n  let res_a = err_test(a);\n  assert_eq!(\n    res_a,\n    Err(Err::Error(error_position!(&b\"mn\"[..], ErrorKind::Tag)))\n  );\n}",
+            "start_line": 75,
+            "symbol_id": "src/sequence/tests.rs#function:complete:75"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 80,
+            "kind": "function",
+            "name": "err_test",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/sequence/tests.rs",
+            "qualified_name": "err_test",
+            "signature": "fn err_test(i: &[u8]) -> IResult<&[u8], &[u8]> {\n    let (i, _) = tag(\"ijkl\")(i)?;\n    tag(\"mnop\")(i)\n  }",
+            "start_line": 77,
+            "symbol_id": "src/sequence/tests.rs#function:err_test:77"
+          },
+          {
+            "children": [],
+            "documentation": "[test]",
+            "end_line": 120,
+            "kind": "function",
+            "name": "pair_test",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/sequence/tests.rs",
+            "qualified_name": "pair_test",
+            "signature": "fn pair_test() {\n  fn pair_abc_def(i: &[u8]) -> IResult<&[u8], (&[u8], &[u8])> {\n    pair(tag(\"abc\"), tag(\"def\")).parse(i)\n  }\n\n  assert_eq!(\n    pair_abc_def(&b\"abcdefghijkl\"[..]),\n    Ok((&b\"ghijkl\"[..], (&b\"abc\"[..], &b\"def\"[..])))\n  );\n  assert_eq!(\n    pair_abc_def(&b\"ab\"[..]),\n    Err(Err::Incomplete(Needed::new(1)))\n  );\n  assert_eq!(\n    pair_abc_def(&b\"abcd\"[..]),\n    Err(Err::Incomplete(Needed::new(2)))\n  );\n  assert_eq!(\n    pair_abc_def(&b\"xxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    pair_abc_def(&b\"xxxdef\"[..]),\n    Err(Err::Error(error_position!(&b\"xxxdef\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    pair_abc_def(&b\"abcxxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n}",
+            "start_line": 91,
+            "symbol_id": "src/sequence/tests.rs#function:pair_test:91"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 94,
+            "kind": "function",
+            "name": "pair_abc_def",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/sequence/tests.rs",
+            "qualified_name": "pair_abc_def",
+            "signature": "fn pair_abc_def(i: &[u8]) -> IResult<&[u8], (&[u8], &[u8])> {\n    pair(tag(\"abc\"), tag(\"def\")).parse(i)\n  }",
+            "start_line": 92,
+            "symbol_id": "src/sequence/tests.rs#function:pair_abc_def:92"
+          },
+          {
+            "children": [],
+            "documentation": "[test]",
+            "end_line": 152,
+            "kind": "function",
+            "name": "separated_pair_test",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/sequence/tests.rs",
+            "qualified_name": "separated_pair_test",
+            "signature": "fn separated_pair_test() {\n  fn sep_pair_abc_def(i: &[u8]) -> IResult<&[u8], (&[u8], &[u8])> {\n    separated_pair(tag(\"abc\"), tag(\",\"), tag(\"def\")).parse(i)\n  }\n\n  assert_eq!(\n    sep_pair_abc_def(&b\"abc,defghijkl\"[..]),\n    Ok((&b\"ghijkl\"[..], (&b\"abc\"[..], &b\"def\"[..])))\n  );\n  assert_eq!(\n    sep_pair_abc_def(&b\"ab\"[..]),\n    Err(Err::Incomplete(Needed::new(1)))\n  );\n  assert_eq!(\n    sep_pair_abc_def(&b\"abc,d\"[..]),\n    Err(Err::Incomplete(Needed::new(2)))\n  );\n  assert_eq!(\n    sep_pair_abc_def(&b\"xxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    sep_pair_abc_def(&b\"xxx,def\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx,def\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    sep_pair_abc_def(&b\"abc,xxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n}",
+            "start_line": 123,
+            "symbol_id": "src/sequence/tests.rs#function:separated_pair_test:123"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 126,
+            "kind": "function",
+            "name": "sep_pair_abc_def",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/sequence/tests.rs",
+            "qualified_name": "sep_pair_abc_def",
+            "signature": "fn sep_pair_abc_def(i: &[u8]) -> IResult<&[u8], (&[u8], &[u8])> {\n    separated_pair(tag(\"abc\"), tag(\",\"), tag(\"def\")).parse(i)\n  }",
+            "start_line": 124,
+            "symbol_id": "src/sequence/tests.rs#function:sep_pair_abc_def:124"
+          },
+          {
+            "children": [],
+            "documentation": "[test]",
+            "end_line": 184,
+            "kind": "function",
+            "name": "preceded_test",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/sequence/tests.rs",
+            "qualified_name": "preceded_test",
+            "signature": "fn preceded_test() {\n  fn preceded_abcd_efgh(i: &[u8]) -> IResult<&[u8], &[u8]> {\n    preceded(tag(\"abcd\"), tag(\"efgh\")).parse(i)\n  }\n\n  assert_eq!(\n    preceded_abcd_efgh(&b\"abcdefghijkl\"[..]),\n    Ok((&b\"ijkl\"[..], &b\"efgh\"[..]))\n  );\n  assert_eq!(\n    preceded_abcd_efgh(&b\"ab\"[..]),\n    Err(Err::Incomplete(Needed::new(2)))\n  );\n  assert_eq!(\n    preceded_abcd_efgh(&b\"abcde\"[..]),\n    Err(Err::Incomplete(Needed::new(3)))\n  );\n  assert_eq!(\n    preceded_abcd_efgh(&b\"xxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    preceded_abcd_efgh(&b\"xxxxdef\"[..]),\n    Err(Err::Error(error_position!(&b\"xxxxdef\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    preceded_abcd_efgh(&b\"abcdxxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n}",
+            "start_line": 155,
+            "symbol_id": "src/sequence/tests.rs#function:preceded_test:155"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 158,
+            "kind": "function",
+            "name": "preceded_abcd_efgh",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/sequence/tests.rs",
+            "qualified_name": "preceded_abcd_efgh",
+            "signature": "fn preceded_abcd_efgh(i: &[u8]) -> IResult<&[u8], &[u8]> {\n    preceded(tag(\"abcd\"), tag(\"efgh\")).parse(i)\n  }",
+            "start_line": 156,
+            "symbol_id": "src/sequence/tests.rs#function:preceded_abcd_efgh:156"
+          },
+          {
+            "children": [],
+            "documentation": "[test]",
+            "end_line": 216,
+            "kind": "function",
+            "name": "terminated_test",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/sequence/tests.rs",
+            "qualified_name": "terminated_test",
+            "signature": "fn terminated_test() {\n  fn terminated_abcd_efgh(i: &[u8]) -> IResult<&[u8], &[u8]> {\n    terminated(tag(\"abcd\"), tag(\"efgh\")).parse(i)\n  }\n\n  assert_eq!(\n    terminated_abcd_efgh(&b\"abcdefghijkl\"[..]),\n    Ok((&b\"ijkl\"[..], &b\"abcd\"[..]))\n  );\n  assert_eq!(\n    terminated_abcd_efgh(&b\"ab\"[..]),\n    Err(Err::Incomplete(Needed::new(2)))\n  );\n  assert_eq!(\n    terminated_abcd_efgh(&b\"abcde\"[..]),\n    Err(Err::Incomplete(Needed::new(3)))\n  );\n  assert_eq!(\n    terminated_abcd_efgh(&b\"xxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    terminated_abcd_efgh(&b\"xxxxdef\"[..]),\n    Err(Err::Error(error_position!(&b\"xxxxdef\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    terminated_abcd_efgh(&b\"abcdxxxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxxx\"[..], ErrorKind::Tag)))\n  );\n}",
+            "start_line": 187,
+            "symbol_id": "src/sequence/tests.rs#function:terminated_test:187"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 190,
+            "kind": "function",
+            "name": "terminated_abcd_efgh",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/sequence/tests.rs",
+            "qualified_name": "terminated_abcd_efgh",
+            "signature": "fn terminated_abcd_efgh(i: &[u8]) -> IResult<&[u8], &[u8]> {\n    terminated(tag(\"abcd\"), tag(\"efgh\")).parse(i)\n  }",
+            "start_line": 188,
+            "symbol_id": "src/sequence/tests.rs#function:terminated_abcd_efgh:188"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 222,
+            "kind": "function",
+            "name": "delimited_abc_def_ghi",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/sequence/tests.rs",
+            "qualified_name": "delimited_abc_def_ghi",
+            "signature": "fn delimited_abc_def_ghi(i: &[u8]) -> IResult<&[u8], &[u8]> {\n    delimited(tag(\"abc\"), tag(\"def\"), tag(\"ghi\")).parse(i)\n  }",
+            "start_line": 220,
+            "symbol_id": "src/sequence/tests.rs#function:delimited_abc_def_ghi:220"
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "path": "src/sequence/tests.rs",
+          "workspace_id": "rs_004_ctx16k"
+        },
+        "id": "step-3-tool-1",
+        "isError": false,
+        "name": "read_file",
+        "result": {
+          "content": "use super::*;\nuse crate::bytes::streaming::{tag, take};\nuse crate::error::{Error, ErrorKind};\nuse crate::internal::{Err, IResult, Needed};\nuse crate::number::streaming::be_u16;\n\n#[test]\nfn single_element_tuples() {\n  use crate::character::complete::alpha1;\n  use crate::{error::ErrorKind, Err};\n\n  let mut parser = (alpha1,);\n  assert_eq!(\n    crate::Parser::parse(&mut parser, \"abc123def\"),\n    Ok((\"123def\", (\"abc\",)))\n  );\n  assert_eq!(\n    crate::Parser::parse(&mut parser, \"123def\"),\n    Err(Err::Error((\"123def\", ErrorKind::Alpha)))\n  );\n}\n\n#[derive(PartialEq, Eq, Debug)]\nstruct B {\n  a: u8,\n  b: u8,\n}\n\n#[derive(PartialEq, Eq, Debug)]\nstruct C {\n  a: u8,\n  b: Option<u8>,\n}\n\n/*FIXME: convert code examples to new error management\nuse util::{add_error_pattern, error_to_list, print_error};\n\n#[cfg(feature = \"std\")]\n#[rustfmt::skip]\nfn error_to_string<P: Clone + PartialEq>(e: &Context<P, u32>) -> &'static str {\n  let v: Vec<(P, ErrorKind<u32>)> = error_to_list(e);\n  // do it this way if you can use slice patterns\n  //match &v[..] {\n  //  [ErrorKind::Custom(42), ErrorKind::Tag]                         => \"missing `ijkl` tag\",\n  //  [ErrorKind::Custom(42), ErrorKind::Custom(128), ErrorKind::Tag] => \"missing `mnop` tag after `ijkl`\",\n  //  _            => \"unrecognized error\"\n  //}\n\n  let collected: Vec<ErrorKind<u32>> = v.iter().map(|&(_, ref e)| e.clone()).collect();\n  if &collected[..] == [ErrorKind::Custom(42), ErrorKind::Tag] {\n    \"missing `ijkl` tag\"\n  } else if &collected[..] == [ErrorKind::Custom(42), ErrorKind::Custom(128), ErrorKind::Tag] {\n    \"missing `mnop` tag after `ijkl`\"\n  } else {\n    \"unrecognized error\"\n  }\n}\n\n// do it this way if you can use box patterns\n//use $crate::lib::std::str;\n//fn error_to_string(e:Err) -> String\n//  match e {\n//    NodePosition(ErrorKind::Custom(42), i1, box Position(ErrorKind::Tag, i2)) => {\n//      format!(\"missing `ijkl` tag, found '{}' instead\", str::from_utf8(i2).unwrap())\n//    },\n//    NodePosition(ErrorKind::Custom(42), i1, box NodePosition(ErrorKind::Custom(128), i2,  box Position(ErrorKind::Tag, i3))) => {\n//      format!(\"missing `mnop` tag after `ijkl`, found '{}' instead\", str::from_utf8(i3).unwrap())\n//    },\n//    _ => \"unrecognized error\".to_string()\n//  }\n//}\n*/\n\n#[test]\nfn complete() {\n  use crate::bytes::complete::tag;\n  fn err_test(i: &[u8]) -> IResult<&[u8], &[u8]> {\n    let (i, _) = tag(\"ijkl\")(i)?;\n    tag(\"mnop\")(i)\n  }\n  let a = &b\"ijklmn\"[..];\n\n  let res_a = err_test(a);\n  assert_eq!(\n    res_a,\n    Err(Err::Error(error_position!(&b\"mn\"[..], ErrorKind::Tag)))\n  );\n}\n\n#[test]\nfn pair_test() {\n  fn pair_abc_def(i: &[u8]) -> IResult<&[u8], (&[u8], &[u8])> {\n    pair(tag(\"abc\"), tag(\"def\")).parse(i)\n  }\n\n  assert_eq!(\n    pair_abc_def(&b\"abcdefghijkl\"[..]),\n    Ok((&b\"ghijkl\"[..], (&b\"abc\"[..], &b\"def\"[..])))\n  );\n  assert_eq!(\n    pair_abc_def(&b\"ab\"[..]),\n    Err(Err::Incomplete(Needed::new(1)))\n  );\n  assert_eq!(\n    pair_abc_def(&b\"abcd\"[..]),\n    Err(Err::Incomplete(Needed::new(2)))\n  );\n  assert_eq!(\n    pair_abc_def(&b\"xxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    pair_abc_def(&b\"xxxdef\"[..]),\n    Err(Err::Error(error_position!(&b\"xxxdef\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    pair_abc_def(&b\"abcxxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n}\n\n#[test]\nfn separated_pair_test() {\n  fn sep_pair_abc_def(i: &[u8]) -> IResult<&[u8], (&[u8], &[u8])> {\n    separated_pair(tag(\"abc\"), tag(\",\"), tag(\"def\")).parse(i)\n  }\n\n  assert_eq!(\n    sep_pair_abc_def(&b\"abc,defghijkl\"[..]),\n    Ok((&b\"ghijkl\"[..], (&b\"abc\"[..], &b\"def\"[..])))\n  );\n  assert_eq!(\n    sep_pair_abc_def(&b\"ab\"[..]),\n    Err(Err::Incomplete(Needed::new(1)))\n  );\n  assert_eq!(\n    sep_pair_abc_def(&b\"abc,d\"[..]),\n    Err(Err::Incomplete(Needed::new(2)))\n  );\n  assert_eq!(\n    sep_pair_abc_def(&b\"xxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    sep_pair_abc_def(&b\"xxx,def\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx,def\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    sep_pair_abc_def(&b\"abc,xxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n}\n\n#[test]\nfn preceded_test() {\n  fn preceded_abcd_efgh(i: &[u8]) -> IResult<&[u8], &[u8]> {\n    preceded(tag(\"abcd\"), tag(\"efgh\")).parse(i)\n  }\n\n  assert_eq!(\n    preceded_abcd_efgh(&b\"abcdefghijkl\"[..]),\n    Ok((&b\"ijkl\"[..], &b\"efgh\"[..]))\n  );\n  assert_eq!(\n    preceded_abcd_efgh(&b\"ab\"[..]),\n    Err(Err::Incomplete(Needed::new(2)))\n  );\n  assert_eq!(\n    preceded_abcd_efgh(&b\"abcde\"[..]),\n    Err(Err::Incomplete(Needed::new(3)))\n  );\n  assert_eq!(\n    preceded_abcd_efgh(&b\"xxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    preceded_abcd_efgh(&b\"xxxxdef\"[..]),\n    Err(Err::Error(error_position!(&b\"xxxxdef\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    preceded_abcd_efgh(&b\"abcdxxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n}\n\n#[test]\nfn terminated_test() {\n  fn terminated_abcd_efgh(i: &[u8]) -> IResult<&[u8], &[u8]> {\n    terminated(tag(\"abcd\"), tag(\"efgh\")).parse(i)\n  }\n\n  assert_eq!(\n    terminated_abcd_efgh(&b\"abcdefghijkl\"[..]),\n    Ok((&b\"ijkl\"[..], &b\"abcd\"[..]))\n  );\n  assert_eq!(\n    terminated_abcd_efgh(&b\"ab\"[..]),\n    Err(Err::Incomplete(Needed::new(2)))\n  );\n  assert_eq!(\n    terminated_abcd_efgh(&b\"abcde\"[..]),\n    Err(Err::Incomplete(Needed::new(3)))\n  );\n  assert_eq!(\n    terminated_abcd_efgh(&b\"xxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    terminated_abcd_efgh(&b\"xxxxdef\"[..]),\n    Err(Err::Error(error_position!(&b\"xxxxdef\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    terminated_abcd_efgh(&b\"abcdxxxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxxx\"[..], ErrorKind::Tag)))\n  );\n}\n\n#[test]\nfn delimited_test() {\n  fn delimited_abc_def_ghi(i: &[u8]) -> IResult<&[u8], &[u8]> {\n    delimited(tag(\"abc\"), tag(\"def\"), tag(\"ghi\")).parse(i)\n  }\n\n  assert_eq!(\n    delimited_abc_def_ghi(&b\"abcdefghijkl\"[..]),\n    Ok((&b\"jkl\"[..], &b\"def\"[..]))\n  );\n  assert_eq!(\n    delimited_abc_def_ghi(&b\"ab\"[..]),\n...\n",
+          "language": "rust",
+          "path": "src/sequence/tests.rs",
+          "repository": "rust-bakery/nom"
+        }
+      },
+      {
+        "arguments": {
+          "path": "src/sequence/tests.rs",
+          "workspace_id": "rs_004_ctx16k"
+        },
+        "id": "step-4-tool-1",
+        "isError": false,
+        "name": "read_file",
+        "result": {
+          "content": "use super::*;\nuse crate::bytes::streaming::{tag, take};\nuse crate::error::{Error, ErrorKind};\nuse crate::internal::{Err, IResult, Needed};\nuse crate::number::streaming::be_u16;\n\n#[test]\nfn single_element_tuples() {\n  use crate::character::complete::alpha1;\n  use crate::{error::ErrorKind, Err};\n\n  let mut parser = (alpha1,);\n  assert_eq!(\n    crate::Parser::parse(&mut parser, \"abc123def\"),\n    Ok((\"123def\", (\"abc\",)))\n  );\n  assert_eq!(\n    crate::Parser::parse(&mut parser, \"123def\"),\n    Err(Err::Error((\"123def\", ErrorKind::Alpha)))\n  );\n}\n\n#[derive(PartialEq, Eq, Debug)]\nstruct B {\n  a: u8,\n  b: u8,\n}\n\n#[derive(PartialEq, Eq, Debug)]\nstruct C {\n  a: u8,\n  b: Option<u8>,\n}\n\n/*FIXME: convert code examples to new error management\nuse util::{add_error_pattern, error_to_list, print_error};\n\n#[cfg(feature = \"std\")]\n#[rustfmt::skip]\nfn error_to_string<P: Clone + PartialEq>(e: &Context<P, u32>) -> &'static str {\n  let v: Vec<(P, ErrorKind<u32>)> = error_to_list(e);\n  // do it this way if you can use slice patterns\n  //match &v[..] {\n  //  [ErrorKind::Custom(42), ErrorKind::Tag]                         => \"missing `ijkl` tag\",\n  //  [ErrorKind::Custom(42), ErrorKind::Custom(128), ErrorKind::Tag] => \"missing `mnop` tag after `ijkl`\",\n  //  _            => \"unrecognized error\"\n  //}\n\n  let collected: Vec<ErrorKind<u32>> = v.iter().map(|&(_, ref e)| e.clone()).collect();\n  if &collected[..] == [ErrorKind::Custom(42), ErrorKind::Tag] {\n    \"missing `ijkl` tag\"\n  } else if &collected[..] == [ErrorKind::Custom(42), ErrorKind::Custom(128), ErrorKind::Tag] {\n    \"missing `mnop` tag after `ijkl`\"\n  } else {\n    \"unrecognized error\"\n  }\n}\n\n// do it this way if you can use box patterns\n//use $crate::lib::std::str;\n//fn error_to_string(e:Err) -> String\n//  match e {\n//    NodePosition(ErrorKind::Custom(42), i1, box Position(ErrorKind::Tag, i2)) => {\n//      format!(\"missing `ijkl` tag, found '{}' instead\", str::from_utf8(i2).unwrap())\n//    },\n//    NodePosition(ErrorKind::Custom(42), i1, box NodePosition(ErrorKind::Custom(128), i2,  box Position(ErrorKind::Tag, i3))) => {\n//      format!(\"missing `mnop` tag after `ijkl`, found '{}' instead\", str::from_utf8(i3).unwrap())\n//    },\n//    _ => \"unrecognized error\".to_string()\n//  }\n//}\n*/\n\n#[test]\nfn complete() {\n  use crate::bytes::complete::tag;\n  fn err_test(i: &[u8]) -> IResult<&[u8], &[u8]> {\n    let (i, _) = tag(\"ijkl\")(i)?;\n    tag(\"mnop\")(i)\n  }\n  let a = &b\"ijklmn\"[..];\n\n  let res_a = err_test(a);\n  assert_eq!(\n    res_a,\n    Err(Err::Error(error_position!(&b\"mn\"[..], ErrorKind::Tag)))\n  );\n}\n\n#[test]\nfn pair_test() {\n  fn pair_abc_def(i: &[u8]) -> IResult<&[u8], (&[u8], &[u8])> {\n    pair(tag(\"abc\"), tag(\"def\")).parse(i)\n  }\n\n  assert_eq!(\n    pair_abc_def(&b\"abcdefghijkl\"[..]),\n    Ok((&b\"ghijkl\"[..], (&b\"abc\"[..], &b\"def\"[..])))\n  );\n  assert_eq!(\n    pair_abc_def(&b\"ab\"[..]),\n    Err(Err::Incomplete(Needed::new(1)))\n  );\n  assert_eq!(\n    pair_abc_def(&b\"abcd\"[..]),\n    Err(Err::Incomplete(Needed::new(2)))\n  );\n  assert_eq!(\n    pair_abc_def(&b\"xxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    pair_abc_def(&b\"xxxdef\"[..]),\n    Err(Err::Error(error_position!(&b\"xxxdef\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    pair_abc_def(&b\"abcxxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n}\n\n#[test]\nfn separated_pair_test() {\n  fn sep_pair_abc_def(i: &[u8]) -> IResult<&[u8], (&[u8], &[u8])> {\n    separated_pair(tag(\"abc\"), tag(\",\"), tag(\"def\")).parse(i)\n  }\n\n  assert_eq!(\n    sep_pair_abc_def(&b\"abc,defghijkl\"[..]),\n    Ok((&b\"ghijkl\"[..], (&b\"abc\"[..], &b\"def\"[..])))\n  );\n  assert_eq!(\n    sep_pair_abc_def(&b\"ab\"[..]),\n    Err(Err::Incomplete(Needed::new(1)))\n  );\n  assert_eq!(\n    sep_pair_abc_def(&b\"abc,d\"[..]),\n    Err(Err::Incomplete(Needed::new(2)))\n  );\n  assert_eq!(\n    sep_pair_abc_def(&b\"xxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    sep_pair_abc_def(&b\"xxx,def\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx,def\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    sep_pair_abc_def(&b\"abc,xxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n}\n\n#[test]\nfn preceded_test() {\n  fn preceded_abcd_efgh(i: &[u8]) -> IResult<&[u8], &[u8]> {\n    preceded(tag(\"abcd\"), tag(\"efgh\")).parse(i)\n  }\n\n  assert_eq!(\n    preceded_abcd_efgh(&b\"abcdefghijkl\"[..]),\n    Ok((&b\"ijkl\"[..], &b\"efgh\"[..]))\n  );\n  assert_eq!(\n    preceded_abcd_efgh(&b\"ab\"[..]),\n    Err(Err::Incomplete(Needed::new(2)))\n  );\n  assert_eq!(\n    preceded_abcd_efgh(&b\"abcde\"[..]),\n    Err(Err::Incomplete(Needed::new(3)))\n  );\n  assert_eq!(\n    preceded_abcd_efgh(&b\"xxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    preceded_abcd_efgh(&b\"xxxxdef\"[..]),\n    Err(Err::Error(error_position!(&b\"xxxxdef\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    preceded_abcd_efgh(&b\"abcdxxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n}\n\n#[test]\nfn terminated_test() {\n  fn terminated_abcd_efgh(i: &[u8]) -> IResult<&[u8], &[u8]> {\n    terminated(tag(\"abcd\"), tag(\"efgh\")).parse(i)\n  }\n\n  assert_eq!(\n    terminated_abcd_efgh(&b\"abcdefghijkl\"[..]),\n    Ok((&b\"ijkl\"[..], &b\"abcd\"[..]))\n  );\n  assert_eq!(\n    terminated_abcd_efgh(&b\"ab\"[..]),\n    Err(Err::Incomplete(Needed::new(2)))\n  );\n  assert_eq!(\n    terminated_abcd_efgh(&b\"abcde\"[..]),\n    Err(Err::Incomplete(Needed::new(3)))\n  );\n  assert_eq!(\n    terminated_abcd_efgh(&b\"xxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxx\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    terminated_abcd_efgh(&b\"xxxxdef\"[..]),\n    Err(Err::Error(error_position!(&b\"xxxxdef\"[..], ErrorKind::Tag)))\n  );\n  assert_eq!(\n    terminated_abcd_efgh(&b\"abcdxxxx\"[..]),\n    Err(Err::Error(error_position!(&b\"xxxx\"[..], ErrorKind::Tag)))\n  );\n}\n\n#[test]\nfn delimited_test() {\n  fn delimited_abc_def_ghi(i: &[u8]) -> IResult<&[u8], &[u8]> {\n    delimited(tag(\"abc\"), tag(\"def\"), tag(\"ghi\")).parse(i)\n  }\n\n  assert_eq!(\n    delimited_abc_def_ghi(&b\"abcdefghijkl\"[..]),\n    Ok((&b\"jkl\"[..], &b\"def\"[..]))\n  );\n  assert_eq!(\n    delimited_abc_def_ghi(&b\"ab\"[..]),\n...\n",
+          "language": "rust",
+          "path": "src/sequence/tests.rs",
+          "repository": "rust-bakery/nom"
+        }
+      }
+    ]
+  },
+  "trialId": "a83421fdef"
+}

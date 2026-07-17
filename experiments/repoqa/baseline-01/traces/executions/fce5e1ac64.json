@@ -1,0 +1,813 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 1862,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "ts_004_ctx4k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 1,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "language": "typescript",
+                "parse_status": "ok_filtered",
+                "path": "src/utils/hub.js",
+                "repository": "xenova/transformers.js",
+                "symbol_count": 18
+              },
+              {
+                "language": "typescript",
+                "parse_status": "ok_filtered",
+                "path": "src/configs.js",
+                "repository": "xenova/transformers.js",
+                "symbol_count": 8
+              },
+              {
+                "language": "typescript",
+                "parse_status": "ok_filtered",
+                "path": "src/utils/maths.js",
+                "repository": "xenova/transformers.js",
+                "symbol_count": 40
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "ts_004_ctx4k"
+              },
+              "durationMs": 1,
+              "toolName": "list_files",
+              "workspace_id": "ts_004_ctx4k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1582,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "src/utils/hub.js",
+              "workspace_id": "ts_004_ctx4k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "Fetches a JSON file from a given path and file name.\n\n@param {string} modelPath The path to the directory containing the file.\n@param {string} fileName The name of the file to fetch.\n@param {boolean} [fatal=true] Whether to throw an error if the file is not found.\n@param {PretrainedOptions} [options] An object containing optional parameters.\n@returns {Promise<Object>} The JSON data parsed into a JavaScript object.\n@throws Will throw an error if the file is not found and `fatal` is true.",
+                "end_line": 585,
+                "kind": "function",
+                "name": "getModelJSON",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/hub.js",
+                "qualified_name": "getModelJSON",
+                "signature": "async function getModelJSON(modelPath, fileName, fatal = true, options = {}) {\n    let buffer = await getModelFile(modelPath, fileName, fatal, options);\n    if (buffer === null) {\n        // Return empty object\n        return {}\n    }\n\n    let decoder = new TextDecoder('utf-8');\n    let jsonData = decoder.decode(buffer);\n\n    return JSON.parse(jsonData);\n}",
+                "start_line": 574,
+                "symbol_id": "src/utils/hub.js#function:getModelJSON:574"
+              },
+              {
+                "children": [],
+                "documentation": "Read and track progress when reading a Response object\n\n@param {any} response The Response object to read\n@param {function} progress_callback The function to call with progress updates\n@returns {Promise<Uint8Array>} A Promise that resolves with the Uint8Array buffer",
+                "end_line": 641,
+                "kind": "function",
+                "name": "readResponse",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/hub.js",
+                "qualified_name": "readResponse",
+                "signature": "async function readResponse(response, progress_callback) {\n\n    const contentLength = response.headers.get('Content-Length');\n    if (contentLength === null) {\n        console.warn('Unable to determine content-length from response headers. Will expand buffer when needed.')\n    }\n    let total = parseInt(contentLength ?? '0');\n    let buffer = new Uint8Array(total);\n    let loaded = 0;\n\n    const reader = response.body.getReader();\n    async function read() {\n        const { done, value } = await reader.read();\n        if (done) return;\n\n        let newLoaded = loaded + value.length;\n        if (newLoaded > total) {\n            total = newLoaded;\n\n            // Adding the new data will overflow buffer.\n            // In this case, we extend the buffer\n            let newBuffer = new Uint8Array(total);\n\n            // copy contents\n            newBuffer.set(buffer);\n\n            buffer = newBuffer;\n        }\n        buffer.set(value, loaded)\n        loaded = newLoaded;\n\n        const progress = (loaded / total) * 100;\n\n        // Call your function here\n        progress_callback({\n            progress: progress,\n            loaded: loaded,\n            total: total,\n        })\n\n        return read();\n    }\n\n    // Actually read\n    await read();\n\n    return buffer;\n}",
+                "start_line": 594,
+                "symbol_id": "src/utils/hub.js#function:readResponse:594"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 635,
+                "kind": "function",
+                "name": "read",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/hub.js",
+                "qualified_name": "read",
+                "signature": "async function read() {\n        const { done, value } = await reader.read();\n        if (done) return;\n\n        let newLoaded = loaded + value.length;\n        if (newLoaded > total) {\n            total = newLoaded;\n\n            // Adding the new data will overflow buffer.\n            // In this case, we extend the buffer\n            let newBuffer = new Uint8Array(total);\n\n            // copy contents\n            newBuffer.set(buffer);\n\n            buffer = newBuffer;\n        }\n        buffer.set(value, loaded)\n        loaded = newLoaded;\n\n        const progress = (loaded / total) * 100;\n\n        // Call your function here\n        progress_callback({\n            progress: progress,\n            loaded: loaded,\n            total: total,\n        })\n\n        return read();\n    }",
+                "start_line": 605,
+                "symbol_id": "src/utils/hub.js#function:read:605"
+              },
+              {
+                "children": [],
+                "documentation": "Joins multiple parts of a path into a single path, while handling leading and trailing slashes.\n\n@param {...string} parts Multiple parts of a path.\n@returns {string} A string representing the joined path.",
+                "end_line": 661,
+                "kind": "function",
+                "name": "pathJoin",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/hub.js",
+                "qualified_name": "pathJoin",
+                "signature": "function pathJoin(...parts) {\n    // https://stackoverflow.com/a/55142565\n    parts = parts.map((part, index) => {\n        if (index) {\n            part = part.replace(new RegExp('^/'), '');\n        }\n        if (index !== parts.length - 1) {\n            part = part.replace(new RegExp('/$'), '');\n        }\n        return part;\n    })\n    return parts.join('/');\n}",
+                "start_line": 649,
+                "symbol_id": "src/utils/hub.js#function:pathJoin:649"
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "src/utils/hub.js",
+                "workspace_id": "ts_004_ctx4k"
+              },
+              "durationMs": 0,
+              "toolName": "list_symbols",
+              "workspace_id": "ts_004_ctx4k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 3139,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "symbol_id": "src/utils/hub.js#function:getModelJSON:574",
+              "workspace_id": "ts_004_ctx4k"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": {
+              "children": [],
+              "code": "async function getModelJSON(modelPath, fileName, fatal = true, options = {}) {\n    let buffer = await getModelFile(modelPath, fileName, fatal, options);\n    if (buffer === null) {\n        // Return empty object\n        return {}\n    }\n\n    let decoder = new TextDecoder('utf-8');\n    let jsonData = decoder.decode(buffer);\n\n    return JSON.parse(jsonData);\n}",
+              "documentation": "Fetches a JSON file from a given path and file name.\n\n@param {string} modelPath The path to the directory containing the file.\n@param {string} fileName The name of the file to fetch.\n@param {boolean} [fatal=true] Whether to throw an error if the file is not found.\n@param {PretrainedOptions} [options] An object containing optional parameters.\n@returns {Promise<Object>} The JSON data parsed into a JavaScript object.\n@throws Will throw an error if the file is not found and `fatal` is true.",
+              "end_line": 585,
+              "kind": "function",
+              "name": "getModelJSON",
+              "parent_id": null,
+              "parent_name": null,
+              "path": "src/utils/hub.js",
+              "qualified_name": "getModelJSON",
+              "signature": "async function getModelJSON(modelPath, fileName, fatal = true, options = {}) {\n    let buffer = await getModelFile(modelPath, fileName, fatal, options);\n    if (buffer === null) {\n        // Return empty object\n        return {}\n    }\n\n    let decoder = new TextDecoder('utf-8');\n    let jsonData = decoder.decode(buffer);\n\n    return JSON.parse(jsonData);\n}",
+              "start_line": 574,
+              "symbol_id": "src/utils/hub.js#function:getModelJSON:574"
+            },
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "symbol_id": "src/utils/hub.js#function:getModelJSON:574",
+                "workspace_id": "ts_004_ctx4k"
+              },
+              "durationMs": 0,
+              "toolName": "get_symbol",
+              "workspace_id": "ts_004_ctx4k"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1400,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 8034,
+          "metadata": {},
+          "name": "strategy.local_function.execute",
+          "type": "strategy.local_function.execute"
+        },
+        {
+          "duration_ms": 8035,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 51,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": null,
+        "cachedInputTokens": 2000,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 3,
+        "inputTokens": 4968,
+        "loopControlDurationMsEstimated": 50,
+        "mcpToolCalls": 3,
+        "modelCalls": 4,
+        "modelDurationMs": 7983,
+        "outputTokens": 213,
+        "promptChars": 1247,
+        "questionTokensEstimated": 185,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 786,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 4,
+        "strategyDurationMs": 8034,
+        "taskStatementChars": 1077,
+        "toolCalls": 3,
+        "toolDurationMs": 1,
+        "totalDurationMs": 8035,
+        "totalTokens": 5967,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "workspace_id": "ts_004_ctx4k"
+                    },
+                    "id": null,
+                    "name": "list_files",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CqgGAQw51sfPNOxC6a2cZfYHTxSquU3JRJ-va1IYMHOmaoW8U4pGjA158FCHzX-V3tVm-rnkHgRFrycdHbmD3mwccpIXsNqHI_C336459JgGEJiWxzioDww_Of_Q7fDtJa1IaYIFphUqzUgNWes2LswgVgn-VWxR6aV6_PAxdfVTqgtl9UDazWhXZkctjxYjbkPxdIIHG0Gb4nlhfHu2ibvgoM9RfTGPhfIpCgbKpAWjxS18bbHGv8z_cz_wA5oBPGp-EuTX_0_GnWEK43bj8-wk3AwwDtpBT5uPPnMDtNbiS5nuGwcO2liig0ZHKXPu46WtEEZ2ghZG7x8BBXkqEbFzKc8lQiDaHpAYg08TTttWyetr7BkxvfVUv3NRm5MCL1nOnu5EDL1_hwICaVBKvymaYK-1KpkJ1NW9dXR7q2iXSLERU91Xzz3XYKMUvCVoNXpDMaQPMuPOlNIMBoLqe_yMSD3Bih79hl8xrEgkgDdYB4MV8dVfQ9OiFZ9NAXEIt3AXoyb5nDBco1uI-lCbeoheYWdTpF6cK5JmlS5CE0uISJtHAr_F-FNaB-NbF76WI7WoSvVRKtql5FH6xwL6dSOrwTZvdnTs8AByVuK81RMVZvbV5AnfyfWzdtsb3OwtKFm45VNBnSZLni4P3q6-J35_RuOQ_GT9c48TBBcbgCyLLvC0lJGlZG2ciegkbLtC4tYjna4ePh1HjN_Bsa6yV9Gu1WUVVaGzExG6IXOv5Xe7NTsLH1LlV0gH9l4bM97W-V3Up0e_CceZiqEpA9loMY_AZZkDpq4hMsCQdHa3DdgWbJYhPX2EwAz6Y9IB5vp_Fqz23oKr17rZWY8G_j-TbFUwCvyeHESX30AqFXvHRu4mZlJTnKnj67B1kyMnFR8HOEBiWiTnjcMFvmu9wZUCm7YmI89_Rb0d8gtZ34TKd9bxCpuFQ3h2go4W6OqP8u1EaOgDJoJT8pLriwTm0h_smOqoSY7COH7wtXnfojA5PLbI-ZiZCVsXHmHom6I2Ap_Z7x0wmV-rZm7w6ejOM5lYSuqkQ5-ZLnQ5qBf_TunONmaIzG7vg3LFSuwaCg==",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "JZUUaveYLYzVz7IPh9PKqQo",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 18:29:59 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1629",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 25,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 700,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 700
+            }
+          ],
+          "thoughts_token_count": 176,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 901,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "kind": "function",
+                      "path": "src/utils/hub.js",
+                      "workspace_id": "ts_004_ctx4k"
+                    },
+                    "id": null,
+                    "name": "list_symbols",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CsEDAQw51sdLKrENSNTD3186yDb42wPam_EBeajR6OdgRO9ZFOcSy2Vq8BXEWJBq5vGUwdc0mAOSOXNcf_zCjYsZ84AftDPcqGf1z2rYeaiPbJor0uTgA9qXYkeCAm-aaZAZfKVOyX_RGv1ff1MfkfGFsdZfGCbENxjCi580er5MTUezecL2slwGaFfUZ4EMt3V6_1rUwMusW3fEEAcWxugT_M5rTYB4q3tVsZE3t8mHnWopHGtczS8RjSuQ00CJmP0-aiyq0xcpE2tNr-CdLwYTpw5IB6vo24v6eC-KP_syLWcv_09AZdKaZ2QocANy8TeTwKELEY8WUWS8HK1jdAf0Y_exq9ISmewpRRvJz9LdZSQjcnfdm58O9_PfHh7h5fZXyvvv2bjU6D3Q0XgHXzcIdHfOPQHVx4h9iiAkCGpLkThvBpU2Vhz1qNPT1zK_pT4A0ptrCgkkPOrYuwibRRPRyLlquwIdI8qB_99diH-dea-5BpW1qB2yMgZs3SRy6CKDP6S6z8EGp9qiR1DtAaGLwfM0-3TAIjmntdNDOhzAVvsj_huBpOfnxueng8bwNL6d49zu-drtau32zSpaPB4o7WA=",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "J5UUapS9JMGHz7IPsvzjoQ4",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 18:30:00 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1371",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 605
+            }
+          ],
+          "cached_content_token_count": 605,
+          "candidates_token_count": 41,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 880,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 880
+            }
+          ],
+          "thoughts_token_count": 121,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 1042,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "symbol_id": "src/utils/hub.js#function:getModelJSON:574",
+                      "workspace_id": "ts_004_ctx4k"
+                    },
+                    "id": null,
+                    "name": "get_symbol",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "Ct8PAQw51sfxfiEwVytJpCfF-2eWLUTLDR_UagRKUf4sa_TRhOMNTua-kp8ASuG2b9Dgqx3quGXWSjDnx0N_pcbCDonqlewhmIDwv3PFkvWXYJuO9ge_09ZSQzCQUs10tLKLTHH05tdZpo7TRiK6t9J5rMsFGgbumvhToFCqPHziS_Li6OBjcZB-BO3fBO6LPSFnZzn62ELBHWZu39Gaps1-pAQe7J1OX8OC7DerZPm4gZ5GCGnoqBSx-j0yWuhe6LY2xVrtSq6njwfTsAwCwSSSB6OOme9QiPRfl5R_ejqhx621KHIb70YyUJrFtKGpfUvb-gJSRliybIBHm9Vr0IBdlpk5CIvT9YE0RGNPFtZA9iEZ8PbEIvCfbnYVLZMHJvQifoSwe31HSQm7xGC1PERqsEHlvKTU_jU0wAlJwoydhnL174IQsuyqIYJHAJ0Q2UO2_GU4Mcs6H5CgI5s83ubJ67TMI9xk3q2jstF7Mcr5uoo1kRTE0NfWHkkEOdvxFWs1MMeoDX-hI22bCzktTNZBzckDWmABY3CY6BTR0yDG-xQcWhMZnBHam3rkJV3azqMpJZsHgzT4hzz5_a5utuD4JxihTqedEJ1N-w9Zyv6JiIT73rpTXMRphHFgp6vWJzsQrO-emaNoFX5o9Ue4y4Z2JhSk5rArsLF2LE4K6xmnj-VCJ0q4P_qTqnfxYZBjIVp0JvS9OPWPdj2XwtPwJXlke54P4KD3oyKdUKxXD_Td8f1bs_GIpd91epZ6PyftasHf0LoNP05GLx_uiS2DMfVpgYw_KOqiyrvrrL9cWTvuNRQXKAitxnm29Xb1IVPikmcmW2Lf4RlLyWBTZQH6R2I4FK9RxH5SrFKm0hBq3C0PD_qdbpSrboRWnSr8_UzyPhWF4Ejb9jLvUWPTG1yWYMmtrxZWj5ujCtxUVSVF7k7oYwNEjHykgyUpABVwSQWbqnsR1_j4uI3iOqP3WEz4kW5g0x6Zkixf6_LO1-qgJFCKdrH_xaFvsWsxxXtTcpPzWtq6Sgl2mfdAaFWnSYEsAJUJJcmBTsZ2mTAqT-IB6vcQdJF_stSLq7QqUHI4-u1qGjkuJUIO14OutLVJPQbprZEsoMCsqe1_dcpQItHDtqfr8ltZqBH4H9tELZ-DO2R53BU2ELvt_bjd1oj08e8ORhSyb5XeJITPa5Ijvj7PsCLquDY9ABqF-Hd8MVllUsCM4Q5-bZSsU-_a8TS88B6p36Ur1K3MpVk1N-aENvPo4TBVAG2Gz9w25QxLAKyEC70zmdc0GnIS0RJiS8VyvlZFl0i2wODntrtjxkM2bIYmV1Bz7SN7bpIMZKdS_xxy3oQOghWtVsBZAcwCZgwXZPx_X_agDrWR0wQjyVBnZo7oVqG7-PStyzCAVgWKvJwffLotndlhfSXe6jFgYcsEdLclVn23Bcp6vWpoVyoi0c-1LpwhQpkRZNfufBZoiqmd08CpG8w_WsnC7CoKmZYZggUEbI2R2Bh8LtMNkiiZ2Hc3_4aHt9-VeUrjZY6ThJ9wStaPbCVSLYKqjaSaPnGmoaQCLSZWrdO-QtrTwAayQbgQptaT884Pp1E9o1ELQ3zJr5AcW5goJUEdIMifMc4cUFEAToivxBm_HU1LsyjgNue4UDjfpLfeBmcSmnXugmgQuka456Y7rKEBVTy4bzBpVKwKz8DLAGtP44TqNcqzAK3UU1tkKsxU6Ho8Jg9ZJVFly9igHirE8SsjDaDjvF8z--ACYxl_WJ20cuYw_1DxN-WV5wDqygJwwdz_n4QYlDx9T9X2F85KTrbmYl7kkT3lmZmDvkL0zt22uMY2bQATTs_9uc4CYi2Ww3LmNWxs0UL4wx0zcVs8_FcQlXgQ1aii4eNs4vv1A9WGxYNm0tsTHgU3OMDXG9N7dZKI7yHdFE91ZY-irvysex4LSsBZGZUQeeEX-uIGo57rZWCd-5J65ns6VSH0iLv3W2ZZiIRGFHJK_4C7czaZrGUiYj8hoKT2CrYd5QzAtrW2sjWYIvifJUDeY4w0BiRPqgbS2Ql0taOw2iItsQWlNRJECHlX5uWzhrgUzWdKa8M1c3e9h6M1csRuTPqYYT6D3-hfSoqg_PjZOrr5DnnxnCEblHwKKmP2cT28w9b1J3J7AbnXvCV6pgqdi0I9ZhjuYb2tbWAujTSaEd9xu5rGgnPi3AhsDhfGzee8M4NsvDdM5itPenq5Wkp1LvshqrRfIQn0zbqIif0KJm9S-t50Q0P9X3zKRNS-HsdVPmHkav1-HTImo3vIJ-j780b-6UxzkAYtCmNSSBMy94Nh_hrPXX1Y5b-5srpVq-hs42w-HippLPs8XsoDL7IJARJYXD-FdGmhi5sP5MgxRC-A1ZNYBrk0SYnwP5jHOs2Xh2p50lLhbJ5hIpT1GPWwsmI_YlsCedG7hw81QiiufcpcpVfel98VRG9IDxcui7XVtvD62d6Vy2iHaZ4c6QRMfWyUds-QlVcaWcVPZ74ZWlMciq8EYP-o95bg4hbtGczAXpV5FahoxTLvoUrFTn3RuwfebojjZgw80sdyFBNbbq18Ld5WcBY7iqRNhhgyjfbvPfQF1WLzCXKXLamuYi_HAbZBudNWzCZnH-mTRNkG6j5e81ESzyQOdbDmfd_T5dWdNiI4X6zwA5xtxnmZjJPyX-laCOXW77bKtQtxb6hiIEQ2g2g=",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "KZUUavGNDtaaqtsP2-HDwAk",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 18:30:03 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=2910",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 817
+            }
+          ],
+          "cached_content_token_count": 817,
+          "candidates_token_count": 47,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 2191,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 2191
+            }
+          ],
+          "thoughts_token_count": 489,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 2727,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": null,
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": "```javascript\nasync function getModelJSON(modelPath, fileName, fatal = true, options = {}) {\n    let buffer = await getModelFile(modelPath, fileName, fatal, options);\n    if (buffer === null) {\n        // Return empty object\n        return {}\n    }\n\n    let decoder = new TextDecoder('utf-8');\n    let jsonData = decoder.decode(buffer);\n\n    return JSON.parse(jsonData);\n}\n```",
+                  "thought": null,
+                  "thought_signature": null,
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                },
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": null,
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": "\n",
+                  "thought": null,
+                  "thought_signature": null,
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "LJUUaoP_FqKDz7IPpabDsAE",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 18:30:05 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1162",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 578
+            }
+          ],
+          "cached_content_token_count": 578,
+          "candidates_token_count": 100,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 1197,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 1197
+            }
+          ],
+          "thoughts_token_count": null,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 1297,
+          "traffic_type": null
+        }
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "workspace_id": "ts_004_ctx4k"
+        },
+        "durationMs": 1,
+        "toolName": "list_files",
+        "workspace_id": "ts_004_ctx4k"
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/utils/hub.js",
+          "workspace_id": "ts_004_ctx4k"
+        },
+        "durationMs": 0,
+        "toolName": "list_symbols",
+        "workspace_id": "ts_004_ctx4k"
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/utils/hub.js#function:getModelJSON:574",
+          "workspace_id": "ts_004_ctx4k"
+        },
+        "durationMs": 0,
+        "toolName": "get_symbol",
+        "workspace_id": "ts_004_ctx4k"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "workspace_id": "ts_004_ctx4k"
+        },
+        "id": "step-1-tool-1",
+        "isError": false,
+        "name": "list_files",
+        "result": [
+          {
+            "language": "typescript",
+            "parse_status": "ok_filtered",
+            "path": "src/utils/hub.js",
+            "repository": "xenova/transformers.js",
+            "symbol_count": 18
+          },
+          {
+            "language": "typescript",
+            "parse_status": "ok_filtered",
+            "path": "src/configs.js",
+            "repository": "xenova/transformers.js",
+            "symbol_count": 8
+          },
+          {
+            "language": "typescript",
+            "parse_status": "ok_filtered",
+            "path": "src/utils/maths.js",
+            "repository": "xenova/transformers.js",
+            "symbol_count": 40
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/utils/hub.js",
+          "workspace_id": "ts_004_ctx4k"
+        },
+        "id": "step-2-tool-1",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "Fetches a JSON file from a given path and file name.\n\n@param {string} modelPath The path to the directory containing the file.\n@param {string} fileName The name of the file to fetch.\n@param {boolean} [fatal=true] Whether to throw an error if the file is not found.\n@param {PretrainedOptions} [options] An object containing optional parameters.\n@returns {Promise<Object>} The JSON data parsed into a JavaScript object.\n@throws Will throw an error if the file is not found and `fatal` is true.",
+            "end_line": 585,
+            "kind": "function",
+            "name": "getModelJSON",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/hub.js",
+            "qualified_name": "getModelJSON",
+            "signature": "async function getModelJSON(modelPath, fileName, fatal = true, options = {}) {\n    let buffer = await getModelFile(modelPath, fileName, fatal, options);\n    if (buffer === null) {\n        // Return empty object\n        return {}\n    }\n\n    let decoder = new TextDecoder('utf-8');\n    let jsonData = decoder.decode(buffer);\n\n    return JSON.parse(jsonData);\n}",
+            "start_line": 574,
+            "symbol_id": "src/utils/hub.js#function:getModelJSON:574"
+          },
+          {
+            "children": [],
+            "documentation": "Read and track progress when reading a Response object\n\n@param {any} response The Response object to read\n@param {function} progress_callback The function to call with progress updates\n@returns {Promise<Uint8Array>} A Promise that resolves with the Uint8Array buffer",
+            "end_line": 641,
+            "kind": "function",
+            "name": "readResponse",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/hub.js",
+            "qualified_name": "readResponse",
+            "signature": "async function readResponse(response, progress_callback) {\n\n    const contentLength = response.headers.get('Content-Length');\n    if (contentLength === null) {\n        console.warn('Unable to determine content-length from response headers. Will expand buffer when needed.')\n    }\n    let total = parseInt(contentLength ?? '0');\n    let buffer = new Uint8Array(total);\n    let loaded = 0;\n\n    const reader = response.body.getReader();\n    async function read() {\n        const { done, value } = await reader.read();\n        if (done) return;\n\n        let newLoaded = loaded + value.length;\n        if (newLoaded > total) {\n            total = newLoaded;\n\n            // Adding the new data will overflow buffer.\n            // In this case, we extend the buffer\n            let newBuffer = new Uint8Array(total);\n\n            // copy contents\n            newBuffer.set(buffer);\n\n            buffer = newBuffer;\n        }\n        buffer.set(value, loaded)\n        loaded = newLoaded;\n\n        const progress = (loaded / total) * 100;\n\n        // Call your function here\n        progress_callback({\n            progress: progress,\n            loaded: loaded,\n            total: total,\n        })\n\n        return read();\n    }\n\n    // Actually read\n    await read();\n\n    return buffer;\n}",
+            "start_line": 594,
+            "symbol_id": "src/utils/hub.js#function:readResponse:594"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 635,
+            "kind": "function",
+            "name": "read",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/hub.js",
+            "qualified_name": "read",
+            "signature": "async function read() {\n        const { done, value } = await reader.read();\n        if (done) return;\n\n        let newLoaded = loaded + value.length;\n        if (newLoaded > total) {\n            total = newLoaded;\n\n            // Adding the new data will overflow buffer.\n            // In this case, we extend the buffer\n            let newBuffer = new Uint8Array(total);\n\n            // copy contents\n            newBuffer.set(buffer);\n\n            buffer = newBuffer;\n        }\n        buffer.set(value, loaded)\n        loaded = newLoaded;\n\n        const progress = (loaded / total) * 100;\n\n        // Call your function here\n        progress_callback({\n            progress: progress,\n            loaded: loaded,\n            total: total,\n        })\n\n        return read();\n    }",
+            "start_line": 605,
+            "symbol_id": "src/utils/hub.js#function:read:605"
+          },
+          {
+            "children": [],
+            "documentation": "Joins multiple parts of a path into a single path, while handling leading and trailing slashes.\n\n@param {...string} parts Multiple parts of a path.\n@returns {string} A string representing the joined path.",
+            "end_line": 661,
+            "kind": "function",
+            "name": "pathJoin",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/hub.js",
+            "qualified_name": "pathJoin",
+            "signature": "function pathJoin(...parts) {\n    // https://stackoverflow.com/a/55142565\n    parts = parts.map((part, index) => {\n        if (index) {\n            part = part.replace(new RegExp('^/'), '');\n        }\n        if (index !== parts.length - 1) {\n            part = part.replace(new RegExp('/$'), '');\n        }\n        return part;\n    })\n    return parts.join('/');\n}",
+            "start_line": 649,
+            "symbol_id": "src/utils/hub.js#function:pathJoin:649"
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/utils/hub.js#function:getModelJSON:574",
+          "workspace_id": "ts_004_ctx4k"
+        },
+        "id": "step-3-tool-1",
+        "isError": false,
+        "name": "get_symbol",
+        "result": {
+          "children": [],
+          "code": "async function getModelJSON(modelPath, fileName, fatal = true, options = {}) {\n    let buffer = await getModelFile(modelPath, fileName, fatal, options);\n    if (buffer === null) {\n        // Return empty object\n        return {}\n    }\n\n    let decoder = new TextDecoder('utf-8');\n    let jsonData = decoder.decode(buffer);\n\n    return JSON.parse(jsonData);\n}",
+          "documentation": "Fetches a JSON file from a given path and file name.\n\n@param {string} modelPath The path to the directory containing the file.\n@param {string} fileName The name of the file to fetch.\n@param {boolean} [fatal=true] Whether to throw an error if the file is not found.\n@param {PretrainedOptions} [options] An object containing optional parameters.\n@returns {Promise<Object>} The JSON data parsed into a JavaScript object.\n@throws Will throw an error if the file is not found and `fatal` is true.",
+          "end_line": 585,
+          "kind": "function",
+          "name": "getModelJSON",
+          "parent_id": null,
+          "parent_name": null,
+          "path": "src/utils/hub.js",
+          "qualified_name": "getModelJSON",
+          "signature": "async function getModelJSON(modelPath, fileName, fatal = true, options = {}) {\n    let buffer = await getModelFile(modelPath, fileName, fatal, options);\n    if (buffer === null) {\n        // Return empty object\n        return {}\n    }\n\n    let decoder = new TextDecoder('utf-8');\n    let jsonData = decoder.decode(buffer);\n\n    return JSON.parse(jsonData);\n}",
+          "start_line": 574,
+          "symbol_id": "src/utils/hub.js#function:getModelJSON:574"
+        }
+      }
+    ]
+  },
+  "trialId": "fce5e1ac64"
+}

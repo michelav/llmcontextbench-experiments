@@ -1,0 +1,159 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 2701,
+          "metadata": {
+            "model": "gemini-2.5-flash-lite",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 2714,
+          "metadata": {},
+          "name": "strategy.inline.execute",
+          "type": "strategy.inline.execute"
+        },
+        {
+          "duration_ms": 2714,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 13,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": null,
+        "cachedInputTokens": null,
+        "contextBytes": 10906,
+        "contextChars": 10906,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 0,
+        "inputTokens": 4175,
+        "loopControlDurationMsEstimated": 13,
+        "mcpToolCalls": 0,
+        "modelCalls": 1,
+        "modelDurationMs": 2701,
+        "outputTokens": 569,
+        "promptChars": 12170,
+        "questionTokensEstimated": 199,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": null,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 1,
+        "strategyDurationMs": 2714,
+        "taskStatementChars": 1242,
+        "toolCalls": 0,
+        "toolDurationMs": null,
+        "totalDurationMs": 2714,
+        "totalTokens": 4744,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": {
+      "automatic_function_calling_history": [],
+      "candidates": [
+        {
+          "avg_logprobs": null,
+          "citation_metadata": {
+            "citations": [
+              {
+                "end_index": 553,
+                "license": "",
+                "publication_date": null,
+                "start_index": 12,
+                "title": null,
+                "uri": "https://android.googlesource.com/platform/external/rust/crates/nom/+/refs/tags/aml_per_341711000%5E1..refs/tags/aml_per_341711000/"
+              }
+            ]
+          },
+          "content": {
+            "parts": [
+              {
+                "code_execution_result": null,
+                "executable_code": null,
+                "file_data": null,
+                "function_call": null,
+                "function_response": null,
+                "inline_data": null,
+                "media_resolution": null,
+                "part_metadata": null,
+                "text": "```rust\n/// Repeats the embedded parser, calling `g` to gather the results.\n///\n/// This stops on [`Err::Error`] if there is at least one result. To instead chain an error up,\n/// see [`cut`][crate::combinator::cut].\n///\n/// # Arguments\n/// * `f` The parser to apply.\n/// * `init` A function returning the initial value.\n/// * `g` The function that combines a result of `f` with\n///       the current accumulator.\n///\n/// *Note*: If the parser passed to `many1` accepts empty inputs\n/// (like `alpha0` or `digit0`), `many1` will return an error,\n/// to prevent going into an infinite loop.\n///\n/// ```rust\n/// # use nom::{Err, error::{Error, ErrorKind}, Needed, IResult, Parser};\n/// use nom::multi::fold_many1;\n/// use nom::bytes::complete::tag;\n///\n/// fn parser(s: &str) -> IResult<&str, Vec<&str>> {\n///   fold_many1(\n///     tag(\"abc\"),\n///     Vec::new,\n///     |mut acc: Vec<_>, item| {\n///       acc.push(item);\n///       acc\n///     }\n///   ).parse(s)\n/// }\n///\n/// assert_eq!(parser(\"abcabc\"), Ok((\"\", vec![\"abc\", \"abc\"])));\n/// assert_eq!(parser(\"abc123\"), Ok((\"123\", vec![\"abc\"])));\n/// assert_eq!(parser(\"123123\"), Err(Err::Error(Error::new(\"123123\", ErrorKind::Many1))));\n/// assert_eq!(parser(\"\"), Err(Err::Error(Error::new(\"\", ErrorKind::Many1))));\n/// ```\npub fn fold_many1<I, E, F, G, H, R>(\n  parser: F,\n  init: H,\n  g: G,\n) -> impl Parser<I, Output = R, Error = E>\nwhere\n  I: Clone + InputLength,\n  F: Parser<I, Error = E>,\n  G: FnMut(R, <F as Parser<I>>::Output) -> R,\n  H: FnMut() -> R,\n  E: ParseError<I>,\n{\n  FoldMany1 {\n    parser,\n    g,\n    init,\n    r: PhantomData,\n  }\n}\n```",
+                "thought": null,
+                "thought_signature": null,
+                "tool_call": null,
+                "tool_response": null,
+                "video_metadata": null
+              }
+            ],
+            "role": "model"
+          },
+          "finish_message": null,
+          "finish_reason": "STOP",
+          "grounding_metadata": null,
+          "index": 0,
+          "logprobs_result": null,
+          "safety_ratings": null,
+          "token_count": null,
+          "url_context_metadata": null
+        }
+      ],
+      "create_time": null,
+      "model_status": null,
+      "model_version": "gemini-2.5-flash-lite",
+      "parsed": null,
+      "prompt_feedback": null,
+      "response_id": "x5AUasj6Jf2dz7IPuPW8sAs",
+      "sdk_http_response": {
+        "body": null,
+        "headers": {
+          "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+          "content-encoding": "gzip",
+          "content-type": "application/json; charset=UTF-8",
+          "date": "Mon, 25 May 2026 18:11:21 GMT",
+          "server": "scaffolding on HTTPServer2",
+          "server-timing": "gfet4t7; dur=2479",
+          "transfer-encoding": "chunked",
+          "vary": "Origin, X-Origin, Referer",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "x-gemini-service-tier": "standard",
+          "x-xss-protection": "0"
+        }
+      },
+      "usage_metadata": {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 569,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 4175,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 4175
+          }
+        ],
+        "thoughts_token_count": null,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 4744,
+        "traffic_type": null
+      }
+    },
+    "serverMcp": [],
+    "toolCalls": []
+  },
+  "trialId": "f6f4d5de66"
+}

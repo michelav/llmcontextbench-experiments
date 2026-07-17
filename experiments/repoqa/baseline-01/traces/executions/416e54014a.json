@@ -1,0 +1,148 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 9182,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 9195,
+          "metadata": {},
+          "name": "strategy.inline.execute",
+          "type": "strategy.inline.execute"
+        },
+        {
+          "duration_ms": 9195,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 13,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": null,
+        "cachedInputTokens": null,
+        "contextBytes": 82265,
+        "contextChars": 81898,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 0,
+        "inputTokens": 28217,
+        "loopControlDurationMsEstimated": 13,
+        "mcpToolCalls": 0,
+        "modelCalls": 1,
+        "modelDurationMs": 9182,
+        "outputTokens": 606,
+        "promptChars": 83008,
+        "questionTokensEstimated": 176,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 1170,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 1,
+        "strategyDurationMs": 9195,
+        "taskStatementChars": 1088,
+        "toolCalls": 0,
+        "toolDurationMs": null,
+        "totalDurationMs": 9195,
+        "totalTokens": 29993,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": {
+      "automatic_function_calling_history": [],
+      "candidates": [
+        {
+          "avg_logprobs": null,
+          "citation_metadata": null,
+          "content": {
+            "parts": [
+              {
+                "code_execution_result": null,
+                "executable_code": null,
+                "file_data": null,
+                "function_call": null,
+                "function_response": null,
+                "inline_data": null,
+                "media_resolution": null,
+                "part_metadata": null,
+                "text": "```rust\npub fn many1_count<I, E, F>(parser: F) -> impl Parser<I, Output = usize, Error = E>\nwhere\n  I: Clone + InputLength,\n  F: Parser<I, Error = E>,\n  E: ParseError<I>,\n{\n  Many1Count { parser }\n}\n\n/// Parser implementation for the [many1_count] combinator\npub struct Many1Count<F> {\n  parser: F,\n}\n\nimpl<I, F> Parser<I> for Many1Count<F>\nwhere\n  I: Clone + InputLength,\n  F: Parser<I>,\n{\n  type Output = usize;\n  type Error = <F as Parser<I>>::Error;\n\n  fn process<OM: OutputMode>(\n    &mut self,\n    input: I,\n  ) -> crate::PResult<OM, I, Self::Output, Self::Error> {\n    let mut count = 0;\n\n    match self\n      .parser\n      .process::<OutputM<Check, Check, OM::Incomplete>>(input.clone())\n    {\n      Err(Err::Error(_)) => Err(Err::Error(OM::Error::bind(move || {\n        <F as Parser<I>>::Error::from_error_kind(input, ErrorKind::Many1Count)\n      }))),\n      Err(Err::Failure(e)) => Err(Err::Failure(e)),\n      Err(Err::Incomplete(i)) => Err(Err::Incomplete(i)),\n      Ok((mut input, _)) => {\n        count += 1;\n\n        loop {\n          let input_ = input.clone();\n          let len = input.input_len();\n          match self\n            .parser\n            .process::<OutputM<Check, Check, OM::Incomplete>>(input_)\n          {\n            Ok((i, _)) => {\n              // infinite loop check: the parser must always consume\n              if i.input_len() == len {\n                return Err(Err::Error(OM::Error::bind(|| {\n                  <F as Parser<I>>::Error::from_error_kind(input, ErrorKind::Many1Count)\n                })));\n              }\n\n              input = i;\n              count += 1;\n            }\n\n            Err(Err::Error(_)) => return Ok((input, OM::Output::bind(|| count))),\n            Err(Err::Failure(e)) => return Err(Err::Failure(e)),\n            Err(Err::Incomplete(i)) => return Err(Err::Incomplete(i)),\n          }\n        }\n      }\n    }\n  }\n}\n```",
+                "thought": null,
+                "thought_signature": null,
+                "tool_call": null,
+                "tool_response": null,
+                "video_metadata": null
+              }
+            ],
+            "role": "model"
+          },
+          "finish_message": null,
+          "finish_reason": "STOP",
+          "grounding_metadata": null,
+          "index": 0,
+          "logprobs_result": null,
+          "safety_ratings": null,
+          "token_count": null,
+          "url_context_metadata": null
+        }
+      ],
+      "create_time": null,
+      "model_status": null,
+      "model_version": "gemini-2.5-flash",
+      "parsed": null,
+      "prompt_feedback": null,
+      "response_id": "oI8UaoDjNMmtqtsPjciLsAs",
+      "sdk_http_response": {
+        "body": null,
+        "headers": {
+          "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+          "content-encoding": "gzip",
+          "content-type": "application/json; charset=UTF-8",
+          "date": "Mon, 25 May 2026 18:06:33 GMT",
+          "server": "scaffolding on HTTPServer2",
+          "server-timing": "gfet4t7; dur=8969",
+          "transfer-encoding": "chunked",
+          "vary": "Origin, X-Origin, Referer",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "x-gemini-service-tier": "standard",
+          "x-xss-protection": "0"
+        }
+      },
+      "usage_metadata": {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 606,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 28217,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 28217
+          }
+        ],
+        "thoughts_token_count": 1170,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 29993,
+        "traffic_type": null
+      }
+    },
+    "serverMcp": [],
+    "toolCalls": []
+  },
+  "trialId": "416e54014a"
+}

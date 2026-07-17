@@ -1,0 +1,1223 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 1974,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "ts_004_ctx16k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 9,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "language": "typescript",
+                "parse_status": "ok_filtered",
+                "path": "src/utils/hub.js",
+                "repository": "xenova/transformers.js",
+                "symbol_count": 65
+              },
+              {
+                "language": "typescript",
+                "parse_status": "ok_filtered",
+                "path": "src/configs.js",
+                "repository": "xenova/transformers.js",
+                "symbol_count": 8
+              },
+              {
+                "language": "typescript",
+                "parse_status": "ok_filtered",
+                "path": "src/utils/maths.js",
+                "repository": "xenova/transformers.js",
+                "symbol_count": 228
+              }
+            ],
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "ts_004_ctx16k"
+              },
+              "durationMs": 9,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "list_files",
+              "transport": "in_memory"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1448,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "src/utils/hub.js",
+              "workspace_id": "ts_004_ctx16k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 4,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 75,
+                "kind": "method",
+                "name": "start",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/hub.js",
+                "qualified_name": "start",
+                "signature": "start(controller) {\n                    self.arrayBuffer().then(buffer => {\n                        controller.enqueue(new Uint8Array(buffer));\n                        controller.close();\n                    })\n                }",
+                "start_line": 70,
+                "symbol_id": "src/utils/hub.js#method:start:70"
+              },
+              {
+                "children": [],
+                "documentation": "Updates the 'content-type' header property of the response based on the extension of\nthe file specified by the filePath property of the current object.\n@returns {void}",
+                "end_line": 93,
+                "kind": "method",
+                "name": "updateContentType",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/hub.js",
+                "qualified_name": "updateContentType",
+                "signature": "updateContentType() {\n        // Set content-type header based on file extension\n        const extension = this.filePath.toString().split('.').pop().toLowerCase();\n        this.headers.set('content-type', this._CONTENT_TYPE_MAP[extension] ?? 'application/octet-stream');\n    }",
+                "start_line": 89,
+                "symbol_id": "src/utils/hub.js#method:updateContentType:89"
+              },
+              {
+                "children": [],
+                "documentation": "Clone the current FileResponse object.\n@returns {FileResponse} A new FileResponse object with the same properties as the current object.",
+                "end_line": 106,
+                "kind": "method",
+                "name": "clone",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/hub.js",
+                "qualified_name": "clone",
+                "signature": "clone() {\n        let response = new FileResponse(this.filePath);\n        response.exists = this.exists;\n        response.status = this.status;\n        response.statusText = this.statusText;\n        response.headers = new Headers(this.headers);\n        return response;\n    }",
+                "start_line": 99,
+                "symbol_id": "src/utils/hub.js#method:clone:99"
+              },
+              {
+                "children": [],
+                "documentation": "Reads the contents of the file specified by the filePath property and returns a Promise that\nresolves with an ArrayBuffer containing the file's contents.\n@returns {Promise<ArrayBuffer>} A Promise that resolves with an ArrayBuffer containing the file's contents.\n@throws {Error} If the file cannot be read.",
+                "end_line": 117,
+                "kind": "method",
+                "name": "arrayBuffer",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/hub.js",
+                "qualified_name": "arrayBuffer",
+                "signature": "async arrayBuffer() {\n        const data = await fs.promises.readFile(this.filePath);\n        return data.buffer;\n    }",
+                "start_line": 114,
+                "symbol_id": "src/utils/hub.js#method:arrayBuffer:114"
+              },
+              {
+                "children": [],
+                "documentation": "Reads the contents of the file specified by the filePath property and returns a Promise that\nresolves with a Blob containing the file's contents.\n@returns {Promise<Blob>} A Promise that resolves with a Blob containing the file's contents.\n@throws {Error} If the file cannot be read.",
+                "end_line": 128,
+                "kind": "method",
+                "name": "blob",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/hub.js",
+                "qualified_name": "blob",
+                "signature": "async blob() {\n        const data = await fs.promises.readFile(this.filePath);\n        return new Blob([data], { type: this.headers.get('content-type') });\n    }",
+                "start_line": 125,
+                "symbol_id": "src/utils/hub.js#method:blob:125"
+              },
+              {
+                "children": [],
+                "documentation": "Reads the contents of the file specified by the filePath property and returns a Promise that\nresolves with a string containing the file's contents.\n@returns {Promise<string>} A Promise that resolves with a string containing the file's contents.\n@throws {Error} If the file cannot be read.",
+                "end_line": 139,
+                "kind": "method",
+                "name": "text",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/hub.js",
+                "qualified_name": "text",
+                "signature": "async text() {\n        const data = await fs.promises.readFile(this.filePath, 'utf8');\n        return data;\n    }",
+                "start_line": 136,
+                "symbol_id": "src/utils/hub.js#method:text:136"
+              },
+              {
+                "children": [],
+                "documentation": "Reads the contents of the file specified by the filePath property and returns a Promise that\nresolves with a parsed JavaScript object containing the file's contents.\n\n@returns {Promise<Object>} A Promise that resolves with a parsed JavaScript object containing the file's contents.\n@throws {Error} If the file cannot be read.",
+                "end_line": 150,
+                "kind": "method",
+                "name": "json",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/hub.js",
+                "qualified_name": "json",
+                "signature": "async json() {\n        return JSON.parse(await this.text());\n    }",
+                "start_line": 148,
+                "symbol_id": "src/utils/hub.js#method:json:148"
+              },
+              {
+                "children": [],
+                "documentation": "Determines whether the given string is a valid HTTP or HTTPS URL.\n@param {string|URL} string The string to test for validity as an HTTP or HTTPS URL.\n@param {string[]} [validHosts=null] A list of valid hostnames. If specified, the URL's hostname must be in this list.\n@returns {boolean} True if the string is a valid HTTP or HTTPS URL, false otherwise.",
+                "end_line": 171,
+                "kind": "function",
+                "name": "isValidHttpUrl",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/hub.js",
+                "qualified_name": "isValidHttpUrl",
+                "signature": "function isValidHttpUrl(string, validHosts = null) {\n    // https://stackoverflow.com/a/43467144\n    let url;\n    try {\n        url = new URL(string);\n    } catch (_) {\n        return false;\n    }\n    if (validHosts && !validHosts.includes(url.hostname)) {\n        return false;\n    }\n    return url.protocol === \"http:\" || url.protocol === \"https:\";\n}",
+                "start_line": 159,
+                "symbol_id": "src/utils/hub.js#function:isValidHttpUrl:159"
+              },
+              {
+                "children": [],
+                "documentation": "Helper function to get a file, using either the Fetch API or FileSystem API.\n\n@param {URL|string} urlOrPath The URL/path of the file to get.\n@returns {Promise<FileResponse|Response>} A promise that resolves to a FileResponse object (if the file is retrieved using the FileSystem API), or a Response object (if the file is retrieved using the Fetch API).",
+                "end_line": 209,
+                "kind": "function",
+                "name": "getFile",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/hub.js",
+                "qualified_name": "getFile",
+                "signature": "async function getFile(urlOrPath) {\n\n    if (env.useFS && !isValidHttpUrl(urlOrPath)) {\n        return new FileResponse(urlOrPath);\n\n    } else if (typeof process !== 'undefined' && process?.release?.name === 'node') {\n        const IS_CI = !!process.env?.TESTING_REMOTELY;\n        const version = env.version;\n\n        const headers = new Headers();\n        headers.set('User-Agent', `transformers.js/${version}; is_ci/${IS_CI};`);\n\n        // Check whether we are making a request to the Hugging Face Hub.\n        const isHFURL = isValidHttpUrl(urlOrPath, ['huggingface.co', 'hf.co']);\n        if (isHFURL) {\n            // If an access token is present in the environment variables,\n            // we add it to the request headers.\n            // NOTE: We keep `HF_ACCESS_TOKEN` for backwards compatibility (as a fallback).\n            const token = process.env?.HF_TOKEN ?? process.env?.HF_ACCESS_TOKEN;\n            if (token) {\n                headers.set('Authorization', `Bearer ${token}`);\n            }\n        }\n        return fetch(urlOrPath, { headers });\n    } else {\n        // Running in a browser-environment, so we use default headers\n        // NOTE: We do not allow passing authorization headers in the browser,\n        // since this would require exposing the token to the client.\n        return fetch(urlOrPath);\n    }\n}",
+                "start_line": 179,
+                "symbol_id": "src/utils/hub.js#function:getFile:179"
+              },
+              {
+                "children": [],
+                "documentation": "Helper method to handle fatal errors that occur while trying to load a file from the Hugging Face Hub.\n@param {number} status The HTTP status code of the error.\n@param {string} remoteURL The URL of the file that could not be loaded.\n@param {boolean} fatal Whether to raise an error if the file could not be loaded.\n@returns {null} Returns `null` if `fatal = true`.\n@throws {Error} If `fatal = false`.",
+                "end_line": 242,
+                "kind": "function",
+                "name": "handleError",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/hub.js",
+                "qualified_name": "handleError",
+                "signature": "function handleError(status, remoteURL, fatal) {\n    if (!fatal) {\n        // File was not loaded correctly, but it is optional.\n        // TODO in future, cache the response?\n        return null;\n    }\n\n    const message = ERROR_MAPPING[status] ?? `Error (${status}) occurred while trying to load file`;\n    throw Error(`${message}: \"${remoteURL}\".`);\n}",
+                "start_line": 233,
+                "symbol_id": "src/utils/hub.js#function:handleError:233"
+              },
+              {
+                "children": [],
+                "documentation": "Instantiate a `FileCache` object.\n@param {string} path",
+                "end_line": 251,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/hub.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(path) {\n        this.path = path;\n    }",
+                "start_line": 249,
+                "symbol_id": "src/utils/hub.js#method:constructor:249"
+              },
+              {
+                "children": [],
+                "documentation": "Checks whether the given request is in the cache.\n@param {string} request\n@returns {Promise<FileResponse | undefined>}",
+                "end_line": 268,
+                "kind": "method",
+                "name": "match",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/hub.js",
+                "qualified_name": "match",
+                "signature": "async match(request) {\n\n        let filePath = path.join(this.path, request);\n        let file = new FileResponse(filePath);\n\n        if (file.exists) {\n            return file;\n        } else {\n            return undefined;\n        }\n    }",
+                "start_line": 258,
+                "symbol_id": "src/utils/hub.js#method:match:258"
+              },
+              {
+                "children": [],
+                "documentation": "Adds the given response to the cache.\n@param {string} request\n@param {Response|FileResponse} response\n@returns {Promise<void>}",
+                "end_line": 288,
+                "kind": "method",
+                "name": "put",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/hub.js",
+                "qualified_name": "put",
+                "signature": "async put(request, response) {\n        const buffer = Buffer.from(await response.arrayBuffer());\n\n        let outputPath = path.join(this.path, request);\n\n        try {\n            await fs.promises.mkdir(path.dirname(outputPath), { recursive: true });\n            await fs.promises.writeFile(outputPath, buffer);\n\n        } catch (err) {\n            console.warn('An error occurred while writing the file to cache:', err)\n        }\n    }",
+                "start_line": 276,
+                "symbol_id": "src/utils/hub.js#method:put:276"
+              },
+              {
+                "children": [],
+                "documentation": "@param {FileCache|Cache} cache The cache to search\n@param {string[]} names The names of the item to search for\n@returns {Promise<FileResponse|Response|undefined>} The item from the cache, or undefined if not found.",
+                "end_line": 314,
+                "kind": "function",
+                "name": "tryCache",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/hub.js",
+                "qualified_name": "tryCache",
+                "signature": "async function tryCache(cache, ...names) {\n    for (let name of names) {\n        try {\n            let result = await cache.match(name);\n            if (result) return result;\n        } catch (e) {\n            continue;\n        }\n    }\n    return undefined;\n}",
+                "start_line": 304,
+                "symbol_id": "src/utils/hub.js#function:tryCache:304"
+              },
+              {
+                "children": [],
+                "documentation": "Retrieves a file from either a remote URL using the Fetch API or from the local file system using the FileSystem API.\nIf the filesystem is available and `env.useCache = true`, the file will be downloaded and cached.\n\n@param {string} path_or_repo_id This can be either:\n- a string, the *model id* of a model repo on huggingface.co.\n- a path to a *directory* potentially containing the file.\n@param {string} filename The name of the file to locate in `path_or_repo`.\n@param {boolean} [fatal=true] Whether to throw an error if the file is not found.\n@param {PretrainedOptions} [options] An object containing optional parameters.\n\n@throws Will throw an error if the file is not found and `fatal` is true.\n@returns {Promise} A Promise that resolves with the file content as a buffer.",
+                "end_line": 562,
+                "kind": "function",
+                "name": "getModelFile",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/hub.js",
+                "qualified_name": "getModelFile",
+                "signature": "async function getModelFile(path_or_repo_id, filename, fatal = true, options = {}) {\n\n    if (!env.allowLocalModels) {\n        // User has disabled local models, so we just make sure other settings are correct.\n\n        if (options.local_files_only) {\n            throw Error(\"Invalid configuration detected: local models are disabled (`env.allowLocalModels=false`) but you have requested to only use local models (`local_files_only=true`).\")\n        } else if (!env.allowRemoteModels) {\n            throw Error(\"Invalid configuration detected: both local and remote models are disabled. Fix by setting `env.allowLocalModels` or `env.allowRemoteModels` to `true`.\")\n        }\n    }\n\n    // Initiate file retrieval\n    dispatchCallback(options.progress_callback, {\n        status: 'initiate',\n        name: path_or_repo_id,\n        file: filename\n    })\n\n    // First, check if the a caching backend is available\n    // If no caching mechanism available, will download the file every time\n    let cache;\n    if (!cache && env.useBrowserCache) {\n        if (typeof caches === 'undefined') {\n            throw Error('Browser cache is not available in this environment.')\n        }\n        try {\n            // In some cases, the browser cache may be visible, but not accessible due to security restrictions.\n            // For example, when running an application in an iframe, if a user attempts to load the page in\n            // incognito mode, the following error is thrown: `DOMException: Failed to execute 'open' on 'CacheStorage':\n            // An attempt was made to break through the security policy of the user agent.`\n            // So, instead of crashing, we just ignore the error and continue without using the cache.\n            cache = await caches.open('transformers-cache');\n        } catch (e) {\n            console.warn('An error occurred while opening the browser cache:', e);\n        }\n    }\n\n    if (!cache && env.useFSCache) {\n        // TODO throw error if not available\n\n        // If `cache_dir` is not specified, use the default cache directory\n        cache = new FileCache(options.cache_dir ?? env.cacheDir);\n    }\n\n    if (!cache && env.useCustomCache) {\n        // Allow the user to specify a custom cache system.\n        if (!env.customCache) {\n            throw Error('`env.useCustomCache=true`, but `env.customCache` is not defined.')\n        }\n\n        // Check that the required methods are defined:\n        if (!env.customCache.match || !env.customCache.put) {\n            throw new Error(\n                \"`env.customCache` must be an object which implements the `match` and `put` functions of the Web Cache API. \" +\n                \"For more information, see https://developer.mozilla.org/en-US/docs/Web/API/Cache\"\n            )\n        }\n        cache = env.customCache;\n    }\n\n    const revision = options.revision ?? 'main';\n\n    let requestURL = pathJoin(path_or_repo_id, filename);\n    let localPath = pathJoin(env.localModelPath, requestURL);\n\n    let remoteURL = pathJoin(\n        env.remoteHost,\n        env.remotePathTemplate\n            .replaceAll('{model}', path_or_repo_id)\n            .replaceAll('{revision}', encodeURIComponent(revision)),\n        filename\n    );\n\n    // Choose cache key for filesystem cache\n    // When using the main revision (default), we use the request URL as the cache key.\n    // If a specific revision is requested, we account for this in the cache key.\n    let fsCacheKey = revision === 'main' ? requestURL : pathJoin(path_or_repo_id, revision, filename);\n\n    /** @type {string} */\n    let cacheKey;\n    let proposedCacheKey = cache instanceof FileCache ? fsCacheKey : remoteURL;\n\n    // Whether to cache the final response in the end.\n    let toCacheResponse = false;\n\n    /** @type {Response|FileResponse|undefined} */\n    let response;\n\n    if (cache) {\n        // A caching system is available, so we try to get the file from it.\n        //  1. We first try to get from cache using the local path. In some environments (like deno),\n        //     non-URL cache keys are not allowed. In these cases, `response` will be undefined.\n        //  2. If no response is found, we try to get from cache using the remote URL or file system cache.\n        response = await tryCache(cache, localPath, proposedCacheKey);\n    }\n\n    const cacheHit = response !== undefined;\n\n    if (response === undefined) {\n        // Caching not available, or file is not cached, so we perform the request\n\n        if (env.allowLocalModels) {\n            // Accessing local models is enabled, so we try to get the file locally.\n            // If request is a valid HTTP URL, we skip the local file check. Otherwise, we try to get the file locally.\n            const isURL = isValidHttpUrl(requestURL);\n            if (!isURL) {\n                try {\n                    response = await getFile(localPath);\n                    cacheKey = localPath; // Update the cache key to be the local path\n                } catch (e) {\n                    // Something went wrong while trying to get the file locally.\n                    // NOTE: error handling is done in the next step (since `response` will be undefined)\n                    console.warn(`Unable to load from local path \"${localPath}\": \"${e}\"`);\n                }\n            } else if (options.local_files_only) {\n                throw new Error(`\\`local_files_only=true\\`, but attempted to load a remote file from: ${requestURL}.`);\n            } else if (!env.allowRemoteModels) {\n                throw new Error(`\\`env.allowRemoteModels=false\\`, but attempted to load a remote file from: ${requestURL}.`);\n            }\n        }\n\n        if (response === undefined || response.status === 404) {\n            // File not found locally. This means either:\n            // - The user has disabled local file access (`env.allowLocalModels=false`)\n            // - the path is a valid HTTP url (`response === undefined`)\n            // - the path is not a valid HTTP url and the file is not present on the file system or local server (`response.status === 404`)\n\n            if (options.local_files_only || !env.allowRemoteModels) {\n                // User requested local files only, but the file is not found locally.\n                if (fatal) {\n                    throw Error(`\\`local_files_only=true\\` or \\`env.allowRemoteModels=false\\` and file was not found locally at \"${localPath}\".`);\n                } else {\n                    // File not found, but this file is optional.\n                    // TODO in future, cache the response?\n                    return null;\n                }\n            }\n\n            // File not found locally, so we try to download it from the remote server\n            response = await getFile(remoteURL);\n\n            if (response.status !== 200) {\n                return handleError(response.status, remoteURL, fatal);\n            }\n\n            // Success! We use the proposed cache key from earlier\n            cacheKey = proposedCacheKey;\n        }\n\n        // Only cache the response if:\n        toCacheResponse =\n            cache                              // 1. A caching system is available\n            && typeof Response !== 'undefined' // 2. `Response` is defined (i.e., we are in a browser-like environment)\n            && response instanceof Response    // 3. result is a `Response` object (i.e., not a `FileResponse`)\n            && response.status === 200         // 4. request was successful (status code 200)\n    }\n\n    // Start downloading\n    dispatchCallback(options.progress_callback, {\n        status: 'download',\n        name: path_or_repo_id,\n        file: filename\n    })\n\n    const progressInfo = {\n        status: 'progress',\n        name: path_or_repo_id,\n        file: filename\n    }\n\n    /** @type {Uint8Array} */\n    let buffer;\n\n    if (!options.progress_callback) {\n        // If no progress callback is specified, we can use the `.arrayBuffer()`\n        // method to read the response.\n        buffer = new Uint8Array(await response.arrayBuffer());\n\n    } else if (\n        cacheHit // The item is being read from the cache\n        &&\n        typeof navigator !== 'undefined' && /firefox/i.test(navigator.userAgent) // We are in Firefox\n    ) {\n        // Due to bug in Firefox, we cannot display progress when loading from cache.\n        // Fortunately, since this should be instantaneous, this should not impact users too much.\n        buffer = new Uint8Array(await response.arrayBuffer());\n\n        // For completeness, we still fire the final progress callback\n        dispatchCallback(options.progress_callback, {\n            ...progressInfo,\n            progress: 100,\n            loaded: buffer.length,\n            total: buffer.length,\n        })\n    } else {\n        buffer = await readResponse(response, data => {\n            dispatchCallback(options.progress_callback, {\n                ...progressInfo,\n                ...data,\n            })\n        })\n    }\n\n    if (\n        // Only cache web responses\n        // i.e., do not cache FileResponses (prevents duplication)\n        toCacheResponse && cacheKey\n        &&\n        // Check again whether request is in cache. If not, we add the response to the cache\n        (await cache.match(cacheKey) === undefined)\n    ) {\n        // NOTE: We use `new Response(buffer, ...)` instead of `response.clone()` to handle LFS files\n        await cache.put(cacheKey, new Response(buffer, {\n            headers: response.headers\n        }))\n            .catch(err => {\n                // Do not crash if unable to add to cache (e.g., QuotaExceededError).\n                // Rather, log a warning and proceed with execution.\n                console.warn(`Unable to add response to browser cache: ${err}.`);\n            });\n\n    }\n\n    dispatchCallback(options.progress_callback, {\n        status: 'done',\n        name: path_or_repo_id,\n        file: filename\n    });\n\n    return buffer;\n}",
+                "start_line": 331,
+                "symbol_id": "src/utils/hub.js#function:getModelFile:331"
+              },
+              {
+                "children": [],
+                "documentation": "Fetches a JSON file from a given path and file name.\n\n@param {string} modelPath The path to the directory containing the file.\n@param {string} fileName The name of the file to fetch.\n@param {boolean} [fatal=true] Whether to throw an error if the file is not found.\n@param {PretrainedOptions} [options] An object containing optional parameters.\n@returns {Promise<Object>} The JSON data parsed into a JavaScript object.\n@throws Will throw an error if the file is not found and `fatal` is true.",
+                "end_line": 585,
+                "kind": "function",
+                "name": "getModelJSON",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/hub.js",
+                "qualified_name": "getModelJSON",
+                "signature": "async function getModelJSON(modelPath, fileName, fatal = true, options = {}) {\n    let buffer = await getModelFile(modelPath, fileName, fatal, options);\n    if (buffer === null) {\n        // Return empty object\n        return {}\n    }\n\n    let decoder = new TextDecoder('utf-8');\n    let jsonData = decoder.decode(buffer);\n\n    return JSON.parse(jsonData);\n}",
+                "start_line": 574,
+                "symbol_id": "src/utils/hub.js#function:getModelJSON:574"
+              },
+              {
+                "children": [],
+                "documentation": "Read and track progress when reading a Response object\n\n@param {any} response The Response object to read\n@param {function} progress_callback The function to call with progress updates\n@returns {Promise<Uint8Array>} A Promise that resolves with the Uint8Array buffer",
+                "end_line": 641,
+                "kind": "function",
+                "name": "readResponse",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/hub.js",
+                "qualified_name": "readResponse",
+                "signature": "async function readResponse(response, progress_callback) {\n\n    const contentLength = response.headers.get('Content-Length');\n    if (contentLength === null) {\n        console.warn('Unable to determine content-length from response headers. Will expand buffer when needed.')\n    }\n    let total = parseInt(contentLength ?? '0');\n    let buffer = new Uint8Array(total);\n    let loaded = 0;\n\n    const reader = response.body.getReader();\n    async function read() {\n        const { done, value } = await reader.read();\n        if (done) return;\n\n        let newLoaded = loaded + value.length;\n        if (newLoaded > total) {\n            total = newLoaded;\n\n            // Adding the new data will overflow buffer.\n            // In this case, we extend the buffer\n            let newBuffer = new Uint8Array(total);\n\n            // copy contents\n            newBuffer.set(buffer);\n\n            buffer = newBuffer;\n        }\n        buffer.set(value, loaded)\n        loaded = newLoaded;\n\n        const progress = (loaded / total) * 100;\n\n        // Call your function here\n        progress_callback({\n            progress: progress,\n            loaded: loaded,\n            total: total,\n        })\n\n        return read();\n    }\n\n    // Actually read\n    await read();\n\n    return buffer;\n}",
+                "start_line": 594,
+                "symbol_id": "src/utils/hub.js#function:readResponse:594"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 635,
+                "kind": "function",
+                "name": "read",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/hub.js",
+                "qualified_name": "read",
+                "signature": "async function read() {\n        const { done, value } = await reader.read();\n        if (done) return;\n\n        let newLoaded = loaded + value.length;\n        if (newLoaded > total) {\n            total = newLoaded;\n\n            // Adding the new data will overflow buffer.\n            // In this case, we extend the buffer\n            let newBuffer = new Uint8Array(total);\n\n            // copy contents\n            newBuffer.set(buffer);\n\n            buffer = newBuffer;\n        }\n        buffer.set(value, loaded)\n        loaded = newLoaded;\n\n        const progress = (loaded / total) * 100;\n\n        // Call your function here\n        progress_callback({\n            progress: progress,\n            loaded: loaded,\n            total: total,\n        })\n\n        return read();\n    }",
+                "start_line": 605,
+                "symbol_id": "src/utils/hub.js#function:read:605"
+              },
+              {
+                "children": [],
+                "documentation": "Joins multiple parts of a path into a single path, while handling leading and trailing slashes.\n\n@param {...string} parts Multiple parts of a path.\n@returns {string} A string representing the joined path.",
+                "end_line": 661,
+                "kind": "function",
+                "name": "pathJoin",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/hub.js",
+                "qualified_name": "pathJoin",
+                "signature": "function pathJoin(...parts) {\n    // https://stackoverflow.com/a/55142565\n    parts = parts.map((part, index) => {\n        if (index) {\n            part = part.replace(new RegExp('^/'), '');\n        }\n        if (index !== parts.length - 1) {\n            part = part.replace(new RegExp('/$'), '');\n        }\n        return part;\n    })\n    return parts.join('/');\n}",
+                "start_line": 649,
+                "symbol_id": "src/utils/hub.js#function:pathJoin:649"
+              }
+            ],
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "src/utils/hub.js",
+                "workspace_id": "ts_004_ctx16k"
+              },
+              "durationMs": 4,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "list_symbols",
+              "transport": "in_memory"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 3521,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "symbol_id": "src/utils/hub.js#function:getModelJSON:574",
+              "workspace_id": "ts_004_ctx16k"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 3,
+          "metadata": {
+            "is_error": false,
+            "result": {
+              "children": [],
+              "code": "async function getModelJSON(modelPath, fileName, fatal = true, options = {}) {\n    let buffer = await getModelFile(modelPath, fileName, fatal, options);\n    if (buffer === null) {\n        // Return empty object\n        return {}\n    }\n\n    let decoder = new TextDecoder('utf-8');\n    let jsonData = decoder.decode(buffer);\n\n    return JSON.parse(jsonData);\n}",
+              "documentation": "Fetches a JSON file from a given path and file name.\n\n@param {string} modelPath The path to the directory containing the file.\n@param {string} fileName The name of the file to fetch.\n@param {boolean} [fatal=true] Whether to throw an error if the file is not found.\n@param {PretrainedOptions} [options] An object containing optional parameters.\n@returns {Promise<Object>} The JSON data parsed into a JavaScript object.\n@throws Will throw an error if the file is not found and `fatal` is true.",
+              "end_line": 585,
+              "kind": "function",
+              "name": "getModelJSON",
+              "parent_id": null,
+              "parent_name": null,
+              "path": "src/utils/hub.js",
+              "qualified_name": "getModelJSON",
+              "signature": "async function getModelJSON(modelPath, fileName, fatal = true, options = {}) {\n    let buffer = await getModelFile(modelPath, fileName, fatal, options);\n    if (buffer === null) {\n        // Return empty object\n        return {}\n    }\n\n    let decoder = new TextDecoder('utf-8');\n    let jsonData = decoder.decode(buffer);\n\n    return JSON.parse(jsonData);\n}",
+              "start_line": 574,
+              "symbol_id": "src/utils/hub.js#function:getModelJSON:574"
+            },
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "symbol_id": "src/utils/hub.js#function:getModelJSON:574",
+                "workspace_id": "ts_004_ctx16k"
+              },
+              "durationMs": 3,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "get_symbol",
+              "transport": "in_memory"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1243,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 8258,
+          "metadata": {},
+          "name": "strategy.local_mcp.execute",
+          "type": "strategy.local_mcp.execute"
+        },
+        {
+          "duration_ms": 8258,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 72,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": null,
+        "cachedInputTokens": 1799,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 3,
+        "inputTokens": 11113,
+        "loopControlDurationMsEstimated": 56,
+        "mcpToolCalls": 3,
+        "modelCalls": 4,
+        "modelDurationMs": 8186,
+        "outputTokens": 216,
+        "promptChars": 1248,
+        "questionTokensEstimated": 185,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 751,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 4,
+        "strategyDurationMs": 8258,
+        "taskStatementChars": 1077,
+        "toolCalls": 3,
+        "toolDurationMs": 16,
+        "totalDurationMs": 8258,
+        "totalTokens": 12080,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "workspace_id": "ts_004_ctx16k"
+                    },
+                    "id": null,
+                    "name": "list_files",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CrMHAQw51sd3zMEjI9hjIgWHxxHIijrM2kqmOBRP9SkArIOBBTCNF2d05PS_nCd7l72sru5qq3FUTcCqp9L96MtPJbpT_Mky2s907zptRL7v1c8XIOl3TatxrQll6a9gXbByjs7FhSp8URpJDeQONL9hHCDgHLOjdU9r3Uw6WZ22lbzeRsbtIFGQocMYTNEcCOHxuTiHpR_af88pPFeMDvlVN-M7XT4jniQINOeU-q5upc349g_trzZ-QVuWgyJsNQyaPB1roLwGNbu4awEkLIQFuUrFBoauANBCMKJoi3S5YYgS2jmUvht4-9YmWYXpuqq3bf8sxyqlHN3DpD-uGIwF2ZqLk_E0T9x4fcabNlg3NgHfqCNvheqdmmklkqPbwuKqTMecp_JXbeiNMs8uOgkLhYJ6k0V-LecPGk7lbrWFBdf_hxq399nPF5hmDF6FTth4bBI6RxELVscTHUma04I8gzNXssWooL6ydSsvGJLwbv-775ew_TCnRceJZ8ZquRP6jmsukditWNSxuSW7gb8m-KakqhxjbNIFpl9Ru_M5VHEHR08QvmkB88wZvpbWKFs_gduzGIhRF9I3j8yHwAnRewKxtY8HJ2IJVrc89Ljh9kSKfxx85GpV6cipo-Grj8Eh5wUeJelA_d3-Q2w_-WdwWXXswzRd3GqW4Fk0dMFcGBkGfO4L32ELIy4ygPBqTv-Kpp6Bjawbyf5tTHBC0NaGlNf_2xOiCXolZ1gq_sFcVGg2fYuUOyWZKVNYTlc02NYUrWT0Wqhb8vaiGUE-ECAXL37LJr4M8bxBtsovyoVlFg3YYsLcwTV9PA4SEFe2M6CJTfGv-h8HNpti3HddhSE2ztQZdgDbY9voz0Pt7uEBPxqfKr9y4orovtqW5Tl8tMSzGFxxnGHq5344SyyDBSIfayJ19xwmgZZGbSKBatXeaBvNb3x9nPF3v9krD5PzEPEBKRG2UHafIGEbaBdoRbuMeWPSi5aQi3dSs_0XMeiTNPe6LJEghxFJo8DL1s5FGr5s1tUPcWYbHdc4xfXpb6sdPkZ-RZ90jkVlLbgZF8XbfNcgeCC4gZJY7I9VBXmH2pM35cme5tvy0YCdw1O6C7H-c6OJE6BjId8coCOycG9a9cs3trEn0MrYrR4Wf8RHkTjL-4KA9D_2p6o7A-zZdVGSFsfFdcnm4qIaPVv3u3JSMzf8x4aWw7qqkm5yFwB4J0S7lEA3Jyxfx-NiS1QdqhDmyUXCtTpTL2aV7BSXybzxG638dqo=",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "XYsUasauIIesz7IP0IDbwQs",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:48:15 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1755",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 636
+            }
+          ],
+          "cached_content_token_count": 636,
+          "candidates_token_count": 26,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 682,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 682
+            }
+          ],
+          "thoughts_token_count": 200,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 908,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "kind": "function",
+                      "path": "src/utils/hub.js",
+                      "workspace_id": "ts_004_ctx16k"
+                    },
+                    "id": null,
+                    "name": "list_symbols",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CoYCAQw51sfDeCZpSmpVotay4LIB0nHhxfADuksAVvYxUiLqmOe8j7s9ocJXPGw5Mh8oR46oq24S9SjKy5Ah_cWoWJZ_JM8bKeEkluMvU-Y8MYxHxRWrm-wyqiP6bVqZX5GFdliGUlEozhj38G2gdECZuRf8Enw295tqQLrggwYumVbCFqiNGm53vZBNoZykd2G1KB2x8hRtwUETxFEwIcNZOQYj5fRnKAZEQXr6Jo6Gk3UoMrMKtft_O6pQzpsW_jJjiPEKp3FaBfhzi8UZ9Rc4z_eUW4jXQ84ZmN6crlbGb0MEgCMiJjEN22QKYF2kSdo-OHw8GhKKaTJoAFTKt3JJvBZxGT2lfw==",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "X4sUar-XIL7oz7IP9I3GkA8",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:48:16 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1230",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 591
+            }
+          ],
+          "cached_content_token_count": 591,
+          "candidates_token_count": 42,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 864,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 864
+            }
+          ],
+          "thoughts_token_count": 53,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 959,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "symbol_id": "src/utils/hub.js#function:getModelJSON:574",
+                      "workspace_id": "ts_004_ctx16k"
+                    },
+                    "id": null,
+                    "name": "get_symbol",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CoIQAQw51segeL7JOER_s9Oyi2t7yh6uVbBMGQMPJTtgahdxbXXPN3FbJ0g2TECtsgJN9JOTH3FKkY6icZGhjhe_1QpTZL3tKnrEQl_XsV2FQM4cWekPWw7RSQ5OQhrH0uhIy0Yb3TawPgf2CYguk6l_lAa78gjTXQT_SowuSCKBIvzsiAkIs7v8nhb8bRajtJqxTaoW630Ee1n1kqP-NbsVKFU-k6X4Clj2rqYwFWN6qLyQSnpwYoPDeN9q36ah3FNrlP9Sz7yefK-RUUpMmLlRLK8eNujd5cSIWMN3LwZZeUhxgo2y2hxIynW60W__Z_iBSdYwWaVV11WirMrpMbU0mIQCgcf5Plm4aeEHes421mA9UCLMSN7qx6VubUIu8AHeIhiubDvgVJB9Cny7y-C7UycMSwAfiewTYRu7T7JEg0SJhQI--tW1VDIskJZOqDbqP8hkBuCph4tuRPlfLZcqhXFjerua9NUPpn3UzuMptDjS0_orBpzV1DmvHq6UHlhbGVhDBq15UN2JHkMiNJ2FQ-cK3hwxmqFMrN5R9IbnkBafE8De8wdq-axSN6f3iWdVC3G5FtP7bN3vIkIj0bwxjspRx6KzB6DOL4GqX1r7z3lmPPboes-9yYNBM1ZJiZf_G6b05ToOTjljT_vf7om1jcp6AREftPgeIQVgi_IW_hdkrcTrhl0mVr02NjBr3wD_v8FOaniypq80vJvrHOrx1w6aISuTdLUN5mKPSfyWbGLYXDajHn7t4er3oJHJ6BoA5fWcsgVRvql0hvA7wXpBUzwkUUX6NQCoQCtW5hBO96FYXKrw29iykQqcJgFj2gHurm6MYE2_xTfwcKQKxerJdSFDcmrwwcwrGjgjAdj7o8m13Fju1MgtGUqk9R56PyHHJAqvNsHrSt8ICLHXdgDAccaXF-uquTUXGfP6wOf_g3b6tb8BmQoheCCAUwWGXP8mtsNOJ__hoHVrgOsxCCtgLUMThzUUa6EIPbUXookgSuMDhYm5o6vXHWL2nB0ZDeq-X2db7Ro8Tfztgnn_2LyUO3EAszE0ny61uTOE5rvKGjeaLlZ9zC_FP8od2I5x56laMOx2INj8FRMKma_u5ZSXeIKXZqUCBaCmucX87bHcxudDDsFdxuPSLCoixMN-wLgF435p2ve_ltXrpoqmjPt03xAEkFtjL7XCqdXz8OgaPcj7HHIA_L3iW6Mo_8htpRZOUZQxDer08yQoZT2WFBaaEUnA50Si8qa7LDjuNXYO4zw_LvOCkXwDiUTd4NESW9M1dosFd4zK2dwRakW9TSjU3mhf6pJt6yHTkSYDzmZhJSB_NZTHysWfh4lrpZ5mA1CRJQfXhTwLXIcZJCwX-z1wr0K0NmkL4h4sGNhnW34U1iOA1cwA-8iAF3B1es2oLB82abn_ZjSgcyV_L1BQg-DDbcDkA1lj3c4wxE3vkl4PkPD0edhlGhC-kUsgU50AI8qBmRdx7enyhDRsftbfx3OIehD4vUIkZS8Jeu_UCosA0Apf4-8E0s34VMFsgi9FInSUmZxrPFp7DvHOTyoirdG1DWg_vl9G4-C7daqiyHaIrRxLYc1_Aa8GPbB72B9gzlAG2RE5jvHsdGWJx2an-B_kZXxCsB81sHIwlIPy5ioAK4RDqrDV-iqMM5HmeSYngjx_zfPeRI0G_Aj9u2eGhhKWLfP9H6EhS3m4knAyw3BhxnqSCJdqcDitfN5k7GdQEKC8Cdpa9mrg40XbZUPxVCRKjY7PI5oak-JBIBPrRh1rcQU8ueNXxupSsXcyIsdvFjQHsvAuv6LbAyc_hkBWlGFQB9Sd5S4tQVjPC2GPWA_H2YBTr7sI1pn0uoVO7f2CWR8iwXRRQK27sB7luTld1IAfjjep_FawAEbMWItfzZmgl-e2-f4QwTzocTJZsUsaJ_OmPoYjGXWD4igQhIvTtWiOsCmV9yKFZ386eTB7cCpZEcfb1NrGBQyg1UJrbTIRUcP-qgXMY-XW9t60nThCEmBhjmWBNIgoIYKW6DaXxyFt-noYTvExDf2B4xAgrnp2u1VjPKti5SYmbVF6YRS819eyRtsmk4ba1zCReeDnGz-ZmuGY4YHMfMMqXUhx4tuZTICIGCMtO83Dj4fr4jjxuS9245-CsJOpdU3egcvQroUB10ajWi-d9-1KTOZ8Yb1CFzKvXCDu8wfG0BsoBOhqfVdaBbla-ZeJEf373t8Im36OuUFrMd1TLllGM7MWuI-MXMJHbCQAPnbImFRPrSbHnH_seqgNCY0qfgECZr5g5VK5jvDlevWYMks9DrBNEB3yFa4AaYA8VrCQETU-uSuucIdWi-7CMirbb2xoxdPg0VNW4DXbPxUbIU38p7GQNUjSqnOWmqMndMpwrFir6N7NqdI3SojZGK2H5MyRsqfhY_uMDhCgmszsrTlJe6VvagbUnx7gk9ZTGxDC71B-f1GSJrPsi5dl3EsZGGQc_gRyN5DWX9xQ3DwQr9fi6OSBOd04gnc-Ndc3U1np2zqTIUWtNFVYdpTMGrdpRHCIX4dSAuijGI30fsFHIkyaHR9RORG_o--xw-zWoWKDBPayW4gvfFI6BWquoT1h6Udku73X6uXZtMwaCIX3XPBzJu7JuRynfp_lutI8aBoUBrdPcMmg_Ii7JqN8CbYzsa-10O209357xY6w0bTir5GW2nRtfv-eqIphliRrWhoAcri6mruQIT1qo-yt_9Zde7A4f5kgeY5E3rGiog==",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "YYsUau-CCv7fz7IPwL6U-QE",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:48:20 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=3310",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 48,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 8387,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 8387
+            }
+          ],
+          "thoughts_token_count": 498,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 8933,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": null,
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": "```javascript\nasync function getModelJSON(modelPath, fileName, fatal = true, options = {}) {\n    let buffer = await getModelFile(modelPath, fileName, fatal, options);\n    if (buffer === null) {\n        // Return empty object\n        return {}\n    }\n\n    let decoder = new TextDecoder('utf-8');\n    let jsonData = decoder.decode(buffer);\n\n    return JSON.parse(jsonData);\n}\n```",
+                  "thought": null,
+                  "thought_signature": null,
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "ZIsUaoTUIIzVz7IPutHKqQo",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:48:21 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1031",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 572
+            }
+          ],
+          "cached_content_token_count": 572,
+          "candidates_token_count": 100,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 1180,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 1180
+            }
+          ],
+          "thoughts_token_count": null,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 1280,
+          "traffic_type": null
+        }
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "workspace_id": "ts_004_ctx16k"
+        },
+        "durationMs": 9,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "list_files",
+        "transport": "in_memory"
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/utils/hub.js",
+          "workspace_id": "ts_004_ctx16k"
+        },
+        "durationMs": 4,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "list_symbols",
+        "transport": "in_memory"
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/utils/hub.js#function:getModelJSON:574",
+          "workspace_id": "ts_004_ctx16k"
+        },
+        "durationMs": 3,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "get_symbol",
+        "transport": "in_memory"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "workspace_id": "ts_004_ctx16k"
+        },
+        "id": "step-1-tool-1",
+        "isError": false,
+        "name": "list_files",
+        "result": [
+          {
+            "language": "typescript",
+            "parse_status": "ok_filtered",
+            "path": "src/utils/hub.js",
+            "repository": "xenova/transformers.js",
+            "symbol_count": 65
+          },
+          {
+            "language": "typescript",
+            "parse_status": "ok_filtered",
+            "path": "src/configs.js",
+            "repository": "xenova/transformers.js",
+            "symbol_count": 8
+          },
+          {
+            "language": "typescript",
+            "parse_status": "ok_filtered",
+            "path": "src/utils/maths.js",
+            "repository": "xenova/transformers.js",
+            "symbol_count": 228
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/utils/hub.js",
+          "workspace_id": "ts_004_ctx16k"
+        },
+        "id": "step-2-tool-1",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 75,
+            "kind": "method",
+            "name": "start",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/hub.js",
+            "qualified_name": "start",
+            "signature": "start(controller) {\n                    self.arrayBuffer().then(buffer => {\n                        controller.enqueue(new Uint8Array(buffer));\n                        controller.close();\n                    })\n                }",
+            "start_line": 70,
+            "symbol_id": "src/utils/hub.js#method:start:70"
+          },
+          {
+            "children": [],
+            "documentation": "Updates the 'content-type' header property of the response based on the extension of\nthe file specified by the filePath property of the current object.\n@returns {void}",
+            "end_line": 93,
+            "kind": "method",
+            "name": "updateContentType",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/hub.js",
+            "qualified_name": "updateContentType",
+            "signature": "updateContentType() {\n        // Set content-type header based on file extension\n        const extension = this.filePath.toString().split('.').pop().toLowerCase();\n        this.headers.set('content-type', this._CONTENT_TYPE_MAP[extension] ?? 'application/octet-stream');\n    }",
+            "start_line": 89,
+            "symbol_id": "src/utils/hub.js#method:updateContentType:89"
+          },
+          {
+            "children": [],
+            "documentation": "Clone the current FileResponse object.\n@returns {FileResponse} A new FileResponse object with the same properties as the current object.",
+            "end_line": 106,
+            "kind": "method",
+            "name": "clone",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/hub.js",
+            "qualified_name": "clone",
+            "signature": "clone() {\n        let response = new FileResponse(this.filePath);\n        response.exists = this.exists;\n        response.status = this.status;\n        response.statusText = this.statusText;\n        response.headers = new Headers(this.headers);\n        return response;\n    }",
+            "start_line": 99,
+            "symbol_id": "src/utils/hub.js#method:clone:99"
+          },
+          {
+            "children": [],
+            "documentation": "Reads the contents of the file specified by the filePath property and returns a Promise that\nresolves with an ArrayBuffer containing the file's contents.\n@returns {Promise<ArrayBuffer>} A Promise that resolves with an ArrayBuffer containing the file's contents.\n@throws {Error} If the file cannot be read.",
+            "end_line": 117,
+            "kind": "method",
+            "name": "arrayBuffer",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/hub.js",
+            "qualified_name": "arrayBuffer",
+            "signature": "async arrayBuffer() {\n        const data = await fs.promises.readFile(this.filePath);\n        return data.buffer;\n    }",
+            "start_line": 114,
+            "symbol_id": "src/utils/hub.js#method:arrayBuffer:114"
+          },
+          {
+            "children": [],
+            "documentation": "Reads the contents of the file specified by the filePath property and returns a Promise that\nresolves with a Blob containing the file's contents.\n@returns {Promise<Blob>} A Promise that resolves with a Blob containing the file's contents.\n@throws {Error} If the file cannot be read.",
+            "end_line": 128,
+            "kind": "method",
+            "name": "blob",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/hub.js",
+            "qualified_name": "blob",
+            "signature": "async blob() {\n        const data = await fs.promises.readFile(this.filePath);\n        return new Blob([data], { type: this.headers.get('content-type') });\n    }",
+            "start_line": 125,
+            "symbol_id": "src/utils/hub.js#method:blob:125"
+          },
+          {
+            "children": [],
+            "documentation": "Reads the contents of the file specified by the filePath property and returns a Promise that\nresolves with a string containing the file's contents.\n@returns {Promise<string>} A Promise that resolves with a string containing the file's contents.\n@throws {Error} If the file cannot be read.",
+            "end_line": 139,
+            "kind": "method",
+            "name": "text",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/hub.js",
+            "qualified_name": "text",
+            "signature": "async text() {\n        const data = await fs.promises.readFile(this.filePath, 'utf8');\n        return data;\n    }",
+            "start_line": 136,
+            "symbol_id": "src/utils/hub.js#method:text:136"
+          },
+          {
+            "children": [],
+            "documentation": "Reads the contents of the file specified by the filePath property and returns a Promise that\nresolves with a parsed JavaScript object containing the file's contents.\n\n@returns {Promise<Object>} A Promise that resolves with a parsed JavaScript object containing the file's contents.\n@throws {Error} If the file cannot be read.",
+            "end_line": 150,
+            "kind": "method",
+            "name": "json",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/hub.js",
+            "qualified_name": "json",
+            "signature": "async json() {\n        return JSON.parse(await this.text());\n    }",
+            "start_line": 148,
+            "symbol_id": "src/utils/hub.js#method:json:148"
+          },
+          {
+            "children": [],
+            "documentation": "Determines whether the given string is a valid HTTP or HTTPS URL.\n@param {string|URL} string The string to test for validity as an HTTP or HTTPS URL.\n@param {string[]} [validHosts=null] A list of valid hostnames. If specified, the URL's hostname must be in this list.\n@returns {boolean} True if the string is a valid HTTP or HTTPS URL, false otherwise.",
+            "end_line": 171,
+            "kind": "function",
+            "name": "isValidHttpUrl",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/hub.js",
+            "qualified_name": "isValidHttpUrl",
+            "signature": "function isValidHttpUrl(string, validHosts = null) {\n    // https://stackoverflow.com/a/43467144\n    let url;\n    try {\n        url = new URL(string);\n    } catch (_) {\n        return false;\n    }\n    if (validHosts && !validHosts.includes(url.hostname)) {\n        return false;\n    }\n    return url.protocol === \"http:\" || url.protocol === \"https:\";\n}",
+            "start_line": 159,
+            "symbol_id": "src/utils/hub.js#function:isValidHttpUrl:159"
+          },
+          {
+            "children": [],
+            "documentation": "Helper function to get a file, using either the Fetch API or FileSystem API.\n\n@param {URL|string} urlOrPath The URL/path of the file to get.\n@returns {Promise<FileResponse|Response>} A promise that resolves to a FileResponse object (if the file is retrieved using the FileSystem API), or a Response object (if the file is retrieved using the Fetch API).",
+            "end_line": 209,
+            "kind": "function",
+            "name": "getFile",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/hub.js",
+            "qualified_name": "getFile",
+            "signature": "async function getFile(urlOrPath) {\n\n    if (env.useFS && !isValidHttpUrl(urlOrPath)) {\n        return new FileResponse(urlOrPath);\n\n    } else if (typeof process !== 'undefined' && process?.release?.name === 'node') {\n        const IS_CI = !!process.env?.TESTING_REMOTELY;\n        const version = env.version;\n\n        const headers = new Headers();\n        headers.set('User-Agent', `transformers.js/${version}; is_ci/${IS_CI};`);\n\n        // Check whether we are making a request to the Hugging Face Hub.\n        const isHFURL = isValidHttpUrl(urlOrPath, ['huggingface.co', 'hf.co']);\n        if (isHFURL) {\n            // If an access token is present in the environment variables,\n            // we add it to the request headers.\n            // NOTE: We keep `HF_ACCESS_TOKEN` for backwards compatibility (as a fallback).\n            const token = process.env?.HF_TOKEN ?? process.env?.HF_ACCESS_TOKEN;\n            if (token) {\n                headers.set('Authorization', `Bearer ${token}`);\n            }\n        }\n        return fetch(urlOrPath, { headers });\n    } else {\n        // Running in a browser-environment, so we use default headers\n        // NOTE: We do not allow passing authorization headers in the browser,\n        // since this would require exposing the token to the client.\n        return fetch(urlOrPath);\n    }\n}",
+            "start_line": 179,
+            "symbol_id": "src/utils/hub.js#function:getFile:179"
+          },
+          {
+            "children": [],
+            "documentation": "Helper method to handle fatal errors that occur while trying to load a file from the Hugging Face Hub.\n@param {number} status The HTTP status code of the error.\n@param {string} remoteURL The URL of the file that could not be loaded.\n@param {boolean} fatal Whether to raise an error if the file could not be loaded.\n@returns {null} Returns `null` if `fatal = true`.\n@throws {Error} If `fatal = false`.",
+            "end_line": 242,
+            "kind": "function",
+            "name": "handleError",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/hub.js",
+            "qualified_name": "handleError",
+            "signature": "function handleError(status, remoteURL, fatal) {\n    if (!fatal) {\n        // File was not loaded correctly, but it is optional.\n        // TODO in future, cache the response?\n        return null;\n    }\n\n    const message = ERROR_MAPPING[status] ?? `Error (${status}) occurred while trying to load file`;\n    throw Error(`${message}: \"${remoteURL}\".`);\n}",
+            "start_line": 233,
+            "symbol_id": "src/utils/hub.js#function:handleError:233"
+          },
+          {
+            "children": [],
+            "documentation": "Instantiate a `FileCache` object.\n@param {string} path",
+            "end_line": 251,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/hub.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(path) {\n        this.path = path;\n    }",
+            "start_line": 249,
+            "symbol_id": "src/utils/hub.js#method:constructor:249"
+          },
+          {
+            "children": [],
+            "documentation": "Checks whether the given request is in the cache.\n@param {string} request\n@returns {Promise<FileResponse | undefined>}",
+            "end_line": 268,
+            "kind": "method",
+            "name": "match",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/hub.js",
+            "qualified_name": "match",
+            "signature": "async match(request) {\n\n        let filePath = path.join(this.path, request);\n        let file = new FileResponse(filePath);\n\n        if (file.exists) {\n            return file;\n        } else {\n            return undefined;\n        }\n    }",
+            "start_line": 258,
+            "symbol_id": "src/utils/hub.js#method:match:258"
+          },
+          {
+            "children": [],
+            "documentation": "Adds the given response to the cache.\n@param {string} request\n@param {Response|FileResponse} response\n@returns {Promise<void>}",
+            "end_line": 288,
+            "kind": "method",
+            "name": "put",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/hub.js",
+            "qualified_name": "put",
+            "signature": "async put(request, response) {\n        const buffer = Buffer.from(await response.arrayBuffer());\n\n        let outputPath = path.join(this.path, request);\n\n        try {\n            await fs.promises.mkdir(path.dirname(outputPath), { recursive: true });\n            await fs.promises.writeFile(outputPath, buffer);\n\n        } catch (err) {\n            console.warn('An error occurred while writing the file to cache:', err)\n        }\n    }",
+            "start_line": 276,
+            "symbol_id": "src/utils/hub.js#method:put:276"
+          },
+          {
+            "children": [],
+            "documentation": "@param {FileCache|Cache} cache The cache to search\n@param {string[]} names The names of the item to search for\n@returns {Promise<FileResponse|Response|undefined>} The item from the cache, or undefined if not found.",
+            "end_line": 314,
+            "kind": "function",
+            "name": "tryCache",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/hub.js",
+            "qualified_name": "tryCache",
+            "signature": "async function tryCache(cache, ...names) {\n    for (let name of names) {\n        try {\n            let result = await cache.match(name);\n            if (result) return result;\n        } catch (e) {\n            continue;\n        }\n    }\n    return undefined;\n}",
+            "start_line": 304,
+            "symbol_id": "src/utils/hub.js#function:tryCache:304"
+          },
+          {
+            "children": [],
+            "documentation": "Retrieves a file from either a remote URL using the Fetch API or from the local file system using the FileSystem API.\nIf the filesystem is available and `env.useCache = true`, the file will be downloaded and cached.\n\n@param {string} path_or_repo_id This can be either:\n- a string, the *model id* of a model repo on huggingface.co.\n- a path to a *directory* potentially containing the file.\n@param {string} filename The name of the file to locate in `path_or_repo`.\n@param {boolean} [fatal=true] Whether to throw an error if the file is not found.\n@param {PretrainedOptions} [options] An object containing optional parameters.\n\n@throws Will throw an error if the file is not found and `fatal` is true.\n@returns {Promise} A Promise that resolves with the file content as a buffer.",
+            "end_line": 562,
+            "kind": "function",
+            "name": "getModelFile",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/hub.js",
+            "qualified_name": "getModelFile",
+            "signature": "async function getModelFile(path_or_repo_id, filename, fatal = true, options = {}) {\n\n    if (!env.allowLocalModels) {\n        // User has disabled local models, so we just make sure other settings are correct.\n\n        if (options.local_files_only) {\n            throw Error(\"Invalid configuration detected: local models are disabled (`env.allowLocalModels=false`) but you have requested to only use local models (`local_files_only=true`).\")\n        } else if (!env.allowRemoteModels) {\n            throw Error(\"Invalid configuration detected: both local and remote models are disabled. Fix by setting `env.allowLocalModels` or `env.allowRemoteModels` to `true`.\")\n        }\n    }\n\n    // Initiate file retrieval\n    dispatchCallback(options.progress_callback, {\n        status: 'initiate',\n        name: path_or_repo_id,\n        file: filename\n    })\n\n    // First, check if the a caching backend is available\n    // If no caching mechanism available, will download the file every time\n    let cache;\n    if (!cache && env.useBrowserCache) {\n        if (typeof caches === 'undefined') {\n            throw Error('Browser cache is not available in this environment.')\n        }\n        try {\n            // In some cases, the browser cache may be visible, but not accessible due to security restrictions.\n            // For example, when running an application in an iframe, if a user attempts to load the page in\n            // incognito mode, the following error is thrown: `DOMException: Failed to execute 'open' on 'CacheStorage':\n            // An attempt was made to break through the security policy of the user agent.`\n            // So, instead of crashing, we just ignore the error and continue without using the cache.\n            cache = await caches.open('transformers-cache');\n        } catch (e) {\n            console.warn('An error occurred while opening the browser cache:', e);\n        }\n    }\n\n    if (!cache && env.useFSCache) {\n        // TODO throw error if not available\n\n        // If `cache_dir` is not specified, use the default cache directory\n        cache = new FileCache(options.cache_dir ?? env.cacheDir);\n    }\n\n    if (!cache && env.useCustomCache) {\n        // Allow the user to specify a custom cache system.\n        if (!env.customCache) {\n            throw Error('`env.useCustomCache=true`, but `env.customCache` is not defined.')\n        }\n\n        // Check that the required methods are defined:\n        if (!env.customCache.match || !env.customCache.put) {\n            throw new Error(\n                \"`env.customCache` must be an object which implements the `match` and `put` functions of the Web Cache API. \" +\n                \"For more information, see https://developer.mozilla.org/en-US/docs/Web/API/Cache\"\n            )\n        }\n        cache = env.customCache;\n    }\n\n    const revision = options.revision ?? 'main';\n\n    let requestURL = pathJoin(path_or_repo_id, filename);\n    let localPath = pathJoin(env.localModelPath, requestURL);\n\n    let remoteURL = pathJoin(\n        env.remoteHost,\n        env.remotePathTemplate\n            .replaceAll('{model}', path_or_repo_id)\n            .replaceAll('{revision}', encodeURIComponent(revision)),\n        filename\n    );\n\n    // Choose cache key for filesystem cache\n    // When using the main revision (default), we use the request URL as the cache key.\n    // If a specific revision is requested, we account for this in the cache key.\n    let fsCacheKey = revision === 'main' ? requestURL : pathJoin(path_or_repo_id, revision, filename);\n\n    /** @type {string} */\n    let cacheKey;\n    let proposedCacheKey = cache instanceof FileCache ? fsCacheKey : remoteURL;\n\n    // Whether to cache the final response in the end.\n    let toCacheResponse = false;\n\n    /** @type {Response|FileResponse|undefined} */\n    let response;\n\n    if (cache) {\n        // A caching system is available, so we try to get the file from it.\n        //  1. We first try to get from cache using the local path. In some environments (like deno),\n        //     non-URL cache keys are not allowed. In these cases, `response` will be undefined.\n        //  2. If no response is found, we try to get from cache using the remote URL or file system cache.\n        response = await tryCache(cache, localPath, proposedCacheKey);\n    }\n\n    const cacheHit = response !== undefined;\n\n    if (response === undefined) {\n        // Caching not available, or file is not cached, so we perform the request\n\n        if (env.allowLocalModels) {\n            // Accessing local models is enabled, so we try to get the file locally.\n            // If request is a valid HTTP URL, we skip the local file check. Otherwise, we try to get the file locally.\n            const isURL = isValidHttpUrl(requestURL);\n            if (!isURL) {\n                try {\n                    response = await getFile(localPath);\n                    cacheKey = localPath; // Update the cache key to be the local path\n                } catch (e) {\n                    // Something went wrong while trying to get the file locally.\n                    // NOTE: error handling is done in the next step (since `response` will be undefined)\n                    console.warn(`Unable to load from local path \"${localPath}\": \"${e}\"`);\n                }\n            } else if (options.local_files_only) {\n                throw new Error(`\\`local_files_only=true\\`, but attempted to load a remote file from: ${requestURL}.`);\n            } else if (!env.allowRemoteModels) {\n                throw new Error(`\\`env.allowRemoteModels=false\\`, but attempted to load a remote file from: ${requestURL}.`);\n            }\n        }\n\n        if (response === undefined || response.status === 404) {\n            // File not found locally. This means either:\n            // - The user has disabled local file access (`env.allowLocalModels=false`)\n            // - the path is a valid HTTP url (`response === undefined`)\n            // - the path is not a valid HTTP url and the file is not present on the file system or local server (`response.status === 404`)\n\n            if (options.local_files_only || !env.allowRemoteModels) {\n                // User requested local files only, but the file is not found locally.\n                if (fatal) {\n                    throw Error(`\\`local_files_only=true\\` or \\`env.allowRemoteModels=false\\` and file was not found locally at \"${localPath}\".`);\n                } else {\n                    // File not found, but this file is optional.\n                    // TODO in future, cache the response?\n                    return null;\n                }\n            }\n\n            // File not found locally, so we try to download it from the remote server\n            response = await getFile(remoteURL);\n\n            if (response.status !== 200) {\n                return handleError(response.status, remoteURL, fatal);\n            }\n\n            // Success! We use the proposed cache key from earlier\n            cacheKey = proposedCacheKey;\n        }\n\n        // Only cache the response if:\n        toCacheResponse =\n            cache                              // 1. A caching system is available\n            && typeof Response !== 'undefined' // 2. `Response` is defined (i.e., we are in a browser-like environment)\n            && response instanceof Response    // 3. result is a `Response` object (i.e., not a `FileResponse`)\n            && response.status === 200         // 4. request was successful (status code 200)\n    }\n\n    // Start downloading\n    dispatchCallback(options.progress_callback, {\n        status: 'download',\n        name: path_or_repo_id,\n        file: filename\n    })\n\n    const progressInfo = {\n        status: 'progress',\n        name: path_or_repo_id,\n        file: filename\n    }\n\n    /** @type {Uint8Array} */\n    let buffer;\n\n    if (!options.progress_callback) {\n        // If no progress callback is specified, we can use the `.arrayBuffer()`\n        // method to read the response.\n        buffer = new Uint8Array(await response.arrayBuffer());\n\n    } else if (\n        cacheHit // The item is being read from the cache\n        &&\n        typeof navigator !== 'undefined' && /firefox/i.test(navigator.userAgent) // We are in Firefox\n    ) {\n        // Due to bug in Firefox, we cannot display progress when loading from cache.\n        // Fortunately, since this should be instantaneous, this should not impact users too much.\n        buffer = new Uint8Array(await response.arrayBuffer());\n\n        // For completeness, we still fire the final progress callback\n        dispatchCallback(options.progress_callback, {\n            ...progressInfo,\n            progress: 100,\n            loaded: buffer.length,\n            total: buffer.length,\n        })\n    } else {\n        buffer = await readResponse(response, data => {\n            dispatchCallback(options.progress_callback, {\n                ...progressInfo,\n                ...data,\n            })\n        })\n    }\n\n    if (\n        // Only cache web responses\n        // i.e., do not cache FileResponses (prevents duplication)\n        toCacheResponse && cacheKey\n        &&\n        // Check again whether request is in cache. If not, we add the response to the cache\n        (await cache.match(cacheKey) === undefined)\n    ) {\n        // NOTE: We use `new Response(buffer, ...)` instead of `response.clone()` to handle LFS files\n        await cache.put(cacheKey, new Response(buffer, {\n            headers: response.headers\n        }))\n            .catch(err => {\n                // Do not crash if unable to add to cache (e.g., QuotaExceededError).\n                // Rather, log a warning and proceed with execution.\n                console.warn(`Unable to add response to browser cache: ${err}.`);\n            });\n\n    }\n\n    dispatchCallback(options.progress_callback, {\n        status: 'done',\n        name: path_or_repo_id,\n        file: filename\n    });\n\n    return buffer;\n}",
+            "start_line": 331,
+            "symbol_id": "src/utils/hub.js#function:getModelFile:331"
+          },
+          {
+            "children": [],
+            "documentation": "Fetches a JSON file from a given path and file name.\n\n@param {string} modelPath The path to the directory containing the file.\n@param {string} fileName The name of the file to fetch.\n@param {boolean} [fatal=true] Whether to throw an error if the file is not found.\n@param {PretrainedOptions} [options] An object containing optional parameters.\n@returns {Promise<Object>} The JSON data parsed into a JavaScript object.\n@throws Will throw an error if the file is not found and `fatal` is true.",
+            "end_line": 585,
+            "kind": "function",
+            "name": "getModelJSON",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/hub.js",
+            "qualified_name": "getModelJSON",
+            "signature": "async function getModelJSON(modelPath, fileName, fatal = true, options = {}) {\n    let buffer = await getModelFile(modelPath, fileName, fatal, options);\n    if (buffer === null) {\n        // Return empty object\n        return {}\n    }\n\n    let decoder = new TextDecoder('utf-8');\n    let jsonData = decoder.decode(buffer);\n\n    return JSON.parse(jsonData);\n}",
+            "start_line": 574,
+            "symbol_id": "src/utils/hub.js#function:getModelJSON:574"
+          },
+          {
+            "children": [],
+            "documentation": "Read and track progress when reading a Response object\n\n@param {any} response The Response object to read\n@param {function} progress_callback The function to call with progress updates\n@returns {Promise<Uint8Array>} A Promise that resolves with the Uint8Array buffer",
+            "end_line": 641,
+            "kind": "function",
+            "name": "readResponse",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/hub.js",
+            "qualified_name": "readResponse",
+            "signature": "async function readResponse(response, progress_callback) {\n\n    const contentLength = response.headers.get('Content-Length');\n    if (contentLength === null) {\n        console.warn('Unable to determine content-length from response headers. Will expand buffer when needed.')\n    }\n    let total = parseInt(contentLength ?? '0');\n    let buffer = new Uint8Array(total);\n    let loaded = 0;\n\n    const reader = response.body.getReader();\n    async function read() {\n        const { done, value } = await reader.read();\n        if (done) return;\n\n        let newLoaded = loaded + value.length;\n        if (newLoaded > total) {\n            total = newLoaded;\n\n            // Adding the new data will overflow buffer.\n            // In this case, we extend the buffer\n            let newBuffer = new Uint8Array(total);\n\n            // copy contents\n            newBuffer.set(buffer);\n\n            buffer = newBuffer;\n        }\n        buffer.set(value, loaded)\n        loaded = newLoaded;\n\n        const progress = (loaded / total) * 100;\n\n        // Call your function here\n        progress_callback({\n            progress: progress,\n            loaded: loaded,\n            total: total,\n        })\n\n        return read();\n    }\n\n    // Actually read\n    await read();\n\n    return buffer;\n}",
+            "start_line": 594,
+            "symbol_id": "src/utils/hub.js#function:readResponse:594"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 635,
+            "kind": "function",
+            "name": "read",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/hub.js",
+            "qualified_name": "read",
+            "signature": "async function read() {\n        const { done, value } = await reader.read();\n        if (done) return;\n\n        let newLoaded = loaded + value.length;\n        if (newLoaded > total) {\n            total = newLoaded;\n\n            // Adding the new data will overflow buffer.\n            // In this case, we extend the buffer\n            let newBuffer = new Uint8Array(total);\n\n            // copy contents\n            newBuffer.set(buffer);\n\n            buffer = newBuffer;\n        }\n        buffer.set(value, loaded)\n        loaded = newLoaded;\n\n        const progress = (loaded / total) * 100;\n\n        // Call your function here\n        progress_callback({\n            progress: progress,\n            loaded: loaded,\n            total: total,\n        })\n\n        return read();\n    }",
+            "start_line": 605,
+            "symbol_id": "src/utils/hub.js#function:read:605"
+          },
+          {
+            "children": [],
+            "documentation": "Joins multiple parts of a path into a single path, while handling leading and trailing slashes.\n\n@param {...string} parts Multiple parts of a path.\n@returns {string} A string representing the joined path.",
+            "end_line": 661,
+            "kind": "function",
+            "name": "pathJoin",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/hub.js",
+            "qualified_name": "pathJoin",
+            "signature": "function pathJoin(...parts) {\n    // https://stackoverflow.com/a/55142565\n    parts = parts.map((part, index) => {\n        if (index) {\n            part = part.replace(new RegExp('^/'), '');\n        }\n        if (index !== parts.length - 1) {\n            part = part.replace(new RegExp('/$'), '');\n        }\n        return part;\n    })\n    return parts.join('/');\n}",
+            "start_line": 649,
+            "symbol_id": "src/utils/hub.js#function:pathJoin:649"
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/utils/hub.js#function:getModelJSON:574",
+          "workspace_id": "ts_004_ctx16k"
+        },
+        "id": "step-3-tool-1",
+        "isError": false,
+        "name": "get_symbol",
+        "result": {
+          "children": [],
+          "code": "async function getModelJSON(modelPath, fileName, fatal = true, options = {}) {\n    let buffer = await getModelFile(modelPath, fileName, fatal, options);\n    if (buffer === null) {\n        // Return empty object\n        return {}\n    }\n\n    let decoder = new TextDecoder('utf-8');\n    let jsonData = decoder.decode(buffer);\n\n    return JSON.parse(jsonData);\n}",
+          "documentation": "Fetches a JSON file from a given path and file name.\n\n@param {string} modelPath The path to the directory containing the file.\n@param {string} fileName The name of the file to fetch.\n@param {boolean} [fatal=true] Whether to throw an error if the file is not found.\n@param {PretrainedOptions} [options] An object containing optional parameters.\n@returns {Promise<Object>} The JSON data parsed into a JavaScript object.\n@throws Will throw an error if the file is not found and `fatal` is true.",
+          "end_line": 585,
+          "kind": "function",
+          "name": "getModelJSON",
+          "parent_id": null,
+          "parent_name": null,
+          "path": "src/utils/hub.js",
+          "qualified_name": "getModelJSON",
+          "signature": "async function getModelJSON(modelPath, fileName, fatal = true, options = {}) {\n    let buffer = await getModelFile(modelPath, fileName, fatal, options);\n    if (buffer === null) {\n        // Return empty object\n        return {}\n    }\n\n    let decoder = new TextDecoder('utf-8');\n    let jsonData = decoder.decode(buffer);\n\n    return JSON.parse(jsonData);\n}",
+          "start_line": 574,
+          "symbol_id": "src/utils/hub.js#function:getModelJSON:574"
+        }
+      }
+    ]
+  },
+  "trialId": "9f4a2730a3"
+}

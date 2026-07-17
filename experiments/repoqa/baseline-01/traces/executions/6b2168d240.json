@@ -1,0 +1,167 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 3659,
+          "metadata": {
+            "model": "gemini-2.5-flash-lite",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 3673,
+          "metadata": {},
+          "name": "strategy.inline.execute",
+          "type": "strategy.inline.execute"
+        },
+        {
+          "duration_ms": 3673,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 14,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": null,
+        "cachedInputTokens": null,
+        "contextBytes": 59097,
+        "contextChars": 59097,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 0,
+        "inputTokens": 15406,
+        "loopControlDurationMsEstimated": 14,
+        "mcpToolCalls": 0,
+        "modelCalls": 1,
+        "modelDurationMs": 3659,
+        "outputTokens": 532,
+        "promptChars": 60234,
+        "questionTokensEstimated": 187,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": null,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 1,
+        "strategyDurationMs": 3673,
+        "taskStatementChars": 1115,
+        "toolCalls": 0,
+        "toolDurationMs": null,
+        "totalDurationMs": 3673,
+        "totalTokens": 15938,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": {
+      "automatic_function_calling_history": [],
+      "candidates": [
+        {
+          "avg_logprobs": null,
+          "citation_metadata": {
+            "citations": [
+              {
+                "end_index": 500,
+                "license": "",
+                "publication_date": null,
+                "start_index": 10,
+                "title": null,
+                "uri": "https://github.com/psf/black"
+              },
+              {
+                "end_index": 1894,
+                "license": "",
+                "publication_date": null,
+                "start_index": 369,
+                "title": null,
+                "uri": "https://github.com/psf/black"
+              }
+            ]
+          },
+          "content": {
+            "parts": [
+              {
+                "code_execution_result": null,
+                "executable_code": null,
+                "file_data": null,
+                "function_call": null,
+                "function_response": null,
+                "inline_data": null,
+                "media_resolution": null,
+                "part_metadata": null,
+                "text": "```python\ndef _merge_string_group(\n        self, line: Line, string_indices: List[int]\n    ) -> TResult[Line]:\n        \"\"\"\n        Merges string groups (i.e. set of adjacent strings).\n\n        Each index from `string_indices` designates one string group's first\n        leaf in `line.leaves`.\n\n        Returns:\n            Ok(new_line), if ALL of the validation checks found in\n            _validate_msg(...) pass.\n                OR\n            Err(CannotTransform), otherwise.\n        \"\"\"\n        LL = line.leaves\n\n        is_valid_index = is_valid_index_factory(LL)\n\n        # A dict of {string_idx: tuple[num_of_strings, string_leaf]}.\n        merged_string_idx_dict: Dict[int, Tuple[int, Leaf]] = {}\n        for string_idx in string_indices:\n            vresult = self._validate_msg(line, string_idx)\n            if isinstance(vresult, Err):\n                continue\n            merged_string_idx_dict[string_idx] = self._merge_one_string_group(\n                LL, string_idx, is_valid_index\n            )\n\n        if not merged_string_idx_dict:\n            return TErr(\"No string group is merged\")\n\n        # Build the final line ('new_line') that this method will later return.\n        new_line = line.clone()\n        previous_merged_string_idx = -1\n        previous_merged_num_of_strings = -1\n        for i, leaf in enumerate(LL):\n            if i in merged_string_idx_dict:\n                previous_merged_string_idx = i\n                previous_merged_num_of_strings, string_leaf = merged_string_idx_dict[i]\n                new_line.append(string_leaf)\n\n            if (\n                previous_merged_string_idx\n                <= i\n                < previous_merged_string_idx + previous_merged_num_of_strings\n            ):\n                for comment_leaf in line.comments_after(LL[i]):\n                    new_line.append(comment_leaf, preformatted=True)\n                continue\n\n            append_leaves(new_line, line, [leaf])\n\n        return Ok(new_line)\n```",
+                "thought": null,
+                "thought_signature": null,
+                "tool_call": null,
+                "tool_response": null,
+                "video_metadata": null
+              }
+            ],
+            "role": "model"
+          },
+          "finish_message": null,
+          "finish_reason": "STOP",
+          "grounding_metadata": null,
+          "index": 0,
+          "logprobs_result": null,
+          "safety_ratings": null,
+          "token_count": null,
+          "url_context_metadata": null
+        }
+      ],
+      "create_time": null,
+      "model_status": null,
+      "model_version": "gemini-2.5-flash-lite",
+      "parsed": null,
+      "prompt_feedback": null,
+      "response_id": "Bn4UasTpHNjqz7IPz9-AiA4",
+      "sdk_http_response": {
+        "body": null,
+        "headers": {
+          "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+          "content-encoding": "gzip",
+          "content-type": "application/json; charset=UTF-8",
+          "date": "Mon, 25 May 2026 16:51:21 GMT",
+          "server": "scaffolding on HTTPServer2",
+          "server-timing": "gfet4t7; dur=3449",
+          "transfer-encoding": "chunked",
+          "vary": "Origin, X-Origin, Referer",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "x-gemini-service-tier": "standard",
+          "x-xss-protection": "0"
+        }
+      },
+      "usage_metadata": {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 532,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 15406,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 15406
+          }
+        ],
+        "thoughts_token_count": null,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 15938,
+        "traffic_type": null
+      }
+    },
+    "serverMcp": [],
+    "toolCalls": []
+  },
+  "trialId": "6b2168d240"
+}

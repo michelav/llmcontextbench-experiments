@@ -1,0 +1,928 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 1760,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "java_002_ctx16k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 5,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "language": "java",
+                "parse_status": "ok_filtered",
+                "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+                "repository": "google/gson",
+                "symbol_count": 7
+              },
+              {
+                "language": "java",
+                "parse_status": "ok_filtered",
+                "path": "gson/src/main/java/com/google/gson/ToNumberPolicy.java",
+                "repository": "google/gson",
+                "symbol_count": 0
+              },
+              {
+                "language": "java",
+                "parse_status": "ok_filtered",
+                "path": "gson/src/main/java/com/google/gson/JsonStreamParser.java",
+                "repository": "google/gson",
+                "symbol_count": 6
+              },
+              {
+                "language": "java",
+                "parse_status": "ok_filtered",
+                "path": "gson/src/main/java/com/google/gson/package-info.java",
+                "repository": "google/gson",
+                "symbol_count": 0
+              },
+              {
+                "language": "java",
+                "parse_status": "ok_filtered",
+                "path": "gson/src/main/java/com/google/gson/stream/package-info.java",
+                "repository": "google/gson",
+                "symbol_count": 0
+              },
+              {
+                "language": "java",
+                "parse_status": "ok_filtered",
+                "path": "gson/src/main/java/com/google/gson/reflect/package-info.java",
+                "repository": "google/gson",
+                "symbol_count": 0
+              },
+              {
+                "language": "java",
+                "parse_status": "ok_filtered",
+                "path": "gson/src/main/java/com/google/gson/internal/package-info.java",
+                "repository": "google/gson",
+                "symbol_count": 0
+              },
+              {
+                "language": "java",
+                "parse_status": "ok_filtered",
+                "path": "gson/src/main/java/com/google/gson/internal/bind/TypeAdapterRuntimeTypeWrapper.java",
+                "repository": "google/gson",
+                "symbol_count": 6
+              },
+              {
+                "language": "java",
+                "parse_status": "ok_filtered",
+                "path": "gson/src/main/java/com/google/gson/annotations/package-info.java",
+                "repository": "google/gson",
+                "symbol_count": 0
+              }
+            ],
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "java_002_ctx16k"
+              },
+              "durationMs": 5,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "list_files",
+              "transport": "in_memory"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1494,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+              "workspace_id": "java_002_ctx16k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 4,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "Parses the specified JSON string into a parse tree. An exception is thrown if the JSON string\nhas multiple top-level JSON elements, or if there is trailing data.\n\n<p>The JSON string is parsed in {@linkplain JsonReader#setStrictness(Strictness) lenient mode}.\n\n@param json JSON text\n@return a parse tree of {@link JsonElement}s corresponding to the specified JSON\n@throws JsonParseException if the specified text is not valid JSON\n@since 2.8.6",
+                "end_line": 54,
+                "kind": "method",
+                "name": "parseString",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+                "qualified_name": "parseString",
+                "signature": "public static JsonElement parseString(String json) throws JsonSyntaxException {\n    return parseReader(new StringReader(json));\n  }",
+                "start_line": 52,
+                "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parseString:52"
+              },
+              {
+                "children": [],
+                "documentation": "Parses the complete JSON string provided by the reader into a parse tree. An exception is\nthrown if the JSON string has multiple top-level JSON elements, or if there is trailing data.\n\n<p>The JSON data is parsed in {@linkplain JsonReader#setStrictness(Strictness) lenient mode}.\n\n@param reader JSON text\n@return a parse tree of {@link JsonElement}s corresponding to the specified JSON\n@throws JsonParseException if there is an IOException or if the specified text is not valid\nJSON\n@since 2.8.6",
+                "end_line": 83,
+                "kind": "method",
+                "name": "parseReader",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+                "qualified_name": "parseReader",
+                "signature": "public static JsonElement parseReader(Reader reader) throws JsonIOException, JsonSyntaxException {\n    try {\n      JsonReader jsonReader = new JsonReader(reader);\n      JsonElement element = parseReader(jsonReader);\n      if (!element.isJsonNull() && jsonReader.peek() != JsonToken.END_DOCUMENT) {\n        throw new JsonSyntaxException(\"Did not consume the entire document.\");\n      }\n      return element;\n    } catch (MalformedJsonException e) {\n      throw new JsonSyntaxException(e);\n    } catch (IOException e) {\n      throw new JsonIOException(e);\n    } catch (NumberFormatException e) {\n      throw new JsonSyntaxException(e);\n    }\n  }",
+                "start_line": 68,
+                "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parseReader:68"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the next value from the JSON stream as a parse tree. Unlike the other {@code parse}\nmethods, no exception is thrown if the JSON data has multiple top-level JSON elements, or if\nthere is trailing data.\n\n<p>The JSON data is parsed in {@linkplain JsonReader#setStrictness(Strictness) lenient mode},\nregardless of the strictness setting of the provided reader. The strictness setting of the\nreader is restored once this method returns.\n\n@throws JsonParseException if there is an IOException or if the specified text is not valid\nJSON\n@since 2.8.6",
+                "end_line": 111,
+                "kind": "method",
+                "name": "parseReader",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+                "qualified_name": "parseReader",
+                "signature": "public static JsonElement parseReader(JsonReader reader)\n      throws JsonIOException, JsonSyntaxException {\n    Strictness strictness = reader.getStrictness();\n    reader.setStrictness(Strictness.LENIENT);\n    try {\n      return Streams.parse(reader);\n    } catch (StackOverflowError e) {\n      throw new JsonParseException(\"Failed parsing JSON source: \" + reader + \" to Json\", e);\n    } catch (OutOfMemoryError e) {\n      throw new JsonParseException(\"Failed parsing JSON source: \" + reader + \" to Json\", e);\n    } finally {\n      reader.setStrictness(strictness);\n    }\n  }",
+                "start_line": 98,
+                "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parseReader:98"
+              },
+              {
+                "children": [],
+                "documentation": "@deprecated Use {@link JsonParser#parseString}",
+                "end_line": 120,
+                "kind": "method",
+                "name": "parse",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+                "qualified_name": "parse",
+                "signature": "@Deprecated\n  @InlineMe(replacement = \"JsonParser.parseString(json)\", imports = \"com.google.gson.JsonParser\")\n  public JsonElement parse(String json) throws JsonSyntaxException {\n    return parseString(json);\n  }",
+                "start_line": 116,
+                "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parse:116"
+              },
+              {
+                "children": [],
+                "documentation": "@deprecated Use {@link JsonParser#parseReader(Reader)}",
+                "end_line": 129,
+                "kind": "method",
+                "name": "parse",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+                "qualified_name": "parse",
+                "signature": "@Deprecated\n  @InlineMe(replacement = \"JsonParser.parseReader(json)\", imports = \"com.google.gson.JsonParser\")\n  public JsonElement parse(Reader json) throws JsonIOException, JsonSyntaxException {\n    return parseReader(json);\n  }",
+                "start_line": 125,
+                "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parse:125"
+              },
+              {
+                "children": [],
+                "documentation": "@deprecated Use {@link JsonParser#parseReader(JsonReader)}",
+                "end_line": 138,
+                "kind": "method",
+                "name": "parse",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+                "qualified_name": "parse",
+                "signature": "@Deprecated\n  @InlineMe(replacement = \"JsonParser.parseReader(json)\", imports = \"com.google.gson.JsonParser\")\n  public JsonElement parse(JsonReader json) throws JsonIOException, JsonSyntaxException {\n    return parseReader(json);\n  }",
+                "start_line": 134,
+                "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parse:134"
+              }
+            ],
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+                "workspace_id": "java_002_ctx16k"
+              },
+              "durationMs": 4,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "list_symbols",
+              "transport": "in_memory"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 2161,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parseString:52",
+              "workspace_id": "java_002_ctx16k"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 6,
+          "metadata": {
+            "is_error": false,
+            "result": {
+              "children": [],
+              "code": "public static JsonElement parseString(String json) throws JsonSyntaxException {\n    return parseReader(new StringReader(json));\n  }",
+              "documentation": "Parses the specified JSON string into a parse tree. An exception is thrown if the JSON string\nhas multiple top-level JSON elements, or if there is trailing data.\n\n<p>The JSON string is parsed in {@linkplain JsonReader#setStrictness(Strictness) lenient mode}.\n\n@param json JSON text\n@return a parse tree of {@link JsonElement}s corresponding to the specified JSON\n@throws JsonParseException if the specified text is not valid JSON\n@since 2.8.6",
+              "end_line": 54,
+              "kind": "method",
+              "name": "parseString",
+              "parent_id": null,
+              "parent_name": null,
+              "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+              "qualified_name": "parseString",
+              "signature": "public static JsonElement parseString(String json) throws JsonSyntaxException {\n    return parseReader(new StringReader(json));\n  }",
+              "start_line": 52,
+              "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parseString:52"
+            },
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parseString:52",
+                "workspace_id": "java_002_ctx16k"
+              },
+              "durationMs": 6,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "get_symbol",
+              "transport": "in_memory"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1365,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 6852,
+          "metadata": {},
+          "name": "strategy.local_mcp.execute",
+          "type": "strategy.local_mcp.execute"
+        },
+        {
+          "duration_ms": 6852,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 72,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": null,
+        "cachedInputTokens": null,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 3,
+        "inputTokens": 5068,
+        "loopControlDurationMsEstimated": 57,
+        "mcpToolCalls": 3,
+        "modelCalls": 4,
+        "modelDurationMs": 6780,
+        "outputTokens": 172,
+        "promptChars": 974,
+        "questionTokensEstimated": 130,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 416,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 4,
+        "strategyDurationMs": 6852,
+        "taskStatementChars": 801,
+        "toolCalls": 3,
+        "toolDurationMs": 15,
+        "totalDurationMs": 6852,
+        "totalTokens": 5656,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "workspace_id": "java_002_ctx16k"
+                    },
+                    "id": null,
+                    "name": "list_files",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CvEFAQw51sc4p-kdx3tbkZdsaN6jCXYMuGs0YlyifO47-PefCeyIU7G_LN2YMN-rZ6gpKyCMMwPB2Raq-VXy7bx3weosEdOsINQWeiaQIH1dp8mtSROR4b2p3AIc4UruQAlwiCYyREMYVsgY_dZupRMBINv4Msz67pIO2fCtNTzE8QCfAGqdP1TqTSXLYZcknLJshVV6thPTgE-qzH5L1dHMHU_yUNDLjb7lTRu7noEC-UIl-rls3ed2PFa8lq0t6GXPJTPAaztxxRYnA2rDcVDMIeInVO2iIEMQdTh7sUO09ddBgs4VCELDGyfQU1QIB4MwDO7j5hMtg3PIVr4T0KsH765LR3lhQnzFL1KLA-613TXBACIecE5J-zUBAY4IjT7fihCDPdty7KnShFPj45XoJdNgEXdxEtGo4LXbh-yhAQo9A12xV2zVYK4wH-Pay-xczcfYv1esH9JvEDAF69zemOKVAzW_tpf8Bq9dps4CoSCc5YG3WJuHGLrVAftBS_u6ij_97VXdi68zxuHg2fFH56rk5P4hc8V5CtztbvZaE70bWHZMo3si6EmgAJrm9bJhYVq8NYW6YfkjcN66U0r9bVjU9BaaAC_M9LfGO5khYPKkfefKHjx-_vDDteRbSutzEk6QpZr2FcjJ8tJLUjTUs2E_K0FKQgjE9mRtC32eewI3hZmnw0JLw-OzZtHOqpZFAdtwdFdlIknBrxQdhXAEr5MwopjKLaQhEV8t1oyt7xBBw-EH9sKUGb0cCoZvILe94MNP-pE3JOJSGrRCwLuD8RXMPccMVK3qs-esmOlUjqFmcIMBi-iyxLWncGZQaBrrddEGYsGpuTYmjJVDXC_6eMagl4CGRrNxrKKiwAf4uG5yFWxqWGIsSU-AyfXJMYzRulCu94T4t_zCayVOx1eTTD_Rq51J2HGe-hXM2OVubvj8YvpJkMA5E8c_YgC9VJp6xGNIrdAIdc5qOM-uqSpHEt4L7EPqb0tRLSpv-Suo4RMj",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "P4UUasDhCqKGz7IPqKj2qAw",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:22:08 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1546",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 26,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 597,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 597
+            }
+          ],
+          "thoughts_token_count": 159,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 782,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "kind": "function",
+                      "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+                      "workspace_id": "java_002_ctx16k"
+                    },
+                    "id": null,
+                    "name": "list_symbols",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CvgBAQw51scmrJaeEU9qNFLtB2AcAMKXTK8uov9PZfg1RNdkk9yTchdtKgViRsDBmPZQ6TDSiMyy1zccjQz1LPpIGpeIwJP_vkb365Hsr3wB1aTHTIuJsl4U8ML1ycSmp7o2HEKplb7shkg2S-4c_uMt18MP1R3JQKGNfj6QAPLqNj5OoQHEHwWUygES_WgAFDFNyXWt6DQ-n0jEeGF1J4VCRFJujCoQEURv8gde798HLdH89Vs-QV49jkt8sJ36VbRiDAnwJc3vzqD565q0tleCov5OPbNM_lyDVBx0C56B-LYDi5L7gSO4cAkq3-2MA-erb4nvul68thc=",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "QIUUapT8OtecqtsP8MPVwAc",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:22:10 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1291",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 53,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 1153,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 1153
+            }
+          ],
+          "thoughts_token_count": 49,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 1255,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parseString:52",
+                      "workspace_id": "java_002_ctx16k"
+                    },
+                    "id": null,
+                    "name": "get_symbol",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CusGAQw51sd2SktypfcTF2Zw15SIJwNFS_llEZ752vGAvfTQ9kuzZkf6wy0VuVy1yraJ5FaDfefqPqTsOGllgf3-9N2BmXkaFQLGkbivJWTHdUafkOSB0yTF0IIbbsgb47YpFbtL37xKakM_kRUKPQxAbDUwa69S0_1NkQnCDM1ZqNleTIOzA7taj4UfckvC1NPNsHlhouzt9y6uNaVmtYR7PaEQdzhCC3rg3pI5PCg-j_SJ9eK2I9uy17JxhWXbmgh3tGkZu1KPBco_hl6sFkMPo4D2u32BWor0nN-FJZ06ei7Qo-EngViPpkbVNVwEiRs1WnPyb9IUH0L1_lEcVUAgfn0OxIzSBRFG-AjUIrPnP7rZJ732qniJtkvsltWHfx14atD1G_qSo-dH_wLXnd00oVGmQPGLawXA55tSBQCUf69eeYkNjdp5xtKuLvCkzOotXeVRVOmHQOTIJouMNszfowKWwrd_IPS1Oo3ruA2VC8Itb_TexaFTN1FHg8pXDSbDYbv3QRtge1Kcv-DzJD8wvjCE1Gq1UGprQ8NR_pD0o4KJVJnjno_kjBX266IckQgXEud6EvE1TcZOR2RfYiXpLbmGJHyReE2o0D5uKe8XkkbsohIIrxI5agfl5m2oRnwoDx0IzixZanlegX5m9cPhJCVK-yYB5jD4YGWJgG9wEecs9Z6KIJszKOVXAPYTn8LO5jupnK2EuC8QuAwiwkc1iGq10rQHFykeoS2Yuzw3QLik48TYJDKt1id08hPwbKiRoEikY53IkTV0ysb9iTD4X9Nl4x_AsuyFFBVrpcOlN3bosKuPZGrzkTQIMmlFSTB10mT9CXzH9L4UZKvYUfc7zh-kNsohNvIGXf8-hPzT6aHyjOEzGzTNXrtAsEZPf4vNw4M74oP9azC_OWxzb8-zXt5FsFWQ8lTRakmTOsvqTMqpaLL29e4q3D-CUU6LvnXdjmCRbRv97jIfqX5DZbGufZBMt9irDAMIUsTYZLKJ3vaPH-NRhyMhB657EckZ5jjw2QVC63NSsifBmvEJgyZ6Al63SGpmssDrBFYmFibFMLzZuETB6ec7GiLyM4UiG6ZGoM-u5eSCojxWLsIrH8urDNYfQxKEoKMHVRmI_3ae-AAnjOehyGcOXmjVYvby3Q0ZZm8-H6CYl-g3ABg=",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "QoUUauDCHYGhz7IPu5K76Ak",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:22:12 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1950",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 58,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 2346,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 2346
+            }
+          ],
+          "thoughts_token_count": 208,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 2612,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": null,
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": "```java\npublic static JsonElement parseString(String json) throws JsonSyntaxException {\n    return parseReader(new StringReader(json));\n  }\n```",
+                  "thought": null,
+                  "thought_signature": null,
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "RIUUaqzAKIesz7IP0IDbwQs",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:22:13 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1144",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 35,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 972,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 972
+            }
+          ],
+          "thoughts_token_count": null,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 1007,
+          "traffic_type": null
+        }
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "workspace_id": "java_002_ctx16k"
+        },
+        "durationMs": 5,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "list_files",
+        "transport": "in_memory"
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+          "workspace_id": "java_002_ctx16k"
+        },
+        "durationMs": 4,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "list_symbols",
+        "transport": "in_memory"
+      },
+      {
+        "arguments": {
+          "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parseString:52",
+          "workspace_id": "java_002_ctx16k"
+        },
+        "durationMs": 6,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "get_symbol",
+        "transport": "in_memory"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "workspace_id": "java_002_ctx16k"
+        },
+        "id": "step-1-tool-1",
+        "isError": false,
+        "name": "list_files",
+        "result": [
+          {
+            "language": "java",
+            "parse_status": "ok_filtered",
+            "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+            "repository": "google/gson",
+            "symbol_count": 7
+          },
+          {
+            "language": "java",
+            "parse_status": "ok_filtered",
+            "path": "gson/src/main/java/com/google/gson/ToNumberPolicy.java",
+            "repository": "google/gson",
+            "symbol_count": 0
+          },
+          {
+            "language": "java",
+            "parse_status": "ok_filtered",
+            "path": "gson/src/main/java/com/google/gson/JsonStreamParser.java",
+            "repository": "google/gson",
+            "symbol_count": 6
+          },
+          {
+            "language": "java",
+            "parse_status": "ok_filtered",
+            "path": "gson/src/main/java/com/google/gson/package-info.java",
+            "repository": "google/gson",
+            "symbol_count": 0
+          },
+          {
+            "language": "java",
+            "parse_status": "ok_filtered",
+            "path": "gson/src/main/java/com/google/gson/stream/package-info.java",
+            "repository": "google/gson",
+            "symbol_count": 0
+          },
+          {
+            "language": "java",
+            "parse_status": "ok_filtered",
+            "path": "gson/src/main/java/com/google/gson/reflect/package-info.java",
+            "repository": "google/gson",
+            "symbol_count": 0
+          },
+          {
+            "language": "java",
+            "parse_status": "ok_filtered",
+            "path": "gson/src/main/java/com/google/gson/internal/package-info.java",
+            "repository": "google/gson",
+            "symbol_count": 0
+          },
+          {
+            "language": "java",
+            "parse_status": "ok_filtered",
+            "path": "gson/src/main/java/com/google/gson/internal/bind/TypeAdapterRuntimeTypeWrapper.java",
+            "repository": "google/gson",
+            "symbol_count": 6
+          },
+          {
+            "language": "java",
+            "parse_status": "ok_filtered",
+            "path": "gson/src/main/java/com/google/gson/annotations/package-info.java",
+            "repository": "google/gson",
+            "symbol_count": 0
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+          "workspace_id": "java_002_ctx16k"
+        },
+        "id": "step-2-tool-1",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "Parses the specified JSON string into a parse tree. An exception is thrown if the JSON string\nhas multiple top-level JSON elements, or if there is trailing data.\n\n<p>The JSON string is parsed in {@linkplain JsonReader#setStrictness(Strictness) lenient mode}.\n\n@param json JSON text\n@return a parse tree of {@link JsonElement}s corresponding to the specified JSON\n@throws JsonParseException if the specified text is not valid JSON\n@since 2.8.6",
+            "end_line": 54,
+            "kind": "method",
+            "name": "parseString",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+            "qualified_name": "parseString",
+            "signature": "public static JsonElement parseString(String json) throws JsonSyntaxException {\n    return parseReader(new StringReader(json));\n  }",
+            "start_line": 52,
+            "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parseString:52"
+          },
+          {
+            "children": [],
+            "documentation": "Parses the complete JSON string provided by the reader into a parse tree. An exception is\nthrown if the JSON string has multiple top-level JSON elements, or if there is trailing data.\n\n<p>The JSON data is parsed in {@linkplain JsonReader#setStrictness(Strictness) lenient mode}.\n\n@param reader JSON text\n@return a parse tree of {@link JsonElement}s corresponding to the specified JSON\n@throws JsonParseException if there is an IOException or if the specified text is not valid\nJSON\n@since 2.8.6",
+            "end_line": 83,
+            "kind": "method",
+            "name": "parseReader",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+            "qualified_name": "parseReader",
+            "signature": "public static JsonElement parseReader(Reader reader) throws JsonIOException, JsonSyntaxException {\n    try {\n      JsonReader jsonReader = new JsonReader(reader);\n      JsonElement element = parseReader(jsonReader);\n      if (!element.isJsonNull() && jsonReader.peek() != JsonToken.END_DOCUMENT) {\n        throw new JsonSyntaxException(\"Did not consume the entire document.\");\n      }\n      return element;\n    } catch (MalformedJsonException e) {\n      throw new JsonSyntaxException(e);\n    } catch (IOException e) {\n      throw new JsonIOException(e);\n    } catch (NumberFormatException e) {\n      throw new JsonSyntaxException(e);\n    }\n  }",
+            "start_line": 68,
+            "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parseReader:68"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the next value from the JSON stream as a parse tree. Unlike the other {@code parse}\nmethods, no exception is thrown if the JSON data has multiple top-level JSON elements, or if\nthere is trailing data.\n\n<p>The JSON data is parsed in {@linkplain JsonReader#setStrictness(Strictness) lenient mode},\nregardless of the strictness setting of the provided reader. The strictness setting of the\nreader is restored once this method returns.\n\n@throws JsonParseException if there is an IOException or if the specified text is not valid\nJSON\n@since 2.8.6",
+            "end_line": 111,
+            "kind": "method",
+            "name": "parseReader",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+            "qualified_name": "parseReader",
+            "signature": "public static JsonElement parseReader(JsonReader reader)\n      throws JsonIOException, JsonSyntaxException {\n    Strictness strictness = reader.getStrictness();\n    reader.setStrictness(Strictness.LENIENT);\n    try {\n      return Streams.parse(reader);\n    } catch (StackOverflowError e) {\n      throw new JsonParseException(\"Failed parsing JSON source: \" + reader + \" to Json\", e);\n    } catch (OutOfMemoryError e) {\n      throw new JsonParseException(\"Failed parsing JSON source: \" + reader + \" to Json\", e);\n    } finally {\n      reader.setStrictness(strictness);\n    }\n  }",
+            "start_line": 98,
+            "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parseReader:98"
+          },
+          {
+            "children": [],
+            "documentation": "@deprecated Use {@link JsonParser#parseString}",
+            "end_line": 120,
+            "kind": "method",
+            "name": "parse",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+            "qualified_name": "parse",
+            "signature": "@Deprecated\n  @InlineMe(replacement = \"JsonParser.parseString(json)\", imports = \"com.google.gson.JsonParser\")\n  public JsonElement parse(String json) throws JsonSyntaxException {\n    return parseString(json);\n  }",
+            "start_line": 116,
+            "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parse:116"
+          },
+          {
+            "children": [],
+            "documentation": "@deprecated Use {@link JsonParser#parseReader(Reader)}",
+            "end_line": 129,
+            "kind": "method",
+            "name": "parse",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+            "qualified_name": "parse",
+            "signature": "@Deprecated\n  @InlineMe(replacement = \"JsonParser.parseReader(json)\", imports = \"com.google.gson.JsonParser\")\n  public JsonElement parse(Reader json) throws JsonIOException, JsonSyntaxException {\n    return parseReader(json);\n  }",
+            "start_line": 125,
+            "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parse:125"
+          },
+          {
+            "children": [],
+            "documentation": "@deprecated Use {@link JsonParser#parseReader(JsonReader)}",
+            "end_line": 138,
+            "kind": "method",
+            "name": "parse",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+            "qualified_name": "parse",
+            "signature": "@Deprecated\n  @InlineMe(replacement = \"JsonParser.parseReader(json)\", imports = \"com.google.gson.JsonParser\")\n  public JsonElement parse(JsonReader json) throws JsonIOException, JsonSyntaxException {\n    return parseReader(json);\n  }",
+            "start_line": 134,
+            "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parse:134"
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parseString:52",
+          "workspace_id": "java_002_ctx16k"
+        },
+        "id": "step-3-tool-1",
+        "isError": false,
+        "name": "get_symbol",
+        "result": {
+          "children": [],
+          "code": "public static JsonElement parseString(String json) throws JsonSyntaxException {\n    return parseReader(new StringReader(json));\n  }",
+          "documentation": "Parses the specified JSON string into a parse tree. An exception is thrown if the JSON string\nhas multiple top-level JSON elements, or if there is trailing data.\n\n<p>The JSON string is parsed in {@linkplain JsonReader#setStrictness(Strictness) lenient mode}.\n\n@param json JSON text\n@return a parse tree of {@link JsonElement}s corresponding to the specified JSON\n@throws JsonParseException if the specified text is not valid JSON\n@since 2.8.6",
+          "end_line": 54,
+          "kind": "method",
+          "name": "parseString",
+          "parent_id": null,
+          "parent_name": null,
+          "path": "gson/src/main/java/com/google/gson/JsonParser.java",
+          "qualified_name": "parseString",
+          "signature": "public static JsonElement parseString(String json) throws JsonSyntaxException {\n    return parseReader(new StringReader(json));\n  }",
+          "start_line": 52,
+          "symbol_id": "gson/src/main/java/com/google/gson/JsonParser.java#method:parseString:52"
+        }
+      }
+    ]
+  },
+  "trialId": "1a436b1794"
+}

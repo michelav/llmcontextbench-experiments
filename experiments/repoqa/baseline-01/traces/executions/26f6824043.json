@@ -1,0 +1,1268 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 2151,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "py_002_ctx32k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 1,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "language": "python",
+                "parse_status": "ok_filtered",
+                "path": "src/black/ranges.py",
+                "repository": "psf/black",
+                "symbol_count": 17
+              },
+              {
+                "language": "python",
+                "parse_status": "ok_filtered",
+                "path": "src/black/linegen.py",
+                "repository": "psf/black",
+                "symbol_count": 3
+              },
+              {
+                "language": "python",
+                "parse_status": "ok_filtered",
+                "path": "src/black/parsing.py",
+                "repository": "psf/black",
+                "symbol_count": 9
+              },
+              {
+                "language": "python",
+                "parse_status": "ok_filtered",
+                "path": "src/black/__init__.py",
+                "repository": "psf/black",
+                "symbol_count": 32
+              },
+              {
+                "language": "python",
+                "parse_status": "ok_filtered",
+                "path": "src/black/__main__.py",
+                "repository": "psf/black",
+                "symbol_count": 0
+              },
+              {
+                "language": "python",
+                "parse_status": "ok_filtered",
+                "path": "src/black/debug.py",
+                "repository": "psf/black",
+                "symbol_count": 4
+              },
+              {
+                "language": "python",
+                "parse_status": "ok_filtered",
+                "path": "src/black/schema.py",
+                "repository": "psf/black",
+                "symbol_count": 1
+              },
+              {
+                "language": "python",
+                "parse_status": "ok_filtered",
+                "path": "src/blackd/__init__.py",
+                "repository": "psf/black",
+                "symbol_count": 8
+              },
+              {
+                "language": "python",
+                "parse_status": "ok_filtered",
+                "path": "src/blackd/__main__.py",
+                "repository": "psf/black",
+                "symbol_count": 0
+              },
+              {
+                "language": "python",
+                "parse_status": "ok_filtered",
+                "path": "src/blackd/middlewares.py",
+                "repository": "psf/black",
+                "symbol_count": 1
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "py_002_ctx32k"
+              },
+              "durationMs": 1,
+              "toolName": "list_files",
+              "workspace_id": "py_002_ctx32k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1932,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "src/black/ranges.py",
+              "workspace_id": "py_002_ctx32k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 40,
+                "kind": "function",
+                "name": "parse_line_ranges",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "parse_line_ranges",
+                "signature": "def parse_line_ranges(line_ranges: Sequence[str]) -> List[Tuple[int, int]]",
+                "start_line": 21,
+                "symbol_id": "src/black/ranges.py#function:parse_line_ranges:21"
+              },
+              {
+                "children": [],
+                "documentation": "Returns whether the line range is valid.",
+                "end_line": 45,
+                "kind": "function",
+                "name": "is_valid_line_range",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "is_valid_line_range",
+                "signature": "def is_valid_line_range(lines: Tuple[int, int]) -> bool",
+                "start_line": 43,
+                "symbol_id": "src/black/ranges.py#function:is_valid_line_range:43"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the adjusted line ranges based on edits from the original code.\n\nThis computes the new line ranges by diffing original_source and\nmodified_source, and adjust each range based on how the range overlaps with\nthe diffs.\n\nNote the diff can contain lines outside of the original line ranges. This can\nhappen when the formatting has to be done in adjacent to maintain consistent\nlocal results. For example:\n\n1. def my_func(arg1, arg2,\n2.             arg3,):\n3.   pass\n\nIf it restricts to line 2-2, it can't simply reformat line 2, it also has\nto reformat line 1:\n\n1. def my_func(\n2.     arg1,\n3.     arg2,\n4.     arg3,\n5. ):\n6.   pass\n\nIn this case, we will expand the line ranges to also include the whole diff\nblock.\n\nArgs:\n  lines: a collection of line ranges.\n  original_source: the original source.\n  modified_source: the modified source.",
+                "end_line": 125,
+                "kind": "function",
+                "name": "adjusted_lines",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "adjusted_lines",
+                "signature": "def adjusted_lines(\n    lines: Collection[Tuple[int, int]],\n    original_source: str,\n    modified_source: str,\n) -> List[Tuple[int, int]]",
+                "start_line": 48,
+                "symbol_id": "src/black/ranges.py#function:adjusted_lines:48"
+              },
+              {
+                "children": [],
+                "documentation": "Converts unchanged lines to STANDALONE_COMMENT.\n\n    The idea is similar to how `# fmt: on/off` is implemented. It also converts the\n    nodes between those markers as a single `STANDALONE_COMMENT` leaf node with\n    the unformatted code as its value. `STANDALONE_COMMENT` is a \"fake\" token\n    that will be formatted as-is with its prefix normalized.\n\n    Here we perform two passes:\n\n    1. Visit the top-level statements, and convert them to a single\n       `STANDALONE_COMMENT` when unchanged. This speeds up formatting when some\n       of the top-level statements aren't changed.\n    2. Convert unchanged \"unwrapped lines\" to `STANDALONE_COMMENT` nodes line by\n       line. \"unwrapped lines\" are divided by the `NEWLINE` token. e.g. a\n       multi-line statement is *one* \"unwrapped line\" that ends with `NEWLINE`,\n       even though this statement itself can span multiple lines, and the\n       tokenizer only sees the last '\n' as the `NEWLINE` token.\n\n    NOTE: During pass (2), comment prefixes and indentations are ALWAYS\n    normalized even when the lines aren't changed. This is fixable by moving\n    more formatting to pass (1). However, it's hard to get it correct when\n    incorrect indentations are used. So we defer this to future optimizations.",
+                "end_line": 157,
+                "kind": "function",
+                "name": "convert_unchanged_lines",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "convert_unchanged_lines",
+                "signature": "def convert_unchanged_lines(src_node: Node, lines: Collection[Tuple[int, int]]) -> None",
+                "start_line": 128,
+                "symbol_id": "src/black/ranges.py#function:convert_unchanged_lines:128"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 167,
+                "kind": "function",
+                "name": "_contains_standalone_comment",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "_contains_standalone_comment",
+                "signature": "def _contains_standalone_comment(node: LN) -> bool",
+                "start_line": 160,
+                "symbol_id": "src/black/ranges.py#function:_contains_standalone_comment:160"
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "documentation": null,
+                    "end_line": 181,
+                    "kind": "method",
+                    "name": "__init__",
+                    "parent_id": "src/black/ranges.py#class:_TopLevelStatementsVisitor:170",
+                    "parent_name": "_TopLevelStatementsVisitor",
+                    "path": "src/black/ranges.py",
+                    "qualified_name": "_TopLevelStatementsVisitor.__init__",
+                    "signature": "def __init__(self, lines_set: Set[int])",
+                    "start_line": 180,
+                    "symbol_id": "src/black/ranges.py#method:_TopLevelStatementsVisitor.__init__:180"
+                  },
+                  {
+                    "children": [],
+                    "documentation": null,
+                    "end_line": 198,
+                    "kind": "method",
+                    "name": "visit_simple_stmt",
+                    "parent_id": "src/black/ranges.py#class:_TopLevelStatementsVisitor:170",
+                    "parent_name": "_TopLevelStatementsVisitor",
+                    "path": "src/black/ranges.py",
+                    "qualified_name": "_TopLevelStatementsVisitor.visit_simple_stmt",
+                    "signature": "def visit_simple_stmt(self, node: Node) -> Iterator[None]",
+                    "start_line": 183,
+                    "symbol_id": "src/black/ranges.py#method:_TopLevelStatementsVisitor.visit_simple_stmt:183"
+                  },
+                  {
+                    "children": [],
+                    "documentation": null,
+                    "end_line": 221,
+                    "kind": "method",
+                    "name": "visit_suite",
+                    "parent_id": "src/black/ranges.py#class:_TopLevelStatementsVisitor:170",
+                    "parent_name": "_TopLevelStatementsVisitor",
+                    "path": "src/black/ranges.py",
+                    "qualified_name": "_TopLevelStatementsVisitor.visit_suite",
+                    "signature": "def visit_suite(self, node: Node) -> Iterator[None]",
+                    "start_line": 200,
+                    "symbol_id": "src/black/ranges.py#method:_TopLevelStatementsVisitor.visit_suite:200"
+                  }
+                ],
+                "documentation": "A node visitor that converts unchanged top-level statements to\nSTANDALONE_COMMENT.\n\nThis is used in addition to _convert_unchanged_line_by_line, to\nspeed up formatting when there are unchanged top-level\nclasses/functions/statements.",
+                "end_line": 221,
+                "kind": "class",
+                "name": "_TopLevelStatementsVisitor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "_TopLevelStatementsVisitor",
+                "signature": "class _TopLevelStatementsVisitor(Visitor[None])",
+                "start_line": 170,
+                "symbol_id": "src/black/ranges.py#class:_TopLevelStatementsVisitor:170"
+              },
+              {
+                "children": [],
+                "documentation": "Converts unchanged to STANDALONE_COMMENT line by line.",
+                "end_line": 275,
+                "kind": "function",
+                "name": "_convert_unchanged_line_by_line",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "_convert_unchanged_line_by_line",
+                "signature": "def _convert_unchanged_line_by_line(node: Node, lines_set: Set[int]) -> None",
+                "start_line": 224,
+                "symbol_id": "src/black/ranges.py#function:_convert_unchanged_line_by_line:224"
+              },
+              {
+                "children": [],
+                "documentation": "Convert node to STANDALONE_COMMENT by modifying the tree inline.",
+                "end_line": 315,
+                "kind": "function",
+                "name": "_convert_node_to_standalone_comment",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "_convert_node_to_standalone_comment",
+                "signature": "def _convert_node_to_standalone_comment(node: LN) -> None",
+                "start_line": 278,
+                "symbol_id": "src/black/ranges.py#function:_convert_node_to_standalone_comment:278"
+              },
+              {
+                "children": [],
+                "documentation": "Convert nodes to STANDALONE_COMMENT by modifying the tree inline.",
+                "end_line": 345,
+                "kind": "function",
+                "name": "_convert_nodes_to_standalone_comment",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "_convert_nodes_to_standalone_comment",
+                "signature": "def _convert_nodes_to_standalone_comment(nodes: Sequence[LN], *, newline: Leaf) -> None",
+                "start_line": 318,
+                "symbol_id": "src/black/ranges.py#function:_convert_nodes_to_standalone_comment:318"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the line number of the leaf node's last line.",
+                "end_line": 354,
+                "kind": "function",
+                "name": "_leaf_line_end",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "_leaf_line_end",
+                "signature": "def _leaf_line_end(leaf: Leaf) -> int",
+                "start_line": 348,
+                "symbol_id": "src/black/ranges.py#function:_leaf_line_end:348"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the line range of this node or list of nodes.",
+                "end_line": 381,
+                "kind": "function",
+                "name": "_get_line_range",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "_get_line_range",
+                "signature": "def _get_line_range(node_or_nodes: Union[LN, List[LN]]) -> Set[int]",
+                "start_line": 357,
+                "symbol_id": "src/black/ranges.py#function:_get_line_range:357"
+              },
+              {
+                "children": [],
+                "documentation": "Returns a sequence of _LinesMapping by diffing the sources.\n\nFor example, given the following diff:\n    import re\n  - def func(arg1,\n  -   arg2, arg3):\n  + def func(arg1, arg2, arg3):\n      pass\nIt returns the following mappings:\n  original -> modified\n   (1, 1)  ->  (1, 1), is_changed_block=False (the \"import re\" line)\n   (2, 3)  ->  (2, 2), is_changed_block=True (the diff)\n   (4, 4)  ->  (3, 3), is_changed_block=False (the \"pass\" line)\n\nYou can think of this visually as if it brings up a side-by-side diff, and tries\nto map the line ranges from the left side to the right side:\n\n  (1, 1)->(1, 1)    1. import re          1. import re\n  (2, 3)->(2, 2)    2. def func(arg1,     2. def func(arg1, arg2, arg3):\n                    3.   arg2, arg3):\n  (4, 4)->(3, 3)    4.   pass             3.   pass\n\nArgs:\n  original_source: the original source.\n  modified_source: the modified source.",
+                "end_line": 478,
+                "kind": "function",
+                "name": "_calculate_lines_mappings",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "_calculate_lines_mappings",
+                "signature": "def _calculate_lines_mappings(\n    original_source: str,\n    modified_source: str,\n) -> Sequence[_LinesMapping]",
+                "start_line": 402,
+                "symbol_id": "src/black/ranges.py#function:_calculate_lines_mappings:402"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the original index of the lines mappings for the original line.",
+                "end_line": 493,
+                "kind": "function",
+                "name": "_find_lines_mapping_index",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/ranges.py",
+                "qualified_name": "_find_lines_mapping_index",
+                "signature": "def _find_lines_mapping_index(\n    original_line: int,\n    lines_mappings: Sequence[_LinesMapping],\n    start_index: int,\n) -> int",
+                "start_line": 481,
+                "symbol_id": "src/black/ranges.py#function:_find_lines_mapping_index:481"
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "src/black/ranges.py",
+                "workspace_id": "py_002_ctx32k"
+              },
+              "durationMs": 0,
+              "toolName": "list_symbols",
+              "workspace_id": "py_002_ctx32k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 3414,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "symbol_id": "src/black/ranges.py#function:convert_unchanged_lines:128",
+              "workspace_id": "py_002_ctx32k"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": {
+              "children": [],
+              "code": "def convert_unchanged_lines(src_node: Node, lines: Collection[Tuple[int, int]]) -> None:\n    \"\"\"Converts unchanged lines to STANDALONE_COMMENT.\n\n    The idea is similar to how `# fmt: on/off` is implemented. It also converts the\n    nodes between those markers as a single `STANDALONE_COMMENT` leaf node with\n    the unformatted code as its value. `STANDALONE_COMMENT` is a \"fake\" token\n    that will be formatted as-is with its prefix normalized.\n\n    Here we perform two passes:\n\n    1. Visit the top-level statements, and convert them to a single\n       `STANDALONE_COMMENT` when unchanged. This speeds up formatting when some\n       of the top-level statements aren't changed.\n    2. Convert unchanged \"unwrapped lines\" to `STANDALONE_COMMENT` nodes line by\n       line. \"unwrapped lines\" are divided by the `NEWLINE` token. e.g. a\n       multi-line statement is *one* \"unwrapped line\" that ends with `NEWLINE`,\n       even though this statement itself can span multiple lines, and the\n       tokenizer only sees the last '\\n' as the `NEWLINE` token.\n\n    NOTE: During pass (2), comment prefixes and indentations are ALWAYS\n    normalized even when the lines aren't changed. This is fixable by moving\n    more formatting to pass (1). However, it's hard to get it correct when\n    incorrect indentations are used. So we defer this to future optimizations.\n    \"\"\"\n    lines_set: Set[int] = set()\n    for start, end in lines:\n        lines_set.update(range(start, end + 1))\n    visitor = _TopLevelStatementsVisitor(lines_set)\n    _ = list(visitor.visit(src_node))  # Consume all results.\n    _convert_unchanged_line_by_line(src_node, lines_set)",
+              "documentation": "Converts unchanged lines to STANDALONE_COMMENT.\n\n    The idea is similar to how `# fmt: on/off` is implemented. It also converts the\n    nodes between those markers as a single `STANDALONE_COMMENT` leaf node with\n    the unformatted code as its value. `STANDALONE_COMMENT` is a \"fake\" token\n    that will be formatted as-is with its prefix normalized.\n\n    Here we perform two passes:\n\n    1. Visit the top-level statements, and convert them to a single\n       `STANDALONE_COMMENT` when unchanged. This speeds up formatting when some\n       of the top-level statements aren't changed.\n    2. Convert unchanged \"unwrapped lines\" to `STANDALONE_COMMENT` nodes line by\n       line. \"unwrapped lines\" are divided by the `NEWLINE` token. e.g. a\n       multi-line statement is *one* \"unwrapped line\" that ends with `NEWLINE`,\n       even though this statement itself can span multiple lines, and the\n       tokenizer only sees the last '\n' as the `NEWLINE` token.\n\n    NOTE: During pass (2), comment prefixes and indentations are ALWAYS\n    normalized even when the lines aren't changed. This is fixable by moving\n    more formatting to pass (1). However, it's hard to get it correct when\n    incorrect indentations are used. So we defer this to future optimizations.",
+              "end_line": 157,
+              "kind": "function",
+              "name": "convert_unchanged_lines",
+              "parent_id": null,
+              "parent_name": null,
+              "path": "src/black/ranges.py",
+              "qualified_name": "convert_unchanged_lines",
+              "signature": "def convert_unchanged_lines(src_node: Node, lines: Collection[Tuple[int, int]]) -> None",
+              "start_line": 128,
+              "symbol_id": "src/black/ranges.py#function:convert_unchanged_lines:128"
+            },
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "symbol_id": "src/black/ranges.py#function:convert_unchanged_lines:128",
+                "workspace_id": "py_002_ctx32k"
+              },
+              "durationMs": 0,
+              "toolName": "get_symbol",
+              "workspace_id": "py_002_ctx32k"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 2580,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 10131,
+          "metadata": {},
+          "name": "strategy.local_function.execute",
+          "type": "strategy.local_function.execute"
+        },
+        {
+          "duration_ms": 10131,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 54,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": null,
+        "cachedInputTokens": 2210,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 3,
+        "inputTokens": 7704,
+        "loopControlDurationMsEstimated": 53,
+        "mcpToolCalls": 3,
+        "modelCalls": 4,
+        "modelDurationMs": 10077,
+        "outputTokens": 568,
+        "promptChars": 1594,
+        "questionTokensEstimated": 213,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 809,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 4,
+        "strategyDurationMs": 10131,
+        "taskStatementChars": 1423,
+        "toolCalls": 3,
+        "toolDurationMs": 1,
+        "totalDurationMs": 10131,
+        "totalTokens": 9081,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "workspace_id": "py_002_ctx32k"
+                    },
+                    "id": null,
+                    "name": "list_files",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CpwIAQw51seLqWWPRZ0-b6OzZD5FUPRVbdHk-Maycf04ATiyiL3r8zOrX8dvBsXR8uBYI22ojRWaZ2bQvdKMrEY4A1_rhehadM8WZEWPiwVE_nBvvmHT4QCoSQg4j9KSuRF7bP6ymI7rCTpMIldgt4vu1oIR2WNsC-clRL1WcAuq5G6czG-Ud3Urw-SkqhwBgsgH667-lQs-oVzwknPoMa62YLVucDzxLuK_3vsf-lI9a8k5_iL7cYGHijEf0DeUyqCy4TrSZzc5Ky35qUEiKuAxc-LyHJXe3anvj0ii2957Qs3n4prXfgOmkudyt631IzvbB9dB6bmgMld-hWBx7Z01_4IiJl64ni1JB-AqYatuwIIHqzUnyoHMP7eV1PTLx5W6-dYgewL9-wJPHIawEnpxnJGwip-4_95oPc4jxBlz_sMBXDy8Ljctkh3_SSetluVPXhw73t_UqYZV90z7izuowgBlO4TPF9ousmXfaP1hoISBVDyTtvHLfY5Ab1-8gSAqv6shA3qTrhJF9nSvKzbGixz81GNnpuq-cquVfkEux1efv-9GYTNJBOq-_UbbIMRaoUc-wqvkpjEltrTU685ian7LUilGfHCP5Q_05W-nbIrRLemnjOGo_BYaI9KpDql9Zhoq66O2dSoYmJgjwdiZIIMqlhGkYQXFSzRD6Zk4RMD_hLzL0-GWQUFMi6mJ0wM4DkjPYMUv_j-fK9A3FWBx3WBa4Axd10Ty6zuoDXTCjOb_tDrd6oFO_XyhUli9Q3ZiGrq-upeuR_rIfc22Xh5VUUMrYhu73y-w0IB06b8XLD7aWxTZurnFje2jSSJgCADnXaVrPHNuhsNxRC8RLcs9crFtVHWRrU9qc1BF8dkNCpMnSozaDx-3TP4r50n-mASq-I-tBp5FfqNtTh5TtiRIAARFe7LflQxM88VR-ougaS5yAybAxU8jE43_4tvLwD2Dxps0BZ01irh0HFxsjo1eS1QNOr5v_-yQJb3oLoF6xkBYbvSxMhpuMrQPO2T7mbn1dfs3-6lmomnfH-QUd22rBu0VnXzp1daQQdyjI7ADiQL1fLN9DNiwaxN5n2JogmBP2MHQFNI7EBOD681xQJJPJyyspJQIAEMv94rxas_6ZqmyOrM2f3K_gYSlDsoIU4EoOQ84R1ADT4G-8eKigb0sE8ywoI5TdEB3u5ly_HekBr6w5FdJeSJTYJsAipRC8l4NxsC_nTNQQqwI833ujNL6_UZvIlmgXOwj_KnUHoTqLDeh1N7x2DCAQlkEDZRLNsKmXCvNFCm8Dfvex2GF8QegIg5At5oXx6YamKXsHC8frTd7cyGizRWijeqBs3aAd2annrjmvYkXXvau9f-eI26RXwvS4i0pHUYI8BrsP5TtPZioi4_gZTida92hQNo=",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "wH8UarGGEuXoz7IPm53zuAw",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 16:58:42 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1937",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 639
+            }
+          ],
+          "cached_content_token_count": 639,
+          "candidates_token_count": 26,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 691,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 691
+            }
+          ],
+          "thoughts_token_count": 218,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 935,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "kind": "function",
+                      "path": "src/black/ranges.py",
+                      "workspace_id": "py_002_ctx32k"
+                    },
+                    "id": null,
+                    "name": "list_symbols",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CvgCAQw51seKSBAyzjefDrO4F3ocPjo8G9-5PzJH4SomvFCDNwoJENwzJA5Kgux9zZ4LzOhCJ3uN4VIcqWD6enxZzbuBWhbPHH4RVa3FTRHIMn8z3F2UP5aXwWnNtRyYifxvpArIwxB1g_vwuyXyle68pXVPb6aYp8qOEifxWFXaUHlJZgniXdIHd0jsBk_9K3d9MyYrCn53Cvz5_JnjlCm1xtygXDNRRqfSVElw0LwYl7IcGCxLV7qFrk2iRt59Mp3CbG_ISByVxUaJXVk2pqqga90Qccq_76c5U_qm_7_dtcEDnaStZzdj3vsmN_iwHly9TkCRBW4ukmGrhG18EWex_X9mnLa_78wOT4zpp-oB0vu59kFWABv5V7MLynBEex6AekDovzPcGTFIRezI704KSZ8fC4SC1RWC8vZ74aaWwDqVjSaoytLLx1IIfjBPP9iLoEcs1T24j5rtfeMMoKz9a5HXtts6-oGv4H1RnBa9B6LunowZFjwf_g==",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "wn8Uapb8HKPn8QHe2uXBCw",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 16:58:43 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1722",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 661
+            }
+          ],
+          "cached_content_token_count": 661,
+          "candidates_token_count": 42,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 1186,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 1186
+            }
+          ],
+          "thoughts_token_count": 82,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 1310,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "symbol_id": "src/black/ranges.py#function:convert_unchanged_lines:128",
+                      "workspace_id": "py_002_ctx32k"
+                    },
+                    "id": null,
+                    "name": "get_symbol",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CrcSAQw51sd3StwpTAYNXATeHrgy-K4iTpbX-a5NsDMHe8iMfekrWF54RFDp7M-CQTbF8qHsieLPlY29QxCS1eeuO7VVqrRLUA2V1-c1W3rqD_sIjmfXMlGZYe6Pfak29fTSrn6N1meZgkfbO2dZb6T-3Qd_BYbf8mby0hznhaKGbYKN52KG9SMkqTxFB4mL-XKv_fbB32ppcjelAyjVW12IL6sCmVtG6I1JNI_NXj8OcUoYyM7c8ajLdCFrir-RJERRVJ2Rsxu2bhJIfEmK7tO9JPmsRnkb8Dv3c7wzIcjJQPgRutjZunh3dPW5PikGA2bIy_9fpBZxHTP5tjXUrwmE6b-LenH5ivF0mIUS21jfOTDpl1GI3eL5CBPYifbprPzxFm5EMXCkuaEvhpALt82emTsOi4X5iSPtVBYxh5KNiW9VamvDlqu5HQ0dMBzwjZ4MEOWQ8TwFfCtbj7bWTU-oo6srm4MHu3IpfOKKAWGU7OfKmnH1r7XaJvpqeiy09lCjs43TaiJrZt8WCllbKZqEvQMxxhsoqB2jS5fpnibIINNNCp30C_1XMBNizZwfXPIl5eCbMiZovg_iWSj4ZXtQlKD9_yh-SQ9CYGxuipuUSEMe9-r82SHbu5oC9t6calsruTeSzpMoMCwaFC9mQWoCgK6ZtUesVl5o2rZq90jtxebNC9rF1u_Slxzzo_EV8RTc5bKOa4vqIjF8h19FbJcD4ioZqety9M5J7OwM7QR8ykTNue24pqHgj9CdpmUw9cMgY7AUlfxfUq9N_VXrnoVlj8e4JgUiMFJETok-0ZJjIsdfOudUpBArfMObwcTCbZntgps3QeONuR9DpRQVYmz4ErAbR2gHG26BjUi3P3F9u1vFjspJKKuSovBq4IixKIP23py-NZyN1LUHdq4TWgKA8XR_wUdS8mJfq8a5vA9VZ04Q0QJAmMb9KiVmLrpgZIjJzvmjvUKKjJBNogwn1xgwqIMEY7uvBATFpu9vMoo8QY9asUFch4R_pGOaI_W1WLiPAHq6culZXskmXwmWbOkYotuz3SRY6S4eAwboxRTWUCu-sCNDv_-MxTolZyISsAmxNwEe_MSEfCa9GKFLPPdFW745x_1DN3foYOr5PlI2F9Xm_1qFhaPadgi2T0reUXPfOSlh3RjuLukvzYhYudm2Wsreh1Z8vrPo4wBt3ENYiDMaOEaMJWLDW2B32fd7C2fTApHQ_EMe8DDKLXSnEGdl_D0I0xoEYOhWPqTtRVP44BdXQR0POg7WivAHnb0nVHyEuAfN7JSVSzD4GnWWto1GvJHahIl5u8MBBxRTMkit5_Z10RusE7PPkjwsViZ-l6i_TgjzvqHtbsKtdrYbyVd9gLYxqVVrgJW6BnCsyOhCr_uzHB1SYzq1ASN6M5jAZ8yOJO-ac4wsaNlKq6He_iFbbaxunHGpvCTDLjYaPUDnSrxnvyA5mtTyT2qjwupEwPAEwBhD08ItDSMEUxOx3M0jVwl-jEI5bPGAVo1V3mpdW-9_bJNBT1mOqofTYAHyMYWhlRdc_4rd93pXK5aT3CMaP7P7radhblYL0_3kpJ8F6hPZkXzNoowgpLwzE7q3dMawn-dZStXJ1YkNc545YKraGRtlU45Im8xN_oD7-R8Di-PLbk0GsTnp-nF4tE2OTO974yw1by83vPLKmU71iENPYUvqcJx6dYLslEhR4yhOAi5lpjWWGaJInq4ryseQ1tKnTyxm_wqel6kcGf-LQaGVDX_wFhkRIe59IFP2rkydc5sXdl47Lpx0LSBec_zpiRmJ0UcyqmvkDbPvDhp3DW3NxyT-7xy62f1srxND8dyay3sFllSa18wIYXgVl3Tlxtixk2fl_kSRKDSAwdIqIyJmJkuXqdNwbIV1ARXUxQ_oMZr9sZTSFbjuBm-RZz9N_A7b0YARptVfQd2x4Dj1eLNJPxQs7r8xJwmD6UpFcxzAVgj22KxC3OvT6_onDWXaGz23FkHwMdamChxoJ3L6B_zIPzGNb3p04jAVg3P0Q0kX0ig4FEZt3P_UpL2Od52h17ebUL6QGajPnA7sfJ1lXu71Iv9XT9Fyz_TnTBYbPJi17jQ7snmGVrgF1JYxddMbipuEJzxUUh03glLr1Gy1YRu5VYbNj1lzouckCft4ifFM9_ETCr2wyeyK2YExzdNCos2d3hp25ccsZyOtc6yrIRKZyFvvXM-nXgKMbC0-2Mrf9IBisfpwjjyroiwmcKjo-PGeLc8tfx24t_0Af2lUmPtszIuvdl9siKDGsEIlMWqBJw7tvj3Pran9Xw_PMbcceJgrHpi-O8Sd3lzwA0xrh0iwPV5Fy96oHDkL8FFGfcwMHD-6diIZ5Nk6GLXjZn5HoSA237YYO5nbFylS9HMejP8lvS6OhAvBlvypzBJgqlFkO7CmvVC-Cw10DdMepAyqXJMFfQZqDGzXFC7OqPs4p0SrbSrRkOJ3IFGB2eCGKTeQBm4LHH-rc-k0-qEPe7VYpqBvL4EHnTMADV5vuBYpfKhUPCDa2nF8UUhprCjYmMIKPh0mv0A0KkvyO3YybNbcPe-22qD8AQHII6jjy6HHIGs7wgL2vzJVVqDBTT7IXbRr4enVXqCXQGCN7brDUFGfvfJInC0vd5TCLuxZajRBJtoA9G8d_FFxJHirpipv4t8BYCTrSWv9k29h65occ0hwJhUB8sZqqIUHgYHvH0CM818gUSkSDwid4UdkqhdxjfVtghrLoMgVNJbNpfCy6a3rRSTZRrWkDF2oF6HdzHgrlDIvf3KZBxQqG5wvK-oZ6bH6_bunTZO_fdEA8jSbfGNF8LSqjTEa5WfwOao852M39nhDhF1Fw87GjXTkswxDs93eRciF3XIu-BmVSEdikWhx_3WryRIXQRoHsOCnEdx-vPxYYp6MnVS02KhrybbwqKIC7Ua49bV_LjtjoV3-gF42mDOoKhCWF5kMDNrJXdjO042FJD6Fn5lAN8al29ELFaQIg4jC0BoAFdAw3a5O8t_9mUWXEX8E7Zcs7glin6twaaVsc91mEhqlnXLYmLeauzqgw6qENc4DT08KRa6lq3Jtff53EFQnEegcoTYBGxJ4hnNQbg3vdqUqR0WqZ9k3TUes11WRqLcRqCuD4IVW4mIQSPeju3MtXONnSA==",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "xH8UarvYHKKez7IP09-paQ",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 16:58:47 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=3206",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 910
+            }
+          ],
+          "cached_content_token_count": 910,
+          "candidates_token_count": 52,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 4121,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 4121
+            }
+          ],
+          "thoughts_token_count": 509,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 4682,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": {
+              "citations": [
+                {
+                  "end_index": 336,
+                  "license": "",
+                  "publication_date": null,
+                  "start_index": 10,
+                  "title": null,
+                  "uri": "https://github.com/JakeMurrayMcGuirk/SDEV-CA2"
+                },
+                {
+                  "end_index": 1641,
+                  "license": "",
+                  "publication_date": null,
+                  "start_index": 218,
+                  "title": null,
+                  "uri": "https://github.com/google/pyink"
+                }
+              ]
+            },
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": null,
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": "```python\ndef convert_unchanged_lines(src_node: Node, lines: Collection[Tuple[int, int]]) -> None:\n    \"\"\"Converts unchanged lines to STANDALONE_COMMENT.\n\n    The idea is similar to how `# fmt: on/off` is implemented. It also converts the\n    nodes between those markers as a single `STANDALONE_COMMENT` leaf node with\n    the unformatted code as its value. `STANDALONE_COMMENT` is a \"fake\" token\n    that will be formatted as-is with its prefix normalized.\n\n    Here we perform two passes:\n\n    1. Visit the top-level statements, and convert them to a single\n       `STANDALONE_COMMENT` when unchanged. This speeds up formatting when some\n       of the top-level statements aren't changed.\n    2. Convert unchanged \"unwrapped lines\" to `STANDALONE_COMMENT` nodes line by\n       line. \"unwrapped lines\" are divided by the `NEWLINE` token. e.g. a\n       multi-line statement is *one* \"unwrapped line\" that ends with `NEWLINE`,\n       even though this statement itself can span multiple lines, and the\n       tokenizer only sees the last '\\n' as the `NEWLINE` token.\n\n    NOTE: During pass (2), comment prefixes and indentations are ALWAYS\n    normalized even when the lines aren't changed. This is fixable by moving\n    more formatting to pass (1). However, it's hard to get it correct when\n    incorrect indentations are used. So we defer this to future optimizations.\n    \"\"\"\n    lines_set: Set[int] = set()\n    for start, end in lines:\n        lines_set.update(range(start, end + 1))\n    visitor = _TopLevelStatementsVisitor(lines_set)\n    _ = list(visitor.visit(src_node))  # Consume all results.\n    _convert_unchanged_line_by_line(src_node, lines_set)\n```",
+                  "thought": null,
+                  "thought_signature": null,
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                },
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": null,
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": "\n",
+                  "thought": null,
+                  "thought_signature": null,
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "x38UasSCM4Ggz7IPmL7K8Qc",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 16:58:49 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=2378",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 448,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 1706,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 1706
+            }
+          ],
+          "thoughts_token_count": null,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 2154,
+          "traffic_type": null
+        }
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "workspace_id": "py_002_ctx32k"
+        },
+        "durationMs": 1,
+        "toolName": "list_files",
+        "workspace_id": "py_002_ctx32k"
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/black/ranges.py",
+          "workspace_id": "py_002_ctx32k"
+        },
+        "durationMs": 0,
+        "toolName": "list_symbols",
+        "workspace_id": "py_002_ctx32k"
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/black/ranges.py#function:convert_unchanged_lines:128",
+          "workspace_id": "py_002_ctx32k"
+        },
+        "durationMs": 0,
+        "toolName": "get_symbol",
+        "workspace_id": "py_002_ctx32k"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "workspace_id": "py_002_ctx32k"
+        },
+        "id": "step-1-tool-1",
+        "isError": false,
+        "name": "list_files",
+        "result": [
+          {
+            "language": "python",
+            "parse_status": "ok_filtered",
+            "path": "src/black/ranges.py",
+            "repository": "psf/black",
+            "symbol_count": 17
+          },
+          {
+            "language": "python",
+            "parse_status": "ok_filtered",
+            "path": "src/black/linegen.py",
+            "repository": "psf/black",
+            "symbol_count": 3
+          },
+          {
+            "language": "python",
+            "parse_status": "ok_filtered",
+            "path": "src/black/parsing.py",
+            "repository": "psf/black",
+            "symbol_count": 9
+          },
+          {
+            "language": "python",
+            "parse_status": "ok_filtered",
+            "path": "src/black/__init__.py",
+            "repository": "psf/black",
+            "symbol_count": 32
+          },
+          {
+            "language": "python",
+            "parse_status": "ok_filtered",
+            "path": "src/black/__main__.py",
+            "repository": "psf/black",
+            "symbol_count": 0
+          },
+          {
+            "language": "python",
+            "parse_status": "ok_filtered",
+            "path": "src/black/debug.py",
+            "repository": "psf/black",
+            "symbol_count": 4
+          },
+          {
+            "language": "python",
+            "parse_status": "ok_filtered",
+            "path": "src/black/schema.py",
+            "repository": "psf/black",
+            "symbol_count": 1
+          },
+          {
+            "language": "python",
+            "parse_status": "ok_filtered",
+            "path": "src/blackd/__init__.py",
+            "repository": "psf/black",
+            "symbol_count": 8
+          },
+          {
+            "language": "python",
+            "parse_status": "ok_filtered",
+            "path": "src/blackd/__main__.py",
+            "repository": "psf/black",
+            "symbol_count": 0
+          },
+          {
+            "language": "python",
+            "parse_status": "ok_filtered",
+            "path": "src/blackd/middlewares.py",
+            "repository": "psf/black",
+            "symbol_count": 1
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/black/ranges.py",
+          "workspace_id": "py_002_ctx32k"
+        },
+        "id": "step-2-tool-1",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 40,
+            "kind": "function",
+            "name": "parse_line_ranges",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "parse_line_ranges",
+            "signature": "def parse_line_ranges(line_ranges: Sequence[str]) -> List[Tuple[int, int]]",
+            "start_line": 21,
+            "symbol_id": "src/black/ranges.py#function:parse_line_ranges:21"
+          },
+          {
+            "children": [],
+            "documentation": "Returns whether the line range is valid.",
+            "end_line": 45,
+            "kind": "function",
+            "name": "is_valid_line_range",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "is_valid_line_range",
+            "signature": "def is_valid_line_range(lines: Tuple[int, int]) -> bool",
+            "start_line": 43,
+            "symbol_id": "src/black/ranges.py#function:is_valid_line_range:43"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the adjusted line ranges based on edits from the original code.\n\nThis computes the new line ranges by diffing original_source and\nmodified_source, and adjust each range based on how the range overlaps with\nthe diffs.\n\nNote the diff can contain lines outside of the original line ranges. This can\nhappen when the formatting has to be done in adjacent to maintain consistent\nlocal results. For example:\n\n1. def my_func(arg1, arg2,\n2.             arg3,):\n3.   pass\n\nIf it restricts to line 2-2, it can't simply reformat line 2, it also has\nto reformat line 1:\n\n1. def my_func(\n2.     arg1,\n3.     arg2,\n4.     arg3,\n5. ):\n6.   pass\n\nIn this case, we will expand the line ranges to also include the whole diff\nblock.\n\nArgs:\n  lines: a collection of line ranges.\n  original_source: the original source.\n  modified_source: the modified source.",
+            "end_line": 125,
+            "kind": "function",
+            "name": "adjusted_lines",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "adjusted_lines",
+            "signature": "def adjusted_lines(\n    lines: Collection[Tuple[int, int]],\n    original_source: str,\n    modified_source: str,\n) -> List[Tuple[int, int]]",
+            "start_line": 48,
+            "symbol_id": "src/black/ranges.py#function:adjusted_lines:48"
+          },
+          {
+            "children": [],
+            "documentation": "Converts unchanged lines to STANDALONE_COMMENT.\n\n    The idea is similar to how `# fmt: on/off` is implemented. It also converts the\n    nodes between those markers as a single `STANDALONE_COMMENT` leaf node with\n    the unformatted code as its value. `STANDALONE_COMMENT` is a \"fake\" token\n    that will be formatted as-is with its prefix normalized.\n\n    Here we perform two passes:\n\n    1. Visit the top-level statements, and convert them to a single\n       `STANDALONE_COMMENT` when unchanged. This speeds up formatting when some\n       of the top-level statements aren't changed.\n    2. Convert unchanged \"unwrapped lines\" to `STANDALONE_COMMENT` nodes line by\n       line. \"unwrapped lines\" are divided by the `NEWLINE` token. e.g. a\n       multi-line statement is *one* \"unwrapped line\" that ends with `NEWLINE`,\n       even though this statement itself can span multiple lines, and the\n       tokenizer only sees the last '\n' as the `NEWLINE` token.\n\n    NOTE: During pass (2), comment prefixes and indentations are ALWAYS\n    normalized even when the lines aren't changed. This is fixable by moving\n    more formatting to pass (1). However, it's hard to get it correct when\n    incorrect indentations are used. So we defer this to future optimizations.",
+            "end_line": 157,
+            "kind": "function",
+            "name": "convert_unchanged_lines",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "convert_unchanged_lines",
+            "signature": "def convert_unchanged_lines(src_node: Node, lines: Collection[Tuple[int, int]]) -> None",
+            "start_line": 128,
+            "symbol_id": "src/black/ranges.py#function:convert_unchanged_lines:128"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 167,
+            "kind": "function",
+            "name": "_contains_standalone_comment",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "_contains_standalone_comment",
+            "signature": "def _contains_standalone_comment(node: LN) -> bool",
+            "start_line": 160,
+            "symbol_id": "src/black/ranges.py#function:_contains_standalone_comment:160"
+          },
+          {
+            "children": [
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 181,
+                "kind": "method",
+                "name": "__init__",
+                "parent_id": "src/black/ranges.py#class:_TopLevelStatementsVisitor:170",
+                "parent_name": "_TopLevelStatementsVisitor",
+                "path": "src/black/ranges.py",
+                "qualified_name": "_TopLevelStatementsVisitor.__init__",
+                "signature": "def __init__(self, lines_set: Set[int])",
+                "start_line": 180,
+                "symbol_id": "src/black/ranges.py#method:_TopLevelStatementsVisitor.__init__:180"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 198,
+                "kind": "method",
+                "name": "visit_simple_stmt",
+                "parent_id": "src/black/ranges.py#class:_TopLevelStatementsVisitor:170",
+                "parent_name": "_TopLevelStatementsVisitor",
+                "path": "src/black/ranges.py",
+                "qualified_name": "_TopLevelStatementsVisitor.visit_simple_stmt",
+                "signature": "def visit_simple_stmt(self, node: Node) -> Iterator[None]",
+                "start_line": 183,
+                "symbol_id": "src/black/ranges.py#method:_TopLevelStatementsVisitor.visit_simple_stmt:183"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 221,
+                "kind": "method",
+                "name": "visit_suite",
+                "parent_id": "src/black/ranges.py#class:_TopLevelStatementsVisitor:170",
+                "parent_name": "_TopLevelStatementsVisitor",
+                "path": "src/black/ranges.py",
+                "qualified_name": "_TopLevelStatementsVisitor.visit_suite",
+                "signature": "def visit_suite(self, node: Node) -> Iterator[None]",
+                "start_line": 200,
+                "symbol_id": "src/black/ranges.py#method:_TopLevelStatementsVisitor.visit_suite:200"
+              }
+            ],
+            "documentation": "A node visitor that converts unchanged top-level statements to\nSTANDALONE_COMMENT.\n\nThis is used in addition to _convert_unchanged_line_by_line, to\nspeed up formatting when there are unchanged top-level\nclasses/functions/statements.",
+            "end_line": 221,
+            "kind": "class",
+            "name": "_TopLevelStatementsVisitor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "_TopLevelStatementsVisitor",
+            "signature": "class _TopLevelStatementsVisitor(Visitor[None])",
+            "start_line": 170,
+            "symbol_id": "src/black/ranges.py#class:_TopLevelStatementsVisitor:170"
+          },
+          {
+            "children": [],
+            "documentation": "Converts unchanged to STANDALONE_COMMENT line by line.",
+            "end_line": 275,
+            "kind": "function",
+            "name": "_convert_unchanged_line_by_line",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "_convert_unchanged_line_by_line",
+            "signature": "def _convert_unchanged_line_by_line(node: Node, lines_set: Set[int]) -> None",
+            "start_line": 224,
+            "symbol_id": "src/black/ranges.py#function:_convert_unchanged_line_by_line:224"
+          },
+          {
+            "children": [],
+            "documentation": "Convert node to STANDALONE_COMMENT by modifying the tree inline.",
+            "end_line": 315,
+            "kind": "function",
+            "name": "_convert_node_to_standalone_comment",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "_convert_node_to_standalone_comment",
+            "signature": "def _convert_node_to_standalone_comment(node: LN) -> None",
+            "start_line": 278,
+            "symbol_id": "src/black/ranges.py#function:_convert_node_to_standalone_comment:278"
+          },
+          {
+            "children": [],
+            "documentation": "Convert nodes to STANDALONE_COMMENT by modifying the tree inline.",
+            "end_line": 345,
+            "kind": "function",
+            "name": "_convert_nodes_to_standalone_comment",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "_convert_nodes_to_standalone_comment",
+            "signature": "def _convert_nodes_to_standalone_comment(nodes: Sequence[LN], *, newline: Leaf) -> None",
+            "start_line": 318,
+            "symbol_id": "src/black/ranges.py#function:_convert_nodes_to_standalone_comment:318"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the line number of the leaf node's last line.",
+            "end_line": 354,
+            "kind": "function",
+            "name": "_leaf_line_end",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "_leaf_line_end",
+            "signature": "def _leaf_line_end(leaf: Leaf) -> int",
+            "start_line": 348,
+            "symbol_id": "src/black/ranges.py#function:_leaf_line_end:348"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the line range of this node or list of nodes.",
+            "end_line": 381,
+            "kind": "function",
+            "name": "_get_line_range",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "_get_line_range",
+            "signature": "def _get_line_range(node_or_nodes: Union[LN, List[LN]]) -> Set[int]",
+            "start_line": 357,
+            "symbol_id": "src/black/ranges.py#function:_get_line_range:357"
+          },
+          {
+            "children": [],
+            "documentation": "Returns a sequence of _LinesMapping by diffing the sources.\n\nFor example, given the following diff:\n    import re\n  - def func(arg1,\n  -   arg2, arg3):\n  + def func(arg1, arg2, arg3):\n      pass\nIt returns the following mappings:\n  original -> modified\n   (1, 1)  ->  (1, 1), is_changed_block=False (the \"import re\" line)\n   (2, 3)  ->  (2, 2), is_changed_block=True (the diff)\n   (4, 4)  ->  (3, 3), is_changed_block=False (the \"pass\" line)\n\nYou can think of this visually as if it brings up a side-by-side diff, and tries\nto map the line ranges from the left side to the right side:\n\n  (1, 1)->(1, 1)    1. import re          1. import re\n  (2, 3)->(2, 2)    2. def func(arg1,     2. def func(arg1, arg2, arg3):\n                    3.   arg2, arg3):\n  (4, 4)->(3, 3)    4.   pass             3.   pass\n\nArgs:\n  original_source: the original source.\n  modified_source: the modified source.",
+            "end_line": 478,
+            "kind": "function",
+            "name": "_calculate_lines_mappings",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "_calculate_lines_mappings",
+            "signature": "def _calculate_lines_mappings(\n    original_source: str,\n    modified_source: str,\n) -> Sequence[_LinesMapping]",
+            "start_line": 402,
+            "symbol_id": "src/black/ranges.py#function:_calculate_lines_mappings:402"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the original index of the lines mappings for the original line.",
+            "end_line": 493,
+            "kind": "function",
+            "name": "_find_lines_mapping_index",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/ranges.py",
+            "qualified_name": "_find_lines_mapping_index",
+            "signature": "def _find_lines_mapping_index(\n    original_line: int,\n    lines_mappings: Sequence[_LinesMapping],\n    start_index: int,\n) -> int",
+            "start_line": 481,
+            "symbol_id": "src/black/ranges.py#function:_find_lines_mapping_index:481"
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/black/ranges.py#function:convert_unchanged_lines:128",
+          "workspace_id": "py_002_ctx32k"
+        },
+        "id": "step-3-tool-1",
+        "isError": false,
+        "name": "get_symbol",
+        "result": {
+          "children": [],
+          "code": "def convert_unchanged_lines(src_node: Node, lines: Collection[Tuple[int, int]]) -> None:\n    \"\"\"Converts unchanged lines to STANDALONE_COMMENT.\n\n    The idea is similar to how `# fmt: on/off` is implemented. It also converts the\n    nodes between those markers as a single `STANDALONE_COMMENT` leaf node with\n    the unformatted code as its value. `STANDALONE_COMMENT` is a \"fake\" token\n    that will be formatted as-is with its prefix normalized.\n\n    Here we perform two passes:\n\n    1. Visit the top-level statements, and convert them to a single\n       `STANDALONE_COMMENT` when unchanged. This speeds up formatting when some\n       of the top-level statements aren't changed.\n    2. Convert unchanged \"unwrapped lines\" to `STANDALONE_COMMENT` nodes line by\n       line. \"unwrapped lines\" are divided by the `NEWLINE` token. e.g. a\n       multi-line statement is *one* \"unwrapped line\" that ends with `NEWLINE`,\n       even though this statement itself can span multiple lines, and the\n       tokenizer only sees the last '\\n' as the `NEWLINE` token.\n\n    NOTE: During pass (2), comment prefixes and indentations are ALWAYS\n    normalized even when the lines aren't changed. This is fixable by moving\n    more formatting to pass (1). However, it's hard to get it correct when\n    incorrect indentations are used. So we defer this to future optimizations.\n    \"\"\"\n    lines_set: Set[int] = set()\n    for start, end in lines:\n        lines_set.update(range(start, end + 1))\n    visitor = _TopLevelStatementsVisitor(lines_set)\n    _ = list(visitor.visit(src_node))  # Consume all results.\n    _convert_unchanged_line_by_line(src_node, lines_set)",
+          "documentation": "Converts unchanged lines to STANDALONE_COMMENT.\n\n    The idea is similar to how `# fmt: on/off` is implemented. It also converts the\n    nodes between those markers as a single `STANDALONE_COMMENT` leaf node with\n    the unformatted code as its value. `STANDALONE_COMMENT` is a \"fake\" token\n    that will be formatted as-is with its prefix normalized.\n\n    Here we perform two passes:\n\n    1. Visit the top-level statements, and convert them to a single\n       `STANDALONE_COMMENT` when unchanged. This speeds up formatting when some\n       of the top-level statements aren't changed.\n    2. Convert unchanged \"unwrapped lines\" to `STANDALONE_COMMENT` nodes line by\n       line. \"unwrapped lines\" are divided by the `NEWLINE` token. e.g. a\n       multi-line statement is *one* \"unwrapped line\" that ends with `NEWLINE`,\n       even though this statement itself can span multiple lines, and the\n       tokenizer only sees the last '\n' as the `NEWLINE` token.\n\n    NOTE: During pass (2), comment prefixes and indentations are ALWAYS\n    normalized even when the lines aren't changed. This is fixable by moving\n    more formatting to pass (1). However, it's hard to get it correct when\n    incorrect indentations are used. So we defer this to future optimizations.",
+          "end_line": 157,
+          "kind": "function",
+          "name": "convert_unchanged_lines",
+          "parent_id": null,
+          "parent_name": null,
+          "path": "src/black/ranges.py",
+          "qualified_name": "convert_unchanged_lines",
+          "signature": "def convert_unchanged_lines(src_node: Node, lines: Collection[Tuple[int, int]]) -> None",
+          "start_line": 128,
+          "symbol_id": "src/black/ranges.py#function:convert_unchanged_lines:128"
+        }
+      }
+    ]
+  },
+  "trialId": "26f6824043"
+}

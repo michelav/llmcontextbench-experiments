@@ -1,0 +1,2029 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 1087,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-mini",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "py_005_ctx8k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 6,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "language": "python",
+                "parse_status": "ok_filtered",
+                "path": "src/black/nodes.py",
+                "repository": "psf/black",
+                "symbol_count": 34
+              },
+              {
+                "language": "python",
+                "parse_status": "ok_filtered",
+                "path": "src/black/comments.py",
+                "repository": "psf/black",
+                "symbol_count": 11
+              }
+            ],
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "py_005_ctx8k"
+              },
+              "durationMs": 5,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "list_files",
+              "transport": "in_memory"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1165,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-mini",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "src/black/nodes.py",
+              "workspace_id": "py_005_ctx8k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 5,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "Return True if content between `opening` and `closing` is a one-sequence.",
+                "end_line": 648,
+                "kind": "function",
+                "name": "is_one_sequence_between",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_one_sequence_between",
+                "signature": "def is_one_sequence_between(\n    opening: Leaf,\n    closing: Leaf,\n    leaves: List[Leaf],\n    brackets: Tuple[int, int] = (token.LPAR, token.RPAR),\n) -> bool",
+                "start_line": 614,
+                "symbol_id": "src/black/nodes.py#function:is_one_sequence_between:614"
+              },
+              {
+                "children": [],
+                "documentation": "Return True iff `node` is of the shape ( test := test )",
+                "end_line": 654,
+                "kind": "function",
+                "name": "is_walrus_assignment",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_walrus_assignment",
+                "signature": "def is_walrus_assignment(node: LN) -> bool",
+                "start_line": 651,
+                "symbol_id": "src/black/nodes.py#function:is_walrus_assignment:651"
+              },
+              {
+                "children": [],
+                "documentation": "Return True iff `node` is a trailer valid in a simple decorator",
+                "end_line": 680,
+                "kind": "function",
+                "name": "is_simple_decorator_trailer",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_simple_decorator_trailer",
+                "signature": "def is_simple_decorator_trailer(node: LN, last: bool = False) -> bool",
+                "start_line": 657,
+                "symbol_id": "src/black/nodes.py#function:is_simple_decorator_trailer:657"
+              },
+              {
+                "children": [],
+                "documentation": "Return True iff `node` could be a 'dotted name' decorator\n\nThis function takes the node of the 'namedexpr_test' of the new decorator\ngrammar and test if it would be valid under the old decorator grammar.\n\nThe old grammar was: decorator: @ dotted_name [arguments] NEWLINE\nThe new grammar is : decorator: @ namedexpr_test NEWLINE",
+                "end_line": 704,
+                "kind": "function",
+                "name": "is_simple_decorator_expression",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_simple_decorator_expression",
+                "signature": "def is_simple_decorator_expression(node: LN) -> bool",
+                "start_line": 683,
+                "symbol_id": "src/black/nodes.py#function:is_simple_decorator_expression:683"
+              },
+              {
+                "children": [],
+                "documentation": "Return True if `node` holds a `yield` or `yield from` expression.",
+                "end_line": 725,
+                "kind": "function",
+                "name": "is_yield",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_yield",
+                "signature": "def is_yield(node: LN) -> bool",
+                "start_line": 707,
+                "symbol_id": "src/black/nodes.py#function:is_yield:707"
+              },
+              {
+                "children": [],
+                "documentation": "Return True if `leaf` is a star or double star in a vararg or kwarg.\n\nIf `within` includes VARARGS_PARENTS, this applies to function signatures.\nIf `within` includes UNPACKING_PARENTS, it applies to right hand-side\nextended iterable unpacking (PEP 3132) and additional unpacking\ngeneralizations (PEP 448).",
+                "end_line": 748,
+                "kind": "function",
+                "name": "is_vararg",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_vararg",
+                "signature": "def is_vararg(leaf: Leaf, within: Set[NodeType]) -> bool",
+                "start_line": 728,
+                "symbol_id": "src/black/nodes.py#function:is_vararg:728"
+              },
+              {
+                "children": [],
+                "documentation": "Return True if `leaf` is a multiline string that actually spans many lines.",
+                "end_line": 753,
+                "kind": "function",
+                "name": "is_multiline_string",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_multiline_string",
+                "signature": "def is_multiline_string(leaf: Leaf) -> bool",
+                "start_line": 751,
+                "symbol_id": "src/black/nodes.py#function:is_multiline_string:751"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 760,
+                "kind": "function",
+                "name": "is_parent_function_or_class",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_parent_function_or_class",
+                "signature": "def is_parent_function_or_class(node: Node) -> bool",
+                "start_line": 756,
+                "symbol_id": "src/black/nodes.py#function:is_parent_function_or_class:756"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 764,
+                "kind": "function",
+                "name": "is_function_or_class",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_function_or_class",
+                "signature": "def is_function_or_class(node: Node) -> bool",
+                "start_line": 763,
+                "symbol_id": "src/black/nodes.py#function:is_function_or_class:763"
+              },
+              {
+                "children": [],
+                "documentation": "Return True if `node` is a suite with a stub body.",
+                "end_line": 787,
+                "kind": "function",
+                "name": "is_stub_suite",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_stub_suite",
+                "signature": "def is_stub_suite(node: Node) -> bool",
+                "start_line": 767,
+                "symbol_id": "src/black/nodes.py#function:is_stub_suite:767"
+              },
+              {
+                "children": [],
+                "documentation": "Return True if `node` is a simple statement containing an ellipsis.",
+                "end_line": 804,
+                "kind": "function",
+                "name": "is_stub_body",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_stub_body",
+                "signature": "def is_stub_body(node: LN) -> bool",
+                "start_line": 790,
+                "symbol_id": "src/black/nodes.py#function:is_stub_body:790"
+              },
+              {
+                "children": [],
+                "documentation": "Given a `LN`, determines whether it's an atom `node` with invisible\nparens. Useful in dedupe-ing and normalizing parens.",
+                "end_line": 822,
+                "kind": "function",
+                "name": "is_atom_with_invisible_parens",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_atom_with_invisible_parens",
+                "signature": "def is_atom_with_invisible_parens(node: LN) -> bool",
+                "start_line": 807,
+                "symbol_id": "src/black/nodes.py#function:is_atom_with_invisible_parens:807"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 826,
+                "kind": "function",
+                "name": "is_empty_par",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_empty_par",
+                "signature": "def is_empty_par(leaf: Leaf) -> bool",
+                "start_line": 825,
+                "symbol_id": "src/black/nodes.py#function:is_empty_par:825"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 830,
+                "kind": "function",
+                "name": "is_empty_lpar",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_empty_lpar",
+                "signature": "def is_empty_lpar(leaf: Leaf) -> bool",
+                "start_line": 829,
+                "symbol_id": "src/black/nodes.py#function:is_empty_lpar:829"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 834,
+                "kind": "function",
+                "name": "is_empty_rpar",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_empty_rpar",
+                "signature": "def is_empty_rpar(leaf: Leaf) -> bool",
+                "start_line": 833,
+                "symbol_id": "src/black/nodes.py#function:is_empty_rpar:833"
+              },
+              {
+                "children": [],
+                "documentation": "Return True if the given leaf starts an import statement.",
+                "end_line": 848,
+                "kind": "function",
+                "name": "is_import",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_import",
+                "signature": "def is_import(leaf: Leaf) -> bool",
+                "start_line": 837,
+                "symbol_id": "src/black/nodes.py#function:is_import:837"
+              },
+              {
+                "children": [],
+                "documentation": "Return True if the given leaf starts a with or async with statement.",
+                "end_line": 862,
+                "kind": "function",
+                "name": "is_with_or_async_with_stmt",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_with_or_async_with_stmt",
+                "signature": "def is_with_or_async_with_stmt(leaf: Leaf) -> bool",
+                "start_line": 851,
+                "symbol_id": "src/black/nodes.py#function:is_with_or_async_with_stmt:851"
+              },
+              {
+                "children": [],
+                "documentation": "Return True if the given leaf starts an async def/for/with statement.\n\nNote that `async def` can be either an `async_stmt` or `async_funcdef`,\nthe latter is used when it has decorators.",
+                "end_line": 875,
+                "kind": "function",
+                "name": "is_async_stmt_or_funcdef",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_async_stmt_or_funcdef",
+                "signature": "def is_async_stmt_or_funcdef(leaf: Leaf) -> bool",
+                "start_line": 865,
+                "symbol_id": "src/black/nodes.py#function:is_async_stmt_or_funcdef:865"
+              },
+              {
+                "children": [],
+                "documentation": "Return True if the given leaf is a type comment. This function should only\nbe used for general type comments (excluding ignore annotations, which should\nuse `is_type_ignore_comment`). Note that general type comments are no longer\nused in modern version of Python, this function may be deprecated in the future.",
+                "end_line": 885,
+                "kind": "function",
+                "name": "is_type_comment",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_type_comment",
+                "signature": "def is_type_comment(leaf: Leaf) -> bool",
+                "start_line": 878,
+                "symbol_id": "src/black/nodes.py#function:is_type_comment:878"
+              },
+              {
+                "children": [],
+                "documentation": "Return True if the given leaf is a type comment with ignore annotation.",
+                "end_line": 892,
+                "kind": "function",
+                "name": "is_type_ignore_comment",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_type_ignore_comment",
+                "signature": "def is_type_ignore_comment(leaf: Leaf) -> bool",
+                "start_line": 888,
+                "symbol_id": "src/black/nodes.py#function:is_type_ignore_comment:888"
+              },
+              {
+                "children": [],
+                "documentation": "Return True if the given string match with type comment with\nignore annotation.",
+                "end_line": 898,
+                "kind": "function",
+                "name": "is_type_ignore_comment_string",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_type_ignore_comment_string",
+                "signature": "def is_type_ignore_comment_string(value: str) -> bool",
+                "start_line": 895,
+                "symbol_id": "src/black/nodes.py#function:is_type_ignore_comment_string:895"
+              },
+              {
+                "children": [],
+                "documentation": "Wrap `child` in parentheses.\n\nThis replaces `child` with an atom holding the parentheses and the old\nchild.  That requires moving the prefix.\n\nIf `visible` is False, the leaves will be valueless (and thus invisible).",
+                "end_line": 916,
+                "kind": "function",
+                "name": "wrap_in_parentheses",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "wrap_in_parentheses",
+                "signature": "def wrap_in_parentheses(parent: Node, child: LN, *, visible: bool = True) -> None",
+                "start_line": 901,
+                "symbol_id": "src/black/nodes.py#function:wrap_in_parentheses:901"
+              },
+              {
+                "children": [],
+                "documentation": "Returns `wrapped` if `node` is of the shape ( wrapped ).\n\nParenthesis can be optional. Returns None otherwise",
+                "end_line": 930,
+                "kind": "function",
+                "name": "unwrap_singleton_parenthesis",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "unwrap_singleton_parenthesis",
+                "signature": "def unwrap_singleton_parenthesis(node: LN) -> Optional[LN]",
+                "start_line": 919,
+                "symbol_id": "src/black/nodes.py#function:unwrap_singleton_parenthesis:919"
+              },
+              {
+                "children": [],
+                "documentation": "Make sure parentheses are visible.\n\nThey could be invisible as part of some statements (see\n:func:`normalize_invisible_parens` and :func:`visit_import_from`).",
+                "end_line": 942,
+                "kind": "function",
+                "name": "ensure_visible",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "ensure_visible",
+                "signature": "def ensure_visible(leaf: Leaf) -> None",
+                "start_line": 933,
+                "symbol_id": "src/black/nodes.py#function:ensure_visible:933"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 946,
+                "kind": "function",
+                "name": "is_name_token",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_name_token",
+                "signature": "def is_name_token(nl: NL) -> TypeGuard[Leaf]",
+                "start_line": 945,
+                "symbol_id": "src/black/nodes.py#function:is_name_token:945"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 950,
+                "kind": "function",
+                "name": "is_lpar_token",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_lpar_token",
+                "signature": "def is_lpar_token(nl: NL) -> TypeGuard[Leaf]",
+                "start_line": 949,
+                "symbol_id": "src/black/nodes.py#function:is_lpar_token:949"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 954,
+                "kind": "function",
+                "name": "is_rpar_token",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_rpar_token",
+                "signature": "def is_rpar_token(nl: NL) -> TypeGuard[Leaf]",
+                "start_line": 953,
+                "symbol_id": "src/black/nodes.py#function:is_rpar_token:953"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 958,
+                "kind": "function",
+                "name": "is_string_token",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_string_token",
+                "signature": "def is_string_token(nl: NL) -> TypeGuard[Leaf]",
+                "start_line": 957,
+                "symbol_id": "src/black/nodes.py#function:is_string_token:957"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 962,
+                "kind": "function",
+                "name": "is_number_token",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_number_token",
+                "signature": "def is_number_token(nl: NL) -> TypeGuard[Leaf]",
+                "start_line": 961,
+                "symbol_id": "src/black/nodes.py#function:is_number_token:961"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the type of annotation this leaf is part of, if any.",
+                "end_line": 974,
+                "kind": "function",
+                "name": "get_annotation_type",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "get_annotation_type",
+                "signature": "def get_annotation_type(leaf: Leaf) -> Literal[\"return\", \"param\", None]",
+                "start_line": 965,
+                "symbol_id": "src/black/nodes.py#function:get_annotation_type:965"
+              },
+              {
+                "children": [],
+                "documentation": "Returns whether this leaf is part of a type annotation.",
+                "end_line": 979,
+                "kind": "function",
+                "name": "is_part_of_annotation",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "is_part_of_annotation",
+                "signature": "def is_part_of_annotation(leaf: Leaf) -> bool",
+                "start_line": 977,
+                "symbol_id": "src/black/nodes.py#function:is_part_of_annotation:977"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the first leaf of the ancestor node.",
+                "end_line": 989,
+                "kind": "function",
+                "name": "first_leaf",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "first_leaf",
+                "signature": "def first_leaf(node: LN) -> Optional[Leaf]",
+                "start_line": 982,
+                "symbol_id": "src/black/nodes.py#function:first_leaf:982"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the last leaf of the ancestor node.",
+                "end_line": 999,
+                "kind": "function",
+                "name": "last_leaf",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "last_leaf",
+                "signature": "def last_leaf(node: LN) -> Optional[Leaf]",
+                "start_line": 992,
+                "symbol_id": "src/black/nodes.py#function:last_leaf:992"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the furthest ancestor that has this leaf node as the last leaf.",
+                "end_line": 1007,
+                "kind": "function",
+                "name": "furthest_ancestor_with_last_leaf",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/nodes.py",
+                "qualified_name": "furthest_ancestor_with_last_leaf",
+                "signature": "def furthest_ancestor_with_last_leaf(leaf: Leaf) -> LN",
+                "start_line": 1002,
+                "symbol_id": "src/black/nodes.py#function:furthest_ancestor_with_last_leaf:1002"
+              }
+            ],
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "src/black/nodes.py",
+                "workspace_id": "py_005_ctx8k"
+              },
+              "durationMs": 5,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "list_symbols",
+              "transport": "in_memory"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1275,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-mini",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "symbol_id": "src/black/nodes.py#function:is_part_of_annotation:977",
+              "workspace_id": "py_005_ctx8k"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 3,
+          "metadata": {
+            "is_error": false,
+            "result": {
+              "children": [],
+              "code": "def is_part_of_annotation(leaf: Leaf) -> bool:\n    \"\"\"Returns whether this leaf is part of a type annotation.\"\"\"\n    return get_annotation_type(leaf) is not None",
+              "documentation": "Returns whether this leaf is part of a type annotation.",
+              "end_line": 979,
+              "kind": "function",
+              "name": "is_part_of_annotation",
+              "parent_id": null,
+              "parent_name": null,
+              "path": "src/black/nodes.py",
+              "qualified_name": "is_part_of_annotation",
+              "signature": "def is_part_of_annotation(leaf: Leaf) -> bool",
+              "start_line": 977,
+              "symbol_id": "src/black/nodes.py#function:is_part_of_annotation:977"
+            },
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "symbol_id": "src/black/nodes.py#function:is_part_of_annotation:977",
+                "workspace_id": "py_005_ctx8k"
+              },
+              "durationMs": 3,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "get_symbol",
+              "transport": "in_memory"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1040,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-mini",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 4612,
+          "metadata": {},
+          "name": "strategy.local_mcp.execute",
+          "type": "strategy.local_mcp.execute"
+        },
+        {
+          "duration_ms": 4612,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 45,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": 0,
+        "cachedInputTokens": 0,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 3,
+        "inputTokens": 6676,
+        "loopControlDurationMsEstimated": 31,
+        "mcpToolCalls": 3,
+        "modelCalls": 4,
+        "modelDurationMs": 4567,
+        "outputTokens": 149,
+        "promptChars": 978,
+        "questionTokensEstimated": 127,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 0,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 4,
+        "strategyDurationMs": 4612,
+        "taskStatementChars": 808,
+        "toolCalls": 3,
+        "toolDurationMs": 14,
+        "totalDurationMs": 4612,
+        "totalTokens": 6825,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779729144.0,
+        "conversation": null,
+        "created_at": 1779729143.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_05913f521e37e5ce006a1482f77628819782cbc3b69e73a012",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "d87581a7af"
+        },
+        "model": "gpt-5.4-mini-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "arguments": "{\"workspace_id\":\"py_005_ctx8k\"}",
+            "call_id": "call_P0QUa62FibqWqEIi55ENNItn",
+            "id": "fc_05913f521e37e5ce006a1482f7d6708197a00dee5dae032d48",
+            "name": "list_files",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 477,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 24,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 501
+        },
+        "user": null
+      },
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779729145.0,
+        "conversation": null,
+        "created_at": 1779729144.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_05913f521e37e5ce006a1482f890b08197a86dd9f98988be05",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "d87581a7af"
+        },
+        "model": "gpt-5.4-mini-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "arguments": "{\"workspace_id\":\"py_005_ctx8k\",\"path\":\"src/black/nodes.py\",\"kind\":\"function\"}",
+            "call_id": "call_WIeZEjo3hpkDXD6K4dOorrUu",
+            "id": "fc_05913f521e37e5ce006a1482f8fca481979f64a2e485a9e09f",
+            "name": "list_symbols",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 595,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 37,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 632
+        },
+        "user": null
+      },
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779729146.0,
+        "conversation": null,
+        "created_at": 1779729145.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_05913f521e37e5ce006a1482f9bdd881979ac3c632467348b0",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "d87581a7af"
+        },
+        "model": "gpt-5.4-mini-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "arguments": "{\"workspace_id\":\"py_005_ctx8k\",\"symbol_id\":\"src/black/nodes.py#function:is_part_of_annotation:977\"}",
+            "call_id": "call_yBembB1UNW31R0tgOzncaggR",
+            "id": "fc_05913f521e37e5ce006a1482fa1f948197b32a36e160626424",
+            "name": "get_symbol",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 4908,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 42,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 4950
+        },
+        "user": null
+      },
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779729147.0,
+        "conversation": null,
+        "created_at": 1779729147.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_05913f521e37e5ce006a1482fb038c81978084209f6b20a3d7",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "d87581a7af"
+        },
+        "model": "gpt-5.4-mini-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "logprobs": [],
+                "text": "```python\ndef is_part_of_annotation(leaf: Leaf) -> bool:\n    \"\"\"Returns whether this leaf is part of a type annotation.\"\"\"\n    return get_annotation_type(leaf) is not None\n```",
+                "type": "output_text"
+              }
+            ],
+            "id": "msg_05913f521e37e5ce006a1482fb537c81978b750c71f8c2d2a8",
+            "phase": "final_answer",
+            "role": "assistant",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 696,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 46,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 742
+        },
+        "user": null
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "workspace_id": "py_005_ctx8k"
+        },
+        "durationMs": 5,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "list_files",
+        "transport": "in_memory"
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/black/nodes.py",
+          "workspace_id": "py_005_ctx8k"
+        },
+        "durationMs": 5,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "list_symbols",
+        "transport": "in_memory"
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/black/nodes.py#function:is_part_of_annotation:977",
+          "workspace_id": "py_005_ctx8k"
+        },
+        "durationMs": 3,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "get_symbol",
+        "transport": "in_memory"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "workspace_id": "py_005_ctx8k"
+        },
+        "id": "call_P0QUa62FibqWqEIi55ENNItn",
+        "isError": false,
+        "name": "list_files",
+        "result": [
+          {
+            "language": "python",
+            "parse_status": "ok_filtered",
+            "path": "src/black/nodes.py",
+            "repository": "psf/black",
+            "symbol_count": 34
+          },
+          {
+            "language": "python",
+            "parse_status": "ok_filtered",
+            "path": "src/black/comments.py",
+            "repository": "psf/black",
+            "symbol_count": 11
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/black/nodes.py",
+          "workspace_id": "py_005_ctx8k"
+        },
+        "id": "call_WIeZEjo3hpkDXD6K4dOorrUu",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "Return True if content between `opening` and `closing` is a one-sequence.",
+            "end_line": 648,
+            "kind": "function",
+            "name": "is_one_sequence_between",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_one_sequence_between",
+            "signature": "def is_one_sequence_between(\n    opening: Leaf,\n    closing: Leaf,\n    leaves: List[Leaf],\n    brackets: Tuple[int, int] = (token.LPAR, token.RPAR),\n) -> bool",
+            "start_line": 614,
+            "symbol_id": "src/black/nodes.py#function:is_one_sequence_between:614"
+          },
+          {
+            "children": [],
+            "documentation": "Return True iff `node` is of the shape ( test := test )",
+            "end_line": 654,
+            "kind": "function",
+            "name": "is_walrus_assignment",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_walrus_assignment",
+            "signature": "def is_walrus_assignment(node: LN) -> bool",
+            "start_line": 651,
+            "symbol_id": "src/black/nodes.py#function:is_walrus_assignment:651"
+          },
+          {
+            "children": [],
+            "documentation": "Return True iff `node` is a trailer valid in a simple decorator",
+            "end_line": 680,
+            "kind": "function",
+            "name": "is_simple_decorator_trailer",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_simple_decorator_trailer",
+            "signature": "def is_simple_decorator_trailer(node: LN, last: bool = False) -> bool",
+            "start_line": 657,
+            "symbol_id": "src/black/nodes.py#function:is_simple_decorator_trailer:657"
+          },
+          {
+            "children": [],
+            "documentation": "Return True iff `node` could be a 'dotted name' decorator\n\nThis function takes the node of the 'namedexpr_test' of the new decorator\ngrammar and test if it would be valid under the old decorator grammar.\n\nThe old grammar was: decorator: @ dotted_name [arguments] NEWLINE\nThe new grammar is : decorator: @ namedexpr_test NEWLINE",
+            "end_line": 704,
+            "kind": "function",
+            "name": "is_simple_decorator_expression",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_simple_decorator_expression",
+            "signature": "def is_simple_decorator_expression(node: LN) -> bool",
+            "start_line": 683,
+            "symbol_id": "src/black/nodes.py#function:is_simple_decorator_expression:683"
+          },
+          {
+            "children": [],
+            "documentation": "Return True if `node` holds a `yield` or `yield from` expression.",
+            "end_line": 725,
+            "kind": "function",
+            "name": "is_yield",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_yield",
+            "signature": "def is_yield(node: LN) -> bool",
+            "start_line": 707,
+            "symbol_id": "src/black/nodes.py#function:is_yield:707"
+          },
+          {
+            "children": [],
+            "documentation": "Return True if `leaf` is a star or double star in a vararg or kwarg.\n\nIf `within` includes VARARGS_PARENTS, this applies to function signatures.\nIf `within` includes UNPACKING_PARENTS, it applies to right hand-side\nextended iterable unpacking (PEP 3132) and additional unpacking\ngeneralizations (PEP 448).",
+            "end_line": 748,
+            "kind": "function",
+            "name": "is_vararg",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_vararg",
+            "signature": "def is_vararg(leaf: Leaf, within: Set[NodeType]) -> bool",
+            "start_line": 728,
+            "symbol_id": "src/black/nodes.py#function:is_vararg:728"
+          },
+          {
+            "children": [],
+            "documentation": "Return True if `leaf` is a multiline string that actually spans many lines.",
+            "end_line": 753,
+            "kind": "function",
+            "name": "is_multiline_string",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_multiline_string",
+            "signature": "def is_multiline_string(leaf: Leaf) -> bool",
+            "start_line": 751,
+            "symbol_id": "src/black/nodes.py#function:is_multiline_string:751"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 760,
+            "kind": "function",
+            "name": "is_parent_function_or_class",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_parent_function_or_class",
+            "signature": "def is_parent_function_or_class(node: Node) -> bool",
+            "start_line": 756,
+            "symbol_id": "src/black/nodes.py#function:is_parent_function_or_class:756"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 764,
+            "kind": "function",
+            "name": "is_function_or_class",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_function_or_class",
+            "signature": "def is_function_or_class(node: Node) -> bool",
+            "start_line": 763,
+            "symbol_id": "src/black/nodes.py#function:is_function_or_class:763"
+          },
+          {
+            "children": [],
+            "documentation": "Return True if `node` is a suite with a stub body.",
+            "end_line": 787,
+            "kind": "function",
+            "name": "is_stub_suite",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_stub_suite",
+            "signature": "def is_stub_suite(node: Node) -> bool",
+            "start_line": 767,
+            "symbol_id": "src/black/nodes.py#function:is_stub_suite:767"
+          },
+          {
+            "children": [],
+            "documentation": "Return True if `node` is a simple statement containing an ellipsis.",
+            "end_line": 804,
+            "kind": "function",
+            "name": "is_stub_body",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_stub_body",
+            "signature": "def is_stub_body(node: LN) -> bool",
+            "start_line": 790,
+            "symbol_id": "src/black/nodes.py#function:is_stub_body:790"
+          },
+          {
+            "children": [],
+            "documentation": "Given a `LN`, determines whether it's an atom `node` with invisible\nparens. Useful in dedupe-ing and normalizing parens.",
+            "end_line": 822,
+            "kind": "function",
+            "name": "is_atom_with_invisible_parens",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_atom_with_invisible_parens",
+            "signature": "def is_atom_with_invisible_parens(node: LN) -> bool",
+            "start_line": 807,
+            "symbol_id": "src/black/nodes.py#function:is_atom_with_invisible_parens:807"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 826,
+            "kind": "function",
+            "name": "is_empty_par",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_empty_par",
+            "signature": "def is_empty_par(leaf: Leaf) -> bool",
+            "start_line": 825,
+            "symbol_id": "src/black/nodes.py#function:is_empty_par:825"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 830,
+            "kind": "function",
+            "name": "is_empty_lpar",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_empty_lpar",
+            "signature": "def is_empty_lpar(leaf: Leaf) -> bool",
+            "start_line": 829,
+            "symbol_id": "src/black/nodes.py#function:is_empty_lpar:829"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 834,
+            "kind": "function",
+            "name": "is_empty_rpar",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_empty_rpar",
+            "signature": "def is_empty_rpar(leaf: Leaf) -> bool",
+            "start_line": 833,
+            "symbol_id": "src/black/nodes.py#function:is_empty_rpar:833"
+          },
+          {
+            "children": [],
+            "documentation": "Return True if the given leaf starts an import statement.",
+            "end_line": 848,
+            "kind": "function",
+            "name": "is_import",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_import",
+            "signature": "def is_import(leaf: Leaf) -> bool",
+            "start_line": 837,
+            "symbol_id": "src/black/nodes.py#function:is_import:837"
+          },
+          {
+            "children": [],
+            "documentation": "Return True if the given leaf starts a with or async with statement.",
+            "end_line": 862,
+            "kind": "function",
+            "name": "is_with_or_async_with_stmt",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_with_or_async_with_stmt",
+            "signature": "def is_with_or_async_with_stmt(leaf: Leaf) -> bool",
+            "start_line": 851,
+            "symbol_id": "src/black/nodes.py#function:is_with_or_async_with_stmt:851"
+          },
+          {
+            "children": [],
+            "documentation": "Return True if the given leaf starts an async def/for/with statement.\n\nNote that `async def` can be either an `async_stmt` or `async_funcdef`,\nthe latter is used when it has decorators.",
+            "end_line": 875,
+            "kind": "function",
+            "name": "is_async_stmt_or_funcdef",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_async_stmt_or_funcdef",
+            "signature": "def is_async_stmt_or_funcdef(leaf: Leaf) -> bool",
+            "start_line": 865,
+            "symbol_id": "src/black/nodes.py#function:is_async_stmt_or_funcdef:865"
+          },
+          {
+            "children": [],
+            "documentation": "Return True if the given leaf is a type comment. This function should only\nbe used for general type comments (excluding ignore annotations, which should\nuse `is_type_ignore_comment`). Note that general type comments are no longer\nused in modern version of Python, this function may be deprecated in the future.",
+            "end_line": 885,
+            "kind": "function",
+            "name": "is_type_comment",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_type_comment",
+            "signature": "def is_type_comment(leaf: Leaf) -> bool",
+            "start_line": 878,
+            "symbol_id": "src/black/nodes.py#function:is_type_comment:878"
+          },
+          {
+            "children": [],
+            "documentation": "Return True if the given leaf is a type comment with ignore annotation.",
+            "end_line": 892,
+            "kind": "function",
+            "name": "is_type_ignore_comment",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_type_ignore_comment",
+            "signature": "def is_type_ignore_comment(leaf: Leaf) -> bool",
+            "start_line": 888,
+            "symbol_id": "src/black/nodes.py#function:is_type_ignore_comment:888"
+          },
+          {
+            "children": [],
+            "documentation": "Return True if the given string match with type comment with\nignore annotation.",
+            "end_line": 898,
+            "kind": "function",
+            "name": "is_type_ignore_comment_string",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_type_ignore_comment_string",
+            "signature": "def is_type_ignore_comment_string(value: str) -> bool",
+            "start_line": 895,
+            "symbol_id": "src/black/nodes.py#function:is_type_ignore_comment_string:895"
+          },
+          {
+            "children": [],
+            "documentation": "Wrap `child` in parentheses.\n\nThis replaces `child` with an atom holding the parentheses and the old\nchild.  That requires moving the prefix.\n\nIf `visible` is False, the leaves will be valueless (and thus invisible).",
+            "end_line": 916,
+            "kind": "function",
+            "name": "wrap_in_parentheses",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "wrap_in_parentheses",
+            "signature": "def wrap_in_parentheses(parent: Node, child: LN, *, visible: bool = True) -> None",
+            "start_line": 901,
+            "symbol_id": "src/black/nodes.py#function:wrap_in_parentheses:901"
+          },
+          {
+            "children": [],
+            "documentation": "Returns `wrapped` if `node` is of the shape ( wrapped ).\n\nParenthesis can be optional. Returns None otherwise",
+            "end_line": 930,
+            "kind": "function",
+            "name": "unwrap_singleton_parenthesis",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "unwrap_singleton_parenthesis",
+            "signature": "def unwrap_singleton_parenthesis(node: LN) -> Optional[LN]",
+            "start_line": 919,
+            "symbol_id": "src/black/nodes.py#function:unwrap_singleton_parenthesis:919"
+          },
+          {
+            "children": [],
+            "documentation": "Make sure parentheses are visible.\n\nThey could be invisible as part of some statements (see\n:func:`normalize_invisible_parens` and :func:`visit_import_from`).",
+            "end_line": 942,
+            "kind": "function",
+            "name": "ensure_visible",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "ensure_visible",
+            "signature": "def ensure_visible(leaf: Leaf) -> None",
+            "start_line": 933,
+            "symbol_id": "src/black/nodes.py#function:ensure_visible:933"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 946,
+            "kind": "function",
+            "name": "is_name_token",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_name_token",
+            "signature": "def is_name_token(nl: NL) -> TypeGuard[Leaf]",
+            "start_line": 945,
+            "symbol_id": "src/black/nodes.py#function:is_name_token:945"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 950,
+            "kind": "function",
+            "name": "is_lpar_token",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_lpar_token",
+            "signature": "def is_lpar_token(nl: NL) -> TypeGuard[Leaf]",
+            "start_line": 949,
+            "symbol_id": "src/black/nodes.py#function:is_lpar_token:949"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 954,
+            "kind": "function",
+            "name": "is_rpar_token",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_rpar_token",
+            "signature": "def is_rpar_token(nl: NL) -> TypeGuard[Leaf]",
+            "start_line": 953,
+            "symbol_id": "src/black/nodes.py#function:is_rpar_token:953"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 958,
+            "kind": "function",
+            "name": "is_string_token",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_string_token",
+            "signature": "def is_string_token(nl: NL) -> TypeGuard[Leaf]",
+            "start_line": 957,
+            "symbol_id": "src/black/nodes.py#function:is_string_token:957"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 962,
+            "kind": "function",
+            "name": "is_number_token",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_number_token",
+            "signature": "def is_number_token(nl: NL) -> TypeGuard[Leaf]",
+            "start_line": 961,
+            "symbol_id": "src/black/nodes.py#function:is_number_token:961"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the type of annotation this leaf is part of, if any.",
+            "end_line": 974,
+            "kind": "function",
+            "name": "get_annotation_type",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "get_annotation_type",
+            "signature": "def get_annotation_type(leaf: Leaf) -> Literal[\"return\", \"param\", None]",
+            "start_line": 965,
+            "symbol_id": "src/black/nodes.py#function:get_annotation_type:965"
+          },
+          {
+            "children": [],
+            "documentation": "Returns whether this leaf is part of a type annotation.",
+            "end_line": 979,
+            "kind": "function",
+            "name": "is_part_of_annotation",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "is_part_of_annotation",
+            "signature": "def is_part_of_annotation(leaf: Leaf) -> bool",
+            "start_line": 977,
+            "symbol_id": "src/black/nodes.py#function:is_part_of_annotation:977"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the first leaf of the ancestor node.",
+            "end_line": 989,
+            "kind": "function",
+            "name": "first_leaf",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "first_leaf",
+            "signature": "def first_leaf(node: LN) -> Optional[Leaf]",
+            "start_line": 982,
+            "symbol_id": "src/black/nodes.py#function:first_leaf:982"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the last leaf of the ancestor node.",
+            "end_line": 999,
+            "kind": "function",
+            "name": "last_leaf",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "last_leaf",
+            "signature": "def last_leaf(node: LN) -> Optional[Leaf]",
+            "start_line": 992,
+            "symbol_id": "src/black/nodes.py#function:last_leaf:992"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the furthest ancestor that has this leaf node as the last leaf.",
+            "end_line": 1007,
+            "kind": "function",
+            "name": "furthest_ancestor_with_last_leaf",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/nodes.py",
+            "qualified_name": "furthest_ancestor_with_last_leaf",
+            "signature": "def furthest_ancestor_with_last_leaf(leaf: Leaf) -> LN",
+            "start_line": 1002,
+            "symbol_id": "src/black/nodes.py#function:furthest_ancestor_with_last_leaf:1002"
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/black/nodes.py#function:is_part_of_annotation:977",
+          "workspace_id": "py_005_ctx8k"
+        },
+        "id": "call_yBembB1UNW31R0tgOzncaggR",
+        "isError": false,
+        "name": "get_symbol",
+        "result": {
+          "children": [],
+          "code": "def is_part_of_annotation(leaf: Leaf) -> bool:\n    \"\"\"Returns whether this leaf is part of a type annotation.\"\"\"\n    return get_annotation_type(leaf) is not None",
+          "documentation": "Returns whether this leaf is part of a type annotation.",
+          "end_line": 979,
+          "kind": "function",
+          "name": "is_part_of_annotation",
+          "parent_id": null,
+          "parent_name": null,
+          "path": "src/black/nodes.py",
+          "qualified_name": "is_part_of_annotation",
+          "signature": "def is_part_of_annotation(leaf: Leaf) -> bool",
+          "start_line": 977,
+          "symbol_id": "src/black/nodes.py#function:is_part_of_annotation:977"
+        }
+      }
+    ]
+  },
+  "trialId": "d87581a7af"
+}

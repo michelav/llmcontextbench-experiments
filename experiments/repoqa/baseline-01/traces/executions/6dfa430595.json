@@ -1,0 +1,1241 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 830,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-mini",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "ts_002_ctx4k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 5,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "language": "typescript",
+                "parse_status": "ok_filtered",
+                "path": "src/tokenizers.js",
+                "repository": "xenova/transformers.js",
+                "symbol_count": 30
+              }
+            ],
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "ts_002_ctx4k"
+              },
+              "durationMs": 5,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "list_files",
+              "transport": "in_memory"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1101,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-mini",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "src/tokenizers.js",
+              "workspace_id": "ts_002_ctx4k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 4,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "Pre-tokenizes the input text by splitting it on whitespace characters.\n@param {string} text The text to be pre-tokenized.\n@param {Object} [options] Additional options for the pre-tokenization logic.\n@returns {string[]} An array of tokens produced by splitting the input text on whitespace.",
+                "end_line": 2352,
+                "kind": "method",
+                "name": "pre_tokenize_text",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "pre_tokenize_text",
+                "signature": "pre_tokenize_text(text, options) {\n        return whitespace_split(text);\n    }",
+                "start_line": 2350,
+                "symbol_id": "src/tokenizers.js#method:pre_tokenize_text:2350"
+              },
+              {
+                "children": [],
+                "documentation": "@param {Object} config The configuration options for the pre-tokenizer.\n@param {Object} config.pattern The pattern used to split the text. Can be a string or a regex object.\n@param {string} config.content What to replace the pattern with.",
+                "end_line": 2367,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(config) {\n        super();\n        this.config = config;\n        this.pattern = createPattern(this.config.pattern);\n        this.content = this.config.content;\n    }",
+                "start_line": 2362,
+                "symbol_id": "src/tokenizers.js#method:constructor:2362"
+              },
+              {
+                "children": [],
+                "documentation": "Pre-tokenizes the input text by replacing certain characters.\n@param {string} text The text to be pre-tokenized.\n@param {Object} [options] Additional options for the pre-tokenization logic.\n@returns {string[]} An array of tokens produced by replacing certain characters.",
+                "end_line": 2380,
+                "kind": "method",
+                "name": "pre_tokenize_text",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "pre_tokenize_text",
+                "signature": "pre_tokenize_text(text, options) {\n        if (this.pattern === null) {\n            return [text];\n        }\n        return [text.replaceAll(this.pattern, this.config.content)];\n    }",
+                "start_line": 2375,
+                "symbol_id": "src/tokenizers.js#method:pre_tokenize_text:2375"
+              },
+              {
+                "children": [],
+                "documentation": "Helper function for truncating values of an object, which are each arrays.\nNOTE: No additional checks are made here for validity of arguments.\n@param {Record<string, any[]>} item The input object.\n@param {number} length The length to truncate to.\n@private",
+                "end_line": 2429,
+                "kind": "function",
+                "name": "truncateHelper",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "truncateHelper",
+                "signature": "function truncateHelper(item, length) {\n    // Setting .length to a lower value truncates the array in-place:\n    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/length\n    for (const key of Object.keys(item)) {\n        item[key].length = length;\n    }\n}",
+                "start_line": 2423,
+                "symbol_id": "src/tokenizers.js#function:truncateHelper:2423"
+              },
+              {
+                "children": [],
+                "documentation": "Create a new PreTrainedTokenizer instance.\n@param {Object} tokenizerJSON The JSON of the tokenizer.\n@param {Object} tokenizerConfig The config of the tokenizer.",
+                "end_line": 2541,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(tokenizerJSON, tokenizerConfig) {\n        super();\n\n        this._tokenizer_config = tokenizerConfig;\n\n        // Construct parts of the tokenizer from the JSON\n        this.normalizer = Normalizer.fromConfig(tokenizerJSON.normalizer);\n        this.pre_tokenizer = PreTokenizer.fromConfig(tokenizerJSON.pre_tokenizer);\n        this.model = TokenizerModel.fromConfig(tokenizerJSON.model, tokenizerConfig);\n        this.post_processor = PostProcessor.fromConfig(tokenizerJSON.post_processor);\n        this.decoder = Decoder.fromConfig(tokenizerJSON.decoder);\n\n        // Add added_tokens to model\n        this.special_tokens = [];\n        this.all_special_ids = [];\n\n        /** @type {AddedToken[]} */\n        this.added_tokens = [];\n        for (const addedToken of tokenizerJSON.added_tokens) {\n            const token = new AddedToken(addedToken);\n            this.added_tokens.push(token);\n\n            this.model.tokens_to_ids.set(token.content, token.id);\n            this.model.vocab[token.id] = token.content;\n\n            if (token.special) {\n                this.special_tokens.push(token.content);\n                this.all_special_ids.push(token.id);\n            }\n        }\n\n        // Update additional_special_tokens\n        this.additional_special_tokens = tokenizerConfig.additional_special_tokens ?? [];\n        this.special_tokens.push(...this.additional_special_tokens);\n        this.special_tokens = [...new Set(this.special_tokens)]; // Remove duplicates\n\n        if (this.decoder) {\n            // Slight hack, but it prevents code duplication:\n            this.decoder.added_tokens = this.added_tokens;\n\n            // Another slight hack to add `end_of_word_suffix` (if present) to the decoder\n            // This is needed for cases where BPE model and ByteLevel decoder are used\n            // For more information, see https://github.com/xenova/transformers.js/issues/74\n            // TODO: save this to the decoder when exporting?\n            this.decoder.end_of_word_suffix = this.model.end_of_word_suffix;\n        }\n\n\n        this.added_tokens_regex = this.added_tokens.length > 0 ? new RegExp(\n            this.added_tokens.map(x => `${x.lstrip ? '\\\\s*' : ''}(${escapeRegExp(x.content)})${x.rstrip ? '\\\\s*' : ''}`).join('|')\n        ) : null;\n\n        // Set mask token if present (otherwise will be undefined, which is fine)\n        this.mask_token = this.getToken('mask_token');\n        this.mask_token_id = this.model.tokens_to_ids.get(this.mask_token);\n\n        this.pad_token = this.getToken('pad_token', 'eos_token');\n        this.pad_token_id = this.model.tokens_to_ids.get(this.pad_token);\n\n        this.sep_token = this.getToken('sep_token');\n        this.sep_token_id = this.model.tokens_to_ids.get(this.sep_token);\n\n        this.unk_token = this.getToken('unk_token');\n        this.unk_token_id = this.model.tokens_to_ids.get(this.unk_token);\n\n        this.model_max_length = tokenizerConfig.model_max_length;\n\n        /** @type {boolean} Whether or not to strip the text when tokenizing (removing excess spaces before and after the string). */\n        this.remove_space = tokenizerConfig.remove_space;\n\n        this.clean_up_tokenization_spaces = tokenizerConfig.clean_up_tokenization_spaces ?? true;\n        this.do_lowercase_and_remove_accent = tokenizerConfig.do_lowercase_and_remove_accent ?? false;\n\n        // TODO allow user to change this\n        /** @type {'right'|'left'} */\n        this.padding_side = 'right';\n\n        this.legacy = false;\n\n        this.chat_template = tokenizerConfig.chat_template ?? null;\n        if (Array.isArray(this.chat_template)) {\n            // Chat templates are stored as lists of dicts with fixed key names,\n            // we reconstruct that into a single dict while loading them.\n            const chat_template = Object.create(null);\n            for (const { name, template } of this.chat_template) {\n                if (typeof name !== 'string' || typeof template !== 'string') {\n                    throw new Error('Chat template must be a list of objects with \"name\" and \"template\" properties');\n                }\n                chat_template[name] = template;\n            }\n            this.chat_template = chat_template;\n        }\n        this._compiled_template_cache = new Map();\n    }",
+                "start_line": 2448,
+                "symbol_id": "src/tokenizers.js#method:constructor:2448"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the value of the first matching key in the tokenizer config object.\n@param {...string} keys One or more keys to search for in the tokenizer config object.\n@returns {string|null} The value associated with the first matching key, or null if no match is found.\n@throws {Error} If an object is found for a matching key and its __type property is not \"AddedToken\".",
+                "end_line": 2566,
+                "kind": "method",
+                "name": "getToken",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "getToken",
+                "signature": "getToken(...keys) {\n        for (const key of keys) {\n            const item = this._tokenizer_config[key];\n\n            if (!item) continue;\n\n            if (typeof item === 'object') {\n                if (item.__type === 'AddedToken') {\n                    return item.content;\n                } else {\n                    throw Error(`Unknown token: ${item}`);\n                }\n            } else {\n                return item;\n            }\n        }\n        return null;\n    }",
+                "start_line": 2549,
+                "symbol_id": "src/tokenizers.js#method:getToken:2549"
+              },
+              {
+                "children": [],
+                "documentation": "Loads a pre-trained tokenizer from the given `pretrained_model_name_or_path`.\n\n@param {string} pretrained_model_name_or_path The path to the pre-trained tokenizer.\n@param {PretrainedTokenizerOptions} options Additional options for loading the tokenizer.\n\n@throws {Error} Throws an error if the tokenizer.json or tokenizer_config.json files are not found in the `pretrained_model_name_or_path`.\n@returns {Promise<PreTrainedTokenizer>} A new instance of the `PreTrainedTokenizer` class.",
+                "end_line": 2597,
+                "kind": "method",
+                "name": "from_pretrained",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "from_pretrained",
+                "signature": "static async from_pretrained(pretrained_model_name_or_path, {\n        progress_callback = null,\n        config = null,\n        cache_dir = null,\n        local_files_only = false,\n        revision = 'main',\n        legacy = null,\n    } = {}) {\n\n        const info = await loadTokenizer(pretrained_model_name_or_path, {\n            progress_callback,\n            config,\n            cache_dir,\n            local_files_only,\n            revision,\n            legacy,\n        })\n\n        // @ts-ignore\n        return new this(...info);\n    }",
+                "start_line": 2577,
+                "symbol_id": "src/tokenizers.js#method:from_pretrained:2577"
+              }
+            ],
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "src/tokenizers.js",
+                "workspace_id": "ts_002_ctx4k"
+              },
+              "durationMs": 4,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "list_symbols",
+              "transport": "in_memory"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1072,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-mini",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "path": "src/tokenizers.js",
+              "workspace_id": "ts_002_ctx4k"
+            },
+            "tool_name": "read_file"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 10,
+          "metadata": {
+            "is_error": false,
+            "result": {
+              "content": "    pre_tokenize_text(text, options) {\n        return whitespace_split(text);\n    }\n}\n\n// NOTE: `ReplacePreTokenizer` is custom (to support `BlenderbotSmallTokenizer`)\nclass ReplacePreTokenizer extends PreTokenizer {\n    /**\n     * @param {Object} config The configuration options for the pre-tokenizer.\n     * @param {Object} config.pattern The pattern used to split the text. Can be a string or a regex object.\n     * @param {string} config.content What to replace the pattern with.\n     */\n    constructor(config) {\n        super();\n        this.config = config;\n        this.pattern = createPattern(this.config.pattern);\n        this.content = this.config.content;\n    }\n\n    /**\n     * Pre-tokenizes the input text by replacing certain characters.\n     * @param {string} text The text to be pre-tokenized.\n     * @param {Object} [options] Additional options for the pre-tokenization logic.\n     * @returns {string[]} An array of tokens produced by replacing certain characters.\n     */\n    pre_tokenize_text(text, options) {\n        if (this.pattern === null) {\n            return [text];\n        }\n        return [text.replaceAll(this.pattern, this.config.content)];\n    }\n}\n\nconst SPECIAL_TOKEN_ATTRIBUTES = [\n    'bos_token',\n    'eos_token',\n    'unk_token',\n    'sep_token',\n    'pad_token',\n    'cls_token',\n    'mask_token',\n    // additional_special_tokens (TODO)\n]\n\n/**\n * \n * Helper function for padding values of an object, which are each arrays.\n * NOTE: No additional checks are made here for validity of arguments.\n * @param {Record<string, any[]>} item The input object.\n * @param {number} length The length to pad to.\n * @param {(key: string) => any} value_fn Determine the value to fill the array, based on its key.\n * @param {'right'|'left'} side Which side to pad the array.\n * @private\n */\nfuncti\non padHelper(item, length, value_fn, side) {\n    for (const key of Object.keys(item)) {\n        const diff = length - item[key].length;\n        const value = value_fn(key);\n\n        const padData = new Array(diff).fill(value);\n        item[key] = side === 'right'\n            ? mergeArrays(item[key], padData)\n            : mergeArrays(padData, item[key]);\n    }\n}\n\n/**\n * Helper function for truncating values of an object, which are each arrays.\n * NOTE: No additional checks are made here for validity of arguments.\n * @param {Record<string, any[]>} item The input object.\n * @param {number} length The length to truncate to.\n * @private\n */\nfunction truncateHelper(item, length) {\n    // Setting .length to a lower value truncates the array in-place:\n    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/length\n    for (const key of Object.keys(item)) {\n        item[key].length = length;\n    }\n}\n\n\n/**\n * @typedef {Object} Message\n * @property {string} role The role of the message (e.g., \"user\" or \"assistant\" or \"system\").\n * @property {string} content The content of the message.\n */\n\nexport class PreTrainedTokenizer extends Callable {\n    return_token_type_ids = false;\n\n    _default_chat_template = `{% for message in messages %}{{'<|im_start|>' + message['role'] + '\\n' + message['content'] + '<|im_end|>' + '\\n'}}{% endfor %}{% if add_generation_prompt %}{{ '<|im_start|>assistant\\n' }}{% endif %}`;\n\n    /**\n     * Create a new PreTrainedTokenizer instance.\n     * @param {Object} tokenizerJSON The JSON of the tokenizer.\n     * @param {Object} tokenizerConfig The config of the tokenizer.\n     */\n    constructor(tokenizerJSON, tokenizerConfig) {\n        super();\n\n        this._tokenizer_config = tokenizerConfig;\n\n        // Construct parts of the tokenizer from the JSON\n        this.normalizer = Normalizer.fromConfig(tokenizerJSON.normalizer);\n        this.pre_tokenizer = PreTokenizer.fromConfig(tokenizerJSON.pre_tokenizer);\n        this.model = TokenizerModel.fromConfig(tokenizerJSON.model, tokenizerConfig);\n        this.post_processor = PostProcessor.fromConfig(tokenizerJSON.post_processor);\n        this.decoder = Decoder.fromConfig(tokenizerJSON.decoder);\n\n        // Add added_tokens to model\n        this.special_tokens = [];\n        this.all_special_ids = [];\n\n        /** @type {AddedToken[]} */\n        this.added_tokens = [];\n        for (const addedToken of tokenizerJSON.added_tokens) {\n            const token = new AddedToken(addedToken);\n            this.added_tokens.push(token);\n\n            this.model.tokens_to_ids.set(token.content, token.id);\n            this.model.vocab[token.id] = token.content;\n\n            if (token.special) {\n                this.special_tokens.push(token.content);\n                this.all_special_ids.push(token.id);\n            }\n        }\n\n        // Update additional_special_tokens\n        this.additional_special_tokens = tokenizerConfig.additional_special_tokens ?? [];\n        this.special_tokens.push(...this.additional_special_tokens);\n        this.special_tokens = [...new Set(this.special_tokens)]; // Remove duplicates\n\n        if (this.decoder) {\n            // Slight hack, but it prevents code duplication:\n            this.decoder.added_tokens = this.added_tokens;\n\n            // Another slight hack to add `end_of_word_suffix` (if present) to the decoder\n            // This is needed for cases where BPE model and ByteLevel decoder are used\n            // For more information, see https://github.com/xenova/transformers.js/issues/74\n            // TODO: save this to the decoder when exporting?\n            this.decoder.end_of_word_suffix = this.model.end_of_word_suffix;\n        }\n\n\n        this.added_tokens_regex = this.added_tokens.length > 0 ? new RegExp(\n            this.added_tokens.map(x => `${x.lstrip ? '\\\\s*' : ''}(${escapeRegExp(x.content)})${x.rstrip ? '\\\\s*' : ''}`).join('|')\n        ) : null;\n\n        // Set mask token if present (otherwise will be undefined, which is fine)\n        this.mask_token = this.getToken('mask_token');\n        this.mask_token_id = this.model.tokens_to_ids.get(this.mask_token);\n\n        this.pad_token = this.getToken('pad_token', 'eos_token');\n        this.pad_token_id = this.model.tokens_to_ids.get(this.pad_token);\n\n        this.sep_token = this.getToken('sep_token');\n        this.sep_token_id = this.model.tokens_to_ids.get(this.sep_token);\n\n        this.unk_token = this.getToken('unk_token');\n        this.unk_token_id = this.model.tokens_to_ids.get(this.unk_token);\n\n        this.model_max_length = tokenizerConfig.model_max_length;\n\n        /** @type {boolean} Whether or not to strip the text when tokenizing (removing excess spaces before and after the string). */\n        this.remove_space = tokenizerConfig.remove_space;\n\n        this.clean_up_tokenization_spaces = tokenizerConfig.clean_up_tokenization_spaces ?? true;\n        this.do_lowercase_and_remove_accent = tokenizerConfig.do_lowercase_and_remove_accent ?? false;\n\n        // TODO allow user to change this\n        /** @type {'right'|'left'} */\n        this.padding_side = 'right';\n\n        this.legacy = false;\n\n        this.chat_template = tokenizerConfig.chat_template ?? null;\n        if (Array.isArray(this.chat_template)) {\n            // Chat templates are stored as lists of dicts with fixed key names,\n            // we reconstruct that into a single dict while loading them.\n            const chat_template = Object.create(null);\n            for (const { name, template } of this.chat_template) {\n                if (typeof name !== 'string' || typeof template !== 'string') {\n                    throw new Error('Chat template must be a list of objects with \"name\" and \"template\" properties');\n                }\n                chat_template[name] = template;\n            }\n            this.chat_template = chat_template;\n        }\n        this._compiled_template_cache = new Map();\n    }\n\n    /**\n     * Returns the value of the first matching key in the tokenizer config object.\n     * @param {...string} keys One or more keys to search for in the tokenizer config object.\n     * @returns {string|null} The value associated with the first matching key, or null if no match is found.\n     * @throws {Error} If an object is found for a matching key and its __type property is not \"AddedToken\".\n     */\n    getToken(...keys) {\n        for (const key of keys) {\n            const item = this._tokenizer_config[key];\n\n            if (!item) continue;\n\n            if (typeof item === 'object') {\n                if (item.__type === 'AddedToken') {\n                    return item.content;\n                } else {\n                    throw Error(`Unknown token: ${item}`);\n                }\n            } else {\n                return item;\n            }\n        }\n        return null;\n    }\n\n    /**\n     * Loads a pre-trained tokenizer from the given `pretrained_model_name_or_path`. \n     * \n     * @param {string} pretrained_model_name_or_path The path to the pre-trained tokenizer.\n     * @param {PretrainedTokenizerOptions} options Additional options for loading the tokenizer.\n     * \n     * @throws {Error} Throws an error if the tokenizer.json or tokenizer_config.json files are not found in the `pretrained_model_name_or_path`.\n     * @returns {Promise<PreTrainedTokenizer>} A new instance of the `PreTrainedTokenizer` class.\n     */\n    static async from_pretrained(pretrained_model_name_or_path, {\n        progress_callback = null,\n        config = null,\n        cache_dir = null,\n        local_files_only = false,\n        revision = 'main',\n        legacy = null,\n    } = {}) {\n\n        const info = await loadTokenizer(pretrained_model_name_or_path, {\n            progress_callback,\n            config,\n            cache_dir,\n            local_files_only,\n            revision,\n            legacy,\n        })\n\n        // @ts-ignore\n        return new this(...info);\n    }\n\n    /**\n     * @typedef {number[]|number[][]|Tensor} BatchEncodingItem\n     * \n     * @typedef {Object} BatchEncoding Holds the output of the tokenizer's call function.\n     * @property {BatchEncodingItem} input_ids List of token ids to be fed to a model.\n     * @property {BatchEncodingItem} attention_mask List of indices specifying which tokens should be attended to by the model.\n     * @property {BatchEncodingItem} [token_type_ids] List of token type ids to be fed to a model.\n     */\n\n    /**\n     * Encode/tokenize the given text(s).\n     * @param {string|string[]} text The text to tokenize.\n     * @param {Object} options An optional object containing the following properties:\n     * @param {string|string[]} [options.text_pair=null] Optional second sequence to be encoded. If set, must be the same type as text.\n     * @param {boolean|'max_length'} [options.padding=false] Whether to pad the input sequences.\n     * @param {boolean} [options.add_special_tokens=true] Whether or not to add the special tokens associated with the corresponding model.\n     * @param {boolean} [options.truncation=null] Whether to truncate the input sequences.\n     * @param {number} [options.max_length=null] Maximum length of the returned list and optionally padding length.\n     * @param {boolean} [options.return_tensor=true] Whether to return the results as Tensors or arrays.\n     * @returns {BatchEncoding} Object to be passed to the model.\n     */\n    _call(\n        // Required positional arguments\n        text,\n\n        // Optional keyword arguments\n        {\n            text_pair = null,\n            add_special_tokens = true,\n            padding = false,\n            truncation = null,\n            max_length = null,\n            return_tensor = true, // Different to HF\n        } = {},\n    ) {\n\n        const isBatched = Array.isArray(text);\n\n        /** @type {EncodingSingle[]} */\n        let encodedTokens;\n\n        if (isBatched) {\n            if (text.length === 0) {\n                throw Error('text array must be non-empty')\n            }\n\n            if (text_pair !== null) {\n                if (!Array.isArray(text_pair)) {\n                    throw Error('text_pair must also be an array')\n\n                } else if (text.length !== text_pair.length) {\n                    throw Error('text and text_pair must have the same length')\n                }\n\n                encodedTokens = text.map(\n                    (t, i) => this._encode_plus(t, text_pair[i], { add_special_tokens })\n                )\n\n            } else {\n                encodedTokens = text.map(x => this._encode_plus(x, null, { add_special_tokens }));\n            }\n\n        } else {\n            if (text === null || text === undefined) {\n                throw Error('text may not be null or undefined')\n            }\n\n            if (Array.isArray(text_pair)) {\n                throw Error('When specifying `text_pair`, since `text` is a string, `text_pair` must also be a string (i.e., not an array).')\n            }\n\n            // For single input, we just wrap in an array, and then unwrap later.\n            encodedTokens = [this._encode_plus(text, text_pair, { add_special_tokens })];\n        }\n        // At this point, tokens is batched: [batch_size, tokens]\n        // However, array may be jagged. So, we pad to max_length\n\n        if (max_length === null) {\n            if (padding === 'max_length') {\n                max_length = this.model_max_length;\n            } else {\n                // Calculate max length from sequences\n                max_length = max(encodedTokens.map(x => x.input_ids.length))[0];\n            }\n        } else {\n            if (!truncation) {\n                console.warn(`Truncation was not explicitly activated but \\`max_length\\` is provided a specific value, please use \\`truncation=true\\` to explicitly truncate examples to max length.`)\n            }\n        }\n\n        // Ensure it is less than model max length\n        max_length = Math.min(max_length, this.model_max_length)\n\n        if (padding || truncation) {\n\n            // Perform padding and/or truncation\n            for (let i = 0; i < encodedTokens.length; ++i) {\n...\n",
+              "language": "typescript",
+              "path": "src/tokenizers.js",
+              "repository": "xenova/transformers.js"
+            },
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "path": "src/tokenizers.js",
+                "workspace_id": "ts_002_ctx4k"
+              },
+              "durationMs": 9,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "read_file",
+              "transport": "in_memory"
+            },
+            "tool_name": "read_file"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1331,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-mini",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 4389,
+          "metadata": {},
+          "name": "strategy.local_mcp.execute",
+          "type": "strategy.local_mcp.execute"
+        },
+        {
+          "duration_ms": 4389,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 55,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": 0,
+        "cachedInputTokens": 0,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 3,
+        "inputTokens": 8470,
+        "loopControlDurationMsEstimated": 36,
+        "mcpToolCalls": 3,
+        "modelCalls": 4,
+        "modelDurationMs": 4334,
+        "outputTokens": 187,
+        "promptChars": 1450,
+        "questionTokensEstimated": 216,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 0,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 4,
+        "strategyDurationMs": 4389,
+        "taskStatementChars": 1280,
+        "toolCalls": 3,
+        "toolDurationMs": 19,
+        "totalDurationMs": 4389,
+        "totalTokens": 8657,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779730598.0,
+        "conversation": null,
+        "created_at": 1779730597.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_03b61974576164cd006a1488a5f7688197b3d810363ab24bc5",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "6dfa430595"
+        },
+        "model": "gpt-5.4-mini-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "arguments": "{\"workspace_id\":\"ts_002_ctx4k\"}",
+            "call_id": "call_L2GEGBUQhlOhJNVkj5YuoJIc",
+            "id": "fc_03b61974576164cd006a1488a651508197a6d74b572b6b1575",
+            "name": "list_files",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 585,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 24,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 609
+        },
+        "user": null
+      },
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779730599.0,
+        "conversation": null,
+        "created_at": 1779730598.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_03b61974576164cd006a1488a6d2c081979d69f198243ac784",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "6dfa430595"
+        },
+        "model": "gpt-5.4-mini-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "arguments": "{\"workspace_id\":\"ts_002_ctx4k\",\"path\":\"src/tokenizers.js\",\"kind\":\"function\"}",
+            "call_id": "call_P6cbtfYZT3nnW3ssI87ciaCj",
+            "id": "fc_03b61974576164cd006a1488a746ac8197bfc8bd613664ee9a",
+            "name": "list_symbols",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 664,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 35,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 699
+        },
+        "user": null
+      },
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779730600.0,
+        "conversation": null,
+        "created_at": 1779730600.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_03b61974576164cd006a1488a7ee748197bb0b9a2562ccd4ef",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "6dfa430595"
+        },
+        "model": "gpt-5.4-mini-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "arguments": "{\"workspace_id\":\"ts_002_ctx4k\",\"path\":\"src/tokenizers.js\"}",
+            "call_id": "call_Mo2g5yFwRJybpxiSCfDU4c3c",
+            "id": "fc_03b61974576164cd006a1488a86ff081978adfa0b79c3f895b",
+            "name": "read_file",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 3129,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 31,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 3160
+        },
+        "user": null
+      },
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779730601.0,
+        "conversation": null,
+        "created_at": 1779730601.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_03b61974576164cd006a1488a9026c81978e3c3b05a0575c3b",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "6dfa430595"
+        },
+        "model": "gpt-5.4-mini-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "logprobs": [],
+                "text": "```typescript\nfunction padHelper(item, length, value_fn, side) {\n    for (const key of Object.keys(item)) {\n        const diff = length - item[key].length;\n        const value = value_fn(key);\n\n        const padData = new Array(diff).fill(value);\n        item[key] = side === 'right'\n            ? mergeArrays(item[key], padData)\n            : mergeArrays(padData, item[key]);\n    }\n}\n```",
+                "type": "output_text"
+              }
+            ],
+            "id": "msg_03b61974576164cd006a1488a951048197b78845e36a762730",
+            "phase": "final_answer",
+            "role": "assistant",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 4092,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 97,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 4189
+        },
+        "user": null
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "workspace_id": "ts_002_ctx4k"
+        },
+        "durationMs": 5,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "list_files",
+        "transport": "in_memory"
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/tokenizers.js",
+          "workspace_id": "ts_002_ctx4k"
+        },
+        "durationMs": 4,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "list_symbols",
+        "transport": "in_memory"
+      },
+      {
+        "arguments": {
+          "path": "src/tokenizers.js",
+          "workspace_id": "ts_002_ctx4k"
+        },
+        "durationMs": 9,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "read_file",
+        "transport": "in_memory"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "workspace_id": "ts_002_ctx4k"
+        },
+        "id": "call_L2GEGBUQhlOhJNVkj5YuoJIc",
+        "isError": false,
+        "name": "list_files",
+        "result": [
+          {
+            "language": "typescript",
+            "parse_status": "ok_filtered",
+            "path": "src/tokenizers.js",
+            "repository": "xenova/transformers.js",
+            "symbol_count": 30
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/tokenizers.js",
+          "workspace_id": "ts_002_ctx4k"
+        },
+        "id": "call_P6cbtfYZT3nnW3ssI87ciaCj",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "Pre-tokenizes the input text by splitting it on whitespace characters.\n@param {string} text The text to be pre-tokenized.\n@param {Object} [options] Additional options for the pre-tokenization logic.\n@returns {string[]} An array of tokens produced by splitting the input text on whitespace.",
+            "end_line": 2352,
+            "kind": "method",
+            "name": "pre_tokenize_text",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "pre_tokenize_text",
+            "signature": "pre_tokenize_text(text, options) {\n        return whitespace_split(text);\n    }",
+            "start_line": 2350,
+            "symbol_id": "src/tokenizers.js#method:pre_tokenize_text:2350"
+          },
+          {
+            "children": [],
+            "documentation": "@param {Object} config The configuration options for the pre-tokenizer.\n@param {Object} config.pattern The pattern used to split the text. Can be a string or a regex object.\n@param {string} config.content What to replace the pattern with.",
+            "end_line": 2367,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(config) {\n        super();\n        this.config = config;\n        this.pattern = createPattern(this.config.pattern);\n        this.content = this.config.content;\n    }",
+            "start_line": 2362,
+            "symbol_id": "src/tokenizers.js#method:constructor:2362"
+          },
+          {
+            "children": [],
+            "documentation": "Pre-tokenizes the input text by replacing certain characters.\n@param {string} text The text to be pre-tokenized.\n@param {Object} [options] Additional options for the pre-tokenization logic.\n@returns {string[]} An array of tokens produced by replacing certain characters.",
+            "end_line": 2380,
+            "kind": "method",
+            "name": "pre_tokenize_text",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "pre_tokenize_text",
+            "signature": "pre_tokenize_text(text, options) {\n        if (this.pattern === null) {\n            return [text];\n        }\n        return [text.replaceAll(this.pattern, this.config.content)];\n    }",
+            "start_line": 2375,
+            "symbol_id": "src/tokenizers.js#method:pre_tokenize_text:2375"
+          },
+          {
+            "children": [],
+            "documentation": "Helper function for truncating values of an object, which are each arrays.\nNOTE: No additional checks are made here for validity of arguments.\n@param {Record<string, any[]>} item The input object.\n@param {number} length The length to truncate to.\n@private",
+            "end_line": 2429,
+            "kind": "function",
+            "name": "truncateHelper",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "truncateHelper",
+            "signature": "function truncateHelper(item, length) {\n    // Setting .length to a lower value truncates the array in-place:\n    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/length\n    for (const key of Object.keys(item)) {\n        item[key].length = length;\n    }\n}",
+            "start_line": 2423,
+            "symbol_id": "src/tokenizers.js#function:truncateHelper:2423"
+          },
+          {
+            "children": [],
+            "documentation": "Create a new PreTrainedTokenizer instance.\n@param {Object} tokenizerJSON The JSON of the tokenizer.\n@param {Object} tokenizerConfig The config of the tokenizer.",
+            "end_line": 2541,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(tokenizerJSON, tokenizerConfig) {\n        super();\n\n        this._tokenizer_config = tokenizerConfig;\n\n        // Construct parts of the tokenizer from the JSON\n        this.normalizer = Normalizer.fromConfig(tokenizerJSON.normalizer);\n        this.pre_tokenizer = PreTokenizer.fromConfig(tokenizerJSON.pre_tokenizer);\n        this.model = TokenizerModel.fromConfig(tokenizerJSON.model, tokenizerConfig);\n        this.post_processor = PostProcessor.fromConfig(tokenizerJSON.post_processor);\n        this.decoder = Decoder.fromConfig(tokenizerJSON.decoder);\n\n        // Add added_tokens to model\n        this.special_tokens = [];\n        this.all_special_ids = [];\n\n        /** @type {AddedToken[]} */\n        this.added_tokens = [];\n        for (const addedToken of tokenizerJSON.added_tokens) {\n            const token = new AddedToken(addedToken);\n            this.added_tokens.push(token);\n\n            this.model.tokens_to_ids.set(token.content, token.id);\n            this.model.vocab[token.id] = token.content;\n\n            if (token.special) {\n                this.special_tokens.push(token.content);\n                this.all_special_ids.push(token.id);\n            }\n        }\n\n        // Update additional_special_tokens\n        this.additional_special_tokens = tokenizerConfig.additional_special_tokens ?? [];\n        this.special_tokens.push(...this.additional_special_tokens);\n        this.special_tokens = [...new Set(this.special_tokens)]; // Remove duplicates\n\n        if (this.decoder) {\n            // Slight hack, but it prevents code duplication:\n            this.decoder.added_tokens = this.added_tokens;\n\n            // Another slight hack to add `end_of_word_suffix` (if present) to the decoder\n            // This is needed for cases where BPE model and ByteLevel decoder are used\n            // For more information, see https://github.com/xenova/transformers.js/issues/74\n            // TODO: save this to the decoder when exporting?\n            this.decoder.end_of_word_suffix = this.model.end_of_word_suffix;\n        }\n\n\n        this.added_tokens_regex = this.added_tokens.length > 0 ? new RegExp(\n            this.added_tokens.map(x => `${x.lstrip ? '\\\\s*' : ''}(${escapeRegExp(x.content)})${x.rstrip ? '\\\\s*' : ''}`).join('|')\n        ) : null;\n\n        // Set mask token if present (otherwise will be undefined, which is fine)\n        this.mask_token = this.getToken('mask_token');\n        this.mask_token_id = this.model.tokens_to_ids.get(this.mask_token);\n\n        this.pad_token = this.getToken('pad_token', 'eos_token');\n        this.pad_token_id = this.model.tokens_to_ids.get(this.pad_token);\n\n        this.sep_token = this.getToken('sep_token');\n        this.sep_token_id = this.model.tokens_to_ids.get(this.sep_token);\n\n        this.unk_token = this.getToken('unk_token');\n        this.unk_token_id = this.model.tokens_to_ids.get(this.unk_token);\n\n        this.model_max_length = tokenizerConfig.model_max_length;\n\n        /** @type {boolean} Whether or not to strip the text when tokenizing (removing excess spaces before and after the string). */\n        this.remove_space = tokenizerConfig.remove_space;\n\n        this.clean_up_tokenization_spaces = tokenizerConfig.clean_up_tokenization_spaces ?? true;\n        this.do_lowercase_and_remove_accent = tokenizerConfig.do_lowercase_and_remove_accent ?? false;\n\n        // TODO allow user to change this\n        /** @type {'right'|'left'} */\n        this.padding_side = 'right';\n\n        this.legacy = false;\n\n        this.chat_template = tokenizerConfig.chat_template ?? null;\n        if (Array.isArray(this.chat_template)) {\n            // Chat templates are stored as lists of dicts with fixed key names,\n            // we reconstruct that into a single dict while loading them.\n            const chat_template = Object.create(null);\n            for (const { name, template } of this.chat_template) {\n                if (typeof name !== 'string' || typeof template !== 'string') {\n                    throw new Error('Chat template must be a list of objects with \"name\" and \"template\" properties');\n                }\n                chat_template[name] = template;\n            }\n            this.chat_template = chat_template;\n        }\n        this._compiled_template_cache = new Map();\n    }",
+            "start_line": 2448,
+            "symbol_id": "src/tokenizers.js#method:constructor:2448"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the value of the first matching key in the tokenizer config object.\n@param {...string} keys One or more keys to search for in the tokenizer config object.\n@returns {string|null} The value associated with the first matching key, or null if no match is found.\n@throws {Error} If an object is found for a matching key and its __type property is not \"AddedToken\".",
+            "end_line": 2566,
+            "kind": "method",
+            "name": "getToken",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "getToken",
+            "signature": "getToken(...keys) {\n        for (const key of keys) {\n            const item = this._tokenizer_config[key];\n\n            if (!item) continue;\n\n            if (typeof item === 'object') {\n                if (item.__type === 'AddedToken') {\n                    return item.content;\n                } else {\n                    throw Error(`Unknown token: ${item}`);\n                }\n            } else {\n                return item;\n            }\n        }\n        return null;\n    }",
+            "start_line": 2549,
+            "symbol_id": "src/tokenizers.js#method:getToken:2549"
+          },
+          {
+            "children": [],
+            "documentation": "Loads a pre-trained tokenizer from the given `pretrained_model_name_or_path`.\n\n@param {string} pretrained_model_name_or_path The path to the pre-trained tokenizer.\n@param {PretrainedTokenizerOptions} options Additional options for loading the tokenizer.\n\n@throws {Error} Throws an error if the tokenizer.json or tokenizer_config.json files are not found in the `pretrained_model_name_or_path`.\n@returns {Promise<PreTrainedTokenizer>} A new instance of the `PreTrainedTokenizer` class.",
+            "end_line": 2597,
+            "kind": "method",
+            "name": "from_pretrained",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "from_pretrained",
+            "signature": "static async from_pretrained(pretrained_model_name_or_path, {\n        progress_callback = null,\n        config = null,\n        cache_dir = null,\n        local_files_only = false,\n        revision = 'main',\n        legacy = null,\n    } = {}) {\n\n        const info = await loadTokenizer(pretrained_model_name_or_path, {\n            progress_callback,\n            config,\n            cache_dir,\n            local_files_only,\n            revision,\n            legacy,\n        })\n\n        // @ts-ignore\n        return new this(...info);\n    }",
+            "start_line": 2577,
+            "symbol_id": "src/tokenizers.js#method:from_pretrained:2577"
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "path": "src/tokenizers.js",
+          "workspace_id": "ts_002_ctx4k"
+        },
+        "id": "call_Mo2g5yFwRJybpxiSCfDU4c3c",
+        "isError": false,
+        "name": "read_file",
+        "result": {
+          "content": "    pre_tokenize_text(text, options) {\n        return whitespace_split(text);\n    }\n}\n\n// NOTE: `ReplacePreTokenizer` is custom (to support `BlenderbotSmallTokenizer`)\nclass ReplacePreTokenizer extends PreTokenizer {\n    /**\n     * @param {Object} config The configuration options for the pre-tokenizer.\n     * @param {Object} config.pattern The pattern used to split the text. Can be a string or a regex object.\n     * @param {string} config.content What to replace the pattern with.\n     */\n    constructor(config) {\n        super();\n        this.config = config;\n        this.pattern = createPattern(this.config.pattern);\n        this.content = this.config.content;\n    }\n\n    /**\n     * Pre-tokenizes the input text by replacing certain characters.\n     * @param {string} text The text to be pre-tokenized.\n     * @param {Object} [options] Additional options for the pre-tokenization logic.\n     * @returns {string[]} An array of tokens produced by replacing certain characters.\n     */\n    pre_tokenize_text(text, options) {\n        if (this.pattern === null) {\n            return [text];\n        }\n        return [text.replaceAll(this.pattern, this.config.content)];\n    }\n}\n\nconst SPECIAL_TOKEN_ATTRIBUTES = [\n    'bos_token',\n    'eos_token',\n    'unk_token',\n    'sep_token',\n    'pad_token',\n    'cls_token',\n    'mask_token',\n    // additional_special_tokens (TODO)\n]\n\n/**\n * \n * Helper function for padding values of an object, which are each arrays.\n * NOTE: No additional checks are made here for validity of arguments.\n * @param {Record<string, any[]>} item The input object.\n * @param {number} length The length to pad to.\n * @param {(key: string) => any} value_fn Determine the value to fill the array, based on its key.\n * @param {'right'|'left'} side Which side to pad the array.\n * @private\n */\nfuncti\non padHelper(item, length, value_fn, side) {\n    for (const key of Object.keys(item)) {\n        const diff = length - item[key].length;\n        const value = value_fn(key);\n\n        const padData = new Array(diff).fill(value);\n        item[key] = side === 'right'\n            ? mergeArrays(item[key], padData)\n            : mergeArrays(padData, item[key]);\n    }\n}\n\n/**\n * Helper function for truncating values of an object, which are each arrays.\n * NOTE: No additional checks are made here for validity of arguments.\n * @param {Record<string, any[]>} item The input object.\n * @param {number} length The length to truncate to.\n * @private\n */\nfunction truncateHelper(item, length) {\n    // Setting .length to a lower value truncates the array in-place:\n    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/length\n    for (const key of Object.keys(item)) {\n        item[key].length = length;\n    }\n}\n\n\n/**\n * @typedef {Object} Message\n * @property {string} role The role of the message (e.g., \"user\" or \"assistant\" or \"system\").\n * @property {string} content The content of the message.\n */\n\nexport class PreTrainedTokenizer extends Callable {\n    return_token_type_ids = false;\n\n    _default_chat_template = `{% for message in messages %}{{'<|im_start|>' + message['role'] + '\\n' + message['content'] + '<|im_end|>' + '\\n'}}{% endfor %}{% if add_generation_prompt %}{{ '<|im_start|>assistant\\n' }}{% endif %}`;\n\n    /**\n     * Create a new PreTrainedTokenizer instance.\n     * @param {Object} tokenizerJSON The JSON of the tokenizer.\n     * @param {Object} tokenizerConfig The config of the tokenizer.\n     */\n    constructor(tokenizerJSON, tokenizerConfig) {\n        super();\n\n        this._tokenizer_config = tokenizerConfig;\n\n        // Construct parts of the tokenizer from the JSON\n        this.normalizer = Normalizer.fromConfig(tokenizerJSON.normalizer);\n        this.pre_tokenizer = PreTokenizer.fromConfig(tokenizerJSON.pre_tokenizer);\n        this.model = TokenizerModel.fromConfig(tokenizerJSON.model, tokenizerConfig);\n        this.post_processor = PostProcessor.fromConfig(tokenizerJSON.post_processor);\n        this.decoder = Decoder.fromConfig(tokenizerJSON.decoder);\n\n        // Add added_tokens to model\n        this.special_tokens = [];\n        this.all_special_ids = [];\n\n        /** @type {AddedToken[]} */\n        this.added_tokens = [];\n        for (const addedToken of tokenizerJSON.added_tokens) {\n            const token = new AddedToken(addedToken);\n            this.added_tokens.push(token);\n\n            this.model.tokens_to_ids.set(token.content, token.id);\n            this.model.vocab[token.id] = token.content;\n\n            if (token.special) {\n                this.special_tokens.push(token.content);\n                this.all_special_ids.push(token.id);\n            }\n        }\n\n        // Update additional_special_tokens\n        this.additional_special_tokens = tokenizerConfig.additional_special_tokens ?? [];\n        this.special_tokens.push(...this.additional_special_tokens);\n        this.special_tokens = [...new Set(this.special_tokens)]; // Remove duplicates\n\n        if (this.decoder) {\n            // Slight hack, but it prevents code duplication:\n            this.decoder.added_tokens = this.added_tokens;\n\n            // Another slight hack to add `end_of_word_suffix` (if present) to the decoder\n            // This is needed for cases where BPE model and ByteLevel decoder are used\n            // For more information, see https://github.com/xenova/transformers.js/issues/74\n            // TODO: save this to the decoder when exporting?\n            this.decoder.end_of_word_suffix = this.model.end_of_word_suffix;\n        }\n\n\n        this.added_tokens_regex = this.added_tokens.length > 0 ? new RegExp(\n            this.added_tokens.map(x => `${x.lstrip ? '\\\\s*' : ''}(${escapeRegExp(x.content)})${x.rstrip ? '\\\\s*' : ''}`).join('|')\n        ) : null;\n\n        // Set mask token if present (otherwise will be undefined, which is fine)\n        this.mask_token = this.getToken('mask_token');\n        this.mask_token_id = this.model.tokens_to_ids.get(this.mask_token);\n\n        this.pad_token = this.getToken('pad_token', 'eos_token');\n        this.pad_token_id = this.model.tokens_to_ids.get(this.pad_token);\n\n        this.sep_token = this.getToken('sep_token');\n        this.sep_token_id = this.model.tokens_to_ids.get(this.sep_token);\n\n        this.unk_token = this.getToken('unk_token');\n        this.unk_token_id = this.model.tokens_to_ids.get(this.unk_token);\n\n        this.model_max_length = tokenizerConfig.model_max_length;\n\n        /** @type {boolean} Whether or not to strip the text when tokenizing (removing excess spaces before and after the string). */\n        this.remove_space = tokenizerConfig.remove_space;\n\n        this.clean_up_tokenization_spaces = tokenizerConfig.clean_up_tokenization_spaces ?? true;\n        this.do_lowercase_and_remove_accent = tokenizerConfig.do_lowercase_and_remove_accent ?? false;\n\n        // TODO allow user to change this\n        /** @type {'right'|'left'} */\n        this.padding_side = 'right';\n\n        this.legacy = false;\n\n        this.chat_template = tokenizerConfig.chat_template ?? null;\n        if (Array.isArray(this.chat_template)) {\n            // Chat templates are stored as lists of dicts with fixed key names,\n            // we reconstruct that into a single dict while loading them.\n            const chat_template = Object.create(null);\n            for (const { name, template } of this.chat_template) {\n                if (typeof name !== 'string' || typeof template !== 'string') {\n                    throw new Error('Chat template must be a list of objects with \"name\" and \"template\" properties');\n                }\n                chat_template[name] = template;\n            }\n            this.chat_template = chat_template;\n        }\n        this._compiled_template_cache = new Map();\n    }\n\n    /**\n     * Returns the value of the first matching key in the tokenizer config object.\n     * @param {...string} keys One or more keys to search for in the tokenizer config object.\n     * @returns {string|null} The value associated with the first matching key, or null if no match is found.\n     * @throws {Error} If an object is found for a matching key and its __type property is not \"AddedToken\".\n     */\n    getToken(...keys) {\n        for (const key of keys) {\n            const item = this._tokenizer_config[key];\n\n            if (!item) continue;\n\n            if (typeof item === 'object') {\n                if (item.__type === 'AddedToken') {\n                    return item.content;\n                } else {\n                    throw Error(`Unknown token: ${item}`);\n                }\n            } else {\n                return item;\n            }\n        }\n        return null;\n    }\n\n    /**\n     * Loads a pre-trained tokenizer from the given `pretrained_model_name_or_path`. \n     * \n     * @param {string} pretrained_model_name_or_path The path to the pre-trained tokenizer.\n     * @param {PretrainedTokenizerOptions} options Additional options for loading the tokenizer.\n     * \n     * @throws {Error} Throws an error if the tokenizer.json or tokenizer_config.json files are not found in the `pretrained_model_name_or_path`.\n     * @returns {Promise<PreTrainedTokenizer>} A new instance of the `PreTrainedTokenizer` class.\n     */\n    static async from_pretrained(pretrained_model_name_or_path, {\n        progress_callback = null,\n        config = null,\n        cache_dir = null,\n        local_files_only = false,\n        revision = 'main',\n        legacy = null,\n    } = {}) {\n\n        const info = await loadTokenizer(pretrained_model_name_or_path, {\n            progress_callback,\n            config,\n            cache_dir,\n            local_files_only,\n            revision,\n            legacy,\n        })\n\n        // @ts-ignore\n        return new this(...info);\n    }\n\n    /**\n     * @typedef {number[]|number[][]|Tensor} BatchEncodingItem\n     * \n     * @typedef {Object} BatchEncoding Holds the output of the tokenizer's call function.\n     * @property {BatchEncodingItem} input_ids List of token ids to be fed to a model.\n     * @property {BatchEncodingItem} attention_mask List of indices specifying which tokens should be attended to by the model.\n     * @property {BatchEncodingItem} [token_type_ids] List of token type ids to be fed to a model.\n     */\n\n    /**\n     * Encode/tokenize the given text(s).\n     * @param {string|string[]} text The text to tokenize.\n     * @param {Object} options An optional object containing the following properties:\n     * @param {string|string[]} [options.text_pair=null] Optional second sequence to be encoded. If set, must be the same type as text.\n     * @param {boolean|'max_length'} [options.padding=false] Whether to pad the input sequences.\n     * @param {boolean} [options.add_special_tokens=true] Whether or not to add the special tokens associated with the corresponding model.\n     * @param {boolean} [options.truncation=null] Whether to truncate the input sequences.\n     * @param {number} [options.max_length=null] Maximum length of the returned list and optionally padding length.\n     * @param {boolean} [options.return_tensor=true] Whether to return the results as Tensors or arrays.\n     * @returns {BatchEncoding} Object to be passed to the model.\n     */\n    _call(\n        // Required positional arguments\n        text,\n\n        // Optional keyword arguments\n        {\n            text_pair = null,\n            add_special_tokens = true,\n            padding = false,\n            truncation = null,\n            max_length = null,\n            return_tensor = true, // Different to HF\n        } = {},\n    ) {\n\n        const isBatched = Array.isArray(text);\n\n        /** @type {EncodingSingle[]} */\n        let encodedTokens;\n\n        if (isBatched) {\n            if (text.length === 0) {\n                throw Error('text array must be non-empty')\n            }\n\n            if (text_pair !== null) {\n                if (!Array.isArray(text_pair)) {\n                    throw Error('text_pair must also be an array')\n\n                } else if (text.length !== text_pair.length) {\n                    throw Error('text and text_pair must have the same length')\n                }\n\n                encodedTokens = text.map(\n                    (t, i) => this._encode_plus(t, text_pair[i], { add_special_tokens })\n                )\n\n            } else {\n                encodedTokens = text.map(x => this._encode_plus(x, null, { add_special_tokens }));\n            }\n\n        } else {\n            if (text === null || text === undefined) {\n                throw Error('text may not be null or undefined')\n            }\n\n            if (Array.isArray(text_pair)) {\n                throw Error('When specifying `text_pair`, since `text` is a string, `text_pair` must also be a string (i.e., not an array).')\n            }\n\n            // For single input, we just wrap in an array, and then unwrap later.\n            encodedTokens = [this._encode_plus(text, text_pair, { add_special_tokens })];\n        }\n        // At this point, tokens is batched: [batch_size, tokens]\n        // However, array may be jagged. So, we pad to max_length\n\n        if (max_length === null) {\n            if (padding === 'max_length') {\n                max_length = this.model_max_length;\n            } else {\n                // Calculate max length from sequences\n                max_length = max(encodedTokens.map(x => x.input_ids.length))[0];\n            }\n        } else {\n            if (!truncation) {\n                console.warn(`Truncation was not explicitly activated but \\`max_length\\` is provided a specific value, please use \\`truncation=true\\` to explicitly truncate examples to max length.`)\n            }\n        }\n\n        // Ensure it is less than model max length\n        max_length = Math.min(max_length, this.model_max_length)\n\n        if (padding || truncation) {\n\n            // Perform padding and/or truncation\n            for (let i = 0; i < encodedTokens.length; ++i) {\n...\n",
+          "language": "typescript",
+          "path": "src/tokenizers.js",
+          "repository": "xenova/transformers.js"
+        }
+      }
+    ]
+  },
+  "trialId": "6dfa430595"
+}

@@ -1,0 +1,1724 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 1933,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "rs_002_ctx16k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 1,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "language": "rust",
+                "parse_status": "ok_filtered",
+                "path": "src/number/streaming.rs",
+                "repository": "rust-bakery/nom",
+                "symbol_count": 37
+              },
+              {
+                "language": "rust",
+                "parse_status": "ok_filtered",
+                "path": "src/internal.rs",
+                "repository": "rust-bakery/nom",
+                "symbol_count": 53
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "rs_002_ctx16k"
+              },
+              "durationMs": 1,
+              "toolName": "list_files",
+              "workspace_id": "rs_002_ctx16k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1759,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "src/number/streaming.rs",
+              "workspace_id": "rs_002_ctx16k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "Recognizes a floating point number in text format\n\nIt returns a tuple of (`sign`, `integer part`, `fraction part` and `exponent`) of the input\ndata.\n\n*Streaming version*: Will return `Err(nom::Err::Incomplete(_))` if there is not enough data.",
+                "end_line": 1357,
+                "kind": "function",
+                "name": "recognize_float_parts",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "recognize_float_parts",
+                "signature": "pub fn recognize_float_parts<T, E: ParseError<T>>(input: T) -> IResult<T, (bool, T, T, i32), E>\nwhere\n  T: Clone + Offset,\n  T: Input,\n  <T as Input>::Item: AsChar,\n  T: for<'a> Compare<&'a [u8]>,\n  T: AsBytes,\n{\n  let (i, sign) = sign(input.clone())?;\n\n  //let (i, zeroes) = take_while(|c: <T as InputTakeAtPosition>::Item| c.as_char() == '0')(i)?;\n  let (i, zeroes) = match i.as_bytes().iter().position(|c| *c != b'0') {\n    Some(index) => i.take_split(index),\n    None => i.take_split(i.input_len()),\n  };\n\n  //let (i, mut integer) = digit0(i)?;\n  let (i, mut integer) = match i\n    .as_bytes()\n    .iter()\n    .position(|c| !(*c >= b'0' && *c <= b'9'))\n  {\n    Some(index) => i.take_split(index),\n    None => i.take_split(i.input_len()),\n  };\n\n  if integer.input_len() == 0 && zeroes.input_len() > 0 {\n    // keep the last zero if integer is empty\n    integer = zeroes.take_from(zeroes.input_len() - 1);\n  }\n\n  let (i, opt_dot) = opt(tag(&b\".\"[..])).parse(i)?;\n  let (i, fraction) = if opt_dot.is_none() {\n    let i2 = i.clone();\n    (i2, i.take(0))\n  } else {\n    // match number, trim right zeroes\n    let mut zero_count = 0usize;\n    let mut position = None;\n    for (pos, c) in i.as_bytes().iter().enumerate() {\n      if *c >= b'0' && *c <= b'9' {\n        if *c == b'0' {\n          zero_count += 1;\n        } else {\n          zero_count = 0;\n        }\n      } else {\n        position = Some(pos);\n        break;\n      }\n    }\n\n    let position = match position {\n      Some(p) => p,\n      None => return Err(Err::Incomplete(Needed::new(1))),\n    };\n\n    let index = if zero_count == 0 {\n      position\n    } else if zero_count == position {\n      position - zero_count + 1\n    } else {\n      position - zero_count\n    };\n\n    (i.take_from(position), i.take(index))\n  };\n\n  if integer.input_len() == 0 && fraction.input_len() == 0 {\n    return Err(Err::Error(E::from_error_kind(input, ErrorKind::Float)));\n  }\n\n  let i2 = i.clone();\n  let (i, e) = match i.as_bytes().iter().next() {\n    Some(b'e') => (i.take_from(1), true),\n    Some(b'E') => (i.take_from(1), true),\n    _ => (i, false),\n  };\n\n  let (i, exp) = if e {\n    cut(crate::character::streaming::i32).parse(i)?\n  } else {\n    (i2, 0)\n  };\n\n  Ok((i, (sign, integer, fraction, exp)))\n}",
+                "start_line": 1271,
+                "symbol_id": "src/number/streaming.rs#function:recognize_float_parts:1271"
+              },
+              {
+                "children": [],
+                "documentation": "Recognizes floating point number in text format and returns a f32.\n\n*Streaming version*: Will return `Err(nom::Err::Incomplete(_))` if there is not enough data.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed};\n# use nom::Needed::Size;\nuse nom::number::complete::float;\n\nlet parser = |s| {\nfloat(s)\n};\n\nassert_eq!(parser(\"11e-1\"), Ok((\"\", 1.1)));\nassert_eq!(parser(\"123E-02\"), Ok((\"\", 1.23)));\nassert_eq!(parser(\"123K-01\"), Ok((\"K-01\", 123.0)));\nassert_eq!(parser(\"abc\"), Err(Err::Error((\"abc\", ErrorKind::Float))));\n```",
+                "end_line": 1407,
+                "kind": "function",
+                "name": "float",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "float",
+                "signature": "pub fn float<T, E: ParseError<T>>(input: T) -> IResult<T, f32, E>\nwhere\n  T: Clone + Offset,\n  T: Input + crate::traits::ParseTo<f32> + Compare<&'static str>,\n  <T as Input>::Item: AsChar + Clone,\n  T: AsBytes,\n  T: for<'a> Compare<&'a [u8]>,\n{\n  /*\n  let (i, (sign, integer, fraction, exponent)) = recognize_float_parts(input)?;\n\n  let mut float: f32 = minimal_lexical::parse_float(\n    integer.as_bytes().iter(),\n    fraction.as_bytes().iter(),\n    exponent,\n  );\n  if !sign {\n    float = -float;\n  }\n\n  Ok((i, float))\n  */\n  let (i, s) = recognize_float_or_exceptions(input)?;\n  match s.parse_to() {\n    Some(f) => Ok((i, f)),\n    None => Err(crate::Err::Error(E::from_error_kind(\n      i,\n      crate::error::ErrorKind::Float,\n    ))),\n  }\n}",
+                "start_line": 1377,
+                "symbol_id": "src/number/streaming.rs#function:float:1377"
+              },
+              {
+                "children": [],
+                "documentation": "Recognizes floating point number in text format and returns a f64.\n\n*Streaming version*: Will return `Err(nom::Err::Incomplete(_))` if there is not enough data.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed};\n# use nom::Needed::Size;\nuse nom::number::complete::double;\n\nlet parser = |s| {\ndouble(s)\n};\n\nassert_eq!(parser(\"11e-1\"), Ok((\"\", 1.1)));\nassert_eq!(parser(\"123E-02\"), Ok((\"\", 1.23)));\nassert_eq!(parser(\"123K-01\"), Ok((\"K-01\", 123.0)));\nassert_eq!(parser(\"abc\"), Err(Err::Error((\"abc\", ErrorKind::Float))));\n```",
+                "end_line": 1457,
+                "kind": "function",
+                "name": "double",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "double",
+                "signature": "pub fn double<T, E: ParseError<T>>(input: T) -> IResult<T, f64, E>\nwhere\n  T: Clone + Offset,\n  T: Input + crate::traits::ParseTo<f64> + Compare<&'static str>,\n  <T as Input>::Item: AsChar + Clone,\n  T: AsBytes,\n  T: for<'a> Compare<&'a [u8]>,\n{\n  /*\n  let (i, (sign, integer, fraction, exponent)) = recognize_float_parts(input)?;\n\n  let mut float: f64 = minimal_lexical::parse_float(\n    integer.as_bytes().iter(),\n    fraction.as_bytes().iter(),\n    exponent,\n  );\n  if !sign {\n    float = -float;\n  }\n\n  Ok((i, float))\n  */\n  let (i, s) = recognize_float_or_exceptions(input)?;\n  match s.parse_to() {\n    Some(f) => Ok((i, f)),\n    None => Err(crate::Err::Error(E::from_error_kind(\n      i,\n      crate::error::ErrorKind::Float,\n    ))),\n  }\n}",
+                "start_line": 1427,
+                "symbol_id": "src/number/streaming.rs#function:double:1427"
+              },
+              {
+                "children": [],
+                "documentation": "[test]",
+                "end_line": 1480,
+                "kind": "function",
+                "name": "i8_tests",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "i8_tests",
+                "signature": "fn i8_tests() {\n    assert_parse!(be_i8(&[0x00][..]), Ok((&b\"\"[..], 0)));\n    assert_parse!(be_i8(&[0x7f][..]), Ok((&b\"\"[..], 127)));\n    assert_parse!(be_i8(&[0xff][..]), Ok((&b\"\"[..], -1)));\n    assert_parse!(be_i8(&[0x80][..]), Ok((&b\"\"[..], -128)));\n    assert_parse!(be_i8(&[][..]), Err(Err::Incomplete(Needed::new(1))));\n  }",
+                "start_line": 1474,
+                "symbol_id": "src/number/streaming.rs#function:i8_tests:1474"
+              },
+              {
+                "children": [],
+                "documentation": "[test]",
+                "end_line": 1490,
+                "kind": "function",
+                "name": "i16_tests",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "i16_tests",
+                "signature": "fn i16_tests() {\n    assert_parse!(be_i16(&[0x00, 0x00][..]), Ok((&b\"\"[..], 0)));\n    assert_parse!(be_i16(&[0x7f, 0xff][..]), Ok((&b\"\"[..], 32_767_i16)));\n    assert_parse!(be_i16(&[0xff, 0xff][..]), Ok((&b\"\"[..], -1)));\n    assert_parse!(be_i16(&[0x80, 0x00][..]), Ok((&b\"\"[..], -32_768_i16)));\n    assert_parse!(be_i16(&[][..]), Err(Err::Incomplete(Needed::new(2))));\n    assert_parse!(be_i16(&[0x00][..]), Err(Err::Incomplete(Needed::new(1))));\n  }",
+                "start_line": 1483,
+                "symbol_id": "src/number/streaming.rs#function:i16_tests:1483"
+              },
+              {
+                "children": [],
+                "documentation": "[test]",
+                "end_line": 1506,
+                "kind": "function",
+                "name": "u24_tests",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "u24_tests",
+                "signature": "fn u24_tests() {\n    assert_parse!(be_u24(&[0x00, 0x00, 0x00][..]), Ok((&b\"\"[..], 0)));\n    assert_parse!(be_u24(&[0x00, 0xFF, 0xFF][..]), Ok((&b\"\"[..], 65_535_u32)));\n    assert_parse!(\n      be_u24(&[0x12, 0x34, 0x56][..]),\n      Ok((&b\"\"[..], 1_193_046_u32))\n    );\n    assert_parse!(be_u24(&[][..]), Err(Err::Incomplete(Needed::new(3))));\n    assert_parse!(be_u24(&[0x00][..]), Err(Err::Incomplete(Needed::new(2))));\n    assert_parse!(\n      be_u24(&[0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(1)))\n    );\n  }",
+                "start_line": 1493,
+                "symbol_id": "src/number/streaming.rs#function:u24_tests:1493"
+              },
+              {
+                "children": [],
+                "documentation": "[test]",
+                "end_line": 1522,
+                "kind": "function",
+                "name": "i24_tests",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "i24_tests",
+                "signature": "fn i24_tests() {\n    assert_parse!(be_i24(&[0xFF, 0xFF, 0xFF][..]), Ok((&b\"\"[..], -1_i32)));\n    assert_parse!(be_i24(&[0xFF, 0x00, 0x00][..]), Ok((&b\"\"[..], -65_536_i32)));\n    assert_parse!(\n      be_i24(&[0xED, 0xCB, 0xAA][..]),\n      Ok((&b\"\"[..], -1_193_046_i32))\n    );\n    assert_parse!(be_i24(&[][..]), Err(Err::Incomplete(Needed::new(3))));\n    assert_parse!(be_i24(&[0x00][..]), Err(Err::Incomplete(Needed::new(2))));\n    assert_parse!(\n      be_i24(&[0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(1)))\n    );\n  }",
+                "start_line": 1509,
+                "symbol_id": "src/number/streaming.rs#function:i24_tests:1509"
+              },
+              {
+                "children": [],
+                "documentation": "[test]",
+                "end_line": 1546,
+                "kind": "function",
+                "name": "i32_tests",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "i32_tests",
+                "signature": "fn i32_tests() {\n    assert_parse!(be_i32(&[0x00, 0x00, 0x00, 0x00][..]), Ok((&b\"\"[..], 0)));\n    assert_parse!(\n      be_i32(&[0x7f, 0xff, 0xff, 0xff][..]),\n      Ok((&b\"\"[..], 2_147_483_647_i32))\n    );\n    assert_parse!(be_i32(&[0xff, 0xff, 0xff, 0xff][..]), Ok((&b\"\"[..], -1)));\n    assert_parse!(\n      be_i32(&[0x80, 0x00, 0x00, 0x00][..]),\n      Ok((&b\"\"[..], -2_147_483_648_i32))\n    );\n    assert_parse!(be_i32(&[][..]), Err(Err::Incomplete(Needed::new(4))));\n    assert_parse!(be_i32(&[0x00][..]), Err(Err::Incomplete(Needed::new(3))));\n    assert_parse!(\n      be_i32(&[0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(2)))\n    );\n    assert_parse!(\n      be_i32(&[0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(1)))\n    );\n  }",
+                "start_line": 1525,
+                "symbol_id": "src/number/streaming.rs#function:i32_tests:1525"
+              },
+              {
+                "children": [],
+                "documentation": "[test]",
+                "end_line": 1592,
+                "kind": "function",
+                "name": "i64_tests",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "i64_tests",
+                "signature": "fn i64_tests() {\n    assert_parse!(\n      be_i64(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Ok((&b\"\"[..], 0))\n    );\n    assert_parse!(\n      be_i64(&[0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff][..]),\n      Ok((&b\"\"[..], 9_223_372_036_854_775_807_i64))\n    );\n    assert_parse!(\n      be_i64(&[0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff][..]),\n      Ok((&b\"\"[..], -1))\n    );\n    assert_parse!(\n      be_i64(&[0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Ok((&b\"\"[..], -9_223_372_036_854_775_808_i64))\n    );\n    assert_parse!(be_i64(&[][..]), Err(Err::Incomplete(Needed::new(8))));\n    assert_parse!(be_i64(&[0x00][..]), Err(Err::Incomplete(Needed::new(7))));\n    assert_parse!(\n      be_i64(&[0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(6)))\n    );\n    assert_parse!(\n      be_i64(&[0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(5)))\n    );\n    assert_parse!(\n      be_i64(&[0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(4)))\n    );\n    assert_parse!(\n      be_i64(&[0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(3)))\n    );\n    assert_parse!(\n      be_i64(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(2)))\n    );\n    assert_parse!(\n      be_i64(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(1)))\n    );\n  }",
+                "start_line": 1549,
+                "symbol_id": "src/number/streaming.rs#function:i64_tests:1549"
+              },
+              {
+                "children": [],
+                "documentation": "[test]",
+                "end_line": 1701,
+                "kind": "function",
+                "name": "i128_tests",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "i128_tests",
+                "signature": "fn i128_tests() {\n    assert_parse!(\n      be_i128(\n        &[\n          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,\n          0x00\n        ][..]\n      ),\n      Ok((&b\"\"[..], 0))\n    );\n    assert_parse!(\n      be_i128(\n        &[\n          0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,\n          0xff\n        ][..]\n      ),\n      Ok((\n        &b\"\"[..],\n        170_141_183_460_469_231_731_687_303_715_884_105_727_i128\n      ))\n    );\n    assert_parse!(\n      be_i128(\n        &[\n          0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,\n          0xff\n        ][..]\n      ),\n      Ok((&b\"\"[..], -1))\n    );\n    assert_parse!(\n      be_i128(\n        &[\n          0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,\n          0x00\n        ][..]\n      ),\n      Ok((\n        &b\"\"[..],\n        -170_141_183_460_469_231_731_687_303_715_884_105_728_i128\n      ))\n    );\n    assert_parse!(be_i128(&[][..]), Err(Err::Incomplete(Needed::new(16))));\n    assert_parse!(be_i128(&[0x00][..]), Err(Err::Incomplete(Needed::new(15))));\n    assert_parse!(\n      be_i128(&[0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(14)))\n    );\n    assert_parse!(\n      be_i128(&[0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(13)))\n    );\n    assert_parse!(\n      be_i128(&[0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(12)))\n    );\n    assert_parse!(\n      be_i128(&[0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(11)))\n    );\n    assert_parse!(\n      be_i128(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(10)))\n    );\n    assert_parse!(\n      be_i128(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(9)))\n    );\n    assert_parse!(\n      be_i128(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(8)))\n    );\n    assert_parse!(\n      be_i128(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(7)))\n    );\n    assert_parse!(\n      be_i128(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(6)))\n    );\n    assert_parse!(\n      be_i128(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(5)))\n    );\n    assert_parse!(\n      be_i128(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(4)))\n    );\n    assert_parse!(\n      be_i128(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(3)))\n    );\n    assert_parse!(\n      be_i128(\n        &[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]\n      ),\n      Err(Err::Incomplete(Needed::new(2)))\n    );\n    assert_parse!(\n      be_i128(\n        &[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]\n          [..]\n      ),\n      Err(Err::Incomplete(Needed::new(1)))\n    );\n  }",
+                "start_line": 1595,
+                "symbol_id": "src/number/streaming.rs#function:i128_tests:1595"
+              },
+              {
+                "children": [],
+                "documentation": "[test]",
+                "end_line": 1709,
+                "kind": "function",
+                "name": "le_i8_tests",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "le_i8_tests",
+                "signature": "fn le_i8_tests() {\n    assert_parse!(le_i8(&[0x00][..]), Ok((&b\"\"[..], 0)));\n    assert_parse!(le_i8(&[0x7f][..]), Ok((&b\"\"[..], 127)));\n    assert_parse!(le_i8(&[0xff][..]), Ok((&b\"\"[..], -1)));\n    assert_parse!(le_i8(&[0x80][..]), Ok((&b\"\"[..], -128)));\n  }",
+                "start_line": 1704,
+                "symbol_id": "src/number/streaming.rs#function:le_i8_tests:1704"
+              },
+              {
+                "children": [],
+                "documentation": "[test]",
+                "end_line": 1717,
+                "kind": "function",
+                "name": "le_i16_tests",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "le_i16_tests",
+                "signature": "fn le_i16_tests() {\n    assert_parse!(le_i16(&[0x00, 0x00][..]), Ok((&b\"\"[..], 0)));\n    assert_parse!(le_i16(&[0xff, 0x7f][..]), Ok((&b\"\"[..], 32_767_i16)));\n    assert_parse!(le_i16(&[0xff, 0xff][..]), Ok((&b\"\"[..], -1)));\n    assert_parse!(le_i16(&[0x00, 0x80][..]), Ok((&b\"\"[..], -32_768_i16)));\n  }",
+                "start_line": 1712,
+                "symbol_id": "src/number/streaming.rs#function:le_i16_tests:1712"
+              },
+              {
+                "children": [],
+                "documentation": "[test]",
+                "end_line": 1727,
+                "kind": "function",
+                "name": "le_u24_tests",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "le_u24_tests",
+                "signature": "fn le_u24_tests() {\n    assert_parse!(le_u24(&[0x00, 0x00, 0x00][..]), Ok((&b\"\"[..], 0)));\n    assert_parse!(le_u24(&[0xFF, 0xFF, 0x00][..]), Ok((&b\"\"[..], 65_535_u32)));\n    assert_parse!(\n      le_u24(&[0x56, 0x34, 0x12][..]),\n      Ok((&b\"\"[..], 1_193_046_u32))\n    );\n  }",
+                "start_line": 1720,
+                "symbol_id": "src/number/streaming.rs#function:le_u24_tests:1720"
+              },
+              {
+                "children": [],
+                "documentation": "[test]",
+                "end_line": 1737,
+                "kind": "function",
+                "name": "le_i24_tests",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "le_i24_tests",
+                "signature": "fn le_i24_tests() {\n    assert_parse!(le_i24(&[0xFF, 0xFF, 0xFF][..]), Ok((&b\"\"[..], -1_i32)));\n    assert_parse!(le_i24(&[0x00, 0x00, 0xFF][..]), Ok((&b\"\"[..], -65_536_i32)));\n    assert_parse!(\n      le_i24(&[0xAA, 0xCB, 0xED][..]),\n      Ok((&b\"\"[..], -1_193_046_i32))\n    );\n  }",
+                "start_line": 1730,
+                "symbol_id": "src/number/streaming.rs#function:le_i24_tests:1730"
+              },
+              {
+                "children": [],
+                "documentation": "[test]",
+                "end_line": 1751,
+                "kind": "function",
+                "name": "le_i32_tests",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "le_i32_tests",
+                "signature": "fn le_i32_tests() {\n    assert_parse!(le_i32(&[0x00, 0x00, 0x00, 0x00][..]), Ok((&b\"\"[..], 0)));\n    assert_parse!(\n      le_i32(&[0xff, 0xff, 0xff, 0x7f][..]),\n      Ok((&b\"\"[..], 2_147_483_647_i32))\n    );\n    assert_parse!(le_i32(&[0xff, 0xff, 0xff, 0xff][..]), Ok((&b\"\"[..], -1)));\n    assert_parse!(\n      le_i32(&[0x00, 0x00, 0x00, 0x80][..]),\n      Ok((&b\"\"[..], -2_147_483_648_i32))\n    );\n  }",
+                "start_line": 1740,
+                "symbol_id": "src/number/streaming.rs#function:le_i32_tests:1740"
+              },
+              {
+                "children": [],
+                "documentation": "[test]",
+                "end_line": 1771,
+                "kind": "function",
+                "name": "le_i64_tests",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "le_i64_tests",
+                "signature": "fn le_i64_tests() {\n    assert_parse!(\n      le_i64(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Ok((&b\"\"[..], 0))\n    );\n    assert_parse!(\n      le_i64(&[0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f][..]),\n      Ok((&b\"\"[..], 9_223_372_036_854_775_807_i64))\n    );\n    assert_parse!(\n      le_i64(&[0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff][..]),\n      Ok((&b\"\"[..], -1))\n    );\n    assert_parse!(\n      le_i64(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80][..]),\n      Ok((&b\"\"[..], -9_223_372_036_854_775_808_i64))\n    );\n  }",
+                "start_line": 1754,
+                "symbol_id": "src/number/streaming.rs#function:le_i64_tests:1754"
+              },
+              {
+                "children": [],
+                "documentation": "[test]",
+                "end_line": 1817,
+                "kind": "function",
+                "name": "le_i128_tests",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "le_i128_tests",
+                "signature": "fn le_i128_tests() {\n    assert_parse!(\n      le_i128(\n        &[\n          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,\n          0x00\n        ][..]\n      ),\n      Ok((&b\"\"[..], 0))\n    );\n    assert_parse!(\n      le_i128(\n        &[\n          0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,\n          0x7f\n        ][..]\n      ),\n      Ok((\n        &b\"\"[..],\n        170_141_183_460_469_231_731_687_303_715_884_105_727_i128\n      ))\n    );\n    assert_parse!(\n      le_i128(\n        &[\n          0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,\n          0xff\n        ][..]\n      ),\n      Ok((&b\"\"[..], -1))\n    );\n    assert_parse!(\n      le_i128(\n        &[\n          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,\n          0x80\n        ][..]\n      ),\n      Ok((\n        &b\"\"[..],\n        -170_141_183_460_469_231_731_687_303_715_884_105_728_i128\n      ))\n    );\n  }",
+                "start_line": 1774,
+                "symbol_id": "src/number/streaming.rs#function:le_i128_tests:1774"
+              },
+              {
+                "children": [],
+                "documentation": "[test]",
+                "end_line": 1826,
+                "kind": "function",
+                "name": "be_f32_tests",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "be_f32_tests",
+                "signature": "fn be_f32_tests() {\n    assert_parse!(be_f32(&[0x00, 0x00, 0x00, 0x00][..]), Ok((&b\"\"[..], 0_f32)));\n    assert_parse!(\n      be_f32(&[0x4d, 0x31, 0x1f, 0xd8][..]),\n      Ok((&b\"\"[..], 185_728_392_f32))\n    );\n  }",
+                "start_line": 1820,
+                "symbol_id": "src/number/streaming.rs#function:be_f32_tests:1820"
+              },
+              {
+                "children": [],
+                "documentation": "[test]",
+                "end_line": 1838,
+                "kind": "function",
+                "name": "be_f64_tests",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "be_f64_tests",
+                "signature": "fn be_f64_tests() {\n    assert_parse!(\n      be_f64(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Ok((&b\"\"[..], 0_f64))\n    );\n    assert_parse!(\n      be_f64(&[0x41, 0xa6, 0x23, 0xfb, 0x10, 0x00, 0x00, 0x00][..]),\n      Ok((&b\"\"[..], 185_728_392_f64))\n    );\n  }",
+                "start_line": 1829,
+                "symbol_id": "src/number/streaming.rs#function:be_f64_tests:1829"
+              },
+              {
+                "children": [],
+                "documentation": "[test]",
+                "end_line": 1847,
+                "kind": "function",
+                "name": "le_f32_tests",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "le_f32_tests",
+                "signature": "fn le_f32_tests() {\n    assert_parse!(le_f32(&[0x00, 0x00, 0x00, 0x00][..]), Ok((&b\"\"[..], 0_f32)));\n    assert_parse!(\n      le_f32(&[0xd8, 0x1f, 0x31, 0x4d][..]),\n      Ok((&b\"\"[..], 185_728_392_f32))\n    );\n  }",
+                "start_line": 1841,
+                "symbol_id": "src/number/streaming.rs#function:le_f32_tests:1841"
+              },
+              {
+                "children": [],
+                "documentation": "[test]",
+                "end_line": 1859,
+                "kind": "function",
+                "name": "le_f64_tests",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "le_f64_tests",
+                "signature": "fn le_f64_tests() {\n    assert_parse!(\n      le_f64(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Ok((&b\"\"[..], 0_f64))\n    );\n    assert_parse!(\n      le_f64(&[0x00, 0x00, 0x00, 0x10, 0xfb, 0x23, 0xa6, 0x41][..]),\n      Ok((&b\"\"[..], 185_728_392_f64))\n    );\n  }",
+                "start_line": 1850,
+                "symbol_id": "src/number/streaming.rs#function:le_f64_tests:1850"
+              },
+              {
+                "children": [],
+                "documentation": "[test]",
+                "end_line": 1879,
+                "kind": "function",
+                "name": "hex_u32_tests",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "hex_u32_tests",
+                "signature": "fn hex_u32_tests() {\n    assert_parse!(\n      hex_u32(&b\";\"[..]),\n      Err(Err::Error(error_position!(&b\";\"[..], ErrorKind::IsA)))\n    );\n    assert_parse!(hex_u32(&b\"ff;\"[..]), Ok((&b\";\"[..], 255)));\n    assert_parse!(hex_u32(&b\"1be2;\"[..]), Ok((&b\";\"[..], 7138)));\n    assert_parse!(hex_u32(&b\"c5a31be2;\"[..]), Ok((&b\";\"[..], 3_315_801_058)));\n    assert_parse!(hex_u32(&b\"C5A31be2;\"[..]), Ok((&b\";\"[..], 3_315_801_058)));\n    assert_parse!(hex_u32(&b\"00c5a31be2;\"[..]), Ok((&b\"e2;\"[..], 12_952_347)));\n    assert_parse!(\n      hex_u32(&b\"c5a31be201;\"[..]),\n      Ok((&b\"01;\"[..], 3_315_801_058))\n    );\n    assert_parse!(hex_u32(&b\"ffffffff;\"[..]), Ok((&b\";\"[..], 4_294_967_295)));\n    assert_parse!(hex_u32(&b\"0x1be2;\"[..]), Ok((&b\"x1be2;\"[..], 0)));\n    assert_parse!(hex_u32(&b\"12af\"[..]), Err(Err::Incomplete(Needed::new(1))));\n  }",
+                "start_line": 1862,
+                "symbol_id": "src/number/streaming.rs#function:hex_u32_tests:1862"
+              },
+              {
+                "children": [],
+                "documentation": "[test]\n[cfg(feature = \"std\")]",
+                "end_line": 1934,
+                "kind": "function",
+                "name": "float_test",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "float_test",
+                "signature": "fn float_test() {\n    let mut test_cases = vec![\n      \"+3.14\",\n      \"3.14\",\n      \"-3.14\",\n      \"0\",\n      \"0.0\",\n      \"1.\",\n      \".789\",\n      \"-.5\",\n      \"1e7\",\n      \"-1E-7\",\n      \".3e-2\",\n      \"1.e4\",\n      \"1.2e4\",\n      \"12.34\",\n      \"-1.234E-12\",\n      \"-1.234e-12\",\n      \"0.00000000000000000087\",\n    ];\n\n    for test in test_cases.drain(..) {\n      let expected32 = str::parse::<f32>(test).unwrap();\n      let expected64 = str::parse::<f64>(test).unwrap();\n\n      println!(\"now parsing: {} -> {}\", test, expected32);\n\n      let larger = format!(\"{};\", test);\n      assert_parse!(recognize_float(&larger[..]), Ok((\";\", test)));\n\n      assert_parse!(float(larger.as_bytes()), Ok((&b\";\"[..], expected32)));\n      assert_parse!(float(&larger[..]), Ok((\";\", expected32)));\n\n      assert_parse!(double(larger.as_bytes()), Ok((&b\";\"[..], expected64)));\n      assert_parse!(double(&larger[..]), Ok((\";\", expected64)));\n    }\n\n    let remaining_exponent = \"-1.234E-\";\n    assert_parse!(\n      recognize_float(remaining_exponent),\n      Err(Err::Incomplete(Needed::new(1)))\n    );\n\n    let (_i, nan) = float::<_, ()>(\"NaN\").unwrap();\n    assert!(nan.is_nan());\n\n    let (_i, inf) = float::<_, ()>(\"inf\").unwrap();\n    assert!(inf.is_infinite());\n    let (i, inf) = float::<_, ()>(\"infinity\").unwrap();\n    assert!(inf.is_infinite());\n    assert!(i.is_empty());\n  }",
+                "start_line": 1883,
+                "symbol_id": "src/number/streaming.rs#function:float_test:1883"
+              },
+              {
+                "children": [],
+                "documentation": "[test]",
+                "end_line": 2017,
+                "kind": "function",
+                "name": "configurable_endianness",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "configurable_endianness",
+                "signature": "fn configurable_endianness() {\n    use crate::number::Endianness;\n\n    fn be_tst16(i: &[u8]) -> IResult<&[u8], u16> {\n      u16(Endianness::Big)(i)\n    }\n    fn le_tst16(i: &[u8]) -> IResult<&[u8], u16> {\n      u16(Endianness::Little)(i)\n    }\n    assert_eq!(be_tst16(&[0x80, 0x00]), Ok((&b\"\"[..], 32_768_u16)));\n    assert_eq!(le_tst16(&[0x80, 0x00]), Ok((&b\"\"[..], 128_u16)));\n\n    fn be_tst32(i: &[u8]) -> IResult<&[u8], u32> {\n      u32(Endianness::Big)(i)\n    }\n    fn le_tst32(i: &[u8]) -> IResult<&[u8], u32> {\n      u32(Endianness::Little)(i)\n    }\n    assert_eq!(\n      be_tst32(&[0x12, 0x00, 0x60, 0x00]),\n      Ok((&b\"\"[..], 302_014_464_u32))\n    );\n    assert_eq!(\n      le_tst32(&[0x12, 0x00, 0x60, 0x00]),\n      Ok((&b\"\"[..], 6_291_474_u32))\n    );\n\n    fn be_tst64(i: &[u8]) -> IResult<&[u8], u64> {\n      u64(Endianness::Big)(i)\n    }\n    fn le_tst64(i: &[u8]) -> IResult<&[u8], u64> {\n      u64(Endianness::Little)(i)\n    }\n    assert_eq!(\n      be_tst64(&[0x12, 0x00, 0x60, 0x00, 0x12, 0x00, 0x80, 0x00]),\n      Ok((&b\"\"[..], 1_297_142_246_100_992_000_u64))\n    );\n    assert_eq!(\n      le_tst64(&[0x12, 0x00, 0x60, 0x00, 0x12, 0x00, 0x80, 0x00]),\n      Ok((&b\"\"[..], 36_028_874_334_666_770_u64))\n    );\n\n    fn be_tsti16(i: &[u8]) -> IResult<&[u8], i16> {\n      i16(Endianness::Big)(i)\n    }\n    fn le_tsti16(i: &[u8]) -> IResult<&[u8], i16> {\n      i16(Endianness::Little)(i)\n    }\n    assert_eq!(be_tsti16(&[0x00, 0x80]), Ok((&b\"\"[..], 128_i16)));\n    assert_eq!(le_tsti16(&[0x00, 0x80]), Ok((&b\"\"[..], -32_768_i16)));\n\n    fn be_tsti32(i: &[u8]) -> IResult<&[u8], i32> {\n      i32(Endianness::Big)(i)\n    }\n    fn le_tsti32(i: &[u8]) -> IResult<&[u8], i32> {\n      i32(Endianness::Little)(i)\n    }\n    assert_eq!(\n      be_tsti32(&[0x00, 0x12, 0x60, 0x00]),\n      Ok((&b\"\"[..], 1_204_224_i32))\n    );\n    assert_eq!(\n      le_tsti32(&[0x00, 0x12, 0x60, 0x00]),\n      Ok((&b\"\"[..], 6_296_064_i32))\n    );\n\n    fn be_tsti64(i: &[u8]) -> IResult<&[u8], i64> {\n      i64(Endianness::Big)(i)\n    }\n    fn le_tsti64(i: &[u8]) -> IResult<&[u8], i64> {\n      i64(Endianness::Little)(i)\n    }\n    assert_eq!(\n      be_tsti64(&[0x00, 0xFF, 0x60, 0x00, 0x12, 0x00, 0x80, 0x00]),\n      Ok((&b\"\"[..], 71_881_672_479_506_432_i64))\n    );\n    assert_eq!(\n      le_tsti64(&[0x00, 0xFF, 0x60, 0x00, 0x12, 0x00, 0x80, 0x00]),\n      Ok((&b\"\"[..], 36_028_874_334_732_032_i64))\n    );\n  }",
+                "start_line": 1937,
+                "symbol_id": "src/number/streaming.rs#function:configurable_endianness:1937"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1942,
+                "kind": "function",
+                "name": "be_tst16",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "be_tst16",
+                "signature": "fn be_tst16(i: &[u8]) -> IResult<&[u8], u16> {\n      u16(Endianness::Big)(i)\n    }",
+                "start_line": 1940,
+                "symbol_id": "src/number/streaming.rs#function:be_tst16:1940"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1945,
+                "kind": "function",
+                "name": "le_tst16",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "le_tst16",
+                "signature": "fn le_tst16(i: &[u8]) -> IResult<&[u8], u16> {\n      u16(Endianness::Little)(i)\n    }",
+                "start_line": 1943,
+                "symbol_id": "src/number/streaming.rs#function:le_tst16:1943"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1951,
+                "kind": "function",
+                "name": "be_tst32",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "be_tst32",
+                "signature": "fn be_tst32(i: &[u8]) -> IResult<&[u8], u32> {\n      u32(Endianness::Big)(i)\n    }",
+                "start_line": 1949,
+                "symbol_id": "src/number/streaming.rs#function:be_tst32:1949"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1954,
+                "kind": "function",
+                "name": "le_tst32",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "le_tst32",
+                "signature": "fn le_tst32(i: &[u8]) -> IResult<&[u8], u32> {\n      u32(Endianness::Little)(i)\n    }",
+                "start_line": 1952,
+                "symbol_id": "src/number/streaming.rs#function:le_tst32:1952"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1966,
+                "kind": "function",
+                "name": "be_tst64",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "be_tst64",
+                "signature": "fn be_tst64(i: &[u8]) -> IResult<&[u8], u64> {\n      u64(Endianness::Big)(i)\n    }",
+                "start_line": 1964,
+                "symbol_id": "src/number/streaming.rs#function:be_tst64:1964"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1969,
+                "kind": "function",
+                "name": "le_tst64",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "le_tst64",
+                "signature": "fn le_tst64(i: &[u8]) -> IResult<&[u8], u64> {\n      u64(Endianness::Little)(i)\n    }",
+                "start_line": 1967,
+                "symbol_id": "src/number/streaming.rs#function:le_tst64:1967"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1981,
+                "kind": "function",
+                "name": "be_tsti16",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "be_tsti16",
+                "signature": "fn be_tsti16(i: &[u8]) -> IResult<&[u8], i16> {\n      i16(Endianness::Big)(i)\n    }",
+                "start_line": 1979,
+                "symbol_id": "src/number/streaming.rs#function:be_tsti16:1979"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1984,
+                "kind": "function",
+                "name": "le_tsti16",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "le_tsti16",
+                "signature": "fn le_tsti16(i: &[u8]) -> IResult<&[u8], i16> {\n      i16(Endianness::Little)(i)\n    }",
+                "start_line": 1982,
+                "symbol_id": "src/number/streaming.rs#function:le_tsti16:1982"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1990,
+                "kind": "function",
+                "name": "be_tsti32",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "be_tsti32",
+                "signature": "fn be_tsti32(i: &[u8]) -> IResult<&[u8], i32> {\n      i32(Endianness::Big)(i)\n    }",
+                "start_line": 1988,
+                "symbol_id": "src/number/streaming.rs#function:be_tsti32:1988"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1993,
+                "kind": "function",
+                "name": "le_tsti32",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "le_tsti32",
+                "signature": "fn le_tsti32(i: &[u8]) -> IResult<&[u8], i32> {\n      i32(Endianness::Little)(i)\n    }",
+                "start_line": 1991,
+                "symbol_id": "src/number/streaming.rs#function:le_tsti32:1991"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 2005,
+                "kind": "function",
+                "name": "be_tsti64",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "be_tsti64",
+                "signature": "fn be_tsti64(i: &[u8]) -> IResult<&[u8], i64> {\n      i64(Endianness::Big)(i)\n    }",
+                "start_line": 2003,
+                "symbol_id": "src/number/streaming.rs#function:be_tsti64:2003"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 2008,
+                "kind": "function",
+                "name": "le_tsti64",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "le_tsti64",
+                "signature": "fn le_tsti64(i: &[u8]) -> IResult<&[u8], i64> {\n      i64(Endianness::Little)(i)\n    }",
+                "start_line": 2006,
+                "symbol_id": "src/number/streaming.rs#function:le_tsti64:2006"
+              },
+              {
+                "children": [],
+                "documentation": "[cfg(feature = \"std\")]",
+                "end_line": 2034,
+                "kind": "function",
+                "name": "parse_f64",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/number/streaming.rs",
+                "qualified_name": "parse_f64",
+                "signature": "fn parse_f64(i: &str) -> IResult<&str, f64, ()> {\n    use crate::traits::ParseTo;\n    match recognize_float_or_exceptions(i) {\n      Err(e) => Err(e),\n      Ok((i, s)) => {\n        if s.is_empty() {\n          return Err(Err::Error(()));\n        }\n        match s.parse_to() {\n          Some(n) => Ok((i, n)),\n          None => Err(Err::Error(())),\n        }\n      }\n    }\n  }",
+                "start_line": 2020,
+                "symbol_id": "src/number/streaming.rs#function:parse_f64:2020"
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "src/number/streaming.rs",
+                "workspace_id": "rs_002_ctx16k"
+              },
+              "durationMs": 0,
+              "toolName": "list_symbols",
+              "workspace_id": "rs_002_ctx16k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 2168,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "symbol_id": "src/number/streaming.rs#function:i16_tests:1483",
+              "workspace_id": "rs_002_ctx16k"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": {
+              "children": [],
+              "code": "fn i16_tests() {\n    assert_parse!(be_i16(&[0x00, 0x00][..]), Ok((&b\"\"[..], 0)));\n    assert_parse!(be_i16(&[0x7f, 0xff][..]), Ok((&b\"\"[..], 32_767_i16)));\n    assert_parse!(be_i16(&[0xff, 0xff][..]), Ok((&b\"\"[..], -1)));\n    assert_parse!(be_i16(&[0x80, 0x00][..]), Ok((&b\"\"[..], -32_768_i16)));\n    assert_parse!(be_i16(&[][..]), Err(Err::Incomplete(Needed::new(2))));\n    assert_parse!(be_i16(&[0x00][..]), Err(Err::Incomplete(Needed::new(1))));\n  }",
+              "documentation": "[test]",
+              "end_line": 1490,
+              "kind": "function",
+              "name": "i16_tests",
+              "parent_id": null,
+              "parent_name": null,
+              "path": "src/number/streaming.rs",
+              "qualified_name": "i16_tests",
+              "signature": "fn i16_tests() {\n    assert_parse!(be_i16(&[0x00, 0x00][..]), Ok((&b\"\"[..], 0)));\n    assert_parse!(be_i16(&[0x7f, 0xff][..]), Ok((&b\"\"[..], 32_767_i16)));\n    assert_parse!(be_i16(&[0xff, 0xff][..]), Ok((&b\"\"[..], -1)));\n    assert_parse!(be_i16(&[0x80, 0x00][..]), Ok((&b\"\"[..], -32_768_i16)));\n    assert_parse!(be_i16(&[][..]), Err(Err::Incomplete(Needed::new(2))));\n    assert_parse!(be_i16(&[0x00][..]), Err(Err::Incomplete(Needed::new(1))));\n  }",
+              "start_line": 1483,
+              "symbol_id": "src/number/streaming.rs#function:i16_tests:1483"
+            },
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "symbol_id": "src/number/streaming.rs#function:i16_tests:1483",
+                "workspace_id": "rs_002_ctx16k"
+              },
+              "durationMs": 0,
+              "toolName": "get_symbol",
+              "workspace_id": "rs_002_ctx16k"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 2032,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 7942,
+          "metadata": {},
+          "name": "strategy.local_function.execute",
+          "type": "strategy.local_function.execute"
+        },
+        {
+          "duration_ms": 7942,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 50,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": null,
+        "cachedInputTokens": 742,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 3,
+        "inputTokens": 19801,
+        "loopControlDurationMsEstimated": 49,
+        "mcpToolCalls": 3,
+        "modelCalls": 4,
+        "modelDurationMs": 7892,
+        "outputTokens": 357,
+        "promptChars": 1044,
+        "questionTokensEstimated": 132,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 325,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 4,
+        "strategyDurationMs": 7942,
+        "taskStatementChars": 873,
+        "toolCalls": 3,
+        "toolDurationMs": 1,
+        "totalDurationMs": 7942,
+        "totalTokens": 20483,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "workspace_id": "rs_002_ctx16k"
+                    },
+                    "id": null,
+                    "name": "list_files",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CucFAQw51sdPZmXW1zptUEv5R6LSOUTWn-GFymT4leGz0e9PigOBpQhsKVyfAlBY1xdAjgVSoRzVseug_PzQQt-hOLpyjAZZJQK6cp2QJV2TYawdl1S9yBZTHTxZ_gGIB5hwyvcIe3O552bboISLfz_zh5tOPwCyaDAvnEQQ7MQIX324YC_rGlBM5gcGFOrhorDjQ1jq4-hnHqI_jjzAhumGpvUa05k3Hkwx9pJpNl-f7uwu2zNKSpT4BDEi_f7hK7sIYxwimyZ4G3K0d8ddk0vf6ThUr-uouPTEEN429uujz63zZpJOvmpianAMCa0FKdIBk3K7Kp8EXT-PCT4wNs30CSzcvndvaKGUxMu2OEyipZlCz2HFZuBpukcm0z0uX-hu2SyZ3p3wr56xCeYjG6230acGX04TCPuQyDEMeH76SFGj06PeA1csT_rvyiEm1dI3t4z6D9n01RWgOJg47OpZ6zSXc7CNzCZfbiBvwychbUZ5weItT1jWgKbzfDnZ43n5aEf86JODJIASpoZE789aUHdrPcrLC6Od_HatKaVt0vsDi7rPUzsAPb-0eetI4OQCSTlKR90CZOMwvGJanwncgYOV83M7NQ4976escTT8R_MYPX3d3vClUkM6o9kigY-OaGrLHT02ExRV4abHxhTkEbr15eZ6vKsGeEIMaTPbRb1sffIIMX_tqyQwapT8i_ugzwksKnlImvN2WeGtQSxn0Ehh1Rqu6p25jYlfZNKsPga5MVGJCxMi6P6ectdB4yZzsQUqRReGJJsz5PwRhYNPKoMSrEDjjiNTbbRlk6P02olHa_PQx7vp2_i4pd7wfEpTDbcld0mKS57vG51Th0DQu9qCZXbtdnkxIhHhCHLTOW-8xBLZu6UmC4G473QRlKvnXwrBXtY9IVPdGUFyt1hY9JqszPdZHECZhriHKTudLZ6F89BcqhR_iRLkp6B8oZ9IY2uaGrNEsxjcsWuI4tbJxJn8R6kcBdM=",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "2ZUUapKSA6KGz7IPqKj2qAw",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 18:32:58 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1697",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 26,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 634,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 634
+            }
+          ],
+          "thoughts_token_count": 172,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 832,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "kind": "function",
+                      "path": "src/number/streaming.rs",
+                      "workspace_id": "rs_002_ctx16k"
+                    },
+                    "id": null,
+                    "name": "list_symbols",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CuUCAQw51sez-YahkWPQAXqPZKawPE1-jTn53c8lf3YmaAoGgU7iKLtfBhdr3uIHuNjS39pHTAzo7FE83ThSxEjX45I5Mbf7TvuSG6vVTQ63osEfbjh7qV32YjExMRFDqWc8dSZ3e5brWfiGD76yvtUGdkDwW7POwfd2ht10PrJHnYeskPo6SFZwTXlamqMCJf6c6oVX-CmLGiKsnx96pIINWk2HH2sR4PXRA-dgyp87InFVp4cP5dTSk-vMcgmdOB0kpKxP_BT3V1bPXu2OXcWIjcXBvQJhqU51CUyFbnLM40SoU0kLwmQN-zLndexwrN5g1vOU7DyjM_XQMw00k-U-LCjSlt6cw3tBr_li6p5Jll3JR0Vu6KEFCuNjwqLT7j0CR7madDLEWFuqNDXV9qsbWH0P0LWXpnxcOXa_Dvj5q8MezddMjCem-YnMkSWlHkZDF3bbMkuhzHMWr0t0bsZR7x9RV0iU",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "2pUUap6aO4_rz7IPttyh4A0",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 18:33:00 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1544",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 42,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 767,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 767
+            }
+          ],
+          "thoughts_token_count": 89,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 898,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "symbol_id": "src/number/streaming.rs#function:i16_tests:1483",
+                      "workspace_id": "rs_002_ctx16k"
+                    },
+                    "id": null,
+                    "name": "get_symbol",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CrUCAQw51sdiEH0bMZE9eHSw6R1Z_3jkA5LyYufAEp1VWM-XRmLgVCPzMRlgjiGlB89zzoEf2_p4NQMHHIb64LeSNObMi0R7KB_dQCIHRJ1zWgTaeP809MVYeLvYc9fg9PS2Rva5FoHJmlc4uHui0ttWtY11NAZYZwLvxWYP6dExcA7KxOefi6mECTFQ3T65zMVL6a2-Lb1YdtBxPaW1neO14NCvy8S-jRxtsATPd5t1UK12yWGkCzFYWII6620QsmFVjKsk_Y9q0msUlrqdx-cWhCcVTPF44jSIJVxGZsYSbdBn2RM9Bj2bHw0K553GV0fGWFI8vgtTQO0jWW024chERUWE29hXTK4SlwcVLdV0qr2fxfkdjf9hMwTQB5XcOW8CLywbwq45ENhZVJEaZEo5x1ZkbpD5",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "3JUUauKPOf6tz7IPtI_EwAs",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 18:33:02 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1950",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 52,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 17096,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 17096
+            }
+          ],
+          "thoughts_token_count": 64,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 17212,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": {
+              "citations": [
+                {
+                  "end_index": 450,
+                  "license": "",
+                  "publication_date": null,
+                  "start_index": 8,
+                  "title": null,
+                  "uri": "https://github.com/rust-bakery/nom"
+                }
+              ]
+            },
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": null,
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": "```rust\nfn i16_tests() {\n    assert_parse!(be_i16(&[0x00, 0x00][..]), Ok((&b\"\"[..], 0)));\n    assert_parse!(be_i16(&[0x7f, 0xff][..]), Ok((&b\"\"[..], 32_767_i16)));\n    assert_parse!(be_i16(&[0xff, 0xff][..]), Ok((&b\"\"[..], -1)));\n    assert_parse!(be_i16(&[0x80, 0x00][..]), Ok((&b\"\"[..], -32_768_i16)));\n    assert_parse!(be_i16(&[][..]), Err(Err::Incomplete(Needed::new(2))));\n    assert_parse!(be_i16(&[0x00][..]), Err(Err::Incomplete(Needed::new(1))));\n  }\n```",
+                  "thought": null,
+                  "thought_signature": null,
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                },
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": null,
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": "\n",
+                  "thought": null,
+                  "thought_signature": null,
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "3pUUaqP4OefQz7IPo4iigAU",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 18:33:04 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1792",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 742
+            }
+          ],
+          "cached_content_token_count": 742,
+          "candidates_token_count": 237,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 1304,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 1304
+            }
+          ],
+          "thoughts_token_count": null,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 1541,
+          "traffic_type": null
+        }
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "workspace_id": "rs_002_ctx16k"
+        },
+        "durationMs": 1,
+        "toolName": "list_files",
+        "workspace_id": "rs_002_ctx16k"
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/number/streaming.rs",
+          "workspace_id": "rs_002_ctx16k"
+        },
+        "durationMs": 0,
+        "toolName": "list_symbols",
+        "workspace_id": "rs_002_ctx16k"
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/number/streaming.rs#function:i16_tests:1483",
+          "workspace_id": "rs_002_ctx16k"
+        },
+        "durationMs": 0,
+        "toolName": "get_symbol",
+        "workspace_id": "rs_002_ctx16k"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "workspace_id": "rs_002_ctx16k"
+        },
+        "id": "step-1-tool-1",
+        "isError": false,
+        "name": "list_files",
+        "result": [
+          {
+            "language": "rust",
+            "parse_status": "ok_filtered",
+            "path": "src/number/streaming.rs",
+            "repository": "rust-bakery/nom",
+            "symbol_count": 37
+          },
+          {
+            "language": "rust",
+            "parse_status": "ok_filtered",
+            "path": "src/internal.rs",
+            "repository": "rust-bakery/nom",
+            "symbol_count": 53
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/number/streaming.rs",
+          "workspace_id": "rs_002_ctx16k"
+        },
+        "id": "step-2-tool-1",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "Recognizes a floating point number in text format\n\nIt returns a tuple of (`sign`, `integer part`, `fraction part` and `exponent`) of the input\ndata.\n\n*Streaming version*: Will return `Err(nom::Err::Incomplete(_))` if there is not enough data.",
+            "end_line": 1357,
+            "kind": "function",
+            "name": "recognize_float_parts",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "recognize_float_parts",
+            "signature": "pub fn recognize_float_parts<T, E: ParseError<T>>(input: T) -> IResult<T, (bool, T, T, i32), E>\nwhere\n  T: Clone + Offset,\n  T: Input,\n  <T as Input>::Item: AsChar,\n  T: for<'a> Compare<&'a [u8]>,\n  T: AsBytes,\n{\n  let (i, sign) = sign(input.clone())?;\n\n  //let (i, zeroes) = take_while(|c: <T as InputTakeAtPosition>::Item| c.as_char() == '0')(i)?;\n  let (i, zeroes) = match i.as_bytes().iter().position(|c| *c != b'0') {\n    Some(index) => i.take_split(index),\n    None => i.take_split(i.input_len()),\n  };\n\n  //let (i, mut integer) = digit0(i)?;\n  let (i, mut integer) = match i\n    .as_bytes()\n    .iter()\n    .position(|c| !(*c >= b'0' && *c <= b'9'))\n  {\n    Some(index) => i.take_split(index),\n    None => i.take_split(i.input_len()),\n  };\n\n  if integer.input_len() == 0 && zeroes.input_len() > 0 {\n    // keep the last zero if integer is empty\n    integer = zeroes.take_from(zeroes.input_len() - 1);\n  }\n\n  let (i, opt_dot) = opt(tag(&b\".\"[..])).parse(i)?;\n  let (i, fraction) = if opt_dot.is_none() {\n    let i2 = i.clone();\n    (i2, i.take(0))\n  } else {\n    // match number, trim right zeroes\n    let mut zero_count = 0usize;\n    let mut position = None;\n    for (pos, c) in i.as_bytes().iter().enumerate() {\n      if *c >= b'0' && *c <= b'9' {\n        if *c == b'0' {\n          zero_count += 1;\n        } else {\n          zero_count = 0;\n        }\n      } else {\n        position = Some(pos);\n        break;\n      }\n    }\n\n    let position = match position {\n      Some(p) => p,\n      None => return Err(Err::Incomplete(Needed::new(1))),\n    };\n\n    let index = if zero_count == 0 {\n      position\n    } else if zero_count == position {\n      position - zero_count + 1\n    } else {\n      position - zero_count\n    };\n\n    (i.take_from(position), i.take(index))\n  };\n\n  if integer.input_len() == 0 && fraction.input_len() == 0 {\n    return Err(Err::Error(E::from_error_kind(input, ErrorKind::Float)));\n  }\n\n  let i2 = i.clone();\n  let (i, e) = match i.as_bytes().iter().next() {\n    Some(b'e') => (i.take_from(1), true),\n    Some(b'E') => (i.take_from(1), true),\n    _ => (i, false),\n  };\n\n  let (i, exp) = if e {\n    cut(crate::character::streaming::i32).parse(i)?\n  } else {\n    (i2, 0)\n  };\n\n  Ok((i, (sign, integer, fraction, exp)))\n}",
+            "start_line": 1271,
+            "symbol_id": "src/number/streaming.rs#function:recognize_float_parts:1271"
+          },
+          {
+            "children": [],
+            "documentation": "Recognizes floating point number in text format and returns a f32.\n\n*Streaming version*: Will return `Err(nom::Err::Incomplete(_))` if there is not enough data.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed};\n# use nom::Needed::Size;\nuse nom::number::complete::float;\n\nlet parser = |s| {\nfloat(s)\n};\n\nassert_eq!(parser(\"11e-1\"), Ok((\"\", 1.1)));\nassert_eq!(parser(\"123E-02\"), Ok((\"\", 1.23)));\nassert_eq!(parser(\"123K-01\"), Ok((\"K-01\", 123.0)));\nassert_eq!(parser(\"abc\"), Err(Err::Error((\"abc\", ErrorKind::Float))));\n```",
+            "end_line": 1407,
+            "kind": "function",
+            "name": "float",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "float",
+            "signature": "pub fn float<T, E: ParseError<T>>(input: T) -> IResult<T, f32, E>\nwhere\n  T: Clone + Offset,\n  T: Input + crate::traits::ParseTo<f32> + Compare<&'static str>,\n  <T as Input>::Item: AsChar + Clone,\n  T: AsBytes,\n  T: for<'a> Compare<&'a [u8]>,\n{\n  /*\n  let (i, (sign, integer, fraction, exponent)) = recognize_float_parts(input)?;\n\n  let mut float: f32 = minimal_lexical::parse_float(\n    integer.as_bytes().iter(),\n    fraction.as_bytes().iter(),\n    exponent,\n  );\n  if !sign {\n    float = -float;\n  }\n\n  Ok((i, float))\n  */\n  let (i, s) = recognize_float_or_exceptions(input)?;\n  match s.parse_to() {\n    Some(f) => Ok((i, f)),\n    None => Err(crate::Err::Error(E::from_error_kind(\n      i,\n      crate::error::ErrorKind::Float,\n    ))),\n  }\n}",
+            "start_line": 1377,
+            "symbol_id": "src/number/streaming.rs#function:float:1377"
+          },
+          {
+            "children": [],
+            "documentation": "Recognizes floating point number in text format and returns a f64.\n\n*Streaming version*: Will return `Err(nom::Err::Incomplete(_))` if there is not enough data.\n\n```rust\n# use nom::{Err, error::ErrorKind, Needed};\n# use nom::Needed::Size;\nuse nom::number::complete::double;\n\nlet parser = |s| {\ndouble(s)\n};\n\nassert_eq!(parser(\"11e-1\"), Ok((\"\", 1.1)));\nassert_eq!(parser(\"123E-02\"), Ok((\"\", 1.23)));\nassert_eq!(parser(\"123K-01\"), Ok((\"K-01\", 123.0)));\nassert_eq!(parser(\"abc\"), Err(Err::Error((\"abc\", ErrorKind::Float))));\n```",
+            "end_line": 1457,
+            "kind": "function",
+            "name": "double",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "double",
+            "signature": "pub fn double<T, E: ParseError<T>>(input: T) -> IResult<T, f64, E>\nwhere\n  T: Clone + Offset,\n  T: Input + crate::traits::ParseTo<f64> + Compare<&'static str>,\n  <T as Input>::Item: AsChar + Clone,\n  T: AsBytes,\n  T: for<'a> Compare<&'a [u8]>,\n{\n  /*\n  let (i, (sign, integer, fraction, exponent)) = recognize_float_parts(input)?;\n\n  let mut float: f64 = minimal_lexical::parse_float(\n    integer.as_bytes().iter(),\n    fraction.as_bytes().iter(),\n    exponent,\n  );\n  if !sign {\n    float = -float;\n  }\n\n  Ok((i, float))\n  */\n  let (i, s) = recognize_float_or_exceptions(input)?;\n  match s.parse_to() {\n    Some(f) => Ok((i, f)),\n    None => Err(crate::Err::Error(E::from_error_kind(\n      i,\n      crate::error::ErrorKind::Float,\n    ))),\n  }\n}",
+            "start_line": 1427,
+            "symbol_id": "src/number/streaming.rs#function:double:1427"
+          },
+          {
+            "children": [],
+            "documentation": "[test]",
+            "end_line": 1480,
+            "kind": "function",
+            "name": "i8_tests",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "i8_tests",
+            "signature": "fn i8_tests() {\n    assert_parse!(be_i8(&[0x00][..]), Ok((&b\"\"[..], 0)));\n    assert_parse!(be_i8(&[0x7f][..]), Ok((&b\"\"[..], 127)));\n    assert_parse!(be_i8(&[0xff][..]), Ok((&b\"\"[..], -1)));\n    assert_parse!(be_i8(&[0x80][..]), Ok((&b\"\"[..], -128)));\n    assert_parse!(be_i8(&[][..]), Err(Err::Incomplete(Needed::new(1))));\n  }",
+            "start_line": 1474,
+            "symbol_id": "src/number/streaming.rs#function:i8_tests:1474"
+          },
+          {
+            "children": [],
+            "documentation": "[test]",
+            "end_line": 1490,
+            "kind": "function",
+            "name": "i16_tests",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "i16_tests",
+            "signature": "fn i16_tests() {\n    assert_parse!(be_i16(&[0x00, 0x00][..]), Ok((&b\"\"[..], 0)));\n    assert_parse!(be_i16(&[0x7f, 0xff][..]), Ok((&b\"\"[..], 32_767_i16)));\n    assert_parse!(be_i16(&[0xff, 0xff][..]), Ok((&b\"\"[..], -1)));\n    assert_parse!(be_i16(&[0x80, 0x00][..]), Ok((&b\"\"[..], -32_768_i16)));\n    assert_parse!(be_i16(&[][..]), Err(Err::Incomplete(Needed::new(2))));\n    assert_parse!(be_i16(&[0x00][..]), Err(Err::Incomplete(Needed::new(1))));\n  }",
+            "start_line": 1483,
+            "symbol_id": "src/number/streaming.rs#function:i16_tests:1483"
+          },
+          {
+            "children": [],
+            "documentation": "[test]",
+            "end_line": 1506,
+            "kind": "function",
+            "name": "u24_tests",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "u24_tests",
+            "signature": "fn u24_tests() {\n    assert_parse!(be_u24(&[0x00, 0x00, 0x00][..]), Ok((&b\"\"[..], 0)));\n    assert_parse!(be_u24(&[0x00, 0xFF, 0xFF][..]), Ok((&b\"\"[..], 65_535_u32)));\n    assert_parse!(\n      be_u24(&[0x12, 0x34, 0x56][..]),\n      Ok((&b\"\"[..], 1_193_046_u32))\n    );\n    assert_parse!(be_u24(&[][..]), Err(Err::Incomplete(Needed::new(3))));\n    assert_parse!(be_u24(&[0x00][..]), Err(Err::Incomplete(Needed::new(2))));\n    assert_parse!(\n      be_u24(&[0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(1)))\n    );\n  }",
+            "start_line": 1493,
+            "symbol_id": "src/number/streaming.rs#function:u24_tests:1493"
+          },
+          {
+            "children": [],
+            "documentation": "[test]",
+            "end_line": 1522,
+            "kind": "function",
+            "name": "i24_tests",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "i24_tests",
+            "signature": "fn i24_tests() {\n    assert_parse!(be_i24(&[0xFF, 0xFF, 0xFF][..]), Ok((&b\"\"[..], -1_i32)));\n    assert_parse!(be_i24(&[0xFF, 0x00, 0x00][..]), Ok((&b\"\"[..], -65_536_i32)));\n    assert_parse!(\n      be_i24(&[0xED, 0xCB, 0xAA][..]),\n      Ok((&b\"\"[..], -1_193_046_i32))\n    );\n    assert_parse!(be_i24(&[][..]), Err(Err::Incomplete(Needed::new(3))));\n    assert_parse!(be_i24(&[0x00][..]), Err(Err::Incomplete(Needed::new(2))));\n    assert_parse!(\n      be_i24(&[0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(1)))\n    );\n  }",
+            "start_line": 1509,
+            "symbol_id": "src/number/streaming.rs#function:i24_tests:1509"
+          },
+          {
+            "children": [],
+            "documentation": "[test]",
+            "end_line": 1546,
+            "kind": "function",
+            "name": "i32_tests",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "i32_tests",
+            "signature": "fn i32_tests() {\n    assert_parse!(be_i32(&[0x00, 0x00, 0x00, 0x00][..]), Ok((&b\"\"[..], 0)));\n    assert_parse!(\n      be_i32(&[0x7f, 0xff, 0xff, 0xff][..]),\n      Ok((&b\"\"[..], 2_147_483_647_i32))\n    );\n    assert_parse!(be_i32(&[0xff, 0xff, 0xff, 0xff][..]), Ok((&b\"\"[..], -1)));\n    assert_parse!(\n      be_i32(&[0x80, 0x00, 0x00, 0x00][..]),\n      Ok((&b\"\"[..], -2_147_483_648_i32))\n    );\n    assert_parse!(be_i32(&[][..]), Err(Err::Incomplete(Needed::new(4))));\n    assert_parse!(be_i32(&[0x00][..]), Err(Err::Incomplete(Needed::new(3))));\n    assert_parse!(\n      be_i32(&[0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(2)))\n    );\n    assert_parse!(\n      be_i32(&[0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(1)))\n    );\n  }",
+            "start_line": 1525,
+            "symbol_id": "src/number/streaming.rs#function:i32_tests:1525"
+          },
+          {
+            "children": [],
+            "documentation": "[test]",
+            "end_line": 1592,
+            "kind": "function",
+            "name": "i64_tests",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "i64_tests",
+            "signature": "fn i64_tests() {\n    assert_parse!(\n      be_i64(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Ok((&b\"\"[..], 0))\n    );\n    assert_parse!(\n      be_i64(&[0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff][..]),\n      Ok((&b\"\"[..], 9_223_372_036_854_775_807_i64))\n    );\n    assert_parse!(\n      be_i64(&[0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff][..]),\n      Ok((&b\"\"[..], -1))\n    );\n    assert_parse!(\n      be_i64(&[0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Ok((&b\"\"[..], -9_223_372_036_854_775_808_i64))\n    );\n    assert_parse!(be_i64(&[][..]), Err(Err::Incomplete(Needed::new(8))));\n    assert_parse!(be_i64(&[0x00][..]), Err(Err::Incomplete(Needed::new(7))));\n    assert_parse!(\n      be_i64(&[0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(6)))\n    );\n    assert_parse!(\n      be_i64(&[0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(5)))\n    );\n    assert_parse!(\n      be_i64(&[0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(4)))\n    );\n    assert_parse!(\n      be_i64(&[0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(3)))\n    );\n    assert_parse!(\n      be_i64(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(2)))\n    );\n    assert_parse!(\n      be_i64(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(1)))\n    );\n  }",
+            "start_line": 1549,
+            "symbol_id": "src/number/streaming.rs#function:i64_tests:1549"
+          },
+          {
+            "children": [],
+            "documentation": "[test]",
+            "end_line": 1701,
+            "kind": "function",
+            "name": "i128_tests",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "i128_tests",
+            "signature": "fn i128_tests() {\n    assert_parse!(\n      be_i128(\n        &[\n          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,\n          0x00\n        ][..]\n      ),\n      Ok((&b\"\"[..], 0))\n    );\n    assert_parse!(\n      be_i128(\n        &[\n          0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,\n          0xff\n        ][..]\n      ),\n      Ok((\n        &b\"\"[..],\n        170_141_183_460_469_231_731_687_303_715_884_105_727_i128\n      ))\n    );\n    assert_parse!(\n      be_i128(\n        &[\n          0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,\n          0xff\n        ][..]\n      ),\n      Ok((&b\"\"[..], -1))\n    );\n    assert_parse!(\n      be_i128(\n        &[\n          0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,\n          0x00\n        ][..]\n      ),\n      Ok((\n        &b\"\"[..],\n        -170_141_183_460_469_231_731_687_303_715_884_105_728_i128\n      ))\n    );\n    assert_parse!(be_i128(&[][..]), Err(Err::Incomplete(Needed::new(16))));\n    assert_parse!(be_i128(&[0x00][..]), Err(Err::Incomplete(Needed::new(15))));\n    assert_parse!(\n      be_i128(&[0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(14)))\n    );\n    assert_parse!(\n      be_i128(&[0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(13)))\n    );\n    assert_parse!(\n      be_i128(&[0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(12)))\n    );\n    assert_parse!(\n      be_i128(&[0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(11)))\n    );\n    assert_parse!(\n      be_i128(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(10)))\n    );\n    assert_parse!(\n      be_i128(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(9)))\n    );\n    assert_parse!(\n      be_i128(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(8)))\n    );\n    assert_parse!(\n      be_i128(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(7)))\n    );\n    assert_parse!(\n      be_i128(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(6)))\n    );\n    assert_parse!(\n      be_i128(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(5)))\n    );\n    assert_parse!(\n      be_i128(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(4)))\n    );\n    assert_parse!(\n      be_i128(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Err(Err::Incomplete(Needed::new(3)))\n    );\n    assert_parse!(\n      be_i128(\n        &[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]\n      ),\n      Err(Err::Incomplete(Needed::new(2)))\n    );\n    assert_parse!(\n      be_i128(\n        &[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]\n          [..]\n      ),\n      Err(Err::Incomplete(Needed::new(1)))\n    );\n  }",
+            "start_line": 1595,
+            "symbol_id": "src/number/streaming.rs#function:i128_tests:1595"
+          },
+          {
+            "children": [],
+            "documentation": "[test]",
+            "end_line": 1709,
+            "kind": "function",
+            "name": "le_i8_tests",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "le_i8_tests",
+            "signature": "fn le_i8_tests() {\n    assert_parse!(le_i8(&[0x00][..]), Ok((&b\"\"[..], 0)));\n    assert_parse!(le_i8(&[0x7f][..]), Ok((&b\"\"[..], 127)));\n    assert_parse!(le_i8(&[0xff][..]), Ok((&b\"\"[..], -1)));\n    assert_parse!(le_i8(&[0x80][..]), Ok((&b\"\"[..], -128)));\n  }",
+            "start_line": 1704,
+            "symbol_id": "src/number/streaming.rs#function:le_i8_tests:1704"
+          },
+          {
+            "children": [],
+            "documentation": "[test]",
+            "end_line": 1717,
+            "kind": "function",
+            "name": "le_i16_tests",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "le_i16_tests",
+            "signature": "fn le_i16_tests() {\n    assert_parse!(le_i16(&[0x00, 0x00][..]), Ok((&b\"\"[..], 0)));\n    assert_parse!(le_i16(&[0xff, 0x7f][..]), Ok((&b\"\"[..], 32_767_i16)));\n    assert_parse!(le_i16(&[0xff, 0xff][..]), Ok((&b\"\"[..], -1)));\n    assert_parse!(le_i16(&[0x00, 0x80][..]), Ok((&b\"\"[..], -32_768_i16)));\n  }",
+            "start_line": 1712,
+            "symbol_id": "src/number/streaming.rs#function:le_i16_tests:1712"
+          },
+          {
+            "children": [],
+            "documentation": "[test]",
+            "end_line": 1727,
+            "kind": "function",
+            "name": "le_u24_tests",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "le_u24_tests",
+            "signature": "fn le_u24_tests() {\n    assert_parse!(le_u24(&[0x00, 0x00, 0x00][..]), Ok((&b\"\"[..], 0)));\n    assert_parse!(le_u24(&[0xFF, 0xFF, 0x00][..]), Ok((&b\"\"[..], 65_535_u32)));\n    assert_parse!(\n      le_u24(&[0x56, 0x34, 0x12][..]),\n      Ok((&b\"\"[..], 1_193_046_u32))\n    );\n  }",
+            "start_line": 1720,
+            "symbol_id": "src/number/streaming.rs#function:le_u24_tests:1720"
+          },
+          {
+            "children": [],
+            "documentation": "[test]",
+            "end_line": 1737,
+            "kind": "function",
+            "name": "le_i24_tests",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "le_i24_tests",
+            "signature": "fn le_i24_tests() {\n    assert_parse!(le_i24(&[0xFF, 0xFF, 0xFF][..]), Ok((&b\"\"[..], -1_i32)));\n    assert_parse!(le_i24(&[0x00, 0x00, 0xFF][..]), Ok((&b\"\"[..], -65_536_i32)));\n    assert_parse!(\n      le_i24(&[0xAA, 0xCB, 0xED][..]),\n      Ok((&b\"\"[..], -1_193_046_i32))\n    );\n  }",
+            "start_line": 1730,
+            "symbol_id": "src/number/streaming.rs#function:le_i24_tests:1730"
+          },
+          {
+            "children": [],
+            "documentation": "[test]",
+            "end_line": 1751,
+            "kind": "function",
+            "name": "le_i32_tests",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "le_i32_tests",
+            "signature": "fn le_i32_tests() {\n    assert_parse!(le_i32(&[0x00, 0x00, 0x00, 0x00][..]), Ok((&b\"\"[..], 0)));\n    assert_parse!(\n      le_i32(&[0xff, 0xff, 0xff, 0x7f][..]),\n      Ok((&b\"\"[..], 2_147_483_647_i32))\n    );\n    assert_parse!(le_i32(&[0xff, 0xff, 0xff, 0xff][..]), Ok((&b\"\"[..], -1)));\n    assert_parse!(\n      le_i32(&[0x00, 0x00, 0x00, 0x80][..]),\n      Ok((&b\"\"[..], -2_147_483_648_i32))\n    );\n  }",
+            "start_line": 1740,
+            "symbol_id": "src/number/streaming.rs#function:le_i32_tests:1740"
+          },
+          {
+            "children": [],
+            "documentation": "[test]",
+            "end_line": 1771,
+            "kind": "function",
+            "name": "le_i64_tests",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "le_i64_tests",
+            "signature": "fn le_i64_tests() {\n    assert_parse!(\n      le_i64(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Ok((&b\"\"[..], 0))\n    );\n    assert_parse!(\n      le_i64(&[0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f][..]),\n      Ok((&b\"\"[..], 9_223_372_036_854_775_807_i64))\n    );\n    assert_parse!(\n      le_i64(&[0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff][..]),\n      Ok((&b\"\"[..], -1))\n    );\n    assert_parse!(\n      le_i64(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80][..]),\n      Ok((&b\"\"[..], -9_223_372_036_854_775_808_i64))\n    );\n  }",
+            "start_line": 1754,
+            "symbol_id": "src/number/streaming.rs#function:le_i64_tests:1754"
+          },
+          {
+            "children": [],
+            "documentation": "[test]",
+            "end_line": 1817,
+            "kind": "function",
+            "name": "le_i128_tests",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "le_i128_tests",
+            "signature": "fn le_i128_tests() {\n    assert_parse!(\n      le_i128(\n        &[\n          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,\n          0x00\n        ][..]\n      ),\n      Ok((&b\"\"[..], 0))\n    );\n    assert_parse!(\n      le_i128(\n        &[\n          0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,\n          0x7f\n        ][..]\n      ),\n      Ok((\n        &b\"\"[..],\n        170_141_183_460_469_231_731_687_303_715_884_105_727_i128\n      ))\n    );\n    assert_parse!(\n      le_i128(\n        &[\n          0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,\n          0xff\n        ][..]\n      ),\n      Ok((&b\"\"[..], -1))\n    );\n    assert_parse!(\n      le_i128(\n        &[\n          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,\n          0x80\n        ][..]\n      ),\n      Ok((\n        &b\"\"[..],\n        -170_141_183_460_469_231_731_687_303_715_884_105_728_i128\n      ))\n    );\n  }",
+            "start_line": 1774,
+            "symbol_id": "src/number/streaming.rs#function:le_i128_tests:1774"
+          },
+          {
+            "children": [],
+            "documentation": "[test]",
+            "end_line": 1826,
+            "kind": "function",
+            "name": "be_f32_tests",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "be_f32_tests",
+            "signature": "fn be_f32_tests() {\n    assert_parse!(be_f32(&[0x00, 0x00, 0x00, 0x00][..]), Ok((&b\"\"[..], 0_f32)));\n    assert_parse!(\n      be_f32(&[0x4d, 0x31, 0x1f, 0xd8][..]),\n      Ok((&b\"\"[..], 185_728_392_f32))\n    );\n  }",
+            "start_line": 1820,
+            "symbol_id": "src/number/streaming.rs#function:be_f32_tests:1820"
+          },
+          {
+            "children": [],
+            "documentation": "[test]",
+            "end_line": 1838,
+            "kind": "function",
+            "name": "be_f64_tests",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "be_f64_tests",
+            "signature": "fn be_f64_tests() {\n    assert_parse!(\n      be_f64(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Ok((&b\"\"[..], 0_f64))\n    );\n    assert_parse!(\n      be_f64(&[0x41, 0xa6, 0x23, 0xfb, 0x10, 0x00, 0x00, 0x00][..]),\n      Ok((&b\"\"[..], 185_728_392_f64))\n    );\n  }",
+            "start_line": 1829,
+            "symbol_id": "src/number/streaming.rs#function:be_f64_tests:1829"
+          },
+          {
+            "children": [],
+            "documentation": "[test]",
+            "end_line": 1847,
+            "kind": "function",
+            "name": "le_f32_tests",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "le_f32_tests",
+            "signature": "fn le_f32_tests() {\n    assert_parse!(le_f32(&[0x00, 0x00, 0x00, 0x00][..]), Ok((&b\"\"[..], 0_f32)));\n    assert_parse!(\n      le_f32(&[0xd8, 0x1f, 0x31, 0x4d][..]),\n      Ok((&b\"\"[..], 185_728_392_f32))\n    );\n  }",
+            "start_line": 1841,
+            "symbol_id": "src/number/streaming.rs#function:le_f32_tests:1841"
+          },
+          {
+            "children": [],
+            "documentation": "[test]",
+            "end_line": 1859,
+            "kind": "function",
+            "name": "le_f64_tests",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "le_f64_tests",
+            "signature": "fn le_f64_tests() {\n    assert_parse!(\n      le_f64(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00][..]),\n      Ok((&b\"\"[..], 0_f64))\n    );\n    assert_parse!(\n      le_f64(&[0x00, 0x00, 0x00, 0x10, 0xfb, 0x23, 0xa6, 0x41][..]),\n      Ok((&b\"\"[..], 185_728_392_f64))\n    );\n  }",
+            "start_line": 1850,
+            "symbol_id": "src/number/streaming.rs#function:le_f64_tests:1850"
+          },
+          {
+            "children": [],
+            "documentation": "[test]",
+            "end_line": 1879,
+            "kind": "function",
+            "name": "hex_u32_tests",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "hex_u32_tests",
+            "signature": "fn hex_u32_tests() {\n    assert_parse!(\n      hex_u32(&b\";\"[..]),\n      Err(Err::Error(error_position!(&b\";\"[..], ErrorKind::IsA)))\n    );\n    assert_parse!(hex_u32(&b\"ff;\"[..]), Ok((&b\";\"[..], 255)));\n    assert_parse!(hex_u32(&b\"1be2;\"[..]), Ok((&b\";\"[..], 7138)));\n    assert_parse!(hex_u32(&b\"c5a31be2;\"[..]), Ok((&b\";\"[..], 3_315_801_058)));\n    assert_parse!(hex_u32(&b\"C5A31be2;\"[..]), Ok((&b\";\"[..], 3_315_801_058)));\n    assert_parse!(hex_u32(&b\"00c5a31be2;\"[..]), Ok((&b\"e2;\"[..], 12_952_347)));\n    assert_parse!(\n      hex_u32(&b\"c5a31be201;\"[..]),\n      Ok((&b\"01;\"[..], 3_315_801_058))\n    );\n    assert_parse!(hex_u32(&b\"ffffffff;\"[..]), Ok((&b\";\"[..], 4_294_967_295)));\n    assert_parse!(hex_u32(&b\"0x1be2;\"[..]), Ok((&b\"x1be2;\"[..], 0)));\n    assert_parse!(hex_u32(&b\"12af\"[..]), Err(Err::Incomplete(Needed::new(1))));\n  }",
+            "start_line": 1862,
+            "symbol_id": "src/number/streaming.rs#function:hex_u32_tests:1862"
+          },
+          {
+            "children": [],
+            "documentation": "[test]\n[cfg(feature = \"std\")]",
+            "end_line": 1934,
+            "kind": "function",
+            "name": "float_test",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "float_test",
+            "signature": "fn float_test() {\n    let mut test_cases = vec![\n      \"+3.14\",\n      \"3.14\",\n      \"-3.14\",\n      \"0\",\n      \"0.0\",\n      \"1.\",\n      \".789\",\n      \"-.5\",\n      \"1e7\",\n      \"-1E-7\",\n      \".3e-2\",\n      \"1.e4\",\n      \"1.2e4\",\n      \"12.34\",\n      \"-1.234E-12\",\n      \"-1.234e-12\",\n      \"0.00000000000000000087\",\n    ];\n\n    for test in test_cases.drain(..) {\n      let expected32 = str::parse::<f32>(test).unwrap();\n      let expected64 = str::parse::<f64>(test).unwrap();\n\n      println!(\"now parsing: {} -> {}\", test, expected32);\n\n      let larger = format!(\"{};\", test);\n      assert_parse!(recognize_float(&larger[..]), Ok((\";\", test)));\n\n      assert_parse!(float(larger.as_bytes()), Ok((&b\";\"[..], expected32)));\n      assert_parse!(float(&larger[..]), Ok((\";\", expected32)));\n\n      assert_parse!(double(larger.as_bytes()), Ok((&b\";\"[..], expected64)));\n      assert_parse!(double(&larger[..]), Ok((\";\", expected64)));\n    }\n\n    let remaining_exponent = \"-1.234E-\";\n    assert_parse!(\n      recognize_float(remaining_exponent),\n      Err(Err::Incomplete(Needed::new(1)))\n    );\n\n    let (_i, nan) = float::<_, ()>(\"NaN\").unwrap();\n    assert!(nan.is_nan());\n\n    let (_i, inf) = float::<_, ()>(\"inf\").unwrap();\n    assert!(inf.is_infinite());\n    let (i, inf) = float::<_, ()>(\"infinity\").unwrap();\n    assert!(inf.is_infinite());\n    assert!(i.is_empty());\n  }",
+            "start_line": 1883,
+            "symbol_id": "src/number/streaming.rs#function:float_test:1883"
+          },
+          {
+            "children": [],
+            "documentation": "[test]",
+            "end_line": 2017,
+            "kind": "function",
+            "name": "configurable_endianness",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "configurable_endianness",
+            "signature": "fn configurable_endianness() {\n    use crate::number::Endianness;\n\n    fn be_tst16(i: &[u8]) -> IResult<&[u8], u16> {\n      u16(Endianness::Big)(i)\n    }\n    fn le_tst16(i: &[u8]) -> IResult<&[u8], u16> {\n      u16(Endianness::Little)(i)\n    }\n    assert_eq!(be_tst16(&[0x80, 0x00]), Ok((&b\"\"[..], 32_768_u16)));\n    assert_eq!(le_tst16(&[0x80, 0x00]), Ok((&b\"\"[..], 128_u16)));\n\n    fn be_tst32(i: &[u8]) -> IResult<&[u8], u32> {\n      u32(Endianness::Big)(i)\n    }\n    fn le_tst32(i: &[u8]) -> IResult<&[u8], u32> {\n      u32(Endianness::Little)(i)\n    }\n    assert_eq!(\n      be_tst32(&[0x12, 0x00, 0x60, 0x00]),\n      Ok((&b\"\"[..], 302_014_464_u32))\n    );\n    assert_eq!(\n      le_tst32(&[0x12, 0x00, 0x60, 0x00]),\n      Ok((&b\"\"[..], 6_291_474_u32))\n    );\n\n    fn be_tst64(i: &[u8]) -> IResult<&[u8], u64> {\n      u64(Endianness::Big)(i)\n    }\n    fn le_tst64(i: &[u8]) -> IResult<&[u8], u64> {\n      u64(Endianness::Little)(i)\n    }\n    assert_eq!(\n      be_tst64(&[0x12, 0x00, 0x60, 0x00, 0x12, 0x00, 0x80, 0x00]),\n      Ok((&b\"\"[..], 1_297_142_246_100_992_000_u64))\n    );\n    assert_eq!(\n      le_tst64(&[0x12, 0x00, 0x60, 0x00, 0x12, 0x00, 0x80, 0x00]),\n      Ok((&b\"\"[..], 36_028_874_334_666_770_u64))\n    );\n\n    fn be_tsti16(i: &[u8]) -> IResult<&[u8], i16> {\n      i16(Endianness::Big)(i)\n    }\n    fn le_tsti16(i: &[u8]) -> IResult<&[u8], i16> {\n      i16(Endianness::Little)(i)\n    }\n    assert_eq!(be_tsti16(&[0x00, 0x80]), Ok((&b\"\"[..], 128_i16)));\n    assert_eq!(le_tsti16(&[0x00, 0x80]), Ok((&b\"\"[..], -32_768_i16)));\n\n    fn be_tsti32(i: &[u8]) -> IResult<&[u8], i32> {\n      i32(Endianness::Big)(i)\n    }\n    fn le_tsti32(i: &[u8]) -> IResult<&[u8], i32> {\n      i32(Endianness::Little)(i)\n    }\n    assert_eq!(\n      be_tsti32(&[0x00, 0x12, 0x60, 0x00]),\n      Ok((&b\"\"[..], 1_204_224_i32))\n    );\n    assert_eq!(\n      le_tsti32(&[0x00, 0x12, 0x60, 0x00]),\n      Ok((&b\"\"[..], 6_296_064_i32))\n    );\n\n    fn be_tsti64(i: &[u8]) -> IResult<&[u8], i64> {\n      i64(Endianness::Big)(i)\n    }\n    fn le_tsti64(i: &[u8]) -> IResult<&[u8], i64> {\n      i64(Endianness::Little)(i)\n    }\n    assert_eq!(\n      be_tsti64(&[0x00, 0xFF, 0x60, 0x00, 0x12, 0x00, 0x80, 0x00]),\n      Ok((&b\"\"[..], 71_881_672_479_506_432_i64))\n    );\n    assert_eq!(\n      le_tsti64(&[0x00, 0xFF, 0x60, 0x00, 0x12, 0x00, 0x80, 0x00]),\n      Ok((&b\"\"[..], 36_028_874_334_732_032_i64))\n    );\n  }",
+            "start_line": 1937,
+            "symbol_id": "src/number/streaming.rs#function:configurable_endianness:1937"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 1942,
+            "kind": "function",
+            "name": "be_tst16",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "be_tst16",
+            "signature": "fn be_tst16(i: &[u8]) -> IResult<&[u8], u16> {\n      u16(Endianness::Big)(i)\n    }",
+            "start_line": 1940,
+            "symbol_id": "src/number/streaming.rs#function:be_tst16:1940"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 1945,
+            "kind": "function",
+            "name": "le_tst16",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "le_tst16",
+            "signature": "fn le_tst16(i: &[u8]) -> IResult<&[u8], u16> {\n      u16(Endianness::Little)(i)\n    }",
+            "start_line": 1943,
+            "symbol_id": "src/number/streaming.rs#function:le_tst16:1943"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 1951,
+            "kind": "function",
+            "name": "be_tst32",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "be_tst32",
+            "signature": "fn be_tst32(i: &[u8]) -> IResult<&[u8], u32> {\n      u32(Endianness::Big)(i)\n    }",
+            "start_line": 1949,
+            "symbol_id": "src/number/streaming.rs#function:be_tst32:1949"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 1954,
+            "kind": "function",
+            "name": "le_tst32",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "le_tst32",
+            "signature": "fn le_tst32(i: &[u8]) -> IResult<&[u8], u32> {\n      u32(Endianness::Little)(i)\n    }",
+            "start_line": 1952,
+            "symbol_id": "src/number/streaming.rs#function:le_tst32:1952"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 1966,
+            "kind": "function",
+            "name": "be_tst64",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "be_tst64",
+            "signature": "fn be_tst64(i: &[u8]) -> IResult<&[u8], u64> {\n      u64(Endianness::Big)(i)\n    }",
+            "start_line": 1964,
+            "symbol_id": "src/number/streaming.rs#function:be_tst64:1964"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 1969,
+            "kind": "function",
+            "name": "le_tst64",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "le_tst64",
+            "signature": "fn le_tst64(i: &[u8]) -> IResult<&[u8], u64> {\n      u64(Endianness::Little)(i)\n    }",
+            "start_line": 1967,
+            "symbol_id": "src/number/streaming.rs#function:le_tst64:1967"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 1981,
+            "kind": "function",
+            "name": "be_tsti16",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "be_tsti16",
+            "signature": "fn be_tsti16(i: &[u8]) -> IResult<&[u8], i16> {\n      i16(Endianness::Big)(i)\n    }",
+            "start_line": 1979,
+            "symbol_id": "src/number/streaming.rs#function:be_tsti16:1979"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 1984,
+            "kind": "function",
+            "name": "le_tsti16",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "le_tsti16",
+            "signature": "fn le_tsti16(i: &[u8]) -> IResult<&[u8], i16> {\n      i16(Endianness::Little)(i)\n    }",
+            "start_line": 1982,
+            "symbol_id": "src/number/streaming.rs#function:le_tsti16:1982"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 1990,
+            "kind": "function",
+            "name": "be_tsti32",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "be_tsti32",
+            "signature": "fn be_tsti32(i: &[u8]) -> IResult<&[u8], i32> {\n      i32(Endianness::Big)(i)\n    }",
+            "start_line": 1988,
+            "symbol_id": "src/number/streaming.rs#function:be_tsti32:1988"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 1993,
+            "kind": "function",
+            "name": "le_tsti32",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "le_tsti32",
+            "signature": "fn le_tsti32(i: &[u8]) -> IResult<&[u8], i32> {\n      i32(Endianness::Little)(i)\n    }",
+            "start_line": 1991,
+            "symbol_id": "src/number/streaming.rs#function:le_tsti32:1991"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 2005,
+            "kind": "function",
+            "name": "be_tsti64",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "be_tsti64",
+            "signature": "fn be_tsti64(i: &[u8]) -> IResult<&[u8], i64> {\n      i64(Endianness::Big)(i)\n    }",
+            "start_line": 2003,
+            "symbol_id": "src/number/streaming.rs#function:be_tsti64:2003"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 2008,
+            "kind": "function",
+            "name": "le_tsti64",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "le_tsti64",
+            "signature": "fn le_tsti64(i: &[u8]) -> IResult<&[u8], i64> {\n      i64(Endianness::Little)(i)\n    }",
+            "start_line": 2006,
+            "symbol_id": "src/number/streaming.rs#function:le_tsti64:2006"
+          },
+          {
+            "children": [],
+            "documentation": "[cfg(feature = \"std\")]",
+            "end_line": 2034,
+            "kind": "function",
+            "name": "parse_f64",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/number/streaming.rs",
+            "qualified_name": "parse_f64",
+            "signature": "fn parse_f64(i: &str) -> IResult<&str, f64, ()> {\n    use crate::traits::ParseTo;\n    match recognize_float_or_exceptions(i) {\n      Err(e) => Err(e),\n      Ok((i, s)) => {\n        if s.is_empty() {\n          return Err(Err::Error(()));\n        }\n        match s.parse_to() {\n          Some(n) => Ok((i, n)),\n          None => Err(Err::Error(())),\n        }\n      }\n    }\n  }",
+            "start_line": 2020,
+            "symbol_id": "src/number/streaming.rs#function:parse_f64:2020"
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/number/streaming.rs#function:i16_tests:1483",
+          "workspace_id": "rs_002_ctx16k"
+        },
+        "id": "step-3-tool-1",
+        "isError": false,
+        "name": "get_symbol",
+        "result": {
+          "children": [],
+          "code": "fn i16_tests() {\n    assert_parse!(be_i16(&[0x00, 0x00][..]), Ok((&b\"\"[..], 0)));\n    assert_parse!(be_i16(&[0x7f, 0xff][..]), Ok((&b\"\"[..], 32_767_i16)));\n    assert_parse!(be_i16(&[0xff, 0xff][..]), Ok((&b\"\"[..], -1)));\n    assert_parse!(be_i16(&[0x80, 0x00][..]), Ok((&b\"\"[..], -32_768_i16)));\n    assert_parse!(be_i16(&[][..]), Err(Err::Incomplete(Needed::new(2))));\n    assert_parse!(be_i16(&[0x00][..]), Err(Err::Incomplete(Needed::new(1))));\n  }",
+          "documentation": "[test]",
+          "end_line": 1490,
+          "kind": "function",
+          "name": "i16_tests",
+          "parent_id": null,
+          "parent_name": null,
+          "path": "src/number/streaming.rs",
+          "qualified_name": "i16_tests",
+          "signature": "fn i16_tests() {\n    assert_parse!(be_i16(&[0x00, 0x00][..]), Ok((&b\"\"[..], 0)));\n    assert_parse!(be_i16(&[0x7f, 0xff][..]), Ok((&b\"\"[..], 32_767_i16)));\n    assert_parse!(be_i16(&[0xff, 0xff][..]), Ok((&b\"\"[..], -1)));\n    assert_parse!(be_i16(&[0x80, 0x00][..]), Ok((&b\"\"[..], -32_768_i16)));\n    assert_parse!(be_i16(&[][..]), Err(Err::Incomplete(Needed::new(2))));\n    assert_parse!(be_i16(&[0x00][..]), Err(Err::Incomplete(Needed::new(1))));\n  }",
+          "start_line": 1483,
+          "symbol_id": "src/number/streaming.rs#function:i16_tests:1483"
+        }
+      }
+    ]
+  },
+  "trialId": "704d010856"
+}

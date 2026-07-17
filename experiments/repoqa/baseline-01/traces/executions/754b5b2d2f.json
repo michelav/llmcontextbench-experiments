@@ -1,0 +1,156 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 3657,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-nano",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 3663,
+          "metadata": {},
+          "name": "strategy.inline.execute",
+          "type": "strategy.inline.execute"
+        },
+        {
+          "duration_ms": 3663,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 6,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": 0,
+        "cachedInputTokens": 0,
+        "contextBytes": 54595,
+        "contextChars": 54576,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 0,
+        "inputTokens": 12773,
+        "loopControlDurationMsEstimated": 6,
+        "mcpToolCalls": 0,
+        "modelCalls": 1,
+        "modelDurationMs": 3657,
+        "outputTokens": 407,
+        "promptChars": 56021,
+        "questionTokensEstimated": 213,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 0,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 1,
+        "strategyDurationMs": 3663,
+        "taskStatementChars": 1423,
+        "toolCalls": 0,
+        "toolDurationMs": null,
+        "totalDurationMs": 3663,
+        "totalTokens": 13180,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": {
+      "background": false,
+      "billing": {
+        "payer": "openai"
+      },
+      "completed_at": 1779728177.0,
+      "conversation": null,
+      "created_at": 1779728174.0,
+      "error": null,
+      "frequency_penalty": 0.0,
+      "id": "resp_017e27a6959178c4006a147f2e903881a3ab34732644110bd0",
+      "incomplete_details": null,
+      "instructions": "You are an assistant that solves benchmark tasks using only the provided context.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nYour goal is to produce accurate, concise, and context-grounded responses.\nGuidelines:\n- Base your response strictly on the provided context.\n- If the provided context is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+      "max_output_tokens": null,
+      "max_tool_calls": null,
+      "metadata": {
+        "experimentId": "datasets/repoqa",
+        "phase": "execution",
+        "taskId": "snf_retrieve_function",
+        "trialId": "754b5b2d2f"
+      },
+      "model": "gpt-5.4-nano-2026-03-17",
+      "moderation": null,
+      "object": "response",
+      "output": [
+        {
+          "content": [
+            {
+              "annotations": [],
+              "logprobs": [],
+              "text": "```python\ndef convert_unchanged_lines(src_node: Node, lines: Collection[Tuple[int, int]]) -> None:\n    \"\"\"Converts unchanged lines to STANDALONE_COMMENT.\n\n    The idea is similar to how `# fmt: on/off` is implemented. It also converts the\n    nodes between those markers as a single `STANDALONE_COMMENT` leaf node with\n    the unformatted code as its value. `STANDALONE_COMMENT` is a \"fake\" token\n    that will be formatted as-is with its prefix normalized.\n\n    Here we perform two passes:\n\n    1. Visit the top-level statements, and convert them to a single\n       `STANDALONE_COMMENT` when unchanged. This speeds up formatting when some\n       of the top-level statements aren't changed.\n    2. Convert unchanged \"unwrapped lines\" to `STANDALONE_COMMENT` nodes line by\n       line. \"unwrapped lines\" are divided by the `NEWLINE` token. e.g. a\n       multi-line statement is *one* \"unwrapped line\" that ends with `NEWLINE`,\n       even though this statement itself can span multiple lines, and the\n       tokenizer only sees the last '\\n' as the `NEWLINE` token.\n\n    NOTE: During pass (2), comment prefixes and indentations are ALWAYS\n    normalized even when the lines aren't changed. This is fixable by moving\n    more formatting to pass (1). However, it's hard to get it correct when\n    incorrect indentations are used. So we defer this to future optimizations.\n    \"\"\"\n    lines_set: Set[int] = set()\n    for start, end in lines:\n        lines_set.update(range(start, end + 1))\n    visitor = _TopLevelStatementsVisitor(lines_set)\n    _ = list(visitor.visit(src_node))  # Consume all results.\n    _convert_unchanged_line_by_line(src_node, lines_set)\n```",
+              "type": "output_text"
+            }
+          ],
+          "id": "msg_017e27a6959178c4006a147f2f142c81a3bc6071c1c708fa6b",
+          "phase": "final_answer",
+          "role": "assistant",
+          "status": "completed",
+          "type": "message"
+        }
+      ],
+      "parallel_tool_calls": true,
+      "presence_penalty": 0.0,
+      "previous_response_id": null,
+      "prompt": null,
+      "prompt_cache_key": "inl:code:88c5f23ae11dac1df80863723a201de1",
+      "prompt_cache_retention": "in_memory",
+      "reasoning": {
+        "context": "current_turn",
+        "effort": "none",
+        "generate_summary": null,
+        "summary": null
+      },
+      "safety_identifier": null,
+      "service_tier": "default",
+      "status": "completed",
+      "store": true,
+      "temperature": 1.0,
+      "text": {
+        "format": {
+          "type": "text"
+        },
+        "verbosity": "medium"
+      },
+      "tool_choice": "auto",
+      "tools": [],
+      "top_logprobs": 0,
+      "top_p": 0.98,
+      "truncation": "disabled",
+      "usage": {
+        "input_tokens": 12773,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 407,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 13180
+      },
+      "user": null
+    },
+    "serverMcp": [],
+    "toolCalls": []
+  },
+  "trialId": "754b5b2d2f"
+}

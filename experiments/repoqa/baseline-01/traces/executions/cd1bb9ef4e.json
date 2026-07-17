@@ -1,0 +1,664 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 1654,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "ts_005_ctx4k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 1,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "language": "typescript",
+                "parse_status": "ok_filtered",
+                "path": "src/utils/audio.js",
+                "repository": "xenova/transformers.js",
+                "symbol_count": 56
+              },
+              {
+                "language": "typescript",
+                "parse_status": "ok_filtered",
+                "path": "src/utils/image.js",
+                "repository": "xenova/transformers.js",
+                "symbol_count": 10
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "ts_005_ctx4k"
+              },
+              "durationMs": 1,
+              "toolName": "list_files",
+              "workspace_id": "ts_005_ctx4k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 2908,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "src/utils/audio.js",
+              "workspace_id": "ts_005_ctx4k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "Helper function to read audio from a path/URL.\n@param {string|URL} url The path/URL to load the audio from.\n@param {number} sampling_rate The sampling rate to use when decoding the audio.\n@returns {Promise<Float32Array>} The decoded audio as a `Float32Array`.",
+                "end_line": 78,
+                "kind": "function",
+                "name": "read_audio",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "read_audio",
+                "signature": "async function read_audio(url, sampling_rate) {\n    if (typeof AudioContext === 'undefined') {\n        // Running in node or an environment without AudioContext\n        throw Error(\n            \"Unable to load audio from path/URL since `AudioContext` is not available in your environment. \" +\n            \"Instead, audio data should be passed directly to the pipeline/processor. \" +\n            \"For more information and some example code, see https://huggingface.co/docs/transformers.js/guides/node-audio-processing.\"\n        )\n    }\n\n    const response = await (await getFile(url)).arrayBuffer();\n    const audioCTX = new AudioContext({ sampleRate: sampling_rate });\n    if (typeof sampling_rate === 'undefined') {\n        console.warn(`No sampling rate provided, using default of ${audioCTX.sampleRate}Hz.`)\n    }\n    const decoded = await audioCTX.decodeAudioData(response);\n\n    /** @type {Float32Array} */\n    let audio;\n\n    // We now replicate HuggingFace's `ffmpeg_read` method:\n    if (decoded.numberOfChannels === 2) {\n        // When downmixing a stereo audio file to mono using the -ac 1 option in FFmpeg,\n        // the audio signal is summed across both channels to create a single mono channel.\n        // However, if the audio is at full scale (i.e. the highest possible volume level),\n        // the summing of the two channels can cause the audio signal to clip or distort.\n\n        // To prevent this clipping, FFmpeg applies a scaling factor of 1/sqrt(2) (~ 0.707)\n        // to the audio signal before summing the two channels. This scaling factor ensures\n        // that the combined audio signal will not exceed the maximum possible level, even\n        // if both channels are at full scale.\n\n        // After applying this scaling factor, the audio signal from both channels is summed\n        // to create a single mono channel. It's worth noting that this scaling factor is\n        // only applied when downmixing stereo audio to mono using the -ac 1 option in FFmpeg.\n        // If you're using a different downmixing method, or if you're not downmixing the\n        // audio at all, this scaling factor may not be needed.\n        const SCALING_FACTOR = Math.sqrt(2);\n\n        const left = decoded.getChannelData(0);\n        const right = decoded.getChannelData(1);\n\n        audio = new Float32Array(left.length);\n        for (let i = 0; i < decoded.length; ++i) {\n            audio[i] = SCALING_FACTOR * (left[i] + right[i]) / 2;\n        }\n\n    } else {\n        // If the audio is not stereo, we can just use the first channel:\n        audio = decoded.getChannelData(0);\n    }\n\n    return audio;\n}",
+                "start_line": 25,
+                "symbol_id": "src/utils/audio.js#function:read_audio:25"
+              },
+              {
+                "children": [],
+                "documentation": "Generates a Hanning window of length M.\n\n@param {number} M The length of the Hanning window to generate.\n@returns {Float64Array} The generated Hanning window.",
+                "end_line": 101,
+                "kind": "function",
+                "name": "hanning",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "hanning",
+                "signature": "function hanning(M) {\n    if (M < 1) {\n        return new Float64Array();\n    }\n    if (M === 1) {\n        return new Float64Array([1]);\n    }\n    const denom = M - 1;\n    const factor = Math.PI / denom;\n    const cos_vals = new Float64Array(M);\n    for (let i = 0; i < M; ++i) {\n        const n = 2 * i - denom;\n        cos_vals[i] = 0.5 + 0.5 * Math.cos(factor * n);\n    }\n    return cos_vals;\n}",
+                "start_line": 86,
+                "symbol_id": "src/utils/audio.js#function:hanning:86"
+              },
+              {
+                "children": [],
+                "documentation": "@template {Float32Array|Float64Array|number} T\n@param {T} freq\n@param {string} [mel_scale]\n@returns {T}",
+                "end_line": 125,
+                "kind": "function",
+                "name": "hertz_to_mel",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "hertz_to_mel",
+                "signature": "function hertz_to_mel(freq, mel_scale = \"htk\") {\n    const fn = HERTZ_TO_MEL_MAPPING[mel_scale];\n    if (!fn) {\n        throw new Error('mel_scale should be one of \"htk\", \"slaney\" or \"kaldi\".');\n    }\n\n    return typeof freq === 'number' ? fn(freq) : freq.map(x => fn(x));\n}",
+                "start_line": 118,
+                "symbol_id": "src/utils/audio.js#function:hertz_to_mel:118"
+              },
+              {
+                "children": [],
+                "documentation": "@template {Float32Array|Float64Array|number} T\n@param {T} mels\n@param {string} [mel_scale]\n@returns {T}",
+                "end_line": 148,
+                "kind": "function",
+                "name": "mel_to_hertz",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "mel_to_hertz",
+                "signature": "function mel_to_hertz(mels, mel_scale = \"htk\") {\n    const fn = MEL_TO_HERTZ_MAPPING[mel_scale];\n    if (!fn) {\n        throw new Error('mel_scale should be one of \"htk\", \"slaney\" or \"kaldi\".');\n    }\n\n    return typeof mels === 'number' ? fn(mels) : mels.map(x => fn(x));\n}",
+                "start_line": 141,
+                "symbol_id": "src/utils/audio.js#function:mel_to_hertz:141"
+              },
+              {
+                "children": [],
+                "documentation": "Creates a triangular filter bank.\n\nAdapted from torchaudio and librosa.\n\n@param {Float64Array} fft_freqs Discrete frequencies of the FFT bins in Hz, of shape `(num_frequency_bins,)`.\n@param {Float64Array} filter_freqs Center frequencies of the triangular filters to create, in Hz, of shape `(num_mel_filters,)`.\n@returns {number[][]} of shape `(num_frequency_bins, num_mel_filters)`.",
+                "end_line": 188,
+                "kind": "function",
+                "name": "_create_triangular_filter_bank",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "_create_triangular_filter_bank",
+                "signature": "function _create_triangular_filter_bank(fft_freqs, filter_freqs) {\n    const filter_diff = Float64Array.from(\n        { length: filter_freqs.length - 1 },\n        (_, i) => filter_freqs[i + 1] - filter_freqs[i]\n    );\n\n    const slopes = Array.from({\n        length: fft_freqs.length\n    }, () => new Array(filter_freqs.length));\n\n    for (let j = 0; j < fft_freqs.length; ++j) {\n        const slope = slopes[j];\n        for (let i = 0; i < filter_freqs.length; ++i) {\n            slope[i] = filter_freqs[i] - fft_freqs[j];\n        }\n    }\n\n    const numFreqs = filter_freqs.length - 2;\n    const ret = Array.from({ length: numFreqs }, () => new Array(fft_freqs.length));\n\n    for (let j = 0; j < fft_freqs.length; ++j) { // 201\n        const slope = slopes[j];\n        for (let i = 0; i < numFreqs; ++i) { // 80\n            const down = -slope[i] / filter_diff[i];\n            const up = slope[i + 2] / filter_diff[i + 1];\n            ret[i][j] = Math.max(0, Math.min(down, up));\n        }\n    }\n    return ret;\n}",
+                "start_line": 159,
+                "symbol_id": "src/utils/audio.js#function:_create_triangular_filter_bank:159"
+              },
+              {
+                "children": [],
+                "documentation": "Return evenly spaced numbers over a specified interval.\n@param {number} start The starting value of the sequence.\n@param {number} end The end value of the sequence.\n@param {number} num Number of samples to generate.\n@returns `num` evenly spaced samples, calculated over the interval `[start, stop]`.",
+                "end_line": 200,
+                "kind": "function",
+                "name": "linspace",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/utils/audio.js",
+                "qualified_name": "linspace",
+                "signature": "function linspace(start, end, num) {\n    const step = (end - start) / (num - 1);\n    return Float64Array.from({ length: num }, (_, i) => start + step * i);\n}",
+                "start_line": 197,
+                "symbol_id": "src/utils/audio.js#function:linspace:197"
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "src/utils/audio.js",
+                "workspace_id": "ts_005_ctx4k"
+              },
+              "durationMs": 0,
+              "toolName": "list_symbols",
+              "workspace_id": "ts_005_ctx4k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 3041,
+          "metadata": {
+            "model": "gemini-2.5-flash",
+            "provider": "google"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 7640,
+          "metadata": {},
+          "name": "strategy.local_function.execute",
+          "type": "strategy.local_function.execute"
+        },
+        {
+          "duration_ms": 7640,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 37,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": null,
+        "cachedInputTokens": 582,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 2,
+        "inputTokens": 4626,
+        "loopControlDurationMsEstimated": 36,
+        "mcpToolCalls": 2,
+        "modelCalls": 3,
+        "modelDurationMs": 7603,
+        "outputTokens": 229,
+        "promptChars": 1154,
+        "questionTokensEstimated": 159,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 603,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 3,
+        "strategyDurationMs": 7640,
+        "taskStatementChars": 984,
+        "toolCalls": 2,
+        "toolDurationMs": 1,
+        "totalDurationMs": 7640,
+        "totalTokens": 5458,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "workspace_id": "ts_005_ctx4k"
+                    },
+                    "id": null,
+                    "name": "list_files",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CqsFAQw51scOad8IxjMk6ePSQjOG21azdWTUWyNpX51EDyckk86lF_ymxvaq23YSZIZDU23sa-gevQllMj70PWoTVJZ1sHonXRIReYB8wKCB294o9uDk16lMk5QQuJsh3jyIFEabcDYM_7OwRjUEk-WxtrTipvFq0XZ5HxzGMBYX1W24YS0VI_0V5w2VWCDsujk3IWxubacubPewR3osRvsqHJ8WvPLa9a8--ALrBfbBIFB4yINviLkMje9eArwJQ0vlvgMZy8uxqU6YBkMxLPAHfMP6ELaYpbcQlAidwOh2tFwjfTI4rpc6c6JjmALdjCR5mgDrRubsYYghnoeu-9nagtknhbfccOISDSO_tYuyZ6QeUK3EhQPawoebASvCsu_PsyVoTpqN6cjBfGSB9r8z2UO7HCfH72N97hb_vpv9qwEgQEigxNA6xCoza6a3oO5Y2S9UKWj7OHyvxdN6fXRHmF8-aluhXKeq6U_b-MtU877ZSkK3nQXS6kWTlJeYMZSYLXxuRcKKHsps3PGU95K4hTB1I6WrF97nzGqc-fvrdT0Rmnr4qJPz-xX_8VDLLEdmEdqTe8-RKCmTApIvASNF-yBS15FsnHdfKaaavklNH6i7yQPkCSRdSQZQ90shGOg2o4IlzOmOT04YUNLdgNQiMiyueqkO_u92xmpcOadxGz9x21EWQakAnm2jrtKs5dz1b6yPa8dTtKm_kPRwDKmRLksmwF-0PPod5JwLNNW8-Luf8_0xVLQJgfvxIa-MJNQFtiubO9A1HrvtbBUuoL_NnpNXyLd9atyQh4mRwaQZa2045E5A3zuFvz4sK9_brD7PBtQYWGHwwxVqC0647xl9L_I9O6rTHUyjaPk2TX5m41wVew6YDznf-uV4NvdhSygp5HNYCX6-Ac59dOc=",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "24sUau6OO62Gz7IPxujyyQo",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:50:21 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=1450",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 25,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 623,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 623
+            }
+          ],
+          "thoughts_token_count": 142,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 790,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": null,
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": {
+                    "args": {
+                      "kind": "function",
+                      "path": "src/utils/audio.js",
+                      "workspace_id": "ts_005_ctx4k"
+                    },
+                    "id": null,
+                    "name": "list_symbols",
+                    "partial_args": null,
+                    "will_continue": null
+                  },
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": null,
+                  "thought": null,
+                  "thought_signature": "CsYHAQw51sf4D5kdDZzkQRvnXkk2MFavgiF0TTjfZ-txL2-QQFdmczeGsqzf12WNssSdiG9vZyy9lHkfXOKu2qXWtmozL9S6qzxSam3YE-uo0RG4cUIQ5r1SORneKF8Otk_qPyxu6Cc1B8Rf9fo8Eb9Y5lkZGKILMHKIVPORMGLRf6s-ZAkP1EGpHsk_4ockREtch5Ii5vnLIHg5vqM_jGttHhMEZvKKBp8eqJ2HDcIvBJWBYxB1Ats3aNHakrtsZx6I6pYE6QwSQQ9j8Zy5YzxSDqjGG-XALuG71O2b7K4PM2XmZAlJM_gYnn2w-t7SyxSV6f2ZKYcgDZWy7c0o0y2va08gwRH-o3hVf72RcduHsu4_smY9ojsfFWh7T0qfrQtr9XJMHURXgVFPnzrjZkwPeUOJ4Ss88078maTt32Pzlq464Rfcc-Ln-1snOeXRBFY9ZyNlSD_L9y4TB5FA3SWBZmqn6-7AEJHIks6KTyDuGABv5C4FpVG9a9EU-MM-lFsGpCuaNv7znFnB9LplIEFkilpv2rj5KNouvsJX9pJCegIOSRKqiKMDEn-WlL4PmyKKB22txwUKF4GCkXj5LXeRqh1atgo_YgO9_uJFitGyounmpPjNE1Etg479fJccGbc7n7eh2OGP2LNdbt4C3Y3UhWrI2MBIXpeJahl7ZvCX_Hqil4CvUr6_44rF03ECy6i0R3ItdKorxNreh_DoluAsbxCys9hnsTkBkPA19-BFuMT-Qs-Vicf6_FomUV-GWdIv1zE38vgwxX6HnV7eLO8dnAH-_ts8AaHPQu1YquNaStZzpM9KCj2jFF_E9uXMZ458HkchRlJJCUGn7MyWNfMT24Gho5kj30g5CXiwhhyEsXB6N5BDwNQ_MlIIYQPMb29bIXYAUeWP2IEV6SPx8Vl0Jqmp04ST4hvMuxRLUBk28z_1sZvWyxSnzT7BRLRarP8W9WnplEy7mFK16AB62W5PZRuPZUR5MMH5uUzwkIfkUo2LqZdlvn8iL5CY-cTVEr21M1UN2EMUVBiqzmgofM9MCMyAlj4GzfDNhJodGeK7vAmTnvNMH_P9zdpbaKK_UDWwZJlep89fnIP06dR_v_S8OykWwg_eORZiyYwVcc7VzlnKmVoAbCA12DvQv-zc8uet5bMLiHl9OqHT-7_2miLtikAk9g8e0ooY7bQBUGMvkpQM46-d2hXjJCPGg9QK2qa9R7xZCaDioZ3jtDPpfDH5xfm-S8tXNvto5gwOcMoI05wyJtNpCb_rZRLJ0NYlcujF-ExLaCDM",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "3osUaovLE_2dz7IPuPW8sAs",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:50:24 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=2692",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 582
+            }
+          ],
+          "cached_content_token_count": 582,
+          "candidates_token_count": 41,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 757,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 757
+            }
+          ],
+          "thoughts_token_count": 207,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 1005,
+          "traffic_type": null
+        }
+      },
+      {
+        "automatic_function_calling_history": null,
+        "candidates": [
+          {
+            "avg_logprobs": null,
+            "citation_metadata": {
+              "citations": [
+                {
+                  "end_index": 406,
+                  "license": "",
+                  "publication_date": null,
+                  "start_index": 14,
+                  "title": null,
+                  "uri": "https://github.com/paryan/transformers.js"
+                }
+              ]
+            },
+            "content": {
+              "parts": [
+                {
+                  "code_execution_result": null,
+                  "executable_code": null,
+                  "file_data": null,
+                  "function_call": null,
+                  "function_response": null,
+                  "inline_data": null,
+                  "media_resolution": null,
+                  "part_metadata": null,
+                  "text": "```javascript\nfunction hanning(M) {\n    if (M < 1) {\n        return new Float64Array();\n    }\n    if (M === 1) {\n        return new Float64Array([1]);\n    }\n    const denom = M - 1;\n    const factor = Math.PI / denom;\n    const cos_vals = new Float64Array(M);\n    for (let i = 0; i < M; ++i) {\n        const n = 2 * i - denom;\n        cos_vals[i] = 0.5 + 0.5 * Math.cos(factor * n);\n    }\n    return cos_vals;\n}\n```",
+                  "thought": null,
+                  "thought_signature": "CrUIAQw51sdWTNdxlzoN1qJPIIjL3tExOI9W9N1UhTjilt6yPwtFUC3oxlil7kMXQMSpUnogMksio0tbH7fsF-ER09jCAS1DApv7kVtrXtaZ1QHmlXF6b_QfiPnwOFaed-W2Mew3uv4a7QIyC6lUQMmYD4g93fSUI2Ge-orDmiPnfUX9oFW5I-Ao2FTjrF6rHuu_8fNT2eiF9KwM1LY4WV8cd2FRelyAhlsY4zaNON9c7M0nmOrUEA2PqBNshKtzMvKgYEShbNPTAR-gunJNUBYHf9--milRdtIJ1aX3LxKR_kjxxeatmK-TP9NGISYbxgYuPEH8F-3WoIPjr1hkbTv_IcfCOpZnTjO_H5iWajs3_ooWjxfHPTqnmT2VbDDacaM2u-Ptw_kYTD2JyfrOKx67VZO2IIfFsAebGtDj1m5Rh7-9okPC8aJ5YzCmhFt_jiLtGmzyZcsozGegkEu06VWre3tljJl-6ee7dRHAXqF0i6FNE6y4UWYlCYDRmeZjftsVzT4NiuX5AuE779kdyB5YTqA3_Tb8OcWzWxlACaLvjwUZdwP1xrHAGTTYcOD_KwrKt2tcHfTZrmPsJVr37N4R7jnF9Cn-3P9dp-iPxrR8tDZuUQUqLcxi6D0_GL9J5fu8CDIliMnGvpwUYw9FouRUJCn3RItGioYxIjEJdrQLxRvNkWSHbxd0zo3UJq1iASzYPSKlqMP60QY5KQMiNMPa0sdO4g2JZkeHz2accqtSTLcxHJ9Vl2fTOEiW6GboviG8-cq5nx1G_AwPXPCPwPDg-wAZx0WYHp6bn91j0ENw5e9UW7xja4OTTui1LgCcQlCflWKtiMWZrjBdD3YFMzMPqMofsVmk0C3vA45rD-8ck4cv6nGTOhLNHaNwBL8QGaVq2a09yft332uBAHFuDCape_EPDqrXdW0JMLkoFhSUfZN4QglStr-VYTFY2Mrtpkwc5_1axXJU_fSFsuLylHnnAa806QE5eU1ya3FLSvfnqtQd6mw90D0T9LWetCzmjM_dWq9SpsAnevFH2XZGXHYHMFC_hHij7skIW4xBypoIoxltU1CJ7uCpXt-H7hPGXHMst4-wtZOyuVgonkvySdza_abJgtu34UHHcXK-CyDT3vE-fth3XEHa_yX8T10r8w-jhAsoH8eOh7z_pA_g1rrqrb25801m8VukIW_FDiegf0bBZ8BlWkhekm4Sr5boTQXNk7gAlfA3Q4B2NoCOtJPlhfx09LEC-_I_sL0SQ-2gks-BRB32pHJhH4paj88MGFzcSzuetCZsyz1Be8RaAxrc0-l29z6S44JDykjwWxCCcvC47tDTYRPJgBuXNWWOR9PFQFvPN_IJBxFKgq8gQnmQjshrj7qpj1gTL6iwxVyujfo0sw3epIhva5LODdq4XYU1RGXddK8tNlpeQF1N915wg0bM1wpB",
+                  "tool_call": null,
+                  "tool_response": null,
+                  "video_metadata": null
+                }
+              ],
+              "role": "model"
+            },
+            "finish_message": null,
+            "finish_reason": "STOP",
+            "grounding_metadata": null,
+            "index": 0,
+            "logprobs_result": null,
+            "safety_ratings": null,
+            "token_count": null,
+            "url_context_metadata": null
+          }
+        ],
+        "create_time": null,
+        "model_status": null,
+        "model_version": "gemini-2.5-flash",
+        "parsed": null,
+        "prompt_feedback": null,
+        "response_id": "4IsUatGMJoGgz7IPw8zH8Aw",
+        "sdk_http_response": {
+          "body": null,
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Mon, 25 May 2026 17:50:27 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=2827",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-gemini-service-tier": "standard",
+            "x-xss-protection": "0"
+          }
+        },
+        "usage_metadata": {
+          "cache_tokens_details": null,
+          "cached_content_token_count": null,
+          "candidates_token_count": 163,
+          "candidates_tokens_details": null,
+          "prompt_token_count": 3246,
+          "prompt_tokens_details": [
+            {
+              "modality": "TEXT",
+              "token_count": 3246
+            }
+          ],
+          "thoughts_token_count": 254,
+          "tool_use_prompt_token_count": null,
+          "tool_use_prompt_tokens_details": null,
+          "total_token_count": 3663,
+          "traffic_type": null
+        }
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "workspace_id": "ts_005_ctx4k"
+        },
+        "durationMs": 1,
+        "toolName": "list_files",
+        "workspace_id": "ts_005_ctx4k"
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/utils/audio.js",
+          "workspace_id": "ts_005_ctx4k"
+        },
+        "durationMs": 0,
+        "toolName": "list_symbols",
+        "workspace_id": "ts_005_ctx4k"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "workspace_id": "ts_005_ctx4k"
+        },
+        "id": "step-1-tool-1",
+        "isError": false,
+        "name": "list_files",
+        "result": [
+          {
+            "language": "typescript",
+            "parse_status": "ok_filtered",
+            "path": "src/utils/audio.js",
+            "repository": "xenova/transformers.js",
+            "symbol_count": 56
+          },
+          {
+            "language": "typescript",
+            "parse_status": "ok_filtered",
+            "path": "src/utils/image.js",
+            "repository": "xenova/transformers.js",
+            "symbol_count": 10
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/utils/audio.js",
+          "workspace_id": "ts_005_ctx4k"
+        },
+        "id": "step-2-tool-1",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "Helper function to read audio from a path/URL.\n@param {string|URL} url The path/URL to load the audio from.\n@param {number} sampling_rate The sampling rate to use when decoding the audio.\n@returns {Promise<Float32Array>} The decoded audio as a `Float32Array`.",
+            "end_line": 78,
+            "kind": "function",
+            "name": "read_audio",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "read_audio",
+            "signature": "async function read_audio(url, sampling_rate) {\n    if (typeof AudioContext === 'undefined') {\n        // Running in node or an environment without AudioContext\n        throw Error(\n            \"Unable to load audio from path/URL since `AudioContext` is not available in your environment. \" +\n            \"Instead, audio data should be passed directly to the pipeline/processor. \" +\n            \"For more information and some example code, see https://huggingface.co/docs/transformers.js/guides/node-audio-processing.\"\n        )\n    }\n\n    const response = await (await getFile(url)).arrayBuffer();\n    const audioCTX = new AudioContext({ sampleRate: sampling_rate });\n    if (typeof sampling_rate === 'undefined') {\n        console.warn(`No sampling rate provided, using default of ${audioCTX.sampleRate}Hz.`)\n    }\n    const decoded = await audioCTX.decodeAudioData(response);\n\n    /** @type {Float32Array} */\n    let audio;\n\n    // We now replicate HuggingFace's `ffmpeg_read` method:\n    if (decoded.numberOfChannels === 2) {\n        // When downmixing a stereo audio file to mono using the -ac 1 option in FFmpeg,\n        // the audio signal is summed across both channels to create a single mono channel.\n        // However, if the audio is at full scale (i.e. the highest possible volume level),\n        // the summing of the two channels can cause the audio signal to clip or distort.\n\n        // To prevent this clipping, FFmpeg applies a scaling factor of 1/sqrt(2) (~ 0.707)\n        // to the audio signal before summing the two channels. This scaling factor ensures\n        // that the combined audio signal will not exceed the maximum possible level, even\n        // if both channels are at full scale.\n\n        // After applying this scaling factor, the audio signal from both channels is summed\n        // to create a single mono channel. It's worth noting that this scaling factor is\n        // only applied when downmixing stereo audio to mono using the -ac 1 option in FFmpeg.\n        // If you're using a different downmixing method, or if you're not downmixing the\n        // audio at all, this scaling factor may not be needed.\n        const SCALING_FACTOR = Math.sqrt(2);\n\n        const left = decoded.getChannelData(0);\n        const right = decoded.getChannelData(1);\n\n        audio = new Float32Array(left.length);\n        for (let i = 0; i < decoded.length; ++i) {\n            audio[i] = SCALING_FACTOR * (left[i] + right[i]) / 2;\n        }\n\n    } else {\n        // If the audio is not stereo, we can just use the first channel:\n        audio = decoded.getChannelData(0);\n    }\n\n    return audio;\n}",
+            "start_line": 25,
+            "symbol_id": "src/utils/audio.js#function:read_audio:25"
+          },
+          {
+            "children": [],
+            "documentation": "Generates a Hanning window of length M.\n\n@param {number} M The length of the Hanning window to generate.\n@returns {Float64Array} The generated Hanning window.",
+            "end_line": 101,
+            "kind": "function",
+            "name": "hanning",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "hanning",
+            "signature": "function hanning(M) {\n    if (M < 1) {\n        return new Float64Array();\n    }\n    if (M === 1) {\n        return new Float64Array([1]);\n    }\n    const denom = M - 1;\n    const factor = Math.PI / denom;\n    const cos_vals = new Float64Array(M);\n    for (let i = 0; i < M; ++i) {\n        const n = 2 * i - denom;\n        cos_vals[i] = 0.5 + 0.5 * Math.cos(factor * n);\n    }\n    return cos_vals;\n}",
+            "start_line": 86,
+            "symbol_id": "src/utils/audio.js#function:hanning:86"
+          },
+          {
+            "children": [],
+            "documentation": "@template {Float32Array|Float64Array|number} T\n@param {T} freq\n@param {string} [mel_scale]\n@returns {T}",
+            "end_line": 125,
+            "kind": "function",
+            "name": "hertz_to_mel",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "hertz_to_mel",
+            "signature": "function hertz_to_mel(freq, mel_scale = \"htk\") {\n    const fn = HERTZ_TO_MEL_MAPPING[mel_scale];\n    if (!fn) {\n        throw new Error('mel_scale should be one of \"htk\", \"slaney\" or \"kaldi\".');\n    }\n\n    return typeof freq === 'number' ? fn(freq) : freq.map(x => fn(x));\n}",
+            "start_line": 118,
+            "symbol_id": "src/utils/audio.js#function:hertz_to_mel:118"
+          },
+          {
+            "children": [],
+            "documentation": "@template {Float32Array|Float64Array|number} T\n@param {T} mels\n@param {string} [mel_scale]\n@returns {T}",
+            "end_line": 148,
+            "kind": "function",
+            "name": "mel_to_hertz",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "mel_to_hertz",
+            "signature": "function mel_to_hertz(mels, mel_scale = \"htk\") {\n    const fn = MEL_TO_HERTZ_MAPPING[mel_scale];\n    if (!fn) {\n        throw new Error('mel_scale should be one of \"htk\", \"slaney\" or \"kaldi\".');\n    }\n\n    return typeof mels === 'number' ? fn(mels) : mels.map(x => fn(x));\n}",
+            "start_line": 141,
+            "symbol_id": "src/utils/audio.js#function:mel_to_hertz:141"
+          },
+          {
+            "children": [],
+            "documentation": "Creates a triangular filter bank.\n\nAdapted from torchaudio and librosa.\n\n@param {Float64Array} fft_freqs Discrete frequencies of the FFT bins in Hz, of shape `(num_frequency_bins,)`.\n@param {Float64Array} filter_freqs Center frequencies of the triangular filters to create, in Hz, of shape `(num_mel_filters,)`.\n@returns {number[][]} of shape `(num_frequency_bins, num_mel_filters)`.",
+            "end_line": 188,
+            "kind": "function",
+            "name": "_create_triangular_filter_bank",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "_create_triangular_filter_bank",
+            "signature": "function _create_triangular_filter_bank(fft_freqs, filter_freqs) {\n    const filter_diff = Float64Array.from(\n        { length: filter_freqs.length - 1 },\n        (_, i) => filter_freqs[i + 1] - filter_freqs[i]\n    );\n\n    const slopes = Array.from({\n        length: fft_freqs.length\n    }, () => new Array(filter_freqs.length));\n\n    for (let j = 0; j < fft_freqs.length; ++j) {\n        const slope = slopes[j];\n        for (let i = 0; i < filter_freqs.length; ++i) {\n            slope[i] = filter_freqs[i] - fft_freqs[j];\n        }\n    }\n\n    const numFreqs = filter_freqs.length - 2;\n    const ret = Array.from({ length: numFreqs }, () => new Array(fft_freqs.length));\n\n    for (let j = 0; j < fft_freqs.length; ++j) { // 201\n        const slope = slopes[j];\n        for (let i = 0; i < numFreqs; ++i) { // 80\n            const down = -slope[i] / filter_diff[i];\n            const up = slope[i + 2] / filter_diff[i + 1];\n            ret[i][j] = Math.max(0, Math.min(down, up));\n        }\n    }\n    return ret;\n}",
+            "start_line": 159,
+            "symbol_id": "src/utils/audio.js#function:_create_triangular_filter_bank:159"
+          },
+          {
+            "children": [],
+            "documentation": "Return evenly spaced numbers over a specified interval.\n@param {number} start The starting value of the sequence.\n@param {number} end The end value of the sequence.\n@param {number} num Number of samples to generate.\n@returns `num` evenly spaced samples, calculated over the interval `[start, stop]`.",
+            "end_line": 200,
+            "kind": "function",
+            "name": "linspace",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/utils/audio.js",
+            "qualified_name": "linspace",
+            "signature": "function linspace(start, end, num) {\n    const step = (end - start) / (num - 1);\n    return Float64Array.from({ length: num }, (_, i) => start + step * i);\n}",
+            "start_line": 197,
+            "symbol_id": "src/utils/audio.js#function:linspace:197"
+          }
+        ]
+      }
+    ]
+  },
+  "trialId": "cd1bb9ef4e"
+}

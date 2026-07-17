@@ -1,0 +1,1357 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 945,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-mini",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "py_004_ctx16k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 5,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "language": "python",
+                "parse_status": "ok_filtered",
+                "path": "src/black/linegen.py",
+                "repository": "psf/black",
+                "symbol_count": 9
+              },
+              {
+                "language": "python",
+                "parse_status": "ok_filtered",
+                "path": "src/black/parsing.py",
+                "repository": "psf/black",
+                "symbol_count": 9
+              },
+              {
+                "language": "python",
+                "parse_status": "ok_filtered",
+                "path": "src/black/ranges.py",
+                "repository": "psf/black",
+                "symbol_count": 17
+              },
+              {
+                "language": "python",
+                "parse_status": "ok_filtered",
+                "path": "src/black/__init__.py",
+                "repository": "psf/black",
+                "symbol_count": 8
+              }
+            ],
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "py_004_ctx16k"
+              },
+              "durationMs": 5,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "list_files",
+              "transport": "in_memory"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1116,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-mini",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "src/black/linegen.py",
+              "workspace_id": "py_004_ctx16k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 3,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "Split standalone comments from the rest of the line.",
+                "end_line": 1272,
+                "kind": "function",
+                "name": "standalone_comment_split",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/linegen.py",
+                "qualified_name": "standalone_comment_split",
+                "signature": "def standalone_comment_split(\n    line: Line, features: Collection[Feature], mode: Mode\n) -> Iterator[Line]",
+                "start_line": 1241,
+                "symbol_id": "src/black/linegen.py#function:standalone_comment_split:1241"
+              },
+              {
+                "children": [],
+                "documentation": "Make existing optional parentheses invisible or create new ones.\n\n`parens_after` is a set of string leaf values immediately after which parens\nshould be put.\n\nStandardizes on visible parentheses for single-element tuples, and keeps\nexisting visible parentheses for other tuples and generator expressions.",
+                "end_line": 1375,
+                "kind": "function",
+                "name": "normalize_invisible_parens",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/linegen.py",
+                "qualified_name": "normalize_invisible_parens",
+                "signature": "def normalize_invisible_parens(  # noqa: C901\n    node: Node, parens_after: Set[str], *, mode: Mode, features: Collection[Feature]\n) -> None",
+                "start_line": 1275,
+                "symbol_id": "src/black/linegen.py#function:normalize_invisible_parens:1275"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1389,
+                "kind": "function",
+                "name": "_normalize_import_from",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/linegen.py",
+                "qualified_name": "_normalize_import_from",
+                "signature": "def _normalize_import_from(parent: Node, child: LN, index: int) -> None",
+                "start_line": 1378,
+                "symbol_id": "src/black/linegen.py#function:_normalize_import_from:1378"
+              },
+              {
+                "children": [],
+                "documentation": null,
+                "end_line": 1424,
+                "kind": "function",
+                "name": "remove_await_parens",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/linegen.py",
+                "qualified_name": "remove_await_parens",
+                "signature": "def remove_await_parens(node: Node) -> None",
+                "start_line": 1392,
+                "symbol_id": "src/black/linegen.py#function:remove_await_parens:1392"
+              },
+              {
+                "children": [],
+                "documentation": "When enabled and safe, wrap the multiple context managers in invisible parens.\n\nIt is only safe when `features` contain Feature.PARENTHESIZED_CONTEXT_MANAGERS.",
+                "end_line": 1466,
+                "kind": "function",
+                "name": "_maybe_wrap_cms_in_parens",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/linegen.py",
+                "qualified_name": "_maybe_wrap_cms_in_parens",
+                "signature": "def _maybe_wrap_cms_in_parens(\n    node: Node, mode: Mode, features: Collection[Feature]\n) -> None",
+                "start_line": 1427,
+                "symbol_id": "src/black/linegen.py#function:_maybe_wrap_cms_in_parens:1427"
+              },
+              {
+                "children": [],
+                "documentation": "Recursively hide optional parens in `with` statements.",
+                "end_line": 1508,
+                "kind": "function",
+                "name": "remove_with_parens",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/linegen.py",
+                "qualified_name": "remove_with_parens",
+                "signature": "def remove_with_parens(node: Node, parent: Node) -> None",
+                "start_line": 1469,
+                "symbol_id": "src/black/linegen.py#function:remove_with_parens:1469"
+              },
+              {
+                "children": [],
+                "documentation": "If it's safe, make the parens in the atom `node` invisible, recursively.\nAdditionally, remove repeated, adjacent invisible parens from the atom `node`\nas they are redundant.\n\nReturns whether the node should itself be wrapped in invisible parentheses.",
+                "end_line": 1586,
+                "kind": "function",
+                "name": "maybe_make_parens_invisible_in_atom",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/linegen.py",
+                "qualified_name": "maybe_make_parens_invisible_in_atom",
+                "signature": "def maybe_make_parens_invisible_in_atom(\n    node: LN,\n    parent: LN,\n    remove_brackets_around_comma: bool = False,\n) -> bool",
+                "start_line": 1511,
+                "symbol_id": "src/black/linegen.py#function:maybe_make_parens_invisible_in_atom:1511"
+              },
+              {
+                "children": [],
+                "documentation": "Should `line` be immediately split with `delimiter_split()` after RHS?",
+                "end_line": 1613,
+                "kind": "function",
+                "name": "should_split_line",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/linegen.py",
+                "qualified_name": "should_split_line",
+                "signature": "def should_split_line(line: Line, opening_bracket: Leaf) -> bool",
+                "start_line": 1589,
+                "symbol_id": "src/black/linegen.py#function:should_split_line:1589"
+              },
+              {
+                "children": [],
+                "documentation": "Generate sets of closing bracket IDs that should be omitted in a RHS.\n\nBrackets can be omitted if the entire trailer up to and including\na preceding closing bracket fits in one line.\n\nYielded sets are cumulative (contain results of previous yields, too).  First\nset is empty, unless the line should explode, in which case bracket pairs until\nthe one that needs to explode are omitted.",
+                "end_line": 1689,
+                "kind": "function",
+                "name": "generate_trailers_to_omit",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/black/linegen.py",
+                "qualified_name": "generate_trailers_to_omit",
+                "signature": "def generate_trailers_to_omit(line: Line, line_length: int) -> Iterator[Set[LeafID]]",
+                "start_line": 1616,
+                "symbol_id": "src/black/linegen.py#function:generate_trailers_to_omit:1616"
+              }
+            ],
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "src/black/linegen.py",
+                "workspace_id": "py_004_ctx16k"
+              },
+              "durationMs": 3,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "list_symbols",
+              "transport": "in_memory"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1161,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-mini",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "symbol_id": "src/black/linegen.py#function:generate_trailers_to_omit:1616",
+              "workspace_id": "py_004_ctx16k"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 5,
+          "metadata": {
+            "is_error": false,
+            "result": {
+              "children": [],
+              "code": "def generate_trailers_to_omit(line: Line, line_length: int) -> Iterator[Set[LeafID]]:\n    \"\"\"Generate sets of closing bracket IDs that should be omitted in a RHS.\n\n    Brackets can be omitted if the entire trailer up to and including\n    a preceding closing bracket fits in one line.\n\n    Yielded sets are cumulative (contain results of previous yields, too).  First\n    set is empty, unless the line should explode, in which case bracket pairs until\n    the one that needs to explode are omitted.\n    \"\"\"\n\n    omit: Set[LeafID] = set()\n    if not line.magic_trailing_comma:\n        yield omit\n\n    length = 4 * line.depth\n    opening_bracket: Optional[Leaf] = None\n    closing_bracket: Optional[Leaf] = None\n    inner_brackets: Set[LeafID] = set()\n    for index, leaf, leaf_length in line.enumerate_with_length(is_reversed=True):\n        length += leaf_length\n        if length > line_length:\n            break\n\n        has_inline_comment = leaf_length > len(leaf.value) + len(leaf.prefix)\n        if leaf.type == STANDALONE_COMMENT or has_inline_comment:\n            break\n\n        if opening_bracket:\n            if leaf is opening_bracket:\n                opening_bracket = None\n            elif leaf.type in CLOSING_BRACKETS:\n                prev = line.leaves[index - 1] if index > 0 else None\n                if (\n                    prev\n                    and prev.type == token.COMMA\n                    and leaf.opening_bracket is not None\n                    and not is_one_sequence_between(\n                        leaf.opening_bracket, leaf, line.leaves\n                    )\n                ):\n                    # Never omit bracket pairs with trailing commas.\n                    # We need to explode on those.\n                    break\n\n                inner_brackets.add(id(leaf))\n        elif leaf.type in CLOSING_BRACKETS:\n            prev = line.leaves[index - 1] if index > 0 else None\n            if prev and prev.type in OPENING_BRACKETS:\n                # Empty brackets would fail a split so treat them as \"inner\"\n                # brackets (e.g. only add them to the `omit` set if another\n                # pair of brackets was good enough.\n                inner_brackets.add(id(leaf))\n                continue\n\n            if closing_bracket:\n                omit.add(id(closing_bracket))\n                omit.update(inner_brackets)\n                inner_brackets.clear()\n                yield omit\n\n            if (\n                prev\n                and prev.type == token.COMMA\n                and leaf.opening_bracket is not None\n                and not is_one_sequence_between(leaf.opening_bracket, leaf, line.leaves)\n            ):\n                # Never omit bracket pairs with trailing commas.\n                # We need to explode on those.\n                break\n\n            if leaf.value:\n                opening_bracket = leaf.opening_bracket\n                closing_bracket = leaf",
+              "documentation": "Generate sets of closing bracket IDs that should be omitted in a RHS.\n\nBrackets can be omitted if the entire trailer up to and including\na preceding closing bracket fits in one line.\n\nYielded sets are cumulative (contain results of previous yields, too).  First\nset is empty, unless the line should explode, in which case bracket pairs until\nthe one that needs to explode are omitted.",
+              "end_line": 1689,
+              "kind": "function",
+              "name": "generate_trailers_to_omit",
+              "parent_id": null,
+              "parent_name": null,
+              "path": "src/black/linegen.py",
+              "qualified_name": "generate_trailers_to_omit",
+              "signature": "def generate_trailers_to_omit(line: Line, line_length: int) -> Iterator[Set[LeafID]]",
+              "start_line": 1616,
+              "symbol_id": "src/black/linegen.py#function:generate_trailers_to_omit:1616"
+            },
+            "runtime": "mcp",
+            "server_event": {
+              "arguments": {
+                "symbol_id": "src/black/linegen.py#function:generate_trailers_to_omit:1616",
+                "workspace_id": "py_004_ctx16k"
+              },
+              "durationMs": 5,
+              "serverLabel": "ctxbench-lattes",
+              "toolName": "get_symbol",
+              "transport": "in_memory"
+            },
+            "tool_name": "get_symbol"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 3243,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-mini",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": 6505,
+          "metadata": {},
+          "name": "strategy.local_mcp.execute",
+          "type": "strategy.local_mcp.execute"
+        },
+        {
+          "duration_ms": 6505,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 40,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": 0,
+        "cachedInputTokens": 0,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 3,
+        "inputTokens": 5027,
+        "loopControlDurationMsEstimated": 27,
+        "mcpToolCalls": 3,
+        "modelCalls": 4,
+        "modelDurationMs": 6465,
+        "outputTokens": 733,
+        "promptChars": 1638,
+        "questionTokensEstimated": 225,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 0,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 4,
+        "strategyDurationMs": 6505,
+        "taskStatementChars": 1467,
+        "toolCalls": 3,
+        "toolDurationMs": 13,
+        "totalDurationMs": 6505,
+        "totalTokens": 5760,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": null,
+    "nativeMcp": {},
+    "rawResponse": [
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779733406.0,
+        "conversation": null,
+        "created_at": 1779733405.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_0bd066b1c790719a006a14939d89a481969820dda1916259c8",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "19d69e72ca"
+        },
+        "model": "gpt-5.4-mini-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "arguments": "{\"workspace_id\":\"py_004_ctx16k\"}",
+            "call_id": "call_rk3vK5dB1rIDFOVyveWcjnVw",
+            "id": "fc_0bd066b1c790719a006a14939de81c819698ca9477e380fb6e",
+            "name": "list_files",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 595,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 24,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 619
+        },
+        "user": null
+      },
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779733407.0,
+        "conversation": null,
+        "created_at": 1779733406.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_0bd066b1c790719a006a14939e76f081969f07155df6dcbef6",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "19d69e72ca"
+        },
+        "model": "gpt-5.4-mini-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "arguments": "{\"workspace_id\":\"py_004_ctx16k\",\"path\":\"src/black/linegen.py\",\"kind\":\"function\"}",
+            "call_id": "call_BFZwE2dVpNsgdqqononwuQMd",
+            "id": "fc_0bd066b1c790719a006a14939eef008196aaf283ebaa233730",
+            "name": "list_symbols",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 798,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 38,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 836
+        },
+        "user": null
+      },
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779733408.0,
+        "conversation": null,
+        "created_at": 1779733407.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_0bd066b1c790719a006a14939f9a508196a42d10e9a8436762",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "19d69e72ca"
+        },
+        "model": "gpt-5.4-mini-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "arguments": "{\"workspace_id\":\"py_004_ctx16k\",\"symbol_id\":\"src/black/linegen.py#function:generate_trailers_to_omit:1616\"}",
+            "call_id": "call_5tUAfY0Ullt4tdv6hXkWEwuy",
+            "id": "fc_0bd066b1c790719a006a1493a003b88196b82e10843863a9a5",
+            "name": "get_symbol",
+            "namespace": null,
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 2082,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 48,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 2130
+        },
+        "user": null
+      },
+      {
+        "background": false,
+        "billing": {
+          "payer": "openai"
+        },
+        "completed_at": 1779733411.0,
+        "conversation": null,
+        "created_at": 1779733408.0,
+        "error": null,
+        "frequency_penalty": 0.0,
+        "id": "resp_0bd066b1c790719a006a1493a0c3ac81969510773e86baa867",
+        "incomplete_details": null,
+        "instructions": "You are an assistant that solves benchmark tasks using only the available operations.\nTasks may include question answering, retrieval, extraction, analysis, or code-related tasks.\nUse the available functions or tools to gather the information needed to complete the task.\nGuidelines:\n- Use only information obtained from the available operations.\n- If the available information is insufficient, say so.\n- Be concise and precise.\n- Do not make assumptions or use external knowledge.\n",
+        "max_output_tokens": null,
+        "max_tool_calls": null,
+        "metadata": {
+          "experimentId": "datasets/repoqa",
+          "phase": "execution",
+          "taskId": "snf_retrieve_function",
+          "trialId": "19d69e72ca"
+        },
+        "model": "gpt-5.4-mini-2026-03-17",
+        "moderation": null,
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "logprobs": [],
+                "text": "```python\ndef generate_trailers_to_omit(line: Line, line_length: int) -> Iterator[Set[LeafID]]:\n    \"\"\"Generate sets of closing bracket IDs that should be omitted in a RHS.\n\n    Brackets can be omitted if the entire trailer up to and including\n    a preceding closing bracket fits in one line.\n\n    Yielded sets are cumulative (contain results of previous yields, too).  First\n    set is empty, unless the line should explode, in which case bracket pairs until\n    the one that needs to explode are omitted.\n    \"\"\"\n\n    omit: Set[LeafID] = set()\n    if not line.magic_trailing_comma:\n        yield omit\n\n    length = 4 * line.depth\n    opening_bracket: Optional[Leaf] = None\n    closing_bracket: Optional[Leaf] = None\n    inner_brackets: Set[LeafID] = set()\n    for index, leaf, leaf_length in line.enumerate_with_length(is_reversed=True):\n        length += leaf_length\n        if length > line_length:\n            break\n\n        has_inline_comment = leaf_length > len(leaf.value) + len(leaf.prefix)\n        if leaf.type == STANDALONE_COMMENT or has_inline_comment:\n            break\n\n        if opening_bracket:\n            if leaf is opening_bracket:\n                opening_bracket = None\n            elif leaf.type in CLOSING_BRACKETS:\n                prev = line.leaves[index - 1] if index > 0 else None\n                if (\n                    prev\n                    and prev.type == token.COMMA\n                    and leaf.opening_bracket is not None\n                    and not is_one_sequence_between(\n                        leaf.opening_bracket, leaf, line.leaves\n                    )\n                ):\n                    # Never omit bracket pairs with trailing commas.\n                    # We need to explode on those.\n                    break\n\n                inner_brackets.add(id(leaf))\n        elif leaf.type in CLOSING_BRACKETS:\n            prev = line.leaves[index - 1] if index > 0 else None\n            if prev and prev.type in OPENING_BRACKETS:\n                # Empty brackets would fail a split so treat them as \"inner\"\n                # brackets (e.g. only add them to the `omit` set if another\n                # pair of brackets was good enough.\n                inner_brackets.add(id(leaf))\n                continue\n\n            if closing_bracket:\n                omit.add(id(closing_bracket))\n                omit.update(inner_brackets)\n                inner_brackets.clear()\n                yield omit\n\n            if (\n                prev\n                and prev.type == token.COMMA\n                and leaf.opening_bracket is not None\n                and not is_one_sequence_between(leaf.opening_bracket, leaf, line.leaves)\n            ):\n                # Never omit bracket pairs with trailing commas.\n                # We need to explode on those.\n                break\n\n            if leaf.value:\n                opening_bracket = leaf.opening_bracket\n                closing_bracket = leaf\n```",
+                "type": "output_text"
+              }
+            ],
+            "id": "msg_0bd066b1c790719a006a1493a112d48196bfc8c164b386d328",
+            "phase": "final_answer",
+            "role": "assistant",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": true,
+        "presence_penalty": 0.0,
+        "previous_response_id": null,
+        "prompt": null,
+        "prompt_cache_key": null,
+        "prompt_cache_retention": "in_memory",
+        "reasoning": {
+          "context": "current_turn",
+          "effort": "none",
+          "generate_summary": null,
+          "summary": null
+        },
+        "safety_identifier": null,
+        "service_tier": "default",
+        "status": "completed",
+        "store": true,
+        "temperature": 1.0,
+        "text": {
+          "format": {
+            "type": "text"
+          },
+          "verbosity": "medium"
+        },
+        "tool_choice": "auto",
+        "tools": [
+          {
+            "defer_loading": null,
+            "description": "List visible repository files and metadata for a RepoQA workspace.",
+            "name": "list_files",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "List code symbols and metadata for a RepoQA workspace. Optional filters: path and kind. kind='function' searches callable code, including methods; exact parser kinds such as 'method', 'class', and other kinds present in parsed.json may also be used.",
+            "name": "list_symbols",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Return one RepoQA symbol, including generated visible code.",
+            "name": "get_symbol",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "symbol_id": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "symbol_id"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          },
+          {
+            "defer_loading": null,
+            "description": "Read one generated visible file from a RepoQA workspace.",
+            "name": "read_file",
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "workspace_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "workspace_id",
+                "path"
+              ],
+              "type": "object"
+            },
+            "strict": true,
+            "type": "function"
+          }
+        ],
+        "top_logprobs": 0,
+        "top_p": 0.98,
+        "truncation": "disabled",
+        "usage": {
+          "input_tokens": 1552,
+          "input_tokens_details": {
+            "cached_tokens": 0
+          },
+          "output_tokens": 623,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 2175
+        },
+        "user": null
+      }
+    ],
+    "serverMcp": [
+      {
+        "arguments": {
+          "workspace_id": "py_004_ctx16k"
+        },
+        "durationMs": 5,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "list_files",
+        "transport": "in_memory"
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/black/linegen.py",
+          "workspace_id": "py_004_ctx16k"
+        },
+        "durationMs": 3,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "list_symbols",
+        "transport": "in_memory"
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/black/linegen.py#function:generate_trailers_to_omit:1616",
+          "workspace_id": "py_004_ctx16k"
+        },
+        "durationMs": 5,
+        "serverLabel": "ctxbench-lattes",
+        "toolName": "get_symbol",
+        "transport": "in_memory"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "workspace_id": "py_004_ctx16k"
+        },
+        "id": "call_rk3vK5dB1rIDFOVyveWcjnVw",
+        "isError": false,
+        "name": "list_files",
+        "result": [
+          {
+            "language": "python",
+            "parse_status": "ok_filtered",
+            "path": "src/black/linegen.py",
+            "repository": "psf/black",
+            "symbol_count": 9
+          },
+          {
+            "language": "python",
+            "parse_status": "ok_filtered",
+            "path": "src/black/parsing.py",
+            "repository": "psf/black",
+            "symbol_count": 9
+          },
+          {
+            "language": "python",
+            "parse_status": "ok_filtered",
+            "path": "src/black/ranges.py",
+            "repository": "psf/black",
+            "symbol_count": 17
+          },
+          {
+            "language": "python",
+            "parse_status": "ok_filtered",
+            "path": "src/black/__init__.py",
+            "repository": "psf/black",
+            "symbol_count": 8
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/black/linegen.py",
+          "workspace_id": "py_004_ctx16k"
+        },
+        "id": "call_BFZwE2dVpNsgdqqononwuQMd",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "Split standalone comments from the rest of the line.",
+            "end_line": 1272,
+            "kind": "function",
+            "name": "standalone_comment_split",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/linegen.py",
+            "qualified_name": "standalone_comment_split",
+            "signature": "def standalone_comment_split(\n    line: Line, features: Collection[Feature], mode: Mode\n) -> Iterator[Line]",
+            "start_line": 1241,
+            "symbol_id": "src/black/linegen.py#function:standalone_comment_split:1241"
+          },
+          {
+            "children": [],
+            "documentation": "Make existing optional parentheses invisible or create new ones.\n\n`parens_after` is a set of string leaf values immediately after which parens\nshould be put.\n\nStandardizes on visible parentheses for single-element tuples, and keeps\nexisting visible parentheses for other tuples and generator expressions.",
+            "end_line": 1375,
+            "kind": "function",
+            "name": "normalize_invisible_parens",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/linegen.py",
+            "qualified_name": "normalize_invisible_parens",
+            "signature": "def normalize_invisible_parens(  # noqa: C901\n    node: Node, parens_after: Set[str], *, mode: Mode, features: Collection[Feature]\n) -> None",
+            "start_line": 1275,
+            "symbol_id": "src/black/linegen.py#function:normalize_invisible_parens:1275"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 1389,
+            "kind": "function",
+            "name": "_normalize_import_from",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/linegen.py",
+            "qualified_name": "_normalize_import_from",
+            "signature": "def _normalize_import_from(parent: Node, child: LN, index: int) -> None",
+            "start_line": 1378,
+            "symbol_id": "src/black/linegen.py#function:_normalize_import_from:1378"
+          },
+          {
+            "children": [],
+            "documentation": null,
+            "end_line": 1424,
+            "kind": "function",
+            "name": "remove_await_parens",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/linegen.py",
+            "qualified_name": "remove_await_parens",
+            "signature": "def remove_await_parens(node: Node) -> None",
+            "start_line": 1392,
+            "symbol_id": "src/black/linegen.py#function:remove_await_parens:1392"
+          },
+          {
+            "children": [],
+            "documentation": "When enabled and safe, wrap the multiple context managers in invisible parens.\n\nIt is only safe when `features` contain Feature.PARENTHESIZED_CONTEXT_MANAGERS.",
+            "end_line": 1466,
+            "kind": "function",
+            "name": "_maybe_wrap_cms_in_parens",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/linegen.py",
+            "qualified_name": "_maybe_wrap_cms_in_parens",
+            "signature": "def _maybe_wrap_cms_in_parens(\n    node: Node, mode: Mode, features: Collection[Feature]\n) -> None",
+            "start_line": 1427,
+            "symbol_id": "src/black/linegen.py#function:_maybe_wrap_cms_in_parens:1427"
+          },
+          {
+            "children": [],
+            "documentation": "Recursively hide optional parens in `with` statements.",
+            "end_line": 1508,
+            "kind": "function",
+            "name": "remove_with_parens",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/linegen.py",
+            "qualified_name": "remove_with_parens",
+            "signature": "def remove_with_parens(node: Node, parent: Node) -> None",
+            "start_line": 1469,
+            "symbol_id": "src/black/linegen.py#function:remove_with_parens:1469"
+          },
+          {
+            "children": [],
+            "documentation": "If it's safe, make the parens in the atom `node` invisible, recursively.\nAdditionally, remove repeated, adjacent invisible parens from the atom `node`\nas they are redundant.\n\nReturns whether the node should itself be wrapped in invisible parentheses.",
+            "end_line": 1586,
+            "kind": "function",
+            "name": "maybe_make_parens_invisible_in_atom",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/linegen.py",
+            "qualified_name": "maybe_make_parens_invisible_in_atom",
+            "signature": "def maybe_make_parens_invisible_in_atom(\n    node: LN,\n    parent: LN,\n    remove_brackets_around_comma: bool = False,\n) -> bool",
+            "start_line": 1511,
+            "symbol_id": "src/black/linegen.py#function:maybe_make_parens_invisible_in_atom:1511"
+          },
+          {
+            "children": [],
+            "documentation": "Should `line` be immediately split with `delimiter_split()` after RHS?",
+            "end_line": 1613,
+            "kind": "function",
+            "name": "should_split_line",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/linegen.py",
+            "qualified_name": "should_split_line",
+            "signature": "def should_split_line(line: Line, opening_bracket: Leaf) -> bool",
+            "start_line": 1589,
+            "symbol_id": "src/black/linegen.py#function:should_split_line:1589"
+          },
+          {
+            "children": [],
+            "documentation": "Generate sets of closing bracket IDs that should be omitted in a RHS.\n\nBrackets can be omitted if the entire trailer up to and including\na preceding closing bracket fits in one line.\n\nYielded sets are cumulative (contain results of previous yields, too).  First\nset is empty, unless the line should explode, in which case bracket pairs until\nthe one that needs to explode are omitted.",
+            "end_line": 1689,
+            "kind": "function",
+            "name": "generate_trailers_to_omit",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/black/linegen.py",
+            "qualified_name": "generate_trailers_to_omit",
+            "signature": "def generate_trailers_to_omit(line: Line, line_length: int) -> Iterator[Set[LeafID]]",
+            "start_line": 1616,
+            "symbol_id": "src/black/linegen.py#function:generate_trailers_to_omit:1616"
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "symbol_id": "src/black/linegen.py#function:generate_trailers_to_omit:1616",
+          "workspace_id": "py_004_ctx16k"
+        },
+        "id": "call_5tUAfY0Ullt4tdv6hXkWEwuy",
+        "isError": false,
+        "name": "get_symbol",
+        "result": {
+          "children": [],
+          "code": "def generate_trailers_to_omit(line: Line, line_length: int) -> Iterator[Set[LeafID]]:\n    \"\"\"Generate sets of closing bracket IDs that should be omitted in a RHS.\n\n    Brackets can be omitted if the entire trailer up to and including\n    a preceding closing bracket fits in one line.\n\n    Yielded sets are cumulative (contain results of previous yields, too).  First\n    set is empty, unless the line should explode, in which case bracket pairs until\n    the one that needs to explode are omitted.\n    \"\"\"\n\n    omit: Set[LeafID] = set()\n    if not line.magic_trailing_comma:\n        yield omit\n\n    length = 4 * line.depth\n    opening_bracket: Optional[Leaf] = None\n    closing_bracket: Optional[Leaf] = None\n    inner_brackets: Set[LeafID] = set()\n    for index, leaf, leaf_length in line.enumerate_with_length(is_reversed=True):\n        length += leaf_length\n        if length > line_length:\n            break\n\n        has_inline_comment = leaf_length > len(leaf.value) + len(leaf.prefix)\n        if leaf.type == STANDALONE_COMMENT or has_inline_comment:\n            break\n\n        if opening_bracket:\n            if leaf is opening_bracket:\n                opening_bracket = None\n            elif leaf.type in CLOSING_BRACKETS:\n                prev = line.leaves[index - 1] if index > 0 else None\n                if (\n                    prev\n                    and prev.type == token.COMMA\n                    and leaf.opening_bracket is not None\n                    and not is_one_sequence_between(\n                        leaf.opening_bracket, leaf, line.leaves\n                    )\n                ):\n                    # Never omit bracket pairs with trailing commas.\n                    # We need to explode on those.\n                    break\n\n                inner_brackets.add(id(leaf))\n        elif leaf.type in CLOSING_BRACKETS:\n            prev = line.leaves[index - 1] if index > 0 else None\n            if prev and prev.type in OPENING_BRACKETS:\n                # Empty brackets would fail a split so treat them as \"inner\"\n                # brackets (e.g. only add them to the `omit` set if another\n                # pair of brackets was good enough.\n                inner_brackets.add(id(leaf))\n                continue\n\n            if closing_bracket:\n                omit.add(id(closing_bracket))\n                omit.update(inner_brackets)\n                inner_brackets.clear()\n                yield omit\n\n            if (\n                prev\n                and prev.type == token.COMMA\n                and leaf.opening_bracket is not None\n                and not is_one_sequence_between(leaf.opening_bracket, leaf, line.leaves)\n            ):\n                # Never omit bracket pairs with trailing commas.\n                # We need to explode on those.\n                break\n\n            if leaf.value:\n                opening_bracket = leaf.opening_bracket\n                closing_bracket = leaf",
+          "documentation": "Generate sets of closing bracket IDs that should be omitted in a RHS.\n\nBrackets can be omitted if the entire trailer up to and including\na preceding closing bracket fits in one line.\n\nYielded sets are cumulative (contain results of previous yields, too).  First\nset is empty, unless the line should explode, in which case bracket pairs until\nthe one that needs to explode are omitted.",
+          "end_line": 1689,
+          "kind": "function",
+          "name": "generate_trailers_to_omit",
+          "parent_id": null,
+          "parent_name": null,
+          "path": "src/black/linegen.py",
+          "qualified_name": "generate_trailers_to_omit",
+          "signature": "def generate_trailers_to_omit(line: Line, line_length: int) -> Iterator[Set[LeafID]]",
+          "start_line": 1616,
+          "symbol_id": "src/black/linegen.py#function:generate_trailers_to_omit:1616"
+        }
+      }
+    ]
+  },
+  "trialId": "19d69e72ca"
+}

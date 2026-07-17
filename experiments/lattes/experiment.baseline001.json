@@ -1,0 +1,198 @@
+{
+  "id": "baseline_001",
+  "name": "Baseline run including only inline executions",
+  "output": "outputs",
+  "dataset": "datasets/lattes",
+  "models": {
+    "gpt1": {
+      "provider": "openai",
+      "name": "gpt-5.4-nano",
+      "params": {
+        "reasoning": {
+          "effort": "low"
+        },
+        "max_output_tokens": 8000,
+        "rate_limit": {
+          "tpm": 200000,
+          "rpm": 500,
+          "min_interval_ms": 200,
+          "max_concurrency": 1,
+          "max_attempts": 5,
+          "base_delay_ms": 1000,
+          "max_delay_ms": 20000,
+          "estimated_output_tokens": 6000
+        }
+      }
+    },
+    "gpt2": {
+      "provider": "openai",
+      "name": "gpt-5.4-mini",
+      "params": {
+        "reasoning": {
+          "effort": "medium"
+        },
+        "max_output_tokens": 8000,
+        "rate_limit": {
+          "tpm": 500000,
+          "rpm": 500,
+          "min_interval_ms": 200,
+          "max_concurrency": 1,
+          "max_attempts": 5,
+          "base_delay_ms": 1000,
+          "max_delay_ms": 20000,
+          "estimated_output_tokens": 6000
+        }
+      }
+    },
+    "gemini1": {
+      "provider": "google",
+      "name": "gemini-2.5-flash-lite",
+      "params": {
+        "max_output_tokens": 8000,
+        "rate_limit": {
+          "tpm": 600000,
+          "rpm": 1000,
+          "min_interval_ms": 200,
+          "max_concurrency": 1,
+          "max_attempts": 5,
+          "base_delay_ms": 1000,
+          "max_delay_ms": 20000,
+          "estimated_output_tokens": 6000
+        }
+      }
+    },
+    "gemini2": {
+      "provider": "google",
+      "name": "gemini-2.5-flash",
+      "params": {
+        "config": {
+          "thinkingConfig": {
+            "thinkingBudget": -1
+          }
+        },
+        "max_output_tokens": 8000,
+        "rate_limit": {
+          "tpm": 600000,
+          "rpm": 1000,
+          "min_interval_ms": 200,
+          "max_concurrency": 1,
+          "max_attempts": 5,
+          "base_delay_ms": 1000,
+          "max_delay_ms": 20000,
+          "estimated_output_tokens": 6000
+        }
+      }
+    },
+    "juiz-gpt": {
+      "provider": "openai",
+      "name": "gpt-5.4",
+      "params": {
+        "reasoning": {
+          "effort": "medium"
+        },
+        "max_output_tokens": 8000,
+        "rate_limit": {
+          "tpm": 500000,
+          "rpm": 500,
+          "min_interval_ms": 200,
+          "max_concurrency": 1,
+          "max_attempts": 5,
+          "base_delay_ms": 1000,
+          "max_delay_ms": 20000,
+          "estimated_output_tokens": 6000
+        }
+      }
+    },
+    "juiz-claude": {
+      "provider": "anthropic",
+      "name": "claude-sonnet-4-6",
+      "params": {
+        "temperature": 0,
+        "max_output_tokens": 8000,
+        "rate_limit": {
+          "tpm": 600000,
+          "rpm": 1000,
+          "min_interval_ms": 200,
+          "max_concurrency": 1,
+          "max_attempts": 5,
+          "base_delay_ms": 1000,
+          "max_delay_ms": 20000,
+          "estimated_output_tokens": 6000
+        }
+      }
+    },
+    "juiz-gemini": {
+      "provider": "google",
+      "name": "gemini-3.1-flash-lite-preview",
+      "params": {
+        "config": {
+          "thinkingConfig": {
+            "thinkingBudget": -1
+          }
+        },
+        "max_output_tokens": 8000,
+        "rate_limit": {
+          "tpm": 600000,
+          "rpm": 1000,
+          "min_interval_ms": 200,
+          "max_concurrency": 1,
+          "max_attempts": 5,
+          "base_delay_ms": 1000,
+          "max_delay_ms": 20000,
+          "estimated_output_tokens": 6000
+        }
+      }
+    }
+  },
+  "scope": {
+    "instances": [
+      "3457219624656691",
+      "3957046121364560",
+      "5521922960404236",
+      "4093653182381054",
+      "5123602572479168"
+    ],
+    "questions": [
+      "q_phd",
+      "q_field",
+      "q_coauth",
+      "q_advpub",
+      "q_pubyear",
+      "q_projfit_2",
+      "q_indexed",
+      "q_sup",
+      "q_techprod",
+      "q_admin",
+      "q_tcc5y",
+      "q_en"
+    ]
+  },
+  "factors": {
+    "model": ["gpt1", "gpt2", "gemini1", "gemini2"],
+    "strategy": ["inline", "local_function", "local_mcp", "mcp"],
+    "format": ["html", "json"]
+  },
+  "params": {
+    "mcp_server": {
+      "server_url": "https://secure-harlequin-mollusk.fastmcp.app/mcp",
+      "server_label": "copa_lattes",
+      "server_description": "COPA Lattes MCP server",
+      "auth_token": "${LATTES_MCP_TOKEN}"
+    }
+  },
+  "evaluation": {
+    "enabled": true,
+    "judges": ["juiz-gpt", "juiz-gemini", "juiz-claude"]
+  },
+  "trace": {
+    "enabled": true,
+    "writeFiles": true,
+    "save_raw_response": true,
+    "save_tool_calls": true,
+    "save_usage": true,
+    "save_errors": true
+  },
+  "execution": {
+    "repeats": 1
+  }
+}

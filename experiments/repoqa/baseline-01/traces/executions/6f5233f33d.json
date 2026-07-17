@@ -1,0 +1,1631 @@
+{
+  "experimentId": "datasets/repoqa",
+  "task": "responses",
+  "taskId": "snf_retrieve_function",
+  "trace": {
+    "aiTrace": {
+      "events": [
+        {
+          "duration_ms": 1152,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-nano",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "ts_002_ctx4k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "language": "typescript",
+                "parse_status": "ok_filtered",
+                "path": "src/tokenizers.js",
+                "repository": "xenova/transformers.js",
+                "symbol_count": 30
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "ts_002_ctx4k"
+              },
+              "durationMs": 0,
+              "toolName": "list_files",
+              "workspace_id": "ts_002_ctx4k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1294,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-nano",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "src",
+              "workspace_id": "ts_002_ctx4k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "Pre-tokenizes the input text by splitting it on whitespace characters.\n@param {string} text The text to be pre-tokenized.\n@param {Object} [options] Additional options for the pre-tokenization logic.\n@returns {string[]} An array of tokens produced by splitting the input text on whitespace.",
+                "end_line": 2352,
+                "kind": "method",
+                "name": "pre_tokenize_text",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "pre_tokenize_text",
+                "signature": "pre_tokenize_text(text, options) {\n        return whitespace_split(text);\n    }",
+                "start_line": 2350,
+                "symbol_id": "src/tokenizers.js#method:pre_tokenize_text:2350"
+              },
+              {
+                "children": [],
+                "documentation": "@param {Object} config The configuration options for the pre-tokenizer.\n@param {Object} config.pattern The pattern used to split the text. Can be a string or a regex object.\n@param {string} config.content What to replace the pattern with.",
+                "end_line": 2367,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(config) {\n        super();\n        this.config = config;\n        this.pattern = createPattern(this.config.pattern);\n        this.content = this.config.content;\n    }",
+                "start_line": 2362,
+                "symbol_id": "src/tokenizers.js#method:constructor:2362"
+              },
+              {
+                "children": [],
+                "documentation": "Pre-tokenizes the input text by replacing certain characters.\n@param {string} text The text to be pre-tokenized.\n@param {Object} [options] Additional options for the pre-tokenization logic.\n@returns {string[]} An array of tokens produced by replacing certain characters.",
+                "end_line": 2380,
+                "kind": "method",
+                "name": "pre_tokenize_text",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "pre_tokenize_text",
+                "signature": "pre_tokenize_text(text, options) {\n        if (this.pattern === null) {\n            return [text];\n        }\n        return [text.replaceAll(this.pattern, this.config.content)];\n    }",
+                "start_line": 2375,
+                "symbol_id": "src/tokenizers.js#method:pre_tokenize_text:2375"
+              },
+              {
+                "children": [],
+                "documentation": "Helper function for truncating values of an object, which are each arrays.\nNOTE: No additional checks are made here for validity of arguments.\n@param {Record<string, any[]>} item The input object.\n@param {number} length The length to truncate to.\n@private",
+                "end_line": 2429,
+                "kind": "function",
+                "name": "truncateHelper",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "truncateHelper",
+                "signature": "function truncateHelper(item, length) {\n    // Setting .length to a lower value truncates the array in-place:\n    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/length\n    for (const key of Object.keys(item)) {\n        item[key].length = length;\n    }\n}",
+                "start_line": 2423,
+                "symbol_id": "src/tokenizers.js#function:truncateHelper:2423"
+              },
+              {
+                "children": [],
+                "documentation": "Create a new PreTrainedTokenizer instance.\n@param {Object} tokenizerJSON The JSON of the tokenizer.\n@param {Object} tokenizerConfig The config of the tokenizer.",
+                "end_line": 2541,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(tokenizerJSON, tokenizerConfig) {\n        super();\n\n        this._tokenizer_config = tokenizerConfig;\n\n        // Construct parts of the tokenizer from the JSON\n        this.normalizer = Normalizer.fromConfig(tokenizerJSON.normalizer);\n        this.pre_tokenizer = PreTokenizer.fromConfig(tokenizerJSON.pre_tokenizer);\n        this.model = TokenizerModel.fromConfig(tokenizerJSON.model, tokenizerConfig);\n        this.post_processor = PostProcessor.fromConfig(tokenizerJSON.post_processor);\n        this.decoder = Decoder.fromConfig(tokenizerJSON.decoder);\n\n        // Add added_tokens to model\n        this.special_tokens = [];\n        this.all_special_ids = [];\n\n        /** @type {AddedToken[]} */\n        this.added_tokens = [];\n        for (const addedToken of tokenizerJSON.added_tokens) {\n            const token = new AddedToken(addedToken);\n            this.added_tokens.push(token);\n\n            this.model.tokens_to_ids.set(token.content, token.id);\n            this.model.vocab[token.id] = token.content;\n\n            if (token.special) {\n                this.special_tokens.push(token.content);\n                this.all_special_ids.push(token.id);\n            }\n        }\n\n        // Update additional_special_tokens\n        this.additional_special_tokens = tokenizerConfig.additional_special_tokens ?? [];\n        this.special_tokens.push(...this.additional_special_tokens);\n        this.special_tokens = [...new Set(this.special_tokens)]; // Remove duplicates\n\n        if (this.decoder) {\n            // Slight hack, but it prevents code duplication:\n            this.decoder.added_tokens = this.added_tokens;\n\n            // Another slight hack to add `end_of_word_suffix` (if present) to the decoder\n            // This is needed for cases where BPE model and ByteLevel decoder are used\n            // For more information, see https://github.com/xenova/transformers.js/issues/74\n            // TODO: save this to the decoder when exporting?\n            this.decoder.end_of_word_suffix = this.model.end_of_word_suffix;\n        }\n\n\n        this.added_tokens_regex = this.added_tokens.length > 0 ? new RegExp(\n            this.added_tokens.map(x => `${x.lstrip ? '\\\\s*' : ''}(${escapeRegExp(x.content)})${x.rstrip ? '\\\\s*' : ''}`).join('|')\n        ) : null;\n\n        // Set mask token if present (otherwise will be undefined, which is fine)\n        this.mask_token = this.getToken('mask_token');\n        this.mask_token_id = this.model.tokens_to_ids.get(this.mask_token);\n\n        this.pad_token = this.getToken('pad_token', 'eos_token');\n        this.pad_token_id = this.model.tokens_to_ids.get(this.pad_token);\n\n        this.sep_token = this.getToken('sep_token');\n        this.sep_token_id = this.model.tokens_to_ids.get(this.sep_token);\n\n        this.unk_token = this.getToken('unk_token');\n        this.unk_token_id = this.model.tokens_to_ids.get(this.unk_token);\n\n        this.model_max_length = tokenizerConfig.model_max_length;\n\n        /** @type {boolean} Whether or not to strip the text when tokenizing (removing excess spaces before and after the string). */\n        this.remove_space = tokenizerConfig.remove_space;\n\n        this.clean_up_tokenization_spaces = tokenizerConfig.clean_up_tokenization_spaces ?? true;\n        this.do_lowercase_and_remove_accent = tokenizerConfig.do_lowercase_and_remove_accent ?? false;\n\n        // TODO allow user to change this\n        /** @type {'right'|'left'} */\n        this.padding_side = 'right';\n\n        this.legacy = false;\n\n        this.chat_template = tokenizerConfig.chat_template ?? null;\n        if (Array.isArray(this.chat_template)) {\n            // Chat templates are stored as lists of dicts with fixed key names,\n            // we reconstruct that into a single dict while loading them.\n            const chat_template = Object.create(null);\n            for (const { name, template } of this.chat_template) {\n                if (typeof name !== 'string' || typeof template !== 'string') {\n                    throw new Error('Chat template must be a list of objects with \"name\" and \"template\" properties');\n                }\n                chat_template[name] = template;\n            }\n            this.chat_template = chat_template;\n        }\n        this._compiled_template_cache = new Map();\n    }",
+                "start_line": 2448,
+                "symbol_id": "src/tokenizers.js#method:constructor:2448"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the value of the first matching key in the tokenizer config object.\n@param {...string} keys One or more keys to search for in the tokenizer config object.\n@returns {string|null} The value associated with the first matching key, or null if no match is found.\n@throws {Error} If an object is found for a matching key and its __type property is not \"AddedToken\".",
+                "end_line": 2566,
+                "kind": "method",
+                "name": "getToken",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "getToken",
+                "signature": "getToken(...keys) {\n        for (const key of keys) {\n            const item = this._tokenizer_config[key];\n\n            if (!item) continue;\n\n            if (typeof item === 'object') {\n                if (item.__type === 'AddedToken') {\n                    return item.content;\n                } else {\n                    throw Error(`Unknown token: ${item}`);\n                }\n            } else {\n                return item;\n            }\n        }\n        return null;\n    }",
+                "start_line": 2549,
+                "symbol_id": "src/tokenizers.js#method:getToken:2549"
+              },
+              {
+                "children": [],
+                "documentation": "Loads a pre-trained tokenizer from the given `pretrained_model_name_or_path`.\n\n@param {string} pretrained_model_name_or_path The path to the pre-trained tokenizer.\n@param {PretrainedTokenizerOptions} options Additional options for loading the tokenizer.\n\n@throws {Error} Throws an error if the tokenizer.json or tokenizer_config.json files are not found in the `pretrained_model_name_or_path`.\n@returns {Promise<PreTrainedTokenizer>} A new instance of the `PreTrainedTokenizer` class.",
+                "end_line": 2597,
+                "kind": "method",
+                "name": "from_pretrained",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "from_pretrained",
+                "signature": "static async from_pretrained(pretrained_model_name_or_path, {\n        progress_callback = null,\n        config = null,\n        cache_dir = null,\n        local_files_only = false,\n        revision = 'main',\n        legacy = null,\n    } = {}) {\n\n        const info = await loadTokenizer(pretrained_model_name_or_path, {\n            progress_callback,\n            config,\n            cache_dir,\n            local_files_only,\n            revision,\n            legacy,\n        })\n\n        // @ts-ignore\n        return new this(...info);\n    }",
+                "start_line": 2577,
+                "symbol_id": "src/tokenizers.js#method:from_pretrained:2577"
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "src",
+                "workspace_id": "ts_002_ctx4k"
+              },
+              "durationMs": 0,
+              "toolName": "list_symbols",
+              "workspace_id": "ts_002_ctx4k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1472,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 2560
+              }
+            },
+            "model": "gpt-5.4-nano",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "src",
+              "workspace_id": "ts_002_ctx4k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "Pre-tokenizes the input text by splitting it on whitespace characters.\n@param {string} text The text to be pre-tokenized.\n@param {Object} [options] Additional options for the pre-tokenization logic.\n@returns {string[]} An array of tokens produced by splitting the input text on whitespace.",
+                "end_line": 2352,
+                "kind": "method",
+                "name": "pre_tokenize_text",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "pre_tokenize_text",
+                "signature": "pre_tokenize_text(text, options) {\n        return whitespace_split(text);\n    }",
+                "start_line": 2350,
+                "symbol_id": "src/tokenizers.js#method:pre_tokenize_text:2350"
+              },
+              {
+                "children": [],
+                "documentation": "@param {Object} config The configuration options for the pre-tokenizer.\n@param {Object} config.pattern The pattern used to split the text. Can be a string or a regex object.\n@param {string} config.content What to replace the pattern with.",
+                "end_line": 2367,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(config) {\n        super();\n        this.config = config;\n        this.pattern = createPattern(this.config.pattern);\n        this.content = this.config.content;\n    }",
+                "start_line": 2362,
+                "symbol_id": "src/tokenizers.js#method:constructor:2362"
+              },
+              {
+                "children": [],
+                "documentation": "Pre-tokenizes the input text by replacing certain characters.\n@param {string} text The text to be pre-tokenized.\n@param {Object} [options] Additional options for the pre-tokenization logic.\n@returns {string[]} An array of tokens produced by replacing certain characters.",
+                "end_line": 2380,
+                "kind": "method",
+                "name": "pre_tokenize_text",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "pre_tokenize_text",
+                "signature": "pre_tokenize_text(text, options) {\n        if (this.pattern === null) {\n            return [text];\n        }\n        return [text.replaceAll(this.pattern, this.config.content)];\n    }",
+                "start_line": 2375,
+                "symbol_id": "src/tokenizers.js#method:pre_tokenize_text:2375"
+              },
+              {
+                "children": [],
+                "documentation": "Helper function for truncating values of an object, which are each arrays.\nNOTE: No additional checks are made here for validity of arguments.\n@param {Record<string, any[]>} item The input object.\n@param {number} length The length to truncate to.\n@private",
+                "end_line": 2429,
+                "kind": "function",
+                "name": "truncateHelper",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "truncateHelper",
+                "signature": "function truncateHelper(item, length) {\n    // Setting .length to a lower value truncates the array in-place:\n    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/length\n    for (const key of Object.keys(item)) {\n        item[key].length = length;\n    }\n}",
+                "start_line": 2423,
+                "symbol_id": "src/tokenizers.js#function:truncateHelper:2423"
+              },
+              {
+                "children": [],
+                "documentation": "Create a new PreTrainedTokenizer instance.\n@param {Object} tokenizerJSON The JSON of the tokenizer.\n@param {Object} tokenizerConfig The config of the tokenizer.",
+                "end_line": 2541,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(tokenizerJSON, tokenizerConfig) {\n        super();\n\n        this._tokenizer_config = tokenizerConfig;\n\n        // Construct parts of the tokenizer from the JSON\n        this.normalizer = Normalizer.fromConfig(tokenizerJSON.normalizer);\n        this.pre_tokenizer = PreTokenizer.fromConfig(tokenizerJSON.pre_tokenizer);\n        this.model = TokenizerModel.fromConfig(tokenizerJSON.model, tokenizerConfig);\n        this.post_processor = PostProcessor.fromConfig(tokenizerJSON.post_processor);\n        this.decoder = Decoder.fromConfig(tokenizerJSON.decoder);\n\n        // Add added_tokens to model\n        this.special_tokens = [];\n        this.all_special_ids = [];\n\n        /** @type {AddedToken[]} */\n        this.added_tokens = [];\n        for (const addedToken of tokenizerJSON.added_tokens) {\n            const token = new AddedToken(addedToken);\n            this.added_tokens.push(token);\n\n            this.model.tokens_to_ids.set(token.content, token.id);\n            this.model.vocab[token.id] = token.content;\n\n            if (token.special) {\n                this.special_tokens.push(token.content);\n                this.all_special_ids.push(token.id);\n            }\n        }\n\n        // Update additional_special_tokens\n        this.additional_special_tokens = tokenizerConfig.additional_special_tokens ?? [];\n        this.special_tokens.push(...this.additional_special_tokens);\n        this.special_tokens = [...new Set(this.special_tokens)]; // Remove duplicates\n\n        if (this.decoder) {\n            // Slight hack, but it prevents code duplication:\n            this.decoder.added_tokens = this.added_tokens;\n\n            // Another slight hack to add `end_of_word_suffix` (if present) to the decoder\n            // This is needed for cases where BPE model and ByteLevel decoder are used\n            // For more information, see https://github.com/xenova/transformers.js/issues/74\n            // TODO: save this to the decoder when exporting?\n            this.decoder.end_of_word_suffix = this.model.end_of_word_suffix;\n        }\n\n\n        this.added_tokens_regex = this.added_tokens.length > 0 ? new RegExp(\n            this.added_tokens.map(x => `${x.lstrip ? '\\\\s*' : ''}(${escapeRegExp(x.content)})${x.rstrip ? '\\\\s*' : ''}`).join('|')\n        ) : null;\n\n        // Set mask token if present (otherwise will be undefined, which is fine)\n        this.mask_token = this.getToken('mask_token');\n        this.mask_token_id = this.model.tokens_to_ids.get(this.mask_token);\n\n        this.pad_token = this.getToken('pad_token', 'eos_token');\n        this.pad_token_id = this.model.tokens_to_ids.get(this.pad_token);\n\n        this.sep_token = this.getToken('sep_token');\n        this.sep_token_id = this.model.tokens_to_ids.get(this.sep_token);\n\n        this.unk_token = this.getToken('unk_token');\n        this.unk_token_id = this.model.tokens_to_ids.get(this.unk_token);\n\n        this.model_max_length = tokenizerConfig.model_max_length;\n\n        /** @type {boolean} Whether or not to strip the text when tokenizing (removing excess spaces before and after the string). */\n        this.remove_space = tokenizerConfig.remove_space;\n\n        this.clean_up_tokenization_spaces = tokenizerConfig.clean_up_tokenization_spaces ?? true;\n        this.do_lowercase_and_remove_accent = tokenizerConfig.do_lowercase_and_remove_accent ?? false;\n\n        // TODO allow user to change this\n        /** @type {'right'|'left'} */\n        this.padding_side = 'right';\n\n        this.legacy = false;\n\n        this.chat_template = tokenizerConfig.chat_template ?? null;\n        if (Array.isArray(this.chat_template)) {\n            // Chat templates are stored as lists of dicts with fixed key names,\n            // we reconstruct that into a single dict while loading them.\n            const chat_template = Object.create(null);\n            for (const { name, template } of this.chat_template) {\n                if (typeof name !== 'string' || typeof template !== 'string') {\n                    throw new Error('Chat template must be a list of objects with \"name\" and \"template\" properties');\n                }\n                chat_template[name] = template;\n            }\n            this.chat_template = chat_template;\n        }\n        this._compiled_template_cache = new Map();\n    }",
+                "start_line": 2448,
+                "symbol_id": "src/tokenizers.js#method:constructor:2448"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the value of the first matching key in the tokenizer config object.\n@param {...string} keys One or more keys to search for in the tokenizer config object.\n@returns {string|null} The value associated with the first matching key, or null if no match is found.\n@throws {Error} If an object is found for a matching key and its __type property is not \"AddedToken\".",
+                "end_line": 2566,
+                "kind": "method",
+                "name": "getToken",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "getToken",
+                "signature": "getToken(...keys) {\n        for (const key of keys) {\n            const item = this._tokenizer_config[key];\n\n            if (!item) continue;\n\n            if (typeof item === 'object') {\n                if (item.__type === 'AddedToken') {\n                    return item.content;\n                } else {\n                    throw Error(`Unknown token: ${item}`);\n                }\n            } else {\n                return item;\n            }\n        }\n        return null;\n    }",
+                "start_line": 2549,
+                "symbol_id": "src/tokenizers.js#method:getToken:2549"
+              },
+              {
+                "children": [],
+                "documentation": "Loads a pre-trained tokenizer from the given `pretrained_model_name_or_path`.\n\n@param {string} pretrained_model_name_or_path The path to the pre-trained tokenizer.\n@param {PretrainedTokenizerOptions} options Additional options for loading the tokenizer.\n\n@throws {Error} Throws an error if the tokenizer.json or tokenizer_config.json files are not found in the `pretrained_model_name_or_path`.\n@returns {Promise<PreTrainedTokenizer>} A new instance of the `PreTrainedTokenizer` class.",
+                "end_line": 2597,
+                "kind": "method",
+                "name": "from_pretrained",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "from_pretrained",
+                "signature": "static async from_pretrained(pretrained_model_name_or_path, {\n        progress_callback = null,\n        config = null,\n        cache_dir = null,\n        local_files_only = false,\n        revision = 'main',\n        legacy = null,\n    } = {}) {\n\n        const info = await loadTokenizer(pretrained_model_name_or_path, {\n            progress_callback,\n            config,\n            cache_dir,\n            local_files_only,\n            revision,\n            legacy,\n        })\n\n        // @ts-ignore\n        return new this(...info);\n    }",
+                "start_line": 2577,
+                "symbol_id": "src/tokenizers.js#method:from_pretrained:2577"
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "src",
+                "workspace_id": "ts_002_ctx4k"
+              },
+              "durationMs": 0,
+              "toolName": "list_symbols",
+              "workspace_id": "ts_002_ctx4k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1324,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 2560
+              }
+            },
+            "model": "gpt-5.4-nano",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function:extend",
+              "path": "src",
+              "workspace_id": "ts_002_ctx4k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": [],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "kind": "function:extend",
+                "path": "src",
+                "workspace_id": "ts_002_ctx4k"
+              },
+              "durationMs": 0,
+              "toolName": "list_symbols",
+              "workspace_id": "ts_002_ctx4k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1293,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-nano",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "workspace_id": "ts_002_ctx4k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "language": "typescript",
+                "parse_status": "ok_filtered",
+                "path": "src/tokenizers.js",
+                "repository": "xenova/transformers.js",
+                "symbol_count": 30
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "workspace_id": "ts_002_ctx4k"
+              },
+              "durationMs": 0,
+              "toolName": "list_files",
+              "workspace_id": "ts_002_ctx4k"
+            },
+            "tool_name": "list_files"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1139,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-nano",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "src/tokenizers.js",
+              "workspace_id": "ts_002_ctx4k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "Pre-tokenizes the input text by splitting it on whitespace characters.\n@param {string} text The text to be pre-tokenized.\n@param {Object} [options] Additional options for the pre-tokenization logic.\n@returns {string[]} An array of tokens produced by splitting the input text on whitespace.",
+                "end_line": 2352,
+                "kind": "method",
+                "name": "pre_tokenize_text",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "pre_tokenize_text",
+                "signature": "pre_tokenize_text(text, options) {\n        return whitespace_split(text);\n    }",
+                "start_line": 2350,
+                "symbol_id": "src/tokenizers.js#method:pre_tokenize_text:2350"
+              },
+              {
+                "children": [],
+                "documentation": "@param {Object} config The configuration options for the pre-tokenizer.\n@param {Object} config.pattern The pattern used to split the text. Can be a string or a regex object.\n@param {string} config.content What to replace the pattern with.",
+                "end_line": 2367,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(config) {\n        super();\n        this.config = config;\n        this.pattern = createPattern(this.config.pattern);\n        this.content = this.config.content;\n    }",
+                "start_line": 2362,
+                "symbol_id": "src/tokenizers.js#method:constructor:2362"
+              },
+              {
+                "children": [],
+                "documentation": "Pre-tokenizes the input text by replacing certain characters.\n@param {string} text The text to be pre-tokenized.\n@param {Object} [options] Additional options for the pre-tokenization logic.\n@returns {string[]} An array of tokens produced by replacing certain characters.",
+                "end_line": 2380,
+                "kind": "method",
+                "name": "pre_tokenize_text",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "pre_tokenize_text",
+                "signature": "pre_tokenize_text(text, options) {\n        if (this.pattern === null) {\n            return [text];\n        }\n        return [text.replaceAll(this.pattern, this.config.content)];\n    }",
+                "start_line": 2375,
+                "symbol_id": "src/tokenizers.js#method:pre_tokenize_text:2375"
+              },
+              {
+                "children": [],
+                "documentation": "Helper function for truncating values of an object, which are each arrays.\nNOTE: No additional checks are made here for validity of arguments.\n@param {Record<string, any[]>} item The input object.\n@param {number} length The length to truncate to.\n@private",
+                "end_line": 2429,
+                "kind": "function",
+                "name": "truncateHelper",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "truncateHelper",
+                "signature": "function truncateHelper(item, length) {\n    // Setting .length to a lower value truncates the array in-place:\n    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/length\n    for (const key of Object.keys(item)) {\n        item[key].length = length;\n    }\n}",
+                "start_line": 2423,
+                "symbol_id": "src/tokenizers.js#function:truncateHelper:2423"
+              },
+              {
+                "children": [],
+                "documentation": "Create a new PreTrainedTokenizer instance.\n@param {Object} tokenizerJSON The JSON of the tokenizer.\n@param {Object} tokenizerConfig The config of the tokenizer.",
+                "end_line": 2541,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(tokenizerJSON, tokenizerConfig) {\n        super();\n\n        this._tokenizer_config = tokenizerConfig;\n\n        // Construct parts of the tokenizer from the JSON\n        this.normalizer = Normalizer.fromConfig(tokenizerJSON.normalizer);\n        this.pre_tokenizer = PreTokenizer.fromConfig(tokenizerJSON.pre_tokenizer);\n        this.model = TokenizerModel.fromConfig(tokenizerJSON.model, tokenizerConfig);\n        this.post_processor = PostProcessor.fromConfig(tokenizerJSON.post_processor);\n        this.decoder = Decoder.fromConfig(tokenizerJSON.decoder);\n\n        // Add added_tokens to model\n        this.special_tokens = [];\n        this.all_special_ids = [];\n\n        /** @type {AddedToken[]} */\n        this.added_tokens = [];\n        for (const addedToken of tokenizerJSON.added_tokens) {\n            const token = new AddedToken(addedToken);\n            this.added_tokens.push(token);\n\n            this.model.tokens_to_ids.set(token.content, token.id);\n            this.model.vocab[token.id] = token.content;\n\n            if (token.special) {\n                this.special_tokens.push(token.content);\n                this.all_special_ids.push(token.id);\n            }\n        }\n\n        // Update additional_special_tokens\n        this.additional_special_tokens = tokenizerConfig.additional_special_tokens ?? [];\n        this.special_tokens.push(...this.additional_special_tokens);\n        this.special_tokens = [...new Set(this.special_tokens)]; // Remove duplicates\n\n        if (this.decoder) {\n            // Slight hack, but it prevents code duplication:\n            this.decoder.added_tokens = this.added_tokens;\n\n            // Another slight hack to add `end_of_word_suffix` (if present) to the decoder\n            // This is needed for cases where BPE model and ByteLevel decoder are used\n            // For more information, see https://github.com/xenova/transformers.js/issues/74\n            // TODO: save this to the decoder when exporting?\n            this.decoder.end_of_word_suffix = this.model.end_of_word_suffix;\n        }\n\n\n        this.added_tokens_regex = this.added_tokens.length > 0 ? new RegExp(\n            this.added_tokens.map(x => `${x.lstrip ? '\\\\s*' : ''}(${escapeRegExp(x.content)})${x.rstrip ? '\\\\s*' : ''}`).join('|')\n        ) : null;\n\n        // Set mask token if present (otherwise will be undefined, which is fine)\n        this.mask_token = this.getToken('mask_token');\n        this.mask_token_id = this.model.tokens_to_ids.get(this.mask_token);\n\n        this.pad_token = this.getToken('pad_token', 'eos_token');\n        this.pad_token_id = this.model.tokens_to_ids.get(this.pad_token);\n\n        this.sep_token = this.getToken('sep_token');\n        this.sep_token_id = this.model.tokens_to_ids.get(this.sep_token);\n\n        this.unk_token = this.getToken('unk_token');\n        this.unk_token_id = this.model.tokens_to_ids.get(this.unk_token);\n\n        this.model_max_length = tokenizerConfig.model_max_length;\n\n        /** @type {boolean} Whether or not to strip the text when tokenizing (removing excess spaces before and after the string). */\n        this.remove_space = tokenizerConfig.remove_space;\n\n        this.clean_up_tokenization_spaces = tokenizerConfig.clean_up_tokenization_spaces ?? true;\n        this.do_lowercase_and_remove_accent = tokenizerConfig.do_lowercase_and_remove_accent ?? false;\n\n        // TODO allow user to change this\n        /** @type {'right'|'left'} */\n        this.padding_side = 'right';\n\n        this.legacy = false;\n\n        this.chat_template = tokenizerConfig.chat_template ?? null;\n        if (Array.isArray(this.chat_template)) {\n            // Chat templates are stored as lists of dicts with fixed key names,\n            // we reconstruct that into a single dict while loading them.\n            const chat_template = Object.create(null);\n            for (const { name, template } of this.chat_template) {\n                if (typeof name !== 'string' || typeof template !== 'string') {\n                    throw new Error('Chat template must be a list of objects with \"name\" and \"template\" properties');\n                }\n                chat_template[name] = template;\n            }\n            this.chat_template = chat_template;\n        }\n        this._compiled_template_cache = new Map();\n    }",
+                "start_line": 2448,
+                "symbol_id": "src/tokenizers.js#method:constructor:2448"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the value of the first matching key in the tokenizer config object.\n@param {...string} keys One or more keys to search for in the tokenizer config object.\n@returns {string|null} The value associated with the first matching key, or null if no match is found.\n@throws {Error} If an object is found for a matching key and its __type property is not \"AddedToken\".",
+                "end_line": 2566,
+                "kind": "method",
+                "name": "getToken",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "getToken",
+                "signature": "getToken(...keys) {\n        for (const key of keys) {\n            const item = this._tokenizer_config[key];\n\n            if (!item) continue;\n\n            if (typeof item === 'object') {\n                if (item.__type === 'AddedToken') {\n                    return item.content;\n                } else {\n                    throw Error(`Unknown token: ${item}`);\n                }\n            } else {\n                return item;\n            }\n        }\n        return null;\n    }",
+                "start_line": 2549,
+                "symbol_id": "src/tokenizers.js#method:getToken:2549"
+              },
+              {
+                "children": [],
+                "documentation": "Loads a pre-trained tokenizer from the given `pretrained_model_name_or_path`.\n\n@param {string} pretrained_model_name_or_path The path to the pre-trained tokenizer.\n@param {PretrainedTokenizerOptions} options Additional options for loading the tokenizer.\n\n@throws {Error} Throws an error if the tokenizer.json or tokenizer_config.json files are not found in the `pretrained_model_name_or_path`.\n@returns {Promise<PreTrainedTokenizer>} A new instance of the `PreTrainedTokenizer` class.",
+                "end_line": 2597,
+                "kind": "method",
+                "name": "from_pretrained",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "from_pretrained",
+                "signature": "static async from_pretrained(pretrained_model_name_or_path, {\n        progress_callback = null,\n        config = null,\n        cache_dir = null,\n        local_files_only = false,\n        revision = 'main',\n        legacy = null,\n    } = {}) {\n\n        const info = await loadTokenizer(pretrained_model_name_or_path, {\n            progress_callback,\n            config,\n            cache_dir,\n            local_files_only,\n            revision,\n            legacy,\n        })\n\n        // @ts-ignore\n        return new this(...info);\n    }",
+                "start_line": 2577,
+                "symbol_id": "src/tokenizers.js#method:from_pretrained:2577"
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "src/tokenizers.js",
+                "workspace_id": "ts_002_ctx4k"
+              },
+              "durationMs": 0,
+              "toolName": "list_symbols",
+              "workspace_id": "ts_002_ctx4k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1159,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 0
+              }
+            },
+            "model": "gpt-5.4-nano",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "",
+              "workspace_id": "ts_002_ctx4k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "Pre-tokenizes the input text by splitting it on whitespace characters.\n@param {string} text The text to be pre-tokenized.\n@param {Object} [options] Additional options for the pre-tokenization logic.\n@returns {string[]} An array of tokens produced by splitting the input text on whitespace.",
+                "end_line": 2352,
+                "kind": "method",
+                "name": "pre_tokenize_text",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "pre_tokenize_text",
+                "signature": "pre_tokenize_text(text, options) {\n        return whitespace_split(text);\n    }",
+                "start_line": 2350,
+                "symbol_id": "src/tokenizers.js#method:pre_tokenize_text:2350"
+              },
+              {
+                "children": [],
+                "documentation": "@param {Object} config The configuration options for the pre-tokenizer.\n@param {Object} config.pattern The pattern used to split the text. Can be a string or a regex object.\n@param {string} config.content What to replace the pattern with.",
+                "end_line": 2367,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(config) {\n        super();\n        this.config = config;\n        this.pattern = createPattern(this.config.pattern);\n        this.content = this.config.content;\n    }",
+                "start_line": 2362,
+                "symbol_id": "src/tokenizers.js#method:constructor:2362"
+              },
+              {
+                "children": [],
+                "documentation": "Pre-tokenizes the input text by replacing certain characters.\n@param {string} text The text to be pre-tokenized.\n@param {Object} [options] Additional options for the pre-tokenization logic.\n@returns {string[]} An array of tokens produced by replacing certain characters.",
+                "end_line": 2380,
+                "kind": "method",
+                "name": "pre_tokenize_text",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "pre_tokenize_text",
+                "signature": "pre_tokenize_text(text, options) {\n        if (this.pattern === null) {\n            return [text];\n        }\n        return [text.replaceAll(this.pattern, this.config.content)];\n    }",
+                "start_line": 2375,
+                "symbol_id": "src/tokenizers.js#method:pre_tokenize_text:2375"
+              },
+              {
+                "children": [],
+                "documentation": "Helper function for truncating values of an object, which are each arrays.\nNOTE: No additional checks are made here for validity of arguments.\n@param {Record<string, any[]>} item The input object.\n@param {number} length The length to truncate to.\n@private",
+                "end_line": 2429,
+                "kind": "function",
+                "name": "truncateHelper",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "truncateHelper",
+                "signature": "function truncateHelper(item, length) {\n    // Setting .length to a lower value truncates the array in-place:\n    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/length\n    for (const key of Object.keys(item)) {\n        item[key].length = length;\n    }\n}",
+                "start_line": 2423,
+                "symbol_id": "src/tokenizers.js#function:truncateHelper:2423"
+              },
+              {
+                "children": [],
+                "documentation": "Create a new PreTrainedTokenizer instance.\n@param {Object} tokenizerJSON The JSON of the tokenizer.\n@param {Object} tokenizerConfig The config of the tokenizer.",
+                "end_line": 2541,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(tokenizerJSON, tokenizerConfig) {\n        super();\n\n        this._tokenizer_config = tokenizerConfig;\n\n        // Construct parts of the tokenizer from the JSON\n        this.normalizer = Normalizer.fromConfig(tokenizerJSON.normalizer);\n        this.pre_tokenizer = PreTokenizer.fromConfig(tokenizerJSON.pre_tokenizer);\n        this.model = TokenizerModel.fromConfig(tokenizerJSON.model, tokenizerConfig);\n        this.post_processor = PostProcessor.fromConfig(tokenizerJSON.post_processor);\n        this.decoder = Decoder.fromConfig(tokenizerJSON.decoder);\n\n        // Add added_tokens to model\n        this.special_tokens = [];\n        this.all_special_ids = [];\n\n        /** @type {AddedToken[]} */\n        this.added_tokens = [];\n        for (const addedToken of tokenizerJSON.added_tokens) {\n            const token = new AddedToken(addedToken);\n            this.added_tokens.push(token);\n\n            this.model.tokens_to_ids.set(token.content, token.id);\n            this.model.vocab[token.id] = token.content;\n\n            if (token.special) {\n                this.special_tokens.push(token.content);\n                this.all_special_ids.push(token.id);\n            }\n        }\n\n        // Update additional_special_tokens\n        this.additional_special_tokens = tokenizerConfig.additional_special_tokens ?? [];\n        this.special_tokens.push(...this.additional_special_tokens);\n        this.special_tokens = [...new Set(this.special_tokens)]; // Remove duplicates\n\n        if (this.decoder) {\n            // Slight hack, but it prevents code duplication:\n            this.decoder.added_tokens = this.added_tokens;\n\n            // Another slight hack to add `end_of_word_suffix` (if present) to the decoder\n            // This is needed for cases where BPE model and ByteLevel decoder are used\n            // For more information, see https://github.com/xenova/transformers.js/issues/74\n            // TODO: save this to the decoder when exporting?\n            this.decoder.end_of_word_suffix = this.model.end_of_word_suffix;\n        }\n\n\n        this.added_tokens_regex = this.added_tokens.length > 0 ? new RegExp(\n            this.added_tokens.map(x => `${x.lstrip ? '\\\\s*' : ''}(${escapeRegExp(x.content)})${x.rstrip ? '\\\\s*' : ''}`).join('|')\n        ) : null;\n\n        // Set mask token if present (otherwise will be undefined, which is fine)\n        this.mask_token = this.getToken('mask_token');\n        this.mask_token_id = this.model.tokens_to_ids.get(this.mask_token);\n\n        this.pad_token = this.getToken('pad_token', 'eos_token');\n        this.pad_token_id = this.model.tokens_to_ids.get(this.pad_token);\n\n        this.sep_token = this.getToken('sep_token');\n        this.sep_token_id = this.model.tokens_to_ids.get(this.sep_token);\n\n        this.unk_token = this.getToken('unk_token');\n        this.unk_token_id = this.model.tokens_to_ids.get(this.unk_token);\n\n        this.model_max_length = tokenizerConfig.model_max_length;\n\n        /** @type {boolean} Whether or not to strip the text when tokenizing (removing excess spaces before and after the string). */\n        this.remove_space = tokenizerConfig.remove_space;\n\n        this.clean_up_tokenization_spaces = tokenizerConfig.clean_up_tokenization_spaces ?? true;\n        this.do_lowercase_and_remove_accent = tokenizerConfig.do_lowercase_and_remove_accent ?? false;\n\n        // TODO allow user to change this\n        /** @type {'right'|'left'} */\n        this.padding_side = 'right';\n\n        this.legacy = false;\n\n        this.chat_template = tokenizerConfig.chat_template ?? null;\n        if (Array.isArray(this.chat_template)) {\n            // Chat templates are stored as lists of dicts with fixed key names,\n            // we reconstruct that into a single dict while loading them.\n            const chat_template = Object.create(null);\n            for (const { name, template } of this.chat_template) {\n                if (typeof name !== 'string' || typeof template !== 'string') {\n                    throw new Error('Chat template must be a list of objects with \"name\" and \"template\" properties');\n                }\n                chat_template[name] = template;\n            }\n            this.chat_template = chat_template;\n        }\n        this._compiled_template_cache = new Map();\n    }",
+                "start_line": 2448,
+                "symbol_id": "src/tokenizers.js#method:constructor:2448"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the value of the first matching key in the tokenizer config object.\n@param {...string} keys One or more keys to search for in the tokenizer config object.\n@returns {string|null} The value associated with the first matching key, or null if no match is found.\n@throws {Error} If an object is found for a matching key and its __type property is not \"AddedToken\".",
+                "end_line": 2566,
+                "kind": "method",
+                "name": "getToken",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "getToken",
+                "signature": "getToken(...keys) {\n        for (const key of keys) {\n            const item = this._tokenizer_config[key];\n\n            if (!item) continue;\n\n            if (typeof item === 'object') {\n                if (item.__type === 'AddedToken') {\n                    return item.content;\n                } else {\n                    throw Error(`Unknown token: ${item}`);\n                }\n            } else {\n                return item;\n            }\n        }\n        return null;\n    }",
+                "start_line": 2549,
+                "symbol_id": "src/tokenizers.js#method:getToken:2549"
+              },
+              {
+                "children": [],
+                "documentation": "Loads a pre-trained tokenizer from the given `pretrained_model_name_or_path`.\n\n@param {string} pretrained_model_name_or_path The path to the pre-trained tokenizer.\n@param {PretrainedTokenizerOptions} options Additional options for loading the tokenizer.\n\n@throws {Error} Throws an error if the tokenizer.json or tokenizer_config.json files are not found in the `pretrained_model_name_or_path`.\n@returns {Promise<PreTrainedTokenizer>} A new instance of the `PreTrainedTokenizer` class.",
+                "end_line": 2597,
+                "kind": "method",
+                "name": "from_pretrained",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "from_pretrained",
+                "signature": "static async from_pretrained(pretrained_model_name_or_path, {\n        progress_callback = null,\n        config = null,\n        cache_dir = null,\n        local_files_only = false,\n        revision = 'main',\n        legacy = null,\n    } = {}) {\n\n        const info = await loadTokenizer(pretrained_model_name_or_path, {\n            progress_callback,\n            config,\n            cache_dir,\n            local_files_only,\n            revision,\n            legacy,\n        })\n\n        // @ts-ignore\n        return new this(...info);\n    }",
+                "start_line": 2577,
+                "symbol_id": "src/tokenizers.js#method:from_pretrained:2577"
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "",
+                "workspace_id": "ts_002_ctx4k"
+              },
+              "durationMs": 0,
+              "toolName": "list_symbols",
+              "workspace_id": "ts_002_ctx4k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 1118,
+          "metadata": {
+            "cache": {
+              "input_tokens_details": {
+                "cached_tokens": 2560
+              }
+            },
+            "model": "gpt-5.4-nano",
+            "provider": "openai"
+          },
+          "name": "model.generate",
+          "type": "model.generate"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "arguments": {
+              "kind": "function",
+              "path": "",
+              "workspace_id": "ts_002_ctx4k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_call",
+          "type": "mcp.tool_call"
+        },
+        {
+          "duration_ms": 0,
+          "metadata": {
+            "is_error": false,
+            "result": [
+              {
+                "children": [],
+                "documentation": "Pre-tokenizes the input text by splitting it on whitespace characters.\n@param {string} text The text to be pre-tokenized.\n@param {Object} [options] Additional options for the pre-tokenization logic.\n@returns {string[]} An array of tokens produced by splitting the input text on whitespace.",
+                "end_line": 2352,
+                "kind": "method",
+                "name": "pre_tokenize_text",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "pre_tokenize_text",
+                "signature": "pre_tokenize_text(text, options) {\n        return whitespace_split(text);\n    }",
+                "start_line": 2350,
+                "symbol_id": "src/tokenizers.js#method:pre_tokenize_text:2350"
+              },
+              {
+                "children": [],
+                "documentation": "@param {Object} config The configuration options for the pre-tokenizer.\n@param {Object} config.pattern The pattern used to split the text. Can be a string or a regex object.\n@param {string} config.content What to replace the pattern with.",
+                "end_line": 2367,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(config) {\n        super();\n        this.config = config;\n        this.pattern = createPattern(this.config.pattern);\n        this.content = this.config.content;\n    }",
+                "start_line": 2362,
+                "symbol_id": "src/tokenizers.js#method:constructor:2362"
+              },
+              {
+                "children": [],
+                "documentation": "Pre-tokenizes the input text by replacing certain characters.\n@param {string} text The text to be pre-tokenized.\n@param {Object} [options] Additional options for the pre-tokenization logic.\n@returns {string[]} An array of tokens produced by replacing certain characters.",
+                "end_line": 2380,
+                "kind": "method",
+                "name": "pre_tokenize_text",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "pre_tokenize_text",
+                "signature": "pre_tokenize_text(text, options) {\n        if (this.pattern === null) {\n            return [text];\n        }\n        return [text.replaceAll(this.pattern, this.config.content)];\n    }",
+                "start_line": 2375,
+                "symbol_id": "src/tokenizers.js#method:pre_tokenize_text:2375"
+              },
+              {
+                "children": [],
+                "documentation": "Helper function for truncating values of an object, which are each arrays.\nNOTE: No additional checks are made here for validity of arguments.\n@param {Record<string, any[]>} item The input object.\n@param {number} length The length to truncate to.\n@private",
+                "end_line": 2429,
+                "kind": "function",
+                "name": "truncateHelper",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "truncateHelper",
+                "signature": "function truncateHelper(item, length) {\n    // Setting .length to a lower value truncates the array in-place:\n    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/length\n    for (const key of Object.keys(item)) {\n        item[key].length = length;\n    }\n}",
+                "start_line": 2423,
+                "symbol_id": "src/tokenizers.js#function:truncateHelper:2423"
+              },
+              {
+                "children": [],
+                "documentation": "Create a new PreTrainedTokenizer instance.\n@param {Object} tokenizerJSON The JSON of the tokenizer.\n@param {Object} tokenizerConfig The config of the tokenizer.",
+                "end_line": 2541,
+                "kind": "method",
+                "name": "constructor",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "constructor",
+                "signature": "constructor(tokenizerJSON, tokenizerConfig) {\n        super();\n\n        this._tokenizer_config = tokenizerConfig;\n\n        // Construct parts of the tokenizer from the JSON\n        this.normalizer = Normalizer.fromConfig(tokenizerJSON.normalizer);\n        this.pre_tokenizer = PreTokenizer.fromConfig(tokenizerJSON.pre_tokenizer);\n        this.model = TokenizerModel.fromConfig(tokenizerJSON.model, tokenizerConfig);\n        this.post_processor = PostProcessor.fromConfig(tokenizerJSON.post_processor);\n        this.decoder = Decoder.fromConfig(tokenizerJSON.decoder);\n\n        // Add added_tokens to model\n        this.special_tokens = [];\n        this.all_special_ids = [];\n\n        /** @type {AddedToken[]} */\n        this.added_tokens = [];\n        for (const addedToken of tokenizerJSON.added_tokens) {\n            const token = new AddedToken(addedToken);\n            this.added_tokens.push(token);\n\n            this.model.tokens_to_ids.set(token.content, token.id);\n            this.model.vocab[token.id] = token.content;\n\n            if (token.special) {\n                this.special_tokens.push(token.content);\n                this.all_special_ids.push(token.id);\n            }\n        }\n\n        // Update additional_special_tokens\n        this.additional_special_tokens = tokenizerConfig.additional_special_tokens ?? [];\n        this.special_tokens.push(...this.additional_special_tokens);\n        this.special_tokens = [...new Set(this.special_tokens)]; // Remove duplicates\n\n        if (this.decoder) {\n            // Slight hack, but it prevents code duplication:\n            this.decoder.added_tokens = this.added_tokens;\n\n            // Another slight hack to add `end_of_word_suffix` (if present) to the decoder\n            // This is needed for cases where BPE model and ByteLevel decoder are used\n            // For more information, see https://github.com/xenova/transformers.js/issues/74\n            // TODO: save this to the decoder when exporting?\n            this.decoder.end_of_word_suffix = this.model.end_of_word_suffix;\n        }\n\n\n        this.added_tokens_regex = this.added_tokens.length > 0 ? new RegExp(\n            this.added_tokens.map(x => `${x.lstrip ? '\\\\s*' : ''}(${escapeRegExp(x.content)})${x.rstrip ? '\\\\s*' : ''}`).join('|')\n        ) : null;\n\n        // Set mask token if present (otherwise will be undefined, which is fine)\n        this.mask_token = this.getToken('mask_token');\n        this.mask_token_id = this.model.tokens_to_ids.get(this.mask_token);\n\n        this.pad_token = this.getToken('pad_token', 'eos_token');\n        this.pad_token_id = this.model.tokens_to_ids.get(this.pad_token);\n\n        this.sep_token = this.getToken('sep_token');\n        this.sep_token_id = this.model.tokens_to_ids.get(this.sep_token);\n\n        this.unk_token = this.getToken('unk_token');\n        this.unk_token_id = this.model.tokens_to_ids.get(this.unk_token);\n\n        this.model_max_length = tokenizerConfig.model_max_length;\n\n        /** @type {boolean} Whether or not to strip the text when tokenizing (removing excess spaces before and after the string). */\n        this.remove_space = tokenizerConfig.remove_space;\n\n        this.clean_up_tokenization_spaces = tokenizerConfig.clean_up_tokenization_spaces ?? true;\n        this.do_lowercase_and_remove_accent = tokenizerConfig.do_lowercase_and_remove_accent ?? false;\n\n        // TODO allow user to change this\n        /** @type {'right'|'left'} */\n        this.padding_side = 'right';\n\n        this.legacy = false;\n\n        this.chat_template = tokenizerConfig.chat_template ?? null;\n        if (Array.isArray(this.chat_template)) {\n            // Chat templates are stored as lists of dicts with fixed key names,\n            // we reconstruct that into a single dict while loading them.\n            const chat_template = Object.create(null);\n            for (const { name, template } of this.chat_template) {\n                if (typeof name !== 'string' || typeof template !== 'string') {\n                    throw new Error('Chat template must be a list of objects with \"name\" and \"template\" properties');\n                }\n                chat_template[name] = template;\n            }\n            this.chat_template = chat_template;\n        }\n        this._compiled_template_cache = new Map();\n    }",
+                "start_line": 2448,
+                "symbol_id": "src/tokenizers.js#method:constructor:2448"
+              },
+              {
+                "children": [],
+                "documentation": "Returns the value of the first matching key in the tokenizer config object.\n@param {...string} keys One or more keys to search for in the tokenizer config object.\n@returns {string|null} The value associated with the first matching key, or null if no match is found.\n@throws {Error} If an object is found for a matching key and its __type property is not \"AddedToken\".",
+                "end_line": 2566,
+                "kind": "method",
+                "name": "getToken",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "getToken",
+                "signature": "getToken(...keys) {\n        for (const key of keys) {\n            const item = this._tokenizer_config[key];\n\n            if (!item) continue;\n\n            if (typeof item === 'object') {\n                if (item.__type === 'AddedToken') {\n                    return item.content;\n                } else {\n                    throw Error(`Unknown token: ${item}`);\n                }\n            } else {\n                return item;\n            }\n        }\n        return null;\n    }",
+                "start_line": 2549,
+                "symbol_id": "src/tokenizers.js#method:getToken:2549"
+              },
+              {
+                "children": [],
+                "documentation": "Loads a pre-trained tokenizer from the given `pretrained_model_name_or_path`.\n\n@param {string} pretrained_model_name_or_path The path to the pre-trained tokenizer.\n@param {PretrainedTokenizerOptions} options Additional options for loading the tokenizer.\n\n@throws {Error} Throws an error if the tokenizer.json or tokenizer_config.json files are not found in the `pretrained_model_name_or_path`.\n@returns {Promise<PreTrainedTokenizer>} A new instance of the `PreTrainedTokenizer` class.",
+                "end_line": 2597,
+                "kind": "method",
+                "name": "from_pretrained",
+                "parent_id": null,
+                "parent_name": null,
+                "path": "src/tokenizers.js",
+                "qualified_name": "from_pretrained",
+                "signature": "static async from_pretrained(pretrained_model_name_or_path, {\n        progress_callback = null,\n        config = null,\n        cache_dir = null,\n        local_files_only = false,\n        revision = 'main',\n        legacy = null,\n    } = {}) {\n\n        const info = await loadTokenizer(pretrained_model_name_or_path, {\n            progress_callback,\n            config,\n            cache_dir,\n            local_files_only,\n            revision,\n            legacy,\n        })\n\n        // @ts-ignore\n        return new this(...info);\n    }",
+                "start_line": 2577,
+                "symbol_id": "src/tokenizers.js#method:from_pretrained:2577"
+              }
+            ],
+            "runtime": "local_function",
+            "server_event": {
+              "arguments": {
+                "kind": "function",
+                "path": "",
+                "workspace_id": "ts_002_ctx4k"
+              },
+              "durationMs": 0,
+              "toolName": "list_symbols",
+              "workspace_id": "ts_002_ctx4k"
+            },
+            "tool_name": "list_symbols"
+          },
+          "name": "mcp.tool_result",
+          "type": "mcp.tool_result"
+        },
+        {
+          "duration_ms": 9998,
+          "metadata": {},
+          "name": "strategy.local_function.execute",
+          "type": "strategy.local_function.execute"
+        },
+        {
+          "duration_ms": null,
+          "metadata": {
+            "error": "Local function strategy exceeded max_steps=8.",
+            "max_steps": 8,
+            "strategy_name": "local_function"
+          },
+          "name": "error",
+          "type": "error"
+        },
+        {
+          "duration_ms": 9998,
+          "metadata": {},
+          "name": "engine.execute",
+          "type": "engine.execute"
+        }
+      ],
+      "metrics": {
+        "benchmarkDurationMsEstimated": 47,
+        "cacheCreationInputTokens": null,
+        "cacheReadInputTokens": 7680,
+        "cachedInputTokens": 7680,
+        "contextBytes": 0,
+        "contextChars": 0,
+        "estimatedInputTokens": null,
+        "estimatedOutputTokens": null,
+        "functionCalls": 8,
+        "inputTokens": 15193,
+        "loopControlDurationMsEstimated": 47,
+        "mcpToolCalls": 8,
+        "modelCalls": 8,
+        "modelDurationMs": 9951,
+        "outputTokens": 241,
+        "promptChars": 1450,
+        "questionTokensEstimated": 216,
+        "rateLimitWaitMs": null,
+        "reasoningTokens": 0,
+        "reservedTokens": null,
+        "retryCount": 0,
+        "retrySleepMs": null,
+        "steps": 8,
+        "strategyDurationMs": 9998,
+        "taskStatementChars": 1280,
+        "toolCalls": 8,
+        "toolDurationMs": 0,
+        "totalDurationMs": 9998,
+        "totalTokens": 15434,
+        "totalTokensEstimated": null
+      }
+    },
+    "error": "Local function strategy exceeded max_steps=8.",
+    "nativeMcp": {},
+    "rawResponse": null,
+    "serverMcp": [
+      {
+        "arguments": {
+          "workspace_id": "ts_002_ctx4k"
+        },
+        "durationMs": 0,
+        "toolName": "list_files",
+        "workspace_id": "ts_002_ctx4k"
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src",
+          "workspace_id": "ts_002_ctx4k"
+        },
+        "durationMs": 0,
+        "toolName": "list_symbols",
+        "workspace_id": "ts_002_ctx4k"
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src",
+          "workspace_id": "ts_002_ctx4k"
+        },
+        "durationMs": 0,
+        "toolName": "list_symbols",
+        "workspace_id": "ts_002_ctx4k"
+      },
+      {
+        "arguments": {
+          "kind": "function:extend",
+          "path": "src",
+          "workspace_id": "ts_002_ctx4k"
+        },
+        "durationMs": 0,
+        "toolName": "list_symbols",
+        "workspace_id": "ts_002_ctx4k"
+      },
+      {
+        "arguments": {
+          "workspace_id": "ts_002_ctx4k"
+        },
+        "durationMs": 0,
+        "toolName": "list_files",
+        "workspace_id": "ts_002_ctx4k"
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/tokenizers.js",
+          "workspace_id": "ts_002_ctx4k"
+        },
+        "durationMs": 0,
+        "toolName": "list_symbols",
+        "workspace_id": "ts_002_ctx4k"
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "",
+          "workspace_id": "ts_002_ctx4k"
+        },
+        "durationMs": 0,
+        "toolName": "list_symbols",
+        "workspace_id": "ts_002_ctx4k"
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "",
+          "workspace_id": "ts_002_ctx4k"
+        },
+        "durationMs": 0,
+        "toolName": "list_symbols",
+        "workspace_id": "ts_002_ctx4k"
+      }
+    ],
+    "toolCalls": [
+      {
+        "arguments": {
+          "workspace_id": "ts_002_ctx4k"
+        },
+        "id": "call_NjHnLs8xbsjmVpnEfeqh10Ze",
+        "isError": false,
+        "name": "list_files",
+        "result": [
+          {
+            "language": "typescript",
+            "parse_status": "ok_filtered",
+            "path": "src/tokenizers.js",
+            "repository": "xenova/transformers.js",
+            "symbol_count": 30
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src",
+          "workspace_id": "ts_002_ctx4k"
+        },
+        "id": "call_sWQoLS5BOp6BwEU6BwGBAmzi",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "Pre-tokenizes the input text by splitting it on whitespace characters.\n@param {string} text The text to be pre-tokenized.\n@param {Object} [options] Additional options for the pre-tokenization logic.\n@returns {string[]} An array of tokens produced by splitting the input text on whitespace.",
+            "end_line": 2352,
+            "kind": "method",
+            "name": "pre_tokenize_text",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "pre_tokenize_text",
+            "signature": "pre_tokenize_text(text, options) {\n        return whitespace_split(text);\n    }",
+            "start_line": 2350,
+            "symbol_id": "src/tokenizers.js#method:pre_tokenize_text:2350"
+          },
+          {
+            "children": [],
+            "documentation": "@param {Object} config The configuration options for the pre-tokenizer.\n@param {Object} config.pattern The pattern used to split the text. Can be a string or a regex object.\n@param {string} config.content What to replace the pattern with.",
+            "end_line": 2367,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(config) {\n        super();\n        this.config = config;\n        this.pattern = createPattern(this.config.pattern);\n        this.content = this.config.content;\n    }",
+            "start_line": 2362,
+            "symbol_id": "src/tokenizers.js#method:constructor:2362"
+          },
+          {
+            "children": [],
+            "documentation": "Pre-tokenizes the input text by replacing certain characters.\n@param {string} text The text to be pre-tokenized.\n@param {Object} [options] Additional options for the pre-tokenization logic.\n@returns {string[]} An array of tokens produced by replacing certain characters.",
+            "end_line": 2380,
+            "kind": "method",
+            "name": "pre_tokenize_text",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "pre_tokenize_text",
+            "signature": "pre_tokenize_text(text, options) {\n        if (this.pattern === null) {\n            return [text];\n        }\n        return [text.replaceAll(this.pattern, this.config.content)];\n    }",
+            "start_line": 2375,
+            "symbol_id": "src/tokenizers.js#method:pre_tokenize_text:2375"
+          },
+          {
+            "children": [],
+            "documentation": "Helper function for truncating values of an object, which are each arrays.\nNOTE: No additional checks are made here for validity of arguments.\n@param {Record<string, any[]>} item The input object.\n@param {number} length The length to truncate to.\n@private",
+            "end_line": 2429,
+            "kind": "function",
+            "name": "truncateHelper",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "truncateHelper",
+            "signature": "function truncateHelper(item, length) {\n    // Setting .length to a lower value truncates the array in-place:\n    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/length\n    for (const key of Object.keys(item)) {\n        item[key].length = length;\n    }\n}",
+            "start_line": 2423,
+            "symbol_id": "src/tokenizers.js#function:truncateHelper:2423"
+          },
+          {
+            "children": [],
+            "documentation": "Create a new PreTrainedTokenizer instance.\n@param {Object} tokenizerJSON The JSON of the tokenizer.\n@param {Object} tokenizerConfig The config of the tokenizer.",
+            "end_line": 2541,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(tokenizerJSON, tokenizerConfig) {\n        super();\n\n        this._tokenizer_config = tokenizerConfig;\n\n        // Construct parts of the tokenizer from the JSON\n        this.normalizer = Normalizer.fromConfig(tokenizerJSON.normalizer);\n        this.pre_tokenizer = PreTokenizer.fromConfig(tokenizerJSON.pre_tokenizer);\n        this.model = TokenizerModel.fromConfig(tokenizerJSON.model, tokenizerConfig);\n        this.post_processor = PostProcessor.fromConfig(tokenizerJSON.post_processor);\n        this.decoder = Decoder.fromConfig(tokenizerJSON.decoder);\n\n        // Add added_tokens to model\n        this.special_tokens = [];\n        this.all_special_ids = [];\n\n        /** @type {AddedToken[]} */\n        this.added_tokens = [];\n        for (const addedToken of tokenizerJSON.added_tokens) {\n            const token = new AddedToken(addedToken);\n            this.added_tokens.push(token);\n\n            this.model.tokens_to_ids.set(token.content, token.id);\n            this.model.vocab[token.id] = token.content;\n\n            if (token.special) {\n                this.special_tokens.push(token.content);\n                this.all_special_ids.push(token.id);\n            }\n        }\n\n        // Update additional_special_tokens\n        this.additional_special_tokens = tokenizerConfig.additional_special_tokens ?? [];\n        this.special_tokens.push(...this.additional_special_tokens);\n        this.special_tokens = [...new Set(this.special_tokens)]; // Remove duplicates\n\n        if (this.decoder) {\n            // Slight hack, but it prevents code duplication:\n            this.decoder.added_tokens = this.added_tokens;\n\n            // Another slight hack to add `end_of_word_suffix` (if present) to the decoder\n            // This is needed for cases where BPE model and ByteLevel decoder are used\n            // For more information, see https://github.com/xenova/transformers.js/issues/74\n            // TODO: save this to the decoder when exporting?\n            this.decoder.end_of_word_suffix = this.model.end_of_word_suffix;\n        }\n\n\n        this.added_tokens_regex = this.added_tokens.length > 0 ? new RegExp(\n            this.added_tokens.map(x => `${x.lstrip ? '\\\\s*' : ''}(${escapeRegExp(x.content)})${x.rstrip ? '\\\\s*' : ''}`).join('|')\n        ) : null;\n\n        // Set mask token if present (otherwise will be undefined, which is fine)\n        this.mask_token = this.getToken('mask_token');\n        this.mask_token_id = this.model.tokens_to_ids.get(this.mask_token);\n\n        this.pad_token = this.getToken('pad_token', 'eos_token');\n        this.pad_token_id = this.model.tokens_to_ids.get(this.pad_token);\n\n        this.sep_token = this.getToken('sep_token');\n        this.sep_token_id = this.model.tokens_to_ids.get(this.sep_token);\n\n        this.unk_token = this.getToken('unk_token');\n        this.unk_token_id = this.model.tokens_to_ids.get(this.unk_token);\n\n        this.model_max_length = tokenizerConfig.model_max_length;\n\n        /** @type {boolean} Whether or not to strip the text when tokenizing (removing excess spaces before and after the string). */\n        this.remove_space = tokenizerConfig.remove_space;\n\n        this.clean_up_tokenization_spaces = tokenizerConfig.clean_up_tokenization_spaces ?? true;\n        this.do_lowercase_and_remove_accent = tokenizerConfig.do_lowercase_and_remove_accent ?? false;\n\n        // TODO allow user to change this\n        /** @type {'right'|'left'} */\n        this.padding_side = 'right';\n\n        this.legacy = false;\n\n        this.chat_template = tokenizerConfig.chat_template ?? null;\n        if (Array.isArray(this.chat_template)) {\n            // Chat templates are stored as lists of dicts with fixed key names,\n            // we reconstruct that into a single dict while loading them.\n            const chat_template = Object.create(null);\n            for (const { name, template } of this.chat_template) {\n                if (typeof name !== 'string' || typeof template !== 'string') {\n                    throw new Error('Chat template must be a list of objects with \"name\" and \"template\" properties');\n                }\n                chat_template[name] = template;\n            }\n            this.chat_template = chat_template;\n        }\n        this._compiled_template_cache = new Map();\n    }",
+            "start_line": 2448,
+            "symbol_id": "src/tokenizers.js#method:constructor:2448"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the value of the first matching key in the tokenizer config object.\n@param {...string} keys One or more keys to search for in the tokenizer config object.\n@returns {string|null} The value associated with the first matching key, or null if no match is found.\n@throws {Error} If an object is found for a matching key and its __type property is not \"AddedToken\".",
+            "end_line": 2566,
+            "kind": "method",
+            "name": "getToken",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "getToken",
+            "signature": "getToken(...keys) {\n        for (const key of keys) {\n            const item = this._tokenizer_config[key];\n\n            if (!item) continue;\n\n            if (typeof item === 'object') {\n                if (item.__type === 'AddedToken') {\n                    return item.content;\n                } else {\n                    throw Error(`Unknown token: ${item}`);\n                }\n            } else {\n                return item;\n            }\n        }\n        return null;\n    }",
+            "start_line": 2549,
+            "symbol_id": "src/tokenizers.js#method:getToken:2549"
+          },
+          {
+            "children": [],
+            "documentation": "Loads a pre-trained tokenizer from the given `pretrained_model_name_or_path`.\n\n@param {string} pretrained_model_name_or_path The path to the pre-trained tokenizer.\n@param {PretrainedTokenizerOptions} options Additional options for loading the tokenizer.\n\n@throws {Error} Throws an error if the tokenizer.json or tokenizer_config.json files are not found in the `pretrained_model_name_or_path`.\n@returns {Promise<PreTrainedTokenizer>} A new instance of the `PreTrainedTokenizer` class.",
+            "end_line": 2597,
+            "kind": "method",
+            "name": "from_pretrained",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "from_pretrained",
+            "signature": "static async from_pretrained(pretrained_model_name_or_path, {\n        progress_callback = null,\n        config = null,\n        cache_dir = null,\n        local_files_only = false,\n        revision = 'main',\n        legacy = null,\n    } = {}) {\n\n        const info = await loadTokenizer(pretrained_model_name_or_path, {\n            progress_callback,\n            config,\n            cache_dir,\n            local_files_only,\n            revision,\n            legacy,\n        })\n\n        // @ts-ignore\n        return new this(...info);\n    }",
+            "start_line": 2577,
+            "symbol_id": "src/tokenizers.js#method:from_pretrained:2577"
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src",
+          "workspace_id": "ts_002_ctx4k"
+        },
+        "id": "call_TGGrvYPrN4meaQPglVXOp9MU",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "Pre-tokenizes the input text by splitting it on whitespace characters.\n@param {string} text The text to be pre-tokenized.\n@param {Object} [options] Additional options for the pre-tokenization logic.\n@returns {string[]} An array of tokens produced by splitting the input text on whitespace.",
+            "end_line": 2352,
+            "kind": "method",
+            "name": "pre_tokenize_text",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "pre_tokenize_text",
+            "signature": "pre_tokenize_text(text, options) {\n        return whitespace_split(text);\n    }",
+            "start_line": 2350,
+            "symbol_id": "src/tokenizers.js#method:pre_tokenize_text:2350"
+          },
+          {
+            "children": [],
+            "documentation": "@param {Object} config The configuration options for the pre-tokenizer.\n@param {Object} config.pattern The pattern used to split the text. Can be a string or a regex object.\n@param {string} config.content What to replace the pattern with.",
+            "end_line": 2367,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(config) {\n        super();\n        this.config = config;\n        this.pattern = createPattern(this.config.pattern);\n        this.content = this.config.content;\n    }",
+            "start_line": 2362,
+            "symbol_id": "src/tokenizers.js#method:constructor:2362"
+          },
+          {
+            "children": [],
+            "documentation": "Pre-tokenizes the input text by replacing certain characters.\n@param {string} text The text to be pre-tokenized.\n@param {Object} [options] Additional options for the pre-tokenization logic.\n@returns {string[]} An array of tokens produced by replacing certain characters.",
+            "end_line": 2380,
+            "kind": "method",
+            "name": "pre_tokenize_text",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "pre_tokenize_text",
+            "signature": "pre_tokenize_text(text, options) {\n        if (this.pattern === null) {\n            return [text];\n        }\n        return [text.replaceAll(this.pattern, this.config.content)];\n    }",
+            "start_line": 2375,
+            "symbol_id": "src/tokenizers.js#method:pre_tokenize_text:2375"
+          },
+          {
+            "children": [],
+            "documentation": "Helper function for truncating values of an object, which are each arrays.\nNOTE: No additional checks are made here for validity of arguments.\n@param {Record<string, any[]>} item The input object.\n@param {number} length The length to truncate to.\n@private",
+            "end_line": 2429,
+            "kind": "function",
+            "name": "truncateHelper",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "truncateHelper",
+            "signature": "function truncateHelper(item, length) {\n    // Setting .length to a lower value truncates the array in-place:\n    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/length\n    for (const key of Object.keys(item)) {\n        item[key].length = length;\n    }\n}",
+            "start_line": 2423,
+            "symbol_id": "src/tokenizers.js#function:truncateHelper:2423"
+          },
+          {
+            "children": [],
+            "documentation": "Create a new PreTrainedTokenizer instance.\n@param {Object} tokenizerJSON The JSON of the tokenizer.\n@param {Object} tokenizerConfig The config of the tokenizer.",
+            "end_line": 2541,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(tokenizerJSON, tokenizerConfig) {\n        super();\n\n        this._tokenizer_config = tokenizerConfig;\n\n        // Construct parts of the tokenizer from the JSON\n        this.normalizer = Normalizer.fromConfig(tokenizerJSON.normalizer);\n        this.pre_tokenizer = PreTokenizer.fromConfig(tokenizerJSON.pre_tokenizer);\n        this.model = TokenizerModel.fromConfig(tokenizerJSON.model, tokenizerConfig);\n        this.post_processor = PostProcessor.fromConfig(tokenizerJSON.post_processor);\n        this.decoder = Decoder.fromConfig(tokenizerJSON.decoder);\n\n        // Add added_tokens to model\n        this.special_tokens = [];\n        this.all_special_ids = [];\n\n        /** @type {AddedToken[]} */\n        this.added_tokens = [];\n        for (const addedToken of tokenizerJSON.added_tokens) {\n            const token = new AddedToken(addedToken);\n            this.added_tokens.push(token);\n\n            this.model.tokens_to_ids.set(token.content, token.id);\n            this.model.vocab[token.id] = token.content;\n\n            if (token.special) {\n                this.special_tokens.push(token.content);\n                this.all_special_ids.push(token.id);\n            }\n        }\n\n        // Update additional_special_tokens\n        this.additional_special_tokens = tokenizerConfig.additional_special_tokens ?? [];\n        this.special_tokens.push(...this.additional_special_tokens);\n        this.special_tokens = [...new Set(this.special_tokens)]; // Remove duplicates\n\n        if (this.decoder) {\n            // Slight hack, but it prevents code duplication:\n            this.decoder.added_tokens = this.added_tokens;\n\n            // Another slight hack to add `end_of_word_suffix` (if present) to the decoder\n            // This is needed for cases where BPE model and ByteLevel decoder are used\n            // For more information, see https://github.com/xenova/transformers.js/issues/74\n            // TODO: save this to the decoder when exporting?\n            this.decoder.end_of_word_suffix = this.model.end_of_word_suffix;\n        }\n\n\n        this.added_tokens_regex = this.added_tokens.length > 0 ? new RegExp(\n            this.added_tokens.map(x => `${x.lstrip ? '\\\\s*' : ''}(${escapeRegExp(x.content)})${x.rstrip ? '\\\\s*' : ''}`).join('|')\n        ) : null;\n\n        // Set mask token if present (otherwise will be undefined, which is fine)\n        this.mask_token = this.getToken('mask_token');\n        this.mask_token_id = this.model.tokens_to_ids.get(this.mask_token);\n\n        this.pad_token = this.getToken('pad_token', 'eos_token');\n        this.pad_token_id = this.model.tokens_to_ids.get(this.pad_token);\n\n        this.sep_token = this.getToken('sep_token');\n        this.sep_token_id = this.model.tokens_to_ids.get(this.sep_token);\n\n        this.unk_token = this.getToken('unk_token');\n        this.unk_token_id = this.model.tokens_to_ids.get(this.unk_token);\n\n        this.model_max_length = tokenizerConfig.model_max_length;\n\n        /** @type {boolean} Whether or not to strip the text when tokenizing (removing excess spaces before and after the string). */\n        this.remove_space = tokenizerConfig.remove_space;\n\n        this.clean_up_tokenization_spaces = tokenizerConfig.clean_up_tokenization_spaces ?? true;\n        this.do_lowercase_and_remove_accent = tokenizerConfig.do_lowercase_and_remove_accent ?? false;\n\n        // TODO allow user to change this\n        /** @type {'right'|'left'} */\n        this.padding_side = 'right';\n\n        this.legacy = false;\n\n        this.chat_template = tokenizerConfig.chat_template ?? null;\n        if (Array.isArray(this.chat_template)) {\n            // Chat templates are stored as lists of dicts with fixed key names,\n            // we reconstruct that into a single dict while loading them.\n            const chat_template = Object.create(null);\n            for (const { name, template } of this.chat_template) {\n                if (typeof name !== 'string' || typeof template !== 'string') {\n                    throw new Error('Chat template must be a list of objects with \"name\" and \"template\" properties');\n                }\n                chat_template[name] = template;\n            }\n            this.chat_template = chat_template;\n        }\n        this._compiled_template_cache = new Map();\n    }",
+            "start_line": 2448,
+            "symbol_id": "src/tokenizers.js#method:constructor:2448"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the value of the first matching key in the tokenizer config object.\n@param {...string} keys One or more keys to search for in the tokenizer config object.\n@returns {string|null} The value associated with the first matching key, or null if no match is found.\n@throws {Error} If an object is found for a matching key and its __type property is not \"AddedToken\".",
+            "end_line": 2566,
+            "kind": "method",
+            "name": "getToken",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "getToken",
+            "signature": "getToken(...keys) {\n        for (const key of keys) {\n            const item = this._tokenizer_config[key];\n\n            if (!item) continue;\n\n            if (typeof item === 'object') {\n                if (item.__type === 'AddedToken') {\n                    return item.content;\n                } else {\n                    throw Error(`Unknown token: ${item}`);\n                }\n            } else {\n                return item;\n            }\n        }\n        return null;\n    }",
+            "start_line": 2549,
+            "symbol_id": "src/tokenizers.js#method:getToken:2549"
+          },
+          {
+            "children": [],
+            "documentation": "Loads a pre-trained tokenizer from the given `pretrained_model_name_or_path`.\n\n@param {string} pretrained_model_name_or_path The path to the pre-trained tokenizer.\n@param {PretrainedTokenizerOptions} options Additional options for loading the tokenizer.\n\n@throws {Error} Throws an error if the tokenizer.json or tokenizer_config.json files are not found in the `pretrained_model_name_or_path`.\n@returns {Promise<PreTrainedTokenizer>} A new instance of the `PreTrainedTokenizer` class.",
+            "end_line": 2597,
+            "kind": "method",
+            "name": "from_pretrained",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "from_pretrained",
+            "signature": "static async from_pretrained(pretrained_model_name_or_path, {\n        progress_callback = null,\n        config = null,\n        cache_dir = null,\n        local_files_only = false,\n        revision = 'main',\n        legacy = null,\n    } = {}) {\n\n        const info = await loadTokenizer(pretrained_model_name_or_path, {\n            progress_callback,\n            config,\n            cache_dir,\n            local_files_only,\n            revision,\n            legacy,\n        })\n\n        // @ts-ignore\n        return new this(...info);\n    }",
+            "start_line": 2577,
+            "symbol_id": "src/tokenizers.js#method:from_pretrained:2577"
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function:extend",
+          "path": "src",
+          "workspace_id": "ts_002_ctx4k"
+        },
+        "id": "call_qTYyvH4FZJMRJ5DxCsTe8Oml",
+        "isError": false,
+        "name": "list_symbols",
+        "result": []
+      },
+      {
+        "arguments": {
+          "workspace_id": "ts_002_ctx4k"
+        },
+        "id": "call_DQKqNt5MLT4oUjP2RhJU3zLS",
+        "isError": false,
+        "name": "list_files",
+        "result": [
+          {
+            "language": "typescript",
+            "parse_status": "ok_filtered",
+            "path": "src/tokenizers.js",
+            "repository": "xenova/transformers.js",
+            "symbol_count": 30
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "src/tokenizers.js",
+          "workspace_id": "ts_002_ctx4k"
+        },
+        "id": "call_USDi0wHzispEuNe34qHQCFG2",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "Pre-tokenizes the input text by splitting it on whitespace characters.\n@param {string} text The text to be pre-tokenized.\n@param {Object} [options] Additional options for the pre-tokenization logic.\n@returns {string[]} An array of tokens produced by splitting the input text on whitespace.",
+            "end_line": 2352,
+            "kind": "method",
+            "name": "pre_tokenize_text",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "pre_tokenize_text",
+            "signature": "pre_tokenize_text(text, options) {\n        return whitespace_split(text);\n    }",
+            "start_line": 2350,
+            "symbol_id": "src/tokenizers.js#method:pre_tokenize_text:2350"
+          },
+          {
+            "children": [],
+            "documentation": "@param {Object} config The configuration options for the pre-tokenizer.\n@param {Object} config.pattern The pattern used to split the text. Can be a string or a regex object.\n@param {string} config.content What to replace the pattern with.",
+            "end_line": 2367,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(config) {\n        super();\n        this.config = config;\n        this.pattern = createPattern(this.config.pattern);\n        this.content = this.config.content;\n    }",
+            "start_line": 2362,
+            "symbol_id": "src/tokenizers.js#method:constructor:2362"
+          },
+          {
+            "children": [],
+            "documentation": "Pre-tokenizes the input text by replacing certain characters.\n@param {string} text The text to be pre-tokenized.\n@param {Object} [options] Additional options for the pre-tokenization logic.\n@returns {string[]} An array of tokens produced by replacing certain characters.",
+            "end_line": 2380,
+            "kind": "method",
+            "name": "pre_tokenize_text",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "pre_tokenize_text",
+            "signature": "pre_tokenize_text(text, options) {\n        if (this.pattern === null) {\n            return [text];\n        }\n        return [text.replaceAll(this.pattern, this.config.content)];\n    }",
+            "start_line": 2375,
+            "symbol_id": "src/tokenizers.js#method:pre_tokenize_text:2375"
+          },
+          {
+            "children": [],
+            "documentation": "Helper function for truncating values of an object, which are each arrays.\nNOTE: No additional checks are made here for validity of arguments.\n@param {Record<string, any[]>} item The input object.\n@param {number} length The length to truncate to.\n@private",
+            "end_line": 2429,
+            "kind": "function",
+            "name": "truncateHelper",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "truncateHelper",
+            "signature": "function truncateHelper(item, length) {\n    // Setting .length to a lower value truncates the array in-place:\n    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/length\n    for (const key of Object.keys(item)) {\n        item[key].length = length;\n    }\n}",
+            "start_line": 2423,
+            "symbol_id": "src/tokenizers.js#function:truncateHelper:2423"
+          },
+          {
+            "children": [],
+            "documentation": "Create a new PreTrainedTokenizer instance.\n@param {Object} tokenizerJSON The JSON of the tokenizer.\n@param {Object} tokenizerConfig The config of the tokenizer.",
+            "end_line": 2541,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(tokenizerJSON, tokenizerConfig) {\n        super();\n\n        this._tokenizer_config = tokenizerConfig;\n\n        // Construct parts of the tokenizer from the JSON\n        this.normalizer = Normalizer.fromConfig(tokenizerJSON.normalizer);\n        this.pre_tokenizer = PreTokenizer.fromConfig(tokenizerJSON.pre_tokenizer);\n        this.model = TokenizerModel.fromConfig(tokenizerJSON.model, tokenizerConfig);\n        this.post_processor = PostProcessor.fromConfig(tokenizerJSON.post_processor);\n        this.decoder = Decoder.fromConfig(tokenizerJSON.decoder);\n\n        // Add added_tokens to model\n        this.special_tokens = [];\n        this.all_special_ids = [];\n\n        /** @type {AddedToken[]} */\n        this.added_tokens = [];\n        for (const addedToken of tokenizerJSON.added_tokens) {\n            const token = new AddedToken(addedToken);\n            this.added_tokens.push(token);\n\n            this.model.tokens_to_ids.set(token.content, token.id);\n            this.model.vocab[token.id] = token.content;\n\n            if (token.special) {\n                this.special_tokens.push(token.content);\n                this.all_special_ids.push(token.id);\n            }\n        }\n\n        // Update additional_special_tokens\n        this.additional_special_tokens = tokenizerConfig.additional_special_tokens ?? [];\n        this.special_tokens.push(...this.additional_special_tokens);\n        this.special_tokens = [...new Set(this.special_tokens)]; // Remove duplicates\n\n        if (this.decoder) {\n            // Slight hack, but it prevents code duplication:\n            this.decoder.added_tokens = this.added_tokens;\n\n            // Another slight hack to add `end_of_word_suffix` (if present) to the decoder\n            // This is needed for cases where BPE model and ByteLevel decoder are used\n            // For more information, see https://github.com/xenova/transformers.js/issues/74\n            // TODO: save this to the decoder when exporting?\n            this.decoder.end_of_word_suffix = this.model.end_of_word_suffix;\n        }\n\n\n        this.added_tokens_regex = this.added_tokens.length > 0 ? new RegExp(\n            this.added_tokens.map(x => `${x.lstrip ? '\\\\s*' : ''}(${escapeRegExp(x.content)})${x.rstrip ? '\\\\s*' : ''}`).join('|')\n        ) : null;\n\n        // Set mask token if present (otherwise will be undefined, which is fine)\n        this.mask_token = this.getToken('mask_token');\n        this.mask_token_id = this.model.tokens_to_ids.get(this.mask_token);\n\n        this.pad_token = this.getToken('pad_token', 'eos_token');\n        this.pad_token_id = this.model.tokens_to_ids.get(this.pad_token);\n\n        this.sep_token = this.getToken('sep_token');\n        this.sep_token_id = this.model.tokens_to_ids.get(this.sep_token);\n\n        this.unk_token = this.getToken('unk_token');\n        this.unk_token_id = this.model.tokens_to_ids.get(this.unk_token);\n\n        this.model_max_length = tokenizerConfig.model_max_length;\n\n        /** @type {boolean} Whether or not to strip the text when tokenizing (removing excess spaces before and after the string). */\n        this.remove_space = tokenizerConfig.remove_space;\n\n        this.clean_up_tokenization_spaces = tokenizerConfig.clean_up_tokenization_spaces ?? true;\n        this.do_lowercase_and_remove_accent = tokenizerConfig.do_lowercase_and_remove_accent ?? false;\n\n        // TODO allow user to change this\n        /** @type {'right'|'left'} */\n        this.padding_side = 'right';\n\n        this.legacy = false;\n\n        this.chat_template = tokenizerConfig.chat_template ?? null;\n        if (Array.isArray(this.chat_template)) {\n            // Chat templates are stored as lists of dicts with fixed key names,\n            // we reconstruct that into a single dict while loading them.\n            const chat_template = Object.create(null);\n            for (const { name, template } of this.chat_template) {\n                if (typeof name !== 'string' || typeof template !== 'string') {\n                    throw new Error('Chat template must be a list of objects with \"name\" and \"template\" properties');\n                }\n                chat_template[name] = template;\n            }\n            this.chat_template = chat_template;\n        }\n        this._compiled_template_cache = new Map();\n    }",
+            "start_line": 2448,
+            "symbol_id": "src/tokenizers.js#method:constructor:2448"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the value of the first matching key in the tokenizer config object.\n@param {...string} keys One or more keys to search for in the tokenizer config object.\n@returns {string|null} The value associated with the first matching key, or null if no match is found.\n@throws {Error} If an object is found for a matching key and its __type property is not \"AddedToken\".",
+            "end_line": 2566,
+            "kind": "method",
+            "name": "getToken",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "getToken",
+            "signature": "getToken(...keys) {\n        for (const key of keys) {\n            const item = this._tokenizer_config[key];\n\n            if (!item) continue;\n\n            if (typeof item === 'object') {\n                if (item.__type === 'AddedToken') {\n                    return item.content;\n                } else {\n                    throw Error(`Unknown token: ${item}`);\n                }\n            } else {\n                return item;\n            }\n        }\n        return null;\n    }",
+            "start_line": 2549,
+            "symbol_id": "src/tokenizers.js#method:getToken:2549"
+          },
+          {
+            "children": [],
+            "documentation": "Loads a pre-trained tokenizer from the given `pretrained_model_name_or_path`.\n\n@param {string} pretrained_model_name_or_path The path to the pre-trained tokenizer.\n@param {PretrainedTokenizerOptions} options Additional options for loading the tokenizer.\n\n@throws {Error} Throws an error if the tokenizer.json or tokenizer_config.json files are not found in the `pretrained_model_name_or_path`.\n@returns {Promise<PreTrainedTokenizer>} A new instance of the `PreTrainedTokenizer` class.",
+            "end_line": 2597,
+            "kind": "method",
+            "name": "from_pretrained",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "from_pretrained",
+            "signature": "static async from_pretrained(pretrained_model_name_or_path, {\n        progress_callback = null,\n        config = null,\n        cache_dir = null,\n        local_files_only = false,\n        revision = 'main',\n        legacy = null,\n    } = {}) {\n\n        const info = await loadTokenizer(pretrained_model_name_or_path, {\n            progress_callback,\n            config,\n            cache_dir,\n            local_files_only,\n            revision,\n            legacy,\n        })\n\n        // @ts-ignore\n        return new this(...info);\n    }",
+            "start_line": 2577,
+            "symbol_id": "src/tokenizers.js#method:from_pretrained:2577"
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "",
+          "workspace_id": "ts_002_ctx4k"
+        },
+        "id": "call_YgALAbEKUOeAEjKB8hYrWDs6",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "Pre-tokenizes the input text by splitting it on whitespace characters.\n@param {string} text The text to be pre-tokenized.\n@param {Object} [options] Additional options for the pre-tokenization logic.\n@returns {string[]} An array of tokens produced by splitting the input text on whitespace.",
+            "end_line": 2352,
+            "kind": "method",
+            "name": "pre_tokenize_text",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "pre_tokenize_text",
+            "signature": "pre_tokenize_text(text, options) {\n        return whitespace_split(text);\n    }",
+            "start_line": 2350,
+            "symbol_id": "src/tokenizers.js#method:pre_tokenize_text:2350"
+          },
+          {
+            "children": [],
+            "documentation": "@param {Object} config The configuration options for the pre-tokenizer.\n@param {Object} config.pattern The pattern used to split the text. Can be a string or a regex object.\n@param {string} config.content What to replace the pattern with.",
+            "end_line": 2367,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(config) {\n        super();\n        this.config = config;\n        this.pattern = createPattern(this.config.pattern);\n        this.content = this.config.content;\n    }",
+            "start_line": 2362,
+            "symbol_id": "src/tokenizers.js#method:constructor:2362"
+          },
+          {
+            "children": [],
+            "documentation": "Pre-tokenizes the input text by replacing certain characters.\n@param {string} text The text to be pre-tokenized.\n@param {Object} [options] Additional options for the pre-tokenization logic.\n@returns {string[]} An array of tokens produced by replacing certain characters.",
+            "end_line": 2380,
+            "kind": "method",
+            "name": "pre_tokenize_text",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "pre_tokenize_text",
+            "signature": "pre_tokenize_text(text, options) {\n        if (this.pattern === null) {\n            return [text];\n        }\n        return [text.replaceAll(this.pattern, this.config.content)];\n    }",
+            "start_line": 2375,
+            "symbol_id": "src/tokenizers.js#method:pre_tokenize_text:2375"
+          },
+          {
+            "children": [],
+            "documentation": "Helper function for truncating values of an object, which are each arrays.\nNOTE: No additional checks are made here for validity of arguments.\n@param {Record<string, any[]>} item The input object.\n@param {number} length The length to truncate to.\n@private",
+            "end_line": 2429,
+            "kind": "function",
+            "name": "truncateHelper",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "truncateHelper",
+            "signature": "function truncateHelper(item, length) {\n    // Setting .length to a lower value truncates the array in-place:\n    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/length\n    for (const key of Object.keys(item)) {\n        item[key].length = length;\n    }\n}",
+            "start_line": 2423,
+            "symbol_id": "src/tokenizers.js#function:truncateHelper:2423"
+          },
+          {
+            "children": [],
+            "documentation": "Create a new PreTrainedTokenizer instance.\n@param {Object} tokenizerJSON The JSON of the tokenizer.\n@param {Object} tokenizerConfig The config of the tokenizer.",
+            "end_line": 2541,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(tokenizerJSON, tokenizerConfig) {\n        super();\n\n        this._tokenizer_config = tokenizerConfig;\n\n        // Construct parts of the tokenizer from the JSON\n        this.normalizer = Normalizer.fromConfig(tokenizerJSON.normalizer);\n        this.pre_tokenizer = PreTokenizer.fromConfig(tokenizerJSON.pre_tokenizer);\n        this.model = TokenizerModel.fromConfig(tokenizerJSON.model, tokenizerConfig);\n        this.post_processor = PostProcessor.fromConfig(tokenizerJSON.post_processor);\n        this.decoder = Decoder.fromConfig(tokenizerJSON.decoder);\n\n        // Add added_tokens to model\n        this.special_tokens = [];\n        this.all_special_ids = [];\n\n        /** @type {AddedToken[]} */\n        this.added_tokens = [];\n        for (const addedToken of tokenizerJSON.added_tokens) {\n            const token = new AddedToken(addedToken);\n            this.added_tokens.push(token);\n\n            this.model.tokens_to_ids.set(token.content, token.id);\n            this.model.vocab[token.id] = token.content;\n\n            if (token.special) {\n                this.special_tokens.push(token.content);\n                this.all_special_ids.push(token.id);\n            }\n        }\n\n        // Update additional_special_tokens\n        this.additional_special_tokens = tokenizerConfig.additional_special_tokens ?? [];\n        this.special_tokens.push(...this.additional_special_tokens);\n        this.special_tokens = [...new Set(this.special_tokens)]; // Remove duplicates\n\n        if (this.decoder) {\n            // Slight hack, but it prevents code duplication:\n            this.decoder.added_tokens = this.added_tokens;\n\n            // Another slight hack to add `end_of_word_suffix` (if present) to the decoder\n            // This is needed for cases where BPE model and ByteLevel decoder are used\n            // For more information, see https://github.com/xenova/transformers.js/issues/74\n            // TODO: save this to the decoder when exporting?\n            this.decoder.end_of_word_suffix = this.model.end_of_word_suffix;\n        }\n\n\n        this.added_tokens_regex = this.added_tokens.length > 0 ? new RegExp(\n            this.added_tokens.map(x => `${x.lstrip ? '\\\\s*' : ''}(${escapeRegExp(x.content)})${x.rstrip ? '\\\\s*' : ''}`).join('|')\n        ) : null;\n\n        // Set mask token if present (otherwise will be undefined, which is fine)\n        this.mask_token = this.getToken('mask_token');\n        this.mask_token_id = this.model.tokens_to_ids.get(this.mask_token);\n\n        this.pad_token = this.getToken('pad_token', 'eos_token');\n        this.pad_token_id = this.model.tokens_to_ids.get(this.pad_token);\n\n        this.sep_token = this.getToken('sep_token');\n        this.sep_token_id = this.model.tokens_to_ids.get(this.sep_token);\n\n        this.unk_token = this.getToken('unk_token');\n        this.unk_token_id = this.model.tokens_to_ids.get(this.unk_token);\n\n        this.model_max_length = tokenizerConfig.model_max_length;\n\n        /** @type {boolean} Whether or not to strip the text when tokenizing (removing excess spaces before and after the string). */\n        this.remove_space = tokenizerConfig.remove_space;\n\n        this.clean_up_tokenization_spaces = tokenizerConfig.clean_up_tokenization_spaces ?? true;\n        this.do_lowercase_and_remove_accent = tokenizerConfig.do_lowercase_and_remove_accent ?? false;\n\n        // TODO allow user to change this\n        /** @type {'right'|'left'} */\n        this.padding_side = 'right';\n\n        this.legacy = false;\n\n        this.chat_template = tokenizerConfig.chat_template ?? null;\n        if (Array.isArray(this.chat_template)) {\n            // Chat templates are stored as lists of dicts with fixed key names,\n            // we reconstruct that into a single dict while loading them.\n            const chat_template = Object.create(null);\n            for (const { name, template } of this.chat_template) {\n                if (typeof name !== 'string' || typeof template !== 'string') {\n                    throw new Error('Chat template must be a list of objects with \"name\" and \"template\" properties');\n                }\n                chat_template[name] = template;\n            }\n            this.chat_template = chat_template;\n        }\n        this._compiled_template_cache = new Map();\n    }",
+            "start_line": 2448,
+            "symbol_id": "src/tokenizers.js#method:constructor:2448"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the value of the first matching key in the tokenizer config object.\n@param {...string} keys One or more keys to search for in the tokenizer config object.\n@returns {string|null} The value associated with the first matching key, or null if no match is found.\n@throws {Error} If an object is found for a matching key and its __type property is not \"AddedToken\".",
+            "end_line": 2566,
+            "kind": "method",
+            "name": "getToken",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "getToken",
+            "signature": "getToken(...keys) {\n        for (const key of keys) {\n            const item = this._tokenizer_config[key];\n\n            if (!item) continue;\n\n            if (typeof item === 'object') {\n                if (item.__type === 'AddedToken') {\n                    return item.content;\n                } else {\n                    throw Error(`Unknown token: ${item}`);\n                }\n            } else {\n                return item;\n            }\n        }\n        return null;\n    }",
+            "start_line": 2549,
+            "symbol_id": "src/tokenizers.js#method:getToken:2549"
+          },
+          {
+            "children": [],
+            "documentation": "Loads a pre-trained tokenizer from the given `pretrained_model_name_or_path`.\n\n@param {string} pretrained_model_name_or_path The path to the pre-trained tokenizer.\n@param {PretrainedTokenizerOptions} options Additional options for loading the tokenizer.\n\n@throws {Error} Throws an error if the tokenizer.json or tokenizer_config.json files are not found in the `pretrained_model_name_or_path`.\n@returns {Promise<PreTrainedTokenizer>} A new instance of the `PreTrainedTokenizer` class.",
+            "end_line": 2597,
+            "kind": "method",
+            "name": "from_pretrained",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "from_pretrained",
+            "signature": "static async from_pretrained(pretrained_model_name_or_path, {\n        progress_callback = null,\n        config = null,\n        cache_dir = null,\n        local_files_only = false,\n        revision = 'main',\n        legacy = null,\n    } = {}) {\n\n        const info = await loadTokenizer(pretrained_model_name_or_path, {\n            progress_callback,\n            config,\n            cache_dir,\n            local_files_only,\n            revision,\n            legacy,\n        })\n\n        // @ts-ignore\n        return new this(...info);\n    }",
+            "start_line": 2577,
+            "symbol_id": "src/tokenizers.js#method:from_pretrained:2577"
+          }
+        ]
+      },
+      {
+        "arguments": {
+          "kind": "function",
+          "path": "",
+          "workspace_id": "ts_002_ctx4k"
+        },
+        "id": "call_2MY0r7gdSDNp3USYOybgJt0Q",
+        "isError": false,
+        "name": "list_symbols",
+        "result": [
+          {
+            "children": [],
+            "documentation": "Pre-tokenizes the input text by splitting it on whitespace characters.\n@param {string} text The text to be pre-tokenized.\n@param {Object} [options] Additional options for the pre-tokenization logic.\n@returns {string[]} An array of tokens produced by splitting the input text on whitespace.",
+            "end_line": 2352,
+            "kind": "method",
+            "name": "pre_tokenize_text",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "pre_tokenize_text",
+            "signature": "pre_tokenize_text(text, options) {\n        return whitespace_split(text);\n    }",
+            "start_line": 2350,
+            "symbol_id": "src/tokenizers.js#method:pre_tokenize_text:2350"
+          },
+          {
+            "children": [],
+            "documentation": "@param {Object} config The configuration options for the pre-tokenizer.\n@param {Object} config.pattern The pattern used to split the text. Can be a string or a regex object.\n@param {string} config.content What to replace the pattern with.",
+            "end_line": 2367,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(config) {\n        super();\n        this.config = config;\n        this.pattern = createPattern(this.config.pattern);\n        this.content = this.config.content;\n    }",
+            "start_line": 2362,
+            "symbol_id": "src/tokenizers.js#method:constructor:2362"
+          },
+          {
+            "children": [],
+            "documentation": "Pre-tokenizes the input text by replacing certain characters.\n@param {string} text The text to be pre-tokenized.\n@param {Object} [options] Additional options for the pre-tokenization logic.\n@returns {string[]} An array of tokens produced by replacing certain characters.",
+            "end_line": 2380,
+            "kind": "method",
+            "name": "pre_tokenize_text",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "pre_tokenize_text",
+            "signature": "pre_tokenize_text(text, options) {\n        if (this.pattern === null) {\n            return [text];\n        }\n        return [text.replaceAll(this.pattern, this.config.content)];\n    }",
+            "start_line": 2375,
+            "symbol_id": "src/tokenizers.js#method:pre_tokenize_text:2375"
+          },
+          {
+            "children": [],
+            "documentation": "Helper function for truncating values of an object, which are each arrays.\nNOTE: No additional checks are made here for validity of arguments.\n@param {Record<string, any[]>} item The input object.\n@param {number} length The length to truncate to.\n@private",
+            "end_line": 2429,
+            "kind": "function",
+            "name": "truncateHelper",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "truncateHelper",
+            "signature": "function truncateHelper(item, length) {\n    // Setting .length to a lower value truncates the array in-place:\n    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/length\n    for (const key of Object.keys(item)) {\n        item[key].length = length;\n    }\n}",
+            "start_line": 2423,
+            "symbol_id": "src/tokenizers.js#function:truncateHelper:2423"
+          },
+          {
+            "children": [],
+            "documentation": "Create a new PreTrainedTokenizer instance.\n@param {Object} tokenizerJSON The JSON of the tokenizer.\n@param {Object} tokenizerConfig The config of the tokenizer.",
+            "end_line": 2541,
+            "kind": "method",
+            "name": "constructor",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "constructor",
+            "signature": "constructor(tokenizerJSON, tokenizerConfig) {\n        super();\n\n        this._tokenizer_config = tokenizerConfig;\n\n        // Construct parts of the tokenizer from the JSON\n        this.normalizer = Normalizer.fromConfig(tokenizerJSON.normalizer);\n        this.pre_tokenizer = PreTokenizer.fromConfig(tokenizerJSON.pre_tokenizer);\n        this.model = TokenizerModel.fromConfig(tokenizerJSON.model, tokenizerConfig);\n        this.post_processor = PostProcessor.fromConfig(tokenizerJSON.post_processor);\n        this.decoder = Decoder.fromConfig(tokenizerJSON.decoder);\n\n        // Add added_tokens to model\n        this.special_tokens = [];\n        this.all_special_ids = [];\n\n        /** @type {AddedToken[]} */\n        this.added_tokens = [];\n        for (const addedToken of tokenizerJSON.added_tokens) {\n            const token = new AddedToken(addedToken);\n            this.added_tokens.push(token);\n\n            this.model.tokens_to_ids.set(token.content, token.id);\n            this.model.vocab[token.id] = token.content;\n\n            if (token.special) {\n                this.special_tokens.push(token.content);\n                this.all_special_ids.push(token.id);\n            }\n        }\n\n        // Update additional_special_tokens\n        this.additional_special_tokens = tokenizerConfig.additional_special_tokens ?? [];\n        this.special_tokens.push(...this.additional_special_tokens);\n        this.special_tokens = [...new Set(this.special_tokens)]; // Remove duplicates\n\n        if (this.decoder) {\n            // Slight hack, but it prevents code duplication:\n            this.decoder.added_tokens = this.added_tokens;\n\n            // Another slight hack to add `end_of_word_suffix` (if present) to the decoder\n            // This is needed for cases where BPE model and ByteLevel decoder are used\n            // For more information, see https://github.com/xenova/transformers.js/issues/74\n            // TODO: save this to the decoder when exporting?\n            this.decoder.end_of_word_suffix = this.model.end_of_word_suffix;\n        }\n\n\n        this.added_tokens_regex = this.added_tokens.length > 0 ? new RegExp(\n            this.added_tokens.map(x => `${x.lstrip ? '\\\\s*' : ''}(${escapeRegExp(x.content)})${x.rstrip ? '\\\\s*' : ''}`).join('|')\n        ) : null;\n\n        // Set mask token if present (otherwise will be undefined, which is fine)\n        this.mask_token = this.getToken('mask_token');\n        this.mask_token_id = this.model.tokens_to_ids.get(this.mask_token);\n\n        this.pad_token = this.getToken('pad_token', 'eos_token');\n        this.pad_token_id = this.model.tokens_to_ids.get(this.pad_token);\n\n        this.sep_token = this.getToken('sep_token');\n        this.sep_token_id = this.model.tokens_to_ids.get(this.sep_token);\n\n        this.unk_token = this.getToken('unk_token');\n        this.unk_token_id = this.model.tokens_to_ids.get(this.unk_token);\n\n        this.model_max_length = tokenizerConfig.model_max_length;\n\n        /** @type {boolean} Whether or not to strip the text when tokenizing (removing excess spaces before and after the string). */\n        this.remove_space = tokenizerConfig.remove_space;\n\n        this.clean_up_tokenization_spaces = tokenizerConfig.clean_up_tokenization_spaces ?? true;\n        this.do_lowercase_and_remove_accent = tokenizerConfig.do_lowercase_and_remove_accent ?? false;\n\n        // TODO allow user to change this\n        /** @type {'right'|'left'} */\n        this.padding_side = 'right';\n\n        this.legacy = false;\n\n        this.chat_template = tokenizerConfig.chat_template ?? null;\n        if (Array.isArray(this.chat_template)) {\n            // Chat templates are stored as lists of dicts with fixed key names,\n            // we reconstruct that into a single dict while loading them.\n            const chat_template = Object.create(null);\n            for (const { name, template } of this.chat_template) {\n                if (typeof name !== 'string' || typeof template !== 'string') {\n                    throw new Error('Chat template must be a list of objects with \"name\" and \"template\" properties');\n                }\n                chat_template[name] = template;\n            }\n            this.chat_template = chat_template;\n        }\n        this._compiled_template_cache = new Map();\n    }",
+            "start_line": 2448,
+            "symbol_id": "src/tokenizers.js#method:constructor:2448"
+          },
+          {
+            "children": [],
+            "documentation": "Returns the value of the first matching key in the tokenizer config object.\n@param {...string} keys One or more keys to search for in the tokenizer config object.\n@returns {string|null} The value associated with the first matching key, or null if no match is found.\n@throws {Error} If an object is found for a matching key and its __type property is not \"AddedToken\".",
+            "end_line": 2566,
+            "kind": "method",
+            "name": "getToken",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "getToken",
+            "signature": "getToken(...keys) {\n        for (const key of keys) {\n            const item = this._tokenizer_config[key];\n\n            if (!item) continue;\n\n            if (typeof item === 'object') {\n                if (item.__type === 'AddedToken') {\n                    return item.content;\n                } else {\n                    throw Error(`Unknown token: ${item}`);\n                }\n            } else {\n                return item;\n            }\n        }\n        return null;\n    }",
+            "start_line": 2549,
+            "symbol_id": "src/tokenizers.js#method:getToken:2549"
+          },
+          {
+            "children": [],
+            "documentation": "Loads a pre-trained tokenizer from the given `pretrained_model_name_or_path`.\n\n@param {string} pretrained_model_name_or_path The path to the pre-trained tokenizer.\n@param {PretrainedTokenizerOptions} options Additional options for loading the tokenizer.\n\n@throws {Error} Throws an error if the tokenizer.json or tokenizer_config.json files are not found in the `pretrained_model_name_or_path`.\n@returns {Promise<PreTrainedTokenizer>} A new instance of the `PreTrainedTokenizer` class.",
+            "end_line": 2597,
+            "kind": "method",
+            "name": "from_pretrained",
+            "parent_id": null,
+            "parent_name": null,
+            "path": "src/tokenizers.js",
+            "qualified_name": "from_pretrained",
+            "signature": "static async from_pretrained(pretrained_model_name_or_path, {\n        progress_callback = null,\n        config = null,\n        cache_dir = null,\n        local_files_only = false,\n        revision = 'main',\n        legacy = null,\n    } = {}) {\n\n        const info = await loadTokenizer(pretrained_model_name_or_path, {\n            progress_callback,\n            config,\n            cache_dir,\n            local_files_only,\n            revision,\n            legacy,\n        })\n\n        // @ts-ignore\n        return new this(...info);\n    }",
+            "start_line": 2577,
+            "symbol_id": "src/tokenizers.js#method:from_pretrained:2577"
+          }
+        ]
+      }
+    ]
+  },
+  "trialId": "6f5233f33d"
+}
