@@ -267,6 +267,8 @@ Hosted models may change over time, so a new execution is not expected to be byt
 
 The Lattes experiment is bound to an archived tool snapshot. The RepoQA provenance records the available software and dataset information and any remaining archival limitations.
 
+**LLMContextBench itself is under active development.** The `tools/*.zip` archives are frozen snapshots pinned to the baselines preserved in this replication package; they are what analytical and full re-execution replication should use. The latest, actively developed version of the tool is maintained separately at <https://github.com/michelav/llmcontextbench>.
+
 ## 8. Reproducibility principles
 
 The package follows these rules:
