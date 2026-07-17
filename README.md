@@ -1,5 +1,7 @@
 # LLMContextBench Replication Package
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21420688.svg)](https://doi.org/10.5281/zenodo.21420688)
+
 This repository is the replication package for the empirical studies conducted with **LLMContextBench**, a benchmark tool for evaluating how LLM-based systems receive and access external context. It allows (a) reprocessing the preserved experiment outputs offline to reproduce every table and figure reported in the papers, and (b) re-running the original experiments end to end against live model providers and MCP servers.
 
 LLMContextBench represents an experiment as a combination of dataset instances, tasks, models, context-provisioning strategies, formats, repetitions, evaluation procedures, and execution traces. It supports comparisons between strategies such as inline context, local function calling, local MCP, and remote MCP.
@@ -290,12 +292,27 @@ The package follows these rules:
 
 ## 9. Citation
 
-Citation metadata is provided in [`CITATION.cff`](CITATION.cff). GitHub can render this file through the repository's **Cite this repository** action; Zenodo parses the same file to populate the deposit's citation and "Cite as" fields.
+The archived version of this replication package is available on Zenodo under DOI [`10.5281/zenodo.21420688`](https://doi.org/10.5281/zenodo.21420688). For artifact evaluation and reproducible studies, cite this version-specific DOI.
 
-Until a DOI is assigned, cite the repository using its URL and the version or commit used in the analysis. After the first Zenodo deposit:
+Citation metadata is also provided in [`CITATION.cff`](CITATION.cff). GitHub renders this file through the repository's **Cite this repository** action, and Zenodo uses the same metadata for its citation exports.
 
-- update `CITATION.cff` with the assigned DOI (`identifiers`) and the deposited `version`;
-- update this README and the papers' *Artifact Availability* statements to point to the specific archived version (for example, `https://doi.org/10.5281/zenodo.NNNNNNN`), not the "all versions" concept DOI, per the CBSoft Festival de Artefatos submission instructions.
+Suggested citation:
+
+> Vasconcelos, Michel, and Nabor C. Mendonça. 2026. *LLMContextBench Replication Package*. Version 0.1.0. Zenodo. https://doi.org/10.5281/zenodo.21420688.
+
+BibTeX:
+
+```bibtex
+@dataset{vasconcelos_2026_llmcontextbench,
+  author    = {Michel Vasconcelos and Nabor C. Mendonça},
+  title     = {LLMContextBench Replication Package},
+  year      = {2026},
+  version   = {0.1.0},
+  publisher = {Zenodo},
+  doi       = {10.5281/zenodo.21420688},
+  url       = {https://doi.org/10.5281/zenodo.21420688}
+}
+```
 
 ## 10. License
 
