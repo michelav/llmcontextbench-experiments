@@ -9,9 +9,7 @@ The package contains preserved experiment outputs, dataset and tool snapshots, a
 - *LLMContextBench: A Benchmark Tool for Evaluating Context Provisioning Strategies in LLM-Based Systems*;
 - *Evaluating Context Provisioning Strategies for LLM-Based Systems: An Empirical Study with the Lattes Platform*.
 
-The camera-ready PDFs of both papers will be added to this repository, under [`articles/`](articles/), before the Festival de Artefatos submission deadline. Until then, the current development repository is available at <https://github.com/michelav/llmcontextbench-experiments>.
-
-> **Note to the artifact evaluators:** the GitHub link above is an informational pointer to where the papers will be committed; it is not the official archival link. The archival copy submitted for the "Available" seal is the Zenodo deposit described in [Section 9 (Citation)](#9-citation) and [Section 10 (License)](#10-license), which will include the same paper PDFs once added.
+The camera-ready PDFs of both papers are available in [experiments repository](https://github.com/michelav/llmcontextbench-experiments/) under [`articles/`](articles/).
 
 ## 1. Purpose and relation to the papers
 
