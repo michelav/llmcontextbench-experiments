@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "1.0",
+  "experiment": {
+    "id": "datasets/repoqa",
+    "domain": "repoqa",
+    "description": "RepoQA Search Needle Function experiment used in the SBES 2026 LLMContextBench tool paper.",
+    "associatedPaper": "LLMContextBench: A Benchmark Tool for Evaluating Context Provisioning Strategies in LLM-Based Systems"
+  },
+  "baselineBinding": {
+    "dataset": {
+      "name": "CTXBench RepoQA dataset",
+      "role": "Dataset snapshot committed with the experiment artifact",
+      "archive": "../../../datasets/repoqa.tar.gz",
+      "archiveFormat": "tar.gz",
+      "version": "2026-05-23",
+      "versionPolicy": "archive-is-authoritative",
+      "gitBlobSha": "1090f7bdf4118e08f348e8ce023fcc28869a7f53",
+      "sha256": null,
+      "releaseBlocker": "Calculate and record the archive SHA-256 before the persistent release."
+    },
+    "software": {
+      "name": "LLMContextBench",
+      "role": "Exact software snapshot used to plan, execute, and score this baseline",
+      "archive": null,
+      "versionPolicy": "exact-snapshot-required",
+      "status": "missing",
+      "releaseBlocker": "Add the exact producing software snapshot under tools/, record its path and SHA-256 here, and do not substitute a later main-branch revision when claiming exact reproduction."
+    }
+  },
+  "execution": {
+    "configuration": "../experiment.repoqa.json",
+    "outputDirectory": ".",
+    "preservedCounts": {
+      "responses": 960,
+      "evaluations": 960
+    },
+    "paperReportedCounts": {
+      "trialsPerConfiguration": 45,
+      "configurations": 4,
+      "totalTrials": 180
+    },
+    "paperSelection": {
+      "path": "../paper-selection.json",
+      "status": "not-yet-recorded",
+      "releaseBlocker": "Record the exact immutable subset used for Table 3(b), preferably as explicit trial IDs, and verify it against expected/tool-paper-table-3b.csv."
+    },
+    "requiresProviderCredentials": true,
+    "requiresRemoteMcpConfiguration": false,
+    "evaluationMethod": "repoqa-scorer"
+  },
+  "reproducibilityNotes": [
+    "Offline analytical reproduction uses responses.jsonl and evals.jsonl and does not require provider or MCP access.",
+    "The deterministic RepoQA scorer records hit, pass, similarity, target, repository, language, threshold, and comment-handling metadata under details.repoqa.",
+    "The historical manifest contains absolute local paths; they are retained only as execution metadata.",
+    "The committed experiment configuration must be reconciled with the preserved inline-code, inline-JSON, local-function, and local-MCP output configurations before the archival release.",
+    "Hosted model changes may prevent exact full-experiment re-execution; the committed outputs remain the reference for analytical reproduction."
+  ]
+}
