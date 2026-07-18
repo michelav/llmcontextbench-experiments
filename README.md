@@ -292,32 +292,14 @@ The package follows these rules:
 
 ## 9. Citation
 
-The archived version of this replication package is available on Zenodo under DOI [`10.5281/zenodo.21420688`](https://doi.org/10.5281/zenodo.21420688). For artifact evaluation and reproducible studies, cite this version-specific DOI.
+The archived version of this replication package is available on Zenodo under DOI [`10.5281/zenodo.21422377`](https://doi.org/10.5281/zenodo.21422377). For artifact evaluation and reproducible studies, cite this version-specific DOI.
 
 Citation metadata is also provided in [`CITATION.cff`](CITATION.cff). GitHub renders this file through the repository's **Cite this repository** action, and Zenodo uses the same metadata for its citation exports.
-
-Suggested citation:
-
-> Vasconcelos, Michel, and Nabor C. Mendonça. 2026. *LLMContextBench Replication Package*. Version 0.1.0. Zenodo. https://doi.org/10.5281/zenodo.21420688.
-
-BibTeX:
-
-```bibtex
-@dataset{vasconcelos_2026_llmcontextbench,
-  author    = {Michel Vasconcelos and Nabor C. Mendonça},
-  title     = {LLMContextBench Replication Package},
-  year      = {2026},
-  version   = {0.1.0},
-  publisher = {Zenodo},
-  doi       = {10.5281/zenodo.21420688},
-  url       = {https://doi.org/10.5281/zenodo.21420688}
-}
-```
 
 ## 10. License
 
 Repository-authored source code, analysis scripts, and documentation are distributed under the [MIT License](LICENSE).
 
-The preserved Lattes and RepoQA dataset archives (`datasets/*.tar.gz`) were assembled by the authors from publicly accessible sources (public Lattes Platform curricula and public open-source repositories, respectively; see [Section 1](#data-provenance-storage-and-ethical-notes)) and are made available for research and replication purposes under the same repository terms.
+The preserved Lattes and RepoQA dataset archives (`datasets/*.tar.gz`) were assembled by the authors from publicly accessible sources (public Lattes Platform curricula and public open-source repositories, respectively; see [Section 1](#data-provenance-storage-and-ethical-notes)) and are made available under the same repository terms.
 
 Tool snapshots, raw model outputs, and any other third-party or derived artifacts may still be subject to their original licenses, terms of use, or attribution requirements. The MIT License does not override rights attached to material created by third parties.
